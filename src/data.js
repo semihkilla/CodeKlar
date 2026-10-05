@@ -1,3 +1,5 @@
+import { foundations } from "./foundations";
+
 export const courses = [
   {
     id: "js",
@@ -62,7 +64,7 @@ export const courses = [
   },
 ];
 
-export const jsLessons = [
+const methodLessons = [
   {
     id: "js-map",
     course: "js",
@@ -565,7 +567,12 @@ export const otherLessons = [
   ),
 ];
 
-export const lessons = [...jsLessons, ...otherLessons];
+export const jsLessons = [...methodLessons, ...foundations];
+const learningOrder = ["js-variables", "js-return", "js-arithmetic", "js-remainder", "js-equality", "js-comparisons", "js-logic", "js-nullish", "js-if", "js-for", "js-objects", "js-template", "js-includes", "js-slice", "js-push", "js-map", "js-filter", "js-budget"];
+export const lessons = [
+  ...[...jsLessons].sort((a, b) => learningOrder.indexOf(a.id) - learningOrder.indexOf(b.id)),
+  ...otherLessons,
+];
 export const lessonById = Object.fromEntries(
   lessons.map((lesson) => [lesson.id, lesson]),
 );

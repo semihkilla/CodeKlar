@@ -234,6 +234,33 @@ button:not(:disabled):hover {
   color: var(--muted);
   margin: 0 0 20px;
 }
+.learning-path {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: var(--surface);
+}
+.path-heading, .lesson-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.path-heading > span { color: var(--muted); font-size: 14px; }
+.learning-path summary { cursor: pointer; padding: 12px 0; min-height: 44px; }
+.path-steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.path-steps button {
+  width: 100%; min-height: 44px; text-align: left; display: flex;
+  align-items: center; justify-content: space-between; gap: 10px;
+  background: transparent; color: var(--text); border: 1px solid transparent;
+  border-radius: 6px; padding: 10px; font-size: 14px;
+}
+.path-steps button[aria-current="step"] { border-color: var(--accent); background: var(--accent-soft); }
+.path-solved { display: flex; align-items: center; gap: 4px; color: var(--accent); flex-shrink: 0; }
+.lesson-pagination { margin: 18px 0; }
+.lesson-pagination .button { min-height: 44px; white-space: normal; }
 .topic-tabs {
   display: flex;
   gap: 18px;
@@ -1429,7 +1456,10 @@ progress::-moz-progress-bar {
 .topic-navigation .topic-tabs {
   border-bottom: 0;
   flex: 1;
+  min-width: 0;
+  overflow-x: auto;
 }
+.topic-tabs button { flex-shrink: 0; }
 .topic-navigation .lesson-picker {
   min-height: 0;
   padding: 0;

@@ -31,4 +31,10 @@ Referenz und aktuelle Playwright-Screenshots werden mit `view_image` direkt gepr
 | Bedienung       | Kein horizontaler Seitenüberlauf; mobiles Umschalten, Ausführen, Testen, Themenwechsel und Dialogbedienung funktionieren.                                                     |
 | Offline         | Manifest und alle angegebenen PNG-Icongrößen sind korrekt. Mit aktivem Service Worker funktionieren Neuladen, Suche, Aufgabenprüfung und Fortschritt bei abgeschaltetem Netz. |
 
-Produktionsbuild sowie sieben Lern-Integrationstests und fünf PWA-Tests bestehen. Die Installationsoberfläche ist mit simulierten Browserereignissen geprüft; die Anleitung für iPhone wird mit passendem User-Agent geprüft. Es liegt kein Nachweis einer tatsächlichen Installation auf einem physischen Gerät vor. Die anschließende private Veröffentlichung unter einer HTTPS-Adresse wird mit dem Sites-Deploymentstatus verifiziert.
+Produktionsbuild sowie neun Lern-Integrationstests und fünf PWA-Tests bestehen. Die Installationsoberfläche ist mit simulierten Browserereignissen geprüft; die Anleitung für iPhone wird mit passendem User-Agent geprüft. Es liegt kein Nachweis einer tatsächlichen Installation auf einem physischen Gerät vor. Die anschließende private Veröffentlichung unter einer HTTPS-Adresse wird mit dem Sites-Deploymentstatus verifiziert.
+
+## Lernpfad-Erweiterung
+
+Eine kompakte aufklappbare Pfadübersicht ergänzt die Lernansicht. 18 Schritte sind direkt erreichbar; gelöste Aufgaben bleiben markiert. Die Themenleiste scrollt innerhalb ihres Bereichs, damit auch acht Kategorien auf dem Handy keinen Seitenüberlauf erzeugen. Der Desktop behält die beiden Arbeitsbereiche. Die erweiterten Erklärungen zeigen auch bisher nicht sichtbare Methodendetails.
+
+Neun Lern- und fünf Produktions-PWA-Tests bestehen mit Chromium. Der neue Ablauf wird auf Desktop und 390 × 844 getestet: Grundlagenaufgabe lösen, nach Neuladen fortsetzen, Pfad aufklappen und Budget-Projekt öffnen. Die PWA-Prüfungen decken weiterhin fünf Ansichtsgrößen und Offline-Ausführung ab. Browser plugin not available; Playwright dient als Browserprüfung.

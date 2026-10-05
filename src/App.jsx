@@ -72,9 +72,7 @@ export default function App() {
                 <span>{courses.find((item) => item.id === course).name}</span>
                 <span className="breadcrumb-slash">/</span>
                 <span className="breadcrumb-current">
-                  {course === "js" && lesson.category !== "Operatoren"
-                    ? `${lesson.category === "Arrays" ? "Array" : "String"}-Methoden`
-                    : lesson.category}
+                  {lesson.category}
                 </span>
               </>
             )}

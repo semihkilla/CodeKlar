@@ -1,6 +1,14 @@
 // Untrusted learning code runs in a worker inside an opaque-origin iframe.
 // The iframe's CSP blocks networking. The parent enforces a hard time limit.
 const workerProgram = `
+const equal = (a, b) => {
+  if (a === b) return true;
+  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a) && a.length !== b.length) return false;
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every(key => Object.prototype.hasOwnProperty.call(b, key) && equal(a[key], b[key]));
+};
 const stringify = value => {
   if (typeof value === 'string') return value;
   if (value === undefined) return 'undefined';
@@ -25,7 +33,7 @@ self.onmessage = ({data}) => {
       const before = JSON.stringify(input);
       try {
         const actual = fn(input);
-        return {input: test.input, expected: test.expected, actual: stringify(actual), passed: JSON.stringify(actual) === JSON.stringify(test.expected) && (!data.preserveInput || JSON.stringify(input) === before), changed: data.preserveInput && JSON.stringify(input) !== before};
+        return {input: test.input, expected: test.expected, actual: stringify(actual), passed: equal(actual, test.expected) && (!data.preserveInput || JSON.stringify(input) === before), changed: data.preserveInput && JSON.stringify(input) !== before};
       } catch (error) {
         return {input: test.input, expected: test.expected, actual: error.message, passed: false};
       }

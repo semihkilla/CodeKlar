@@ -141,6 +141,7 @@ function LessonPanel({
                 </div>
               ))}
             </dl>
+            <p className="detail-text">{lesson.detail}</p>
             <div className="lesson-note">
               <Info size={20} />
               <span>{lesson.note}</span>
@@ -242,12 +243,14 @@ export function Learning({
   const [tab, setTab] = useState(initialTab || "explanation");
   const [mobilePane, setMobilePane] = useState("lesson");
   const categories = [...new Set(available.map((item) => item.category))];
-  if (course === "js")
-    categories.sort(
-      (a, b) =>
-        ["Operatoren", "Strings", "Arrays"].indexOf(a) -
-        ["Operatoren", "Strings", "Arrays"].indexOf(b),
-    );
+  const lessonIndex = available.indexOf(lesson);
+  const nextOpen = available.find((item) => !progress.solved[item.id]);
+  function goTo(id) {
+    setLessonId(id);
+    setTab("explanation");
+    setMobilePane("lesson");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
   const siblings = available.filter(
     (item) => item.category === lesson.category,
   );
@@ -258,6 +261,30 @@ export function Learning({
         <h1>Verstehe, was dein Code tut.</h1>
         <p>Lerne Methoden, probiere sie aus und wende sie direkt an.</p>
       </div>
+      {course === "js" && (
+        <div className="learning-path">
+          <div className="path-heading">
+            <span>JavaScript · Schritt {lessonIndex + 1} von {available.length}</span>
+            <button className="text-button" onClick={() => goTo((nextOpen || available[0]).id)}>
+              {Object.keys(progress.solved).some((id) => available.some((item) => item.id === id)) ? "Lernpfad fortsetzen" : "Lernpfad beginnen"}
+              <ArrowRight size={17} />
+            </button>
+          </div>
+          <details>
+            <summary>Alle Schritte im Lernpfad</summary>
+            <ol className="path-steps">
+              {available.map((item, i) => (
+                <li key={item.id}>
+                  <button aria-current={item.id === lesson.id ? "step" : undefined} onClick={() => goTo(item.id)}>
+                    <span>{i + 1}. {item.title}</span>
+                    {progress.solved[item.id] && <span className="path-solved"><Check size={15} /> Gelöst</span>}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </details>
+        </div>
+      )}
       <div className="topic-navigation">
         <div className="topic-tabs" aria-label="Themen">
           {categories.map((category) => (
@@ -356,6 +383,10 @@ export function Learning({
           </div>
         )}
       </div>
+      <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">
+        <button className="button secondary" disabled={lessonIndex === 0} onClick={() => goTo(available[lessonIndex - 1].id)}>Vorherige Lektion</button>
+        <button className="button primary" disabled={lessonIndex === available.length - 1} onClick={() => goTo(available[lessonIndex + 1].id)}>Nächste Lektion <ArrowRight size={17} /></button>
+      </nav>
       <ProgressStrip
         solved={available.filter((item) => progress.solved[item.id]).length}
         total={available.length}

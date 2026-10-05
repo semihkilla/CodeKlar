@@ -32,7 +32,9 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- Sechs ausführbare JavaScript-Codeaufgaben: `===`, `&&`, `includes`, `slice`, `map` und `filter`.
+- 18 ausführbare JavaScript-Codeaufgaben: Variablen, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Strings und Arrays.
+- Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
+- Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
 - Elf weitere Lektionen mit Wissensfragen zu Java, Python, HTML/CSS, SQL, React, Angular, Spring Boot, C, C++, C# und Docker.
 - Erklärungen mit Syntax, einzelnen Bestandteilen, Verhalten, Hinweisen und Lösungsweg.
 - Bearbeitbarer JavaScript-Spielplatz mit Ausgabe, Zurücksetzen und mehreren Testfällen pro Aufgabe. Strg/⌘ + Enter führt den Code aus.
@@ -91,6 +93,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 ## Aufbau
 
 - `src/data.js`: Lernbereiche, Lektionen, Aufgaben und Testfälle.
+- `src/foundations.js`: Zwölf neue Grundlagen- und Projektaufgaben mit Erklärungen, Grenzfällen und Lösungen.
 - `src/components`: Navigation, Lernansicht, Editor, Spielplatz und Übersichten.
 - `src/runner.js`: Getrennte JavaScript-Ausführung.
 - `src/useProgress.js`: Lesen, Prüfen und Speichern des Fortschritts.

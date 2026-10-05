@@ -28,7 +28,7 @@ test("mobile playground, dark theme, accent persistence and touch navigation", a
   await page.getByRole("button", { name: "Code bearbeiten" }).click();
   await page.getByLabel("JavaScript-Code").fill(jsLessons[0].solution);
   await page.getByRole("button", { name: "Lösung prüfen" }).click();
-  await expect(page.getByText("1 von 6 Aufgaben gelöst")).toBeVisible();
+  await expect(page.getByText(`1 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
   await page.getByRole("button", { name: "Design und Webapp" }).click();
   await page.getByRole("radio", { name: "Grün", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-accent", "green");
@@ -100,9 +100,9 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByRole("button", { name: "Code bearbeiten" }).click();
   await page.getByLabel("JavaScript-Code").fill(jsLessons[0].solution);
   await page.getByRole("button", { name: "Lösung prüfen" }).click();
-  await expect(page.getByText("1 von 6 Aufgaben gelöst")).toBeVisible();
+  await expect(page.getByText(`1 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
   await page.reload();
-  await expect(page.getByText("1 von 6 Aufgaben gelöst")).toBeVisible();
+  await expect(page.getByText(`1 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
   await page
     .getByLabel("Schnellnavigation")
     .getByRole("button", { name: "Nachschlagen", exact: true })

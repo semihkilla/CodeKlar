@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält sechs JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 18 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -57,3 +57,9 @@ Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgeb
 Das Design ist dunkel; Lila, Blau und Grün sind als gespeicherte Akzentfarben wählbar. Auf dem Handy gibt es eine feste Navigation am unteren Rand und einen direkten Wechsel zwischen Erklärung und Code-Spielplatz. Bedienelemente berücksichtigen Berührung, Bildschirmränder und die Bildschirmtastatur.
 
 Der Produktionsbuild enthält ein PWA-Manifest, Startbildschirm-Icons und einen Offline-Cache. Mitgelieferte Inhalte und JavaScript-Aufgaben funktionieren nach einem ersten vollständigen Laden auch ohne Internet. iPhone- und Android-Installationswege werden in der App erklärt. Für die Nutzung unterwegs wird der Build privat mit Sites über HTTPS bereitgestellt. Die vorgesehene Adresse steht im README; der erfolgreiche Deploymentstatus bestätigt die Veröffentlichung.
+
+## Ausbau: JavaScript-Lernpfad
+
+Zwölf neue Aufgaben ergänzen die bisherigen Methodenlektionen: let/const, function/return, Rechnen, Restoperator, Vergleiche und Negation, if/else, for-Schleifen, Objekte, ??, Template-Strings, push und ein Budget-Rechner. Ein geordneter Pfad bietet eine Übersicht mit Lösungsstatus, die erste offene Aufgabe und Vor-/Zurück-Navigation. Das Nachschlagewerk und die Aufgabenliste übernehmen alle neuen Inhalte. Bestehende Fortschritts-IDs bleiben erhalten.
+
+Objektantworten werden unabhängig von ihrer Eigenschaftsreihenfolge verglichen; Arrayreihenfolge und Typen müssen übereinstimmen. Die App ist weiterhin eine erste Kursstufe und kein vollständiger JavaScript-Kurs.

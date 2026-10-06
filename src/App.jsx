@@ -103,7 +103,7 @@ export default function App() {
         <main className="main-content" id="main-content">
           {view === "learn" && (
             <Learning
-              key={`${course}-${lessonId}-${initialTab}`}
+              key={`${course}-${initialTab}`}
               course={course}
               lessonId={lessonId}
               setLessonId={(id) => {

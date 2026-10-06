@@ -82,10 +82,10 @@ test("ordered learning path resumes after a solved foundation and remains usable
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("3 / 3 bestanden");
   await page.reload();
   await page.getByRole("button", { name: "Lernpfad fortsetzen", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Funktionen aufrufen und Ergebnisse zurückgeben" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Datentypen erkennen mit typeof" })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
-  await expect(page.locator(".path-steps button")).toHaveCount(18);
+  await expect(page.locator(".path-steps button")).toHaveCount(jsLessons.length);
   await expect(page.locator(".path-steps li").first()).toContainText("Gelöst");
   await page.locator(".path-steps button").last().click();
   await expect(page.getByRole("heading", { name: "Miniprojekt: Deinen Budget-Rechner bauen" })).toBeVisible();
@@ -110,6 +110,38 @@ test("object answers accept any property order and reject missing fields or wron
   await page.getByLabel("JavaScript-Code").fill("function geradeZahlen(zahlen) { return {}; }");
   await page.getByRole("button", { name: "Lösung prüfen" }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("0 / 3 bestanden");
+});
+
+test("mobile topic scroll remains at the selected area across category and lesson changes", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const row = page.locator(".topic-tabs");
+  const isSelectedVisible = () => row.evaluate((element) => {
+    const active = element.querySelector('[aria-pressed="true"]').getBoundingClientRect();
+    const bounds = element.getBoundingClientRect();
+    return active.left >= bounds.left - 1 && active.right <= bounds.right + 1;
+  });
+  expect(await isSelectedVisible()).toBe(true);
+  await row.evaluate((element) => { element.scrollLeft = element.scrollWidth; });
+  const position = await row.evaluate((element) => element.scrollLeft);
+  expect(position).toBeGreaterThan(0);
+  await row.getByRole("button", { name: "Projekte", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Miniprojekt: Deinen Budget-Rechner bauen" })).toBeVisible();
+  expect(Math.abs(await row.evaluate((element) => element.scrollLeft) - position)).toBeLessThanOrEqual(2);
+  expect(await isSelectedVisible()).toBe(true);
+  await row.getByRole("button", { name: "Arrays", exact: true }).click();
+  const arraysPosition = await row.evaluate((element) => element.scrollLeft);
+  await page.locator(".lesson-picker").getByRole("button", { name: ".filter()", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Elemente auswählen mit .filter()" })).toBeVisible();
+  expect(Math.abs(await row.evaluate((element) => element.scrollLeft) - arraysPosition)).toBeLessThanOrEqual(2);
+  expect(await isSelectedVisible()).toBe(true);
+  await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();
+  await page.locator(".lesson-picker").getByRole("button", { name: ".map()", exact: true }).click();
+  await expect(page.getByRole("tab", { name: "Erklärung", exact: true })).toHaveAttribute("aria-selected", "true");
+  await page.reload();
+  expect(await isSelectedVisible()).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-mobile-topic-scroll.png", fullPage: false });
 });
 
 test("mutating the input cannot pass the map task", async ({ page }) => {

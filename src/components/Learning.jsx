@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { Playground } from "./Playground";
@@ -242,6 +242,23 @@ export function Learning({
   const lesson = available.find((item) => item.id === lessonId) || available[0];
   const [tab, setTab] = useState(initialTab || "explanation");
   const [mobilePane, setMobilePane] = useState("lesson");
+  const topicRef = useRef(null);
+  const pickerRef = useRef(null);
+  useEffect(() => {
+    setTab(initialTab || "explanation");
+    setMobilePane("lesson");
+  }, [lesson.id, initialTab]);
+  useLayoutEffect(() => {
+    // Scroll only within each horizontal row; never move the page vertically.
+    for (const row of [topicRef.current, pickerRef.current]) {
+      const selected = row?.querySelector('[aria-pressed="true"]');
+      if (!selected) continue;
+      const bounds = row.getBoundingClientRect();
+      const active = selected.getBoundingClientRect();
+      if (active.left < bounds.left) row.scrollLeft += active.left - bounds.left;
+      else if (active.right > bounds.right) row.scrollLeft += active.right - bounds.right;
+    }
+  }, [lesson.id]);
   const categories = [...new Set(available.map((item) => item.category))];
   const lessonIndex = available.indexOf(lesson);
   const nextOpen = available.find((item) => !progress.solved[item.id]);
@@ -286,7 +303,7 @@ export function Learning({
         </div>
       )}
       <div className="topic-navigation">
-        <div className="topic-tabs" aria-label="Themen">
+        <div className="topic-tabs" aria-label="Themen" ref={topicRef}>
           {categories.map((category) => (
             <button
               key={category}
@@ -303,7 +320,7 @@ export function Learning({
             </button>
           ))}
         </div>
-        <div className="lesson-picker" aria-label="Lektionen">
+        <div className="lesson-picker" aria-label="Lektionen" ref={pickerRef}>
           {siblings.map((item) => (
             <button
               key={item.id}

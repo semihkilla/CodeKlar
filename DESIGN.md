@@ -38,3 +38,7 @@ Produktionsbuild sowie neun Lern-Integrationstests und fünf PWA-Tests bestehen.
 Eine kompakte aufklappbare Pfadübersicht ergänzt die Lernansicht. 18 Schritte sind direkt erreichbar; gelöste Aufgaben bleiben markiert. Die Themenleiste scrollt innerhalb ihres Bereichs, damit auch acht Kategorien auf dem Handy keinen Seitenüberlauf erzeugen. Der Desktop behält die beiden Arbeitsbereiche. Die erweiterten Erklärungen zeigen auch bisher nicht sichtbare Methodendetails.
 
 Neun Lern- und fünf Produktions-PWA-Tests bestehen mit Chromium. Der neue Ablauf wird auf Desktop und 390 × 844 getestet: Grundlagenaufgabe lösen, nach Neuladen fortsetzen, Pfad aufklappen und Budget-Projekt öffnen. Die PWA-Prüfungen decken weiterhin fünf Ansichtsgrößen und Offline-Ausführung ab. Browser plugin not available; Playwright dient als Browserprüfung.
+
+## Korrektur der mobilen Themenauswahl
+
+Die Lernansicht wird nicht mehr bei jedem Lektionswechsel vollständig neu eingehängt. Die horizontale Themenposition bleibt bei Auswahl eines sichtbaren Bereichs erhalten; außerhalb der Zeile liegende aktive Einträge werden ohne vertikales Scrollen sichtbar gemacht. Ein Regressionstest prüft Projekte → Arrays → filter → map und Neuladen bei 390 × 844. Die fünf neuen Typ-Lektionen nutzen das vorhandene Design.

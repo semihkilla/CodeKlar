@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 18 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 23 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -63,3 +63,9 @@ Der Produktionsbuild enthält ein PWA-Manifest, Startbildschirm-Icons und einen 
 Zwölf neue Aufgaben ergänzen die bisherigen Methodenlektionen: let/const, function/return, Rechnen, Restoperator, Vergleiche und Negation, if/else, for-Schleifen, Objekte, ??, Template-Strings, push und ein Budget-Rechner. Ein geordneter Pfad bietet eine Übersicht mit Lösungsstatus, die erste offene Aufgabe und Vor-/Zurück-Navigation. Das Nachschlagewerk und die Aufgabenliste übernehmen alle neuen Inhalte. Bestehende Fortschritts-IDs bleiben erhalten.
 
 Objektantworten werden unabhängig von ihrer Eigenschaftsreihenfolge verglichen; Arrayreihenfolge und Typen müssen übereinstimmen. Die App ist weiterhin eine erste Kursstufe und kein vollständiger JavaScript-Kurs.
+
+## Ausbau: Datentypen und mobile Themenleiste
+
+Fünf neue Lektionen ergänzen den Lernpfad direkt nach Variablen: typeof, null/undefined, Number mit NaN-Prüfung, String und Boolean. Sie behandeln typische Unterschiede wie 42 und '42', leere Texte, 0, false, leere Arrays und ungültige Zahlentexte.
+
+Beim Lektionswechsel bleibt die Themenleiste bestehen und behält ihre horizontale Scrollposition. Außerhalb des sichtbaren Ausschnitts ausgewählte Themen oder Lektionen werden nur innerhalb ihrer Zeile sichtbar gemacht.

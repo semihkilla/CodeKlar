@@ -42,3 +42,7 @@ Neun Lern- und fünf Produktions-PWA-Tests bestehen mit Chromium. Der neue Ablau
 ## Korrektur der mobilen Themenauswahl
 
 Die Lernansicht wird nicht mehr bei jedem Lektionswechsel vollständig neu eingehängt. Die horizontale Themenposition bleibt bei Auswahl eines sichtbaren Bereichs erhalten; außerhalb der Zeile liegende aktive Einträge werden ohne vertikales Scrollen sichtbar gemacht. Ein Regressionstest prüft Projekte → Arrays → filter → map und Neuladen bei 390 × 844. Die fünf neuen Typ-Lektionen nutzen das vorhandene Design.
+
+## Logik-Lektionen und längere Lektionsauswahl
+
+Der JavaScript-Lernpfad enthält jetzt 28 Codeaufgaben. Themen und Lektionsauswahl stehen auf eigenen Zeilen; beide scrollen bei Bedarf horizontal innerhalb ihres Bereichs. Elf Lern-Integrationstests und fünf PWA-Tests prüfen unter anderem die Operatorrangfolge, Rückgabewerte, fehlende Konten und den erhaltenen Themenausschnitt. Die Operatorenansicht wird zusätzlich auf Seitenüberlauf bei 390 und 1505 Pixeln Breite geprüft.

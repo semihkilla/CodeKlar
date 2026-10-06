@@ -1,5 +1,6 @@
 import { foundations } from "./foundations";
 import { typeLessons } from "./types";
+import { logicLessons } from "./logic";
 
 export const courses = [
   {
@@ -568,8 +569,8 @@ export const otherLessons = [
   ),
 ];
 
-export const jsLessons = [...methodLessons, ...foundations, ...typeLessons];
-const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "js-string", "js-boolean", "js-return", "js-arithmetic", "js-remainder", "js-equality", "js-comparisons", "js-logic", "js-nullish", "js-if", "js-for", "js-objects", "js-template", "js-includes", "js-slice", "js-push", "js-map", "js-filter", "js-budget"];
+export const jsLessons = [...methodLessons, ...foundations, ...typeLessons, ...logicLessons];
+const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "js-string", "js-boolean", "js-return", "js-arithmetic", "js-remainder", "js-equality", "js-comparisons", "js-logic", "js-or", "js-not", "js-or-fallback", "js-short-circuit", "js-logic-order", "js-nullish", "js-if", "js-for", "js-objects", "js-template", "js-includes", "js-slice", "js-push", "js-map", "js-filter", "js-budget"];
 export const lessons = [
   ...[...jsLessons].sort((a, b) => learningOrder.indexOf(a.id) - learningOrder.indexOf(b.id)),
   ...otherLessons,

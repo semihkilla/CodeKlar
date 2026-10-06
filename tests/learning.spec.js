@@ -144,6 +144,27 @@ test("mobile topic scroll remains at the selected area across category and lesso
   await page.screenshot({ path: "/tmp/codeklar-mobile-topic-scroll.png", fullPage: false });
 });
 
+test("logic tasks expose precedence, operand values and unsafe property access", async ({ page }) => {
+  await page.goto("/");
+  async function check(title, code, result) {
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: title }).click();
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen" }).click();
+    await expect(page.getByLabel("Code-Ausgabe")).toContainText(result);
+  }
+  await check("Auswertungsreihenfolge mit Klammern klären", "function zugriffErlaubt(daten) { return daten.admin || daten.inhaber && !daten.gesperrt; }", "5 / 6 bestanden");
+  await expect(page.locator(".difficulty")).not.toContainText("Gelöst");
+  await check("Auswertungsreihenfolge mit Klammern klären", "function zugriffErlaubt(daten) { if (daten.gesperrt) return false; return daten.admin || daten.inhaber; }", "6 / 6 bestanden");
+  await check("Was || tatsächlich zurückgibt", "function mitStandard(wert) { return wert ?? 'Standard'; }", "4 / 7 bestanden");
+  await check("Unsichere Zugriffe durch Kurzschluss vermeiden", "function kontoAktiv(daten) { return daten.konto.aktiv; }", "2 / 5 bestanden");
+  await check("Unsichere Zugriffe durch Kurzschluss vermeiden", "function kontoAktiv(daten) { if (!daten.konto) return false; return daten.konto.aktiv === true; }", "5 / 5 bestanden");
+  for (const width of [390, 1505]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});
+
 test("mutating the input cannot pass the map task", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();

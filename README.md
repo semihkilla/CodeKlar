@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 23 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Strings und Arrays.
+- 28 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Strings und Arrays.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
 - Elf weitere Lektionen mit Wissensfragen zu Java, Python, HTML/CSS, SQL, React, Angular, Spring Boot, C, C++, C# und Docker.
@@ -93,6 +93,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 ## Aufbau
 
 - `src/data.js`: Lernbereiche, Lektionen, Aufgaben und Testfälle.
+- `src/logic.js`: Fünf Aufgaben zu Oder, Negation, Ersatzwerten, Kurzschluss und Operatorrangfolge.
 - `src/types.js`: Fünf Aufgaben zu typeof, null/undefined, Number/NaN, String und Boolean.
 - `src/foundations.js`: Zwölf neue Grundlagen- und Projektaufgaben mit Erklärungen, Grenzfällen und Lösungen.
 - `src/components`: Navigation, Lernansicht, Editor, Spielplatz und Übersichten.

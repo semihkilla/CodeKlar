@@ -60,3 +60,7 @@ Die aktive Themen- und Lektionsauswahl wird auch bei einer Größenänderung der
 ## Datei-Labor
 
 Im neuen Thema Ein-/Ausgabe & Dateien führt ein Direktlink zu einem Bereich unter der Lernansicht. Datei- und Formatauswahl, Dateiname und bearbeitbarer Inhalt bleiben auch auf dem Handy gut erreichbar; die Vorschau scrollt in ihrem eigenen Bereich. Ein lokaler Notizentwurf überlebt Neuladen. Sechzehn Lern-/Datei-Integrationstests und fünf Produktions-PWA-Tests prüfen unter anderem echte Uploads/Downloads, JSON-Fehler, CSV-Quoting, Größenlimit, blockierte Speicherung und Datei-Import/-Export ohne Netzwerk.
+
+## Datenstrukturen: Objekte, Map und Set
+
+Zwei neue Lektionen ergänzen das bestehende Thema Objekte. Map und Set bilden das neue Thema Datenstrukturen mit drei direkt auswählbaren Aufgaben. Die vorhandene mobile Themenleiste, Lernpfadgruppierung und Codeprüfung werden unverändert verwendet. Siebzehn Lern-/Datei-Tests und fünf PWA-Tests prüfen die Erweiterung; der neue Regressionstest unterscheidet Map-Schlüsselpräsenz von truthy-Werten und erhält primitive Werttypen beim Entfernen von Duplikaten.

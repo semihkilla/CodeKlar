@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 41 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Strings und Arrays.
+- 46 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -94,6 +94,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 ## Aufbau
 
 - `src/data.js`: Lernbereiche, Lektionen, Aufgaben und Testfälle.
+- `src/structures.js`: Fünf Aufgaben zu Object.keys/entries, Map-Zuordnungen und Set-Eindeutigkeit.
 - `src/io.js`: Sechs Aufgaben zu Eingaben, Textzeilen, JSON und einfachem CSV.
 - `src/components/FileLab.jsx`: Echte Text-/JSON-/CSV-Dateien öffnen, bearbeiten und herunterladen; persistenter Notizentwurf.
 - `src/fileFormats.js`: JSON-Formatierung und CSV-Parser/-Writer mit zitierten Feldern.

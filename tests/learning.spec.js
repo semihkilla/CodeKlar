@@ -237,6 +237,30 @@ test("CSV quoting preserves commas, escaped quotes and embedded newlines", () =>
   expect(() => parseCsv('a"b,c')).toThrow(/Anfang/);
 });
 
+test("Map presence and Set value types are checked independently from truthiness", async ({ page }) => {
+  await page.goto("/");
+  async function check(title, code, result) {
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: title }).click();
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen" }).click();
+    await expect(page.getByLabel("Code-Ausgabe")).toContainText(result);
+  }
+  await check("Vorhandene Map-Schlüssel gezielt prüfen", "function zuordnungLesen(daten) { const wert = new Map(daten.paare).get(daten.schluessel); return { gefunden: Boolean(wert), wert: wert || 'Fehlt' }; }", "3 / 6 bestanden");
+  await check("Vorhandene Map-Schlüssel gezielt prüfen", "function zuordnungLesen(daten) { const map = new Map(daten.paare); return map.has(daten.schluessel) ? { wert: map.get(daten.schluessel), gefunden: true } : { wert: 'Fehlt', gefunden: false }; }", "6 / 6 bestanden");
+  await check("Doppelte Werte mit Set entfernen", "function eindeutigeWerte(werte) { return [...new Set(werte.map(String))]; }", "1 / 4 bestanden");
+  await check("Doppelte Werte mit Set entfernen", "function eindeutigeWerte(werte) { return werte.filter((wert, index) => werte.indexOf(wert) === index); }", "4 / 4 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("tab", { name: "Erklärung", exact: true }).click();
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  const structure = page.getByRole("region", { name: "Datenstrukturen-Lektionen", exact: true });
+  await expect(structure.locator(".path-steps button")).toHaveCount(3);
+  await expect(structure.getByRole("heading")).toContainText("2 / 3 gelöst");
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-structures-mobile.png", fullPage: false, animations: "disabled" });
+});
+
 test("file lab imports, edits, validates, downloads and preserves a JSON note", async ({ page }) => {
   await page.goto("/");
   async function openLab() {

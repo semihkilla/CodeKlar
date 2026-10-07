@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { jsLessons } from "../src/data.js";
+import { readFile } from "node:fs/promises";
 
 test("mobile playground, dark theme, accent persistence and touch navigation", async ({
   page,
@@ -109,6 +110,20 @@ test("installed service worker keeps app, fonts, code execution and progress ava
     .click();
   await page.getByRole("textbox").fill("append");
   await expect(page.locator(".reference-entry")).toHaveCount(1);
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Textdateien in Zeilen zerlegen" }).click();
+  const lab = page.getByRole("region", { name: "Notizen und Datei-Labor", exact: true });
+  await lab.getByLabel("Datei öffnen", { exact: true }).setInputFiles({ name: "unterwegs.txt", mimeType: "text/plain", buffer: Buffer.from("Offline-Notiz\n") });
+  await expect(lab.getByLabel("Dateiinhalt")).toHaveValue("Offline-Notiz\n");
+  const downloadPromise = page.waitForEvent("download");
+  await lab.getByRole("button", { name: "Datei herunterladen", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("unterwegs.txt");
+  expect(await readFile(await download.path(), "utf8")).toBe("Offline-Notiz\n");
+  await page.reload();
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Textdateien in Zeilen zerlegen" }).click();
+  await expect(lab.getByLabel("Dateiinhalt")).toHaveValue("Offline-Notiz\n");
 });
 
 test("install button invokes the available browser prompt and respects dismissal", async ({

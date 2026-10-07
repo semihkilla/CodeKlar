@@ -56,3 +56,7 @@ Die Navigation besitzt fünf Gruppen: Programmiersprachen, Webgestaltung, Framew
 Die vorhandene for-Lektion und vier neue Lektionen zu while, for…of, break und continue bilden das Thema Schleifen. Die bestehende horizontale Themenauswahl und gruppierte Lernpfadübersicht übernehmen den Bereich ohne neue Bedienmuster. Dreizehn Lern-Integrationstests und fünf PWA-Prüfungen decken die Erweiterung ab. Die neuen Regressionen prüfen die inklusive while-Grenze, den Unterschied zwischen Abbrechen und Überspringen, alternative korrekte Lösungen und den Fortschritt im mobilen Schleifenthema.
 
 Die aktive Themen- und Lektionsauswahl wird auch bei einer Größenänderung der Zeilen im sichtbaren Ausschnitt gehalten. Ein ResizeObserver reagiert auf die neue Zeilenbreite, ohne die Seite vertikal zu verschieben. Der Schleifentest prüft nach dem Wechsel auf 390 Pixel Breite beide aktiven Einträge.
+
+## Datei-Labor
+
+Im neuen Thema Ein-/Ausgabe & Dateien führt ein Direktlink zu einem Bereich unter der Lernansicht. Datei- und Formatauswahl, Dateiname und bearbeitbarer Inhalt bleiben auch auf dem Handy gut erreichbar; die Vorschau scrollt in ihrem eigenen Bereich. Ein lokaler Notizentwurf überlebt Neuladen. Sechzehn Lern-/Datei-Integrationstests und fünf Produktions-PWA-Tests prüfen unter anderem echte Uploads/Downloads, JSON-Fehler, CSV-Quoting, Größenlimit, blockierte Speicherung und Datei-Import/-Export ohne Netzwerk.

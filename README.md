@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 35 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Strings und Arrays.
+- 41 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -94,6 +94,9 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 ## Aufbau
 
 - `src/data.js`: Lernbereiche, Lektionen, Aufgaben und Testfälle.
+- `src/io.js`: Sechs Aufgaben zu Eingaben, Textzeilen, JSON und einfachem CSV.
+- `src/components/FileLab.jsx`: Echte Text-/JSON-/CSV-Dateien öffnen, bearbeiten und herunterladen; persistenter Notizentwurf.
+- `src/fileFormats.js`: JSON-Formatierung und CSV-Parser/-Writer mit zitierten Feldern.
 - `src/loops.js`: Vier Aufgaben zu while, for…of, break und continue. Zusammen mit for bilden sie das Thema Schleifen.
 - `src/decisions.js`: Drei Aufgaben zu else if, ternärer Auswahl und switch.
 - `src/logic.js`: Fünf Aufgaben zu Oder, Negation, Ersatzwerten, Kurzschluss und Operatorrangfolge.
@@ -108,3 +111,11 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/styles.css`: Gemeinsame Designregeln und responsive Darstellung.
 
 Anforderungen und visuelle Referenz sind in `PROJEKT.md` und `DESIGN.md` beschrieben. Als nächster fachlicher Ausbau bieten sich zusätzliche Operatoren, mehr Methoden, Wiederholungsaufgaben und ein SQL-Spielplatz an.
+
+## Ein-/Ausgabe und Dateien
+
+Wähle in JavaScript das Thema **Ein-/Ausgabe & Dateien**. Unter den Lektionen findest du **Notizen & Datei-Labor**; ein direkter Link führt dorthin. Du kannst ausgewählte UTF-8-Textdateien bis 256 KiB öffnen, eine Kopie bearbeiten, Text/JSON/CSV als Ausgabeformat wählen und die Datei herunterladen. JSON wird geprüft und lesbar formatiert. CSV verwendet Kommas und unterstützt zitierte Felder, maskierte Anführungszeichen und eingebettete Zeilenumbrüche; die Vorschau zeigt höchstens zehn Zeilen. Die CSV-Codeaufgaben beginnen bewusst mit einfacheren Feldern ohne diese Sonderzeichen.
+
+Der aktuelle Notizentwurf wird lokal gespeichert und bleibt bei einem Neuladen erhalten. Bei blockierter Speicherung erscheint ein Hinweis. Originaldateien werden nicht überschrieben. Nach dem ersten vollständigen Laden funktionieren das Labor und die Downloads auch offline. Die Dateiauswahl und das Speichern/Teilen bestimmt der Browser; ein echter iPhone-Download wurde nicht manuell geprüft.
+
+Das Labor zeigt zusätzlich die verwendeten Browser-APIs und ein Node.js-Beispiel zu Ordnern, Lesen und Schreiben mit node:fs/promises. Node.js-Dateisystem- und Terminalzugriffe laufen nicht im isolierten Browser-Spielplatz.

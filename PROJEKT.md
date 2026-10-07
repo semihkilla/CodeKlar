@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 35 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 41 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -81,3 +81,7 @@ Drei weitere JavaScript-Aufgaben behandeln else if, den ternären Operator und s
 ## Ausbau: Schleifen
 
 Das eigene Thema Schleifen verbindet die bestehende for-Lektion mit vier neuen Aufgaben zu while, for…of, break und continue. Übungen behandeln inklusive Grenzen, leere Listen, einen negativen Stopwert und das Überspringen einzelner Werte. Alternative korrekte Lösungen sind erlaubt; die Tests prüfen Verhalten statt vorgeschriebener Syntax. Fortschritts-IDs bleiben erhalten.
+
+## Ausbau: Eingaben, Ausgaben und Dateien
+
+Sechs Aufgaben ergänzen trim, Zeilenzerlegung, JSON.parse mit Strukturprüfung und try/catch, JSON.stringify sowie einfaches CSV-Lesen und -Schreiben. Ein eigenes Datei-Labor öffnet ausgewählte Text-/JSON-/CSV-Dateien, hält einen lokalen bearbeitbaren Notizentwurf und erstellt Downloads. CSV-Sonderzeichen werden im Labor korrekt verarbeitet. Ordnererstellung und Dateizugriff in Node.js werden als separate APIs mit Beispiel erklärt. Die eigentliche Node.js-Laufzeit und Funktionen anderer Sprachen bleiben nächste Ausbauschritte.

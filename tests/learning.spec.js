@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { jsLessons } from "../src/data.js";
+import { readFile } from "node:fs/promises";
+import { parseCsv, writeCsv, MAX_FILE_BYTES } from "../src/fileFormats.js";
 
 test("examples execute; syntax errors and infinite loops stay inside the playground", async ({
   page,
@@ -221,6 +223,75 @@ test("loop tasks distinguish break from continue and include the while boundary"
     })).toBe(true);
   }
   await page.screenshot({ path: "/tmp/codeklar-loops-mobile.png", fullPage: false, animations: "disabled" });
+});
+
+test("CSV quoting preserves commas, escaped quotes and embedded newlines", () => {
+  const rows = [["name", "notiz"], ["Mira", "Hallo, Welt"], ["Ali", 'Er sagt "Ja"'], ["Lea", "Zeile 1\nZeile 2"], ["", ""]];
+  expect(parseCsv(writeCsv(rows))).toEqual(rows);
+  expect(parseCsv('a,b\r\n1,2\r\n')).toEqual([["a", "b"], ["1", "2"]]);
+  expect(parseCsv('""')).toEqual([[""]]);
+  expect(parseCsv(writeCsv([[""]]))).toEqual([[""]]);
+  expect(parseCsv('')).toEqual([]);
+  expect(() => parseCsv('"offen')).toThrow(/schließendes/);
+  expect(() => parseCsv('"a"x,b')).toThrow(/Nach einem/);
+  expect(() => parseCsv('a"b,c')).toThrow(/Anfang/);
+});
+
+test("file lab imports, edits, validates, downloads and preserves a JSON note", async ({ page }) => {
+  await page.goto("/");
+  async function openLab() {
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: "JSON einlesen und Lesefehler behandeln" }).click();
+  }
+  await openLab();
+  const lab = page.getByRole("region", { name: "Notizen und Datei-Labor", exact: true });
+  await lab.getByLabel("Datei öffnen", { exact: true }).setInputFiles({ name: "notizen.json", mimeType: "application/json", buffer: Buffer.from('{"titel":"Üben","inhalt":"Dateien lernen"}') });
+  await expect(lab.getByLabel("Ausgabeformat")).toHaveValue("json");
+  await expect(lab.getByLabel("Dateiinhalt")).toHaveValue('{"titel":"Üben","inhalt":"Dateien lernen"}');
+  await lab.getByLabel("Dateiinhalt").fill('{"titel":"Üben","inhalt":"Selbst geändert"}');
+  await lab.getByLabel("Dateiname ohne Endung").fill("mira/notiz");
+  const downloadPromise = page.waitForEvent("download");
+  await lab.getByRole("button", { name: "Datei herunterladen", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("mira_notiz.json");
+  const output = await readFile(await download.path(), "utf8");
+  expect(output).toBe(JSON.stringify({ titel: "Üben", inhalt: "Selbst geändert" }, null, 2));
+  await page.reload();
+  await openLab();
+  await expect(lab.getByLabel("Dateiinhalt")).toHaveValue('{"titel":"Üben","inhalt":"Selbst geändert"}');
+  await lab.getByLabel("Dateiinhalt").fill("{broken");
+  let downloads = 0;
+  page.on("download", () => downloads++);
+  await lab.getByRole("button", { name: "Datei herunterladen", exact: true }).click();
+  await expect(lab.getByRole("status")).toContainText("Inhalt nicht verarbeitet");
+  expect(downloads).toBe(0);
+  await lab.getByLabel("Datei öffnen", { exact: true }).setInputFiles({ name: "gross.txt", mimeType: "text/plain", buffer: Buffer.alloc(MAX_FILE_BYTES + 1, "a") });
+  await expect(lab.getByRole("status")).toContainText("Die Datei ist zu groß");
+  await expect(lab.getByLabel("Dateiinhalt")).toHaveValue("{broken");
+});
+
+test("mobile file lab handles quoted CSV and reports blocked draft storage", async ({ page }) => {
+  await page.addInitScript(() => { Storage.prototype.setItem = () => { throw new Error("Blocked"); }; });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Einfache CSV-Daten einlesen" }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  const lab = page.getByRole("region", { name: "Notizen und Datei-Labor", exact: true });
+  await expect(lab).toContainText("Entwurf kann gerade nicht gespeichert werden");
+  const text = 'name,notiz\r\nMira,"Hallo, Welt"\r\nAli,"Er sagt ""Ja"""\r\nLea,"Zeile 1\nZeile 2"';
+  await lab.getByLabel("Datei öffnen", { exact: true }).setInputFiles({ name: "tabelle.csv", mimeType: "text/csv", buffer: Buffer.from(text) });
+  await expect(lab.getByLabel("Dateiinhalt")).toHaveValue(text.replaceAll("\r\n", "\n"));
+  await lab.getByRole("button", { name: "Inhalt prüfen", exact: true }).click();
+  await expect(lab.getByRole("status")).toContainText("4 CSV-Zeilen");
+  expect(JSON.parse(await lab.getByLabel("Datei-Ausgabe").textContent())).toEqual(parseCsv(text));
+  const downloadPromise = page.waitForEvent("download");
+  await lab.getByRole("button", { name: "Datei herunterladen", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("tabelle.csv");
+  expect(parseCsv(await readFile(await download.path(), "utf8"))).toEqual(parseCsv(text));
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await lab.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "/tmp/codeklar-file-lab-mobile.png", fullPage: false, animations: "disabled" });
 });
 
 test("mutating the input cannot pass the map task", async ({ page }) => {

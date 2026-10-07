@@ -265,6 +265,21 @@ button:not(:disabled):hover {
 .course-group .course-link { width: 100%; text-align: left; }
 .course-group:first-child h2 { margin-top: 2px; }
 .lesson-pagination { margin: 18px 0; }
+.file-lab-link { display: block; color: var(--accent); padding: 12px 0; margin-bottom: 8px; }
+.file-lab { margin-top: 20px; padding: 20px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); scroll-margin-top: 80px; }
+.file-lab h2 { margin: 0 0 12px; font-size: 22px; }
+.file-lab p { color: var(--muted); line-height: 1.6; }
+.file-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; margin: 16px 0; }
+.file-lab label { display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0; }
+.file-lab input, .file-lab select, .file-lab textarea { width: 100%; min-width: 0; min-height: 44px; font-size: 16px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; color: var(--text); background: var(--background); }
+.file-lab input[type="file"] { padding: 8px; }
+.file-lab textarea { min-height: 220px; resize: vertical; font-family: var(--mono); line-height: 1.6; }
+.file-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.file-actions .button { min-height: 44px; white-space: normal; }
+.file-lab .file-draft-status { font-size: 13px; }
+.file-lab summary { cursor: pointer; padding: 12px 0; min-height: 44px; }
+.file-preview pre { max-height: 350px; overflow: auto; padding: 14px; border-radius: 6px; background: var(--background); font: 14px/1.6 var(--mono); }
+.file-api-example { max-width: 100%; overflow-x: auto; padding: 12px; background: var(--background); font: 13px/1.6 var(--mono); }
 .lesson-pagination .button { min-height: 44px; white-space: normal; }
 .topic-tabs {
   display: flex;

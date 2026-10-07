@@ -3,6 +3,7 @@ import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
+import { FileLab } from "./FileLab";
 
 export function ProgressStrip({ solved, total }) {
   return (
@@ -347,6 +348,7 @@ export function Learning({
           ))}
         </div>
       </div>
+      {lesson.category === "Ein-/Ausgabe & Dateien" && <a className="file-lab-link" href="#file-lab">Zum Datei-Labor: Dateien öffnen, bearbeiten und herunterladen</a>}
       {course === "js" && (
         <div className="mobile-workspace-switch" aria-label="Arbeitsbereich">
           <button
@@ -410,6 +412,7 @@ export function Learning({
           </div>
         )}
       </div>
+      {lesson.category === "Ein-/Ausgabe & Dateien" && <FileLab />}
       <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">
         <button className="button secondary" disabled={lessonIndex === 0} onClick={() => goTo(available[lessonIndex - 1].id)}>Vorherige Lektion</button>
         <button className="button primary" disabled={lessonIndex === available.length - 1} onClick={() => goTo(available[lessonIndex + 1].id)}>Nächste Lektion <ArrowRight size={17} /></button>

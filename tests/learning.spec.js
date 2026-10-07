@@ -171,7 +171,7 @@ test("course groups and per-language topic progress remain navigable on mobile",
   await expect(page.getByRole("region", { name: "Programmiersprachen", exact: true }).getByRole("button", { name: "JavaScript", exact: true })).toBeVisible();
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
   const controls = page.getByRole("region", { name: "Kontrollfluss-Lektionen", exact: true });
-  await expect(controls.locator(".path-steps button")).toHaveCount(5);
+  await expect(controls.locator(".path-steps button")).toHaveCount(4);
   await controls.getByRole("button", { name: /Mehrere Fälle mit else if/ }).click();
   await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();
   await page.getByLabel("JavaScript-Code").fill("function rang(punkte) { if (punkte >= 50) return 'Silber'; if (punkte >= 80) return 'Gold'; return 'Bronze'; }");
@@ -180,7 +180,7 @@ test("course groups and per-language topic progress remain navigable on mobile",
   await page.getByLabel("JavaScript-Code").fill("function rang(punkte) { if (punkte < 50) return 'Bronze'; if (punkte < 80) return 'Silber'; return 'Gold'; }");
   await page.getByRole("button", { name: "Lösung prüfen" }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("6 / 6 bestanden");
-  await expect(controls.getByRole("heading")).toContainText("1 / 5 gelöst");
+  await expect(controls.getByRole("heading")).toContainText("1 / 4 gelöst");
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Navigation öffnen" }).click();
   await page.getByRole("button", { name: "Java", exact: true }).click();
@@ -190,6 +190,37 @@ test("course groups and per-language topic progress remain navigable on mobile",
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("button", { name: "Navigation öffnen" }).click();
   await page.screenshot({ path: "/tmp/codeklar-grouped-navigation-mobile.png", fullPage: false, animations: "disabled" });
+});
+
+test("loop tasks distinguish break from continue and include the while boundary", async ({ page }) => {
+  await page.goto("/");
+  async function check(title, code, result) {
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: title }).click();
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen" }).click();
+    await expect(page.getByLabel("Code-Ausgabe")).toContainText(result);
+  }
+  await check("Wiederholen, solange eine Bedingung gilt", "function summeBis(n) { let summe = 0; let i = 1; while (i < n) { summe += i; i++; } return summe; }", "1 / 4 bestanden");
+  await check("Eine Schleife mit break beenden", "function summeBisStop(zahlen) { let summe = 0; for (const zahl of zahlen) { if (zahl < 0) continue; summe += zahl; } return summe; }", "2 / 5 bestanden");
+  await check("Einzelne Durchläufe mit continue überspringen", "function positiveSumme(zahlen) { let summe = 0; for (const zahl of zahlen) { if (zahl <= 0) break; summe += zahl; } return summe; }", "3 / 5 bestanden");
+  await check("Einzelne Durchläufe mit continue überspringen", "function positiveSumme(zahlen) { return zahlen.filter(zahl => zahl > 0).reduce((summe, zahl) => summe + zahl, 0); }", "5 / 5 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("tab", { name: "Erklärung", exact: true }).click();
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  const loops = page.getByRole("region", { name: "Schleifen-Lektionen", exact: true });
+  await expect(loops.locator(".path-steps button")).toHaveCount(5);
+  await expect(loops.getByRole("heading")).toContainText("1 / 5 gelöst");
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  for (const selector of [".topic-tabs", ".lesson-picker"]) {
+    await expect.poll(() => page.locator(selector).evaluate((row) => {
+      const selected = row.querySelector('[aria-pressed="true"]').getBoundingClientRect();
+      const bounds = row.getBoundingClientRect();
+      return selected.left >= bounds.left - 1 && selected.right <= bounds.right + 1;
+    })).toBe(true);
+  }
+  await page.screenshot({ path: "/tmp/codeklar-loops-mobile.png", fullPage: false, animations: "disabled" });
 });
 
 test("mutating the input cannot pass the map task", async ({ page }) => {

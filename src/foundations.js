@@ -86,7 +86,7 @@ export const foundations = [
     explanation: "if wählt anhand des Warenwerts einen Weg. Genau 5000 erfüllt >=. Beide Wege liefern ausdrücklich einen Zahlenwert zurück.",
   }),
   lesson({
-    id: "js-for", category: "Kontrollfluss", name: "for & +=",
+    id: "js-for", category: "Schleifen", name: "for & +=",
     title: "Wiederholungen mit einer for-Schleife",
     description: "Eine for-Schleife wiederholt ihren Block, solange ihre Bedingung wahr ist. Ein Zähler steuert die Wiederholungen.",
     syntax: "for (let i = 0; i < zahlen.length; i++) {\n  summe += zahlen[i];\n}",

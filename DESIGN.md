@@ -50,3 +50,9 @@ Der JavaScript-Lernpfad enthält jetzt 28 Codeaufgaben. Themen und Lektionsauswa
 ## Kategorisierte Lernbereiche
 
 Die Navigation besitzt fünf Gruppen: Programmiersprachen, Webgestaltung, Frameworks/Bibliotheken, Datenbanken und Werkzeuge. Der Lernpfad ist nun in jedem vorhandenen Kurs verfügbar und gruppiert seine Schritte nach Themen mit dem tatsächlichen Lösungsfortschritt. Zwölf Lern-Integrationstests und fünf PWA-Prüfungen decken die Erweiterung ab; dazu gehört ein mobiler Wechsel von einer JavaScript-Kontrollflussaufgabe zum Java-Lernpfad und die gruppierte Navigation.
+
+## Eigenes Thema Schleifen
+
+Die vorhandene for-Lektion und vier neue Lektionen zu while, for…of, break und continue bilden das Thema Schleifen. Die bestehende horizontale Themenauswahl und gruppierte Lernpfadübersicht übernehmen den Bereich ohne neue Bedienmuster. Dreizehn Lern-Integrationstests und fünf PWA-Prüfungen decken die Erweiterung ab. Die neuen Regressionen prüfen die inklusive while-Grenze, den Unterschied zwischen Abbrechen und Überspringen, alternative korrekte Lösungen und den Fortschritt im mobilen Schleifenthema.
+
+Die aktive Themen- und Lektionsauswahl wird auch bei einer Größenänderung der Zeilen im sichtbaren Ausschnitt gehalten. Ein ResizeObserver reagiert auf die neue Zeilenbreite, ohne die Seite vertikal zu verschieben. Der Schleifentest prüft nach dem Wechsel auf 390 Pixel Breite beide aktiven Einträge.

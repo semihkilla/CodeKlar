@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 31 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 35 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -77,3 +77,7 @@ Fünf neue Aufgaben erklären ||, !, Rückgabewerte von ||, Kurzschluss mit && u
 ## Ausbau: Entscheidungen und Kategorien
 
 Drei weitere JavaScript-Aufgaben behandeln else if, den ternären Operator und switch. Die Navigation gruppiert Sprachen, Webgestaltung, Frameworks/Bibliotheken, Datenbanken und Werkzeuge. Alle vorhandenen Kurse zeigen einen Lernpfad mit Themen und Fortschritt je Thema. Die anderen Kurse bleiben erste Wissenslektionen; nur JavaScript ist ausführbar.
+
+## Ausbau: Schleifen
+
+Das eigene Thema Schleifen verbindet die bestehende for-Lektion mit vier neuen Aufgaben zu while, for…of, break und continue. Übungen behandeln inklusive Grenzen, leere Listen, einen negativen Stopwert und das Überspringen einzelner Werte. Alternative korrekte Lösungen sind erlaubt; die Tests prüfen Verhalten statt vorgeschriebener Syntax. Fortschritts-IDs bleiben erhalten.

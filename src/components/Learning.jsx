@@ -250,14 +250,19 @@ export function Learning({
   }, [lesson.id, initialTab]);
   useLayoutEffect(() => {
     // Scroll only within each horizontal row; never move the page vertically.
-    for (const row of [topicRef.current, pickerRef.current]) {
+    const rows = [topicRef.current, pickerRef.current].filter(Boolean);
+    function revealSelected(row) {
       const selected = row?.querySelector('[aria-pressed="true"]');
-      if (!selected) continue;
+      if (!selected || !row.clientWidth) return;
       const bounds = row.getBoundingClientRect();
       const active = selected.getBoundingClientRect();
       if (active.left < bounds.left) row.scrollLeft += active.left - bounds.left;
       else if (active.right > bounds.right) row.scrollLeft += active.right - bounds.right;
     }
+    rows.forEach(revealSelected);
+    const observer = new ResizeObserver((entries) => entries.forEach(({ target }) => revealSelected(target)));
+    rows.forEach((row) => observer.observe(row));
+    return () => observer.disconnect();
   }, [lesson.id]);
   const categories = [...new Set(available.map((item) => item.category))];
   const lessonIndex = available.indexOf(lesson);

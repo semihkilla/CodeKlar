@@ -1,6 +1,15 @@
 import { foundations } from "./foundations";
 import { typeLessons } from "./types";
 import { logicLessons } from "./logic";
+import { decisionLessons } from "./decisions";
+
+export const courseGroups = [
+  { name: "Programmiersprachen", ids: ["js", "java", "python", "c"] },
+  { name: "Webgestaltung", ids: ["css"] },
+  { name: "Frameworks & Bibliotheken", ids: ["react", "angular", "spring"] },
+  { name: "Datenbanken", ids: ["sql"] },
+  { name: "Werkzeuge", ids: ["docker"] },
+];
 
 export const courses = [
   {
@@ -569,8 +578,8 @@ export const otherLessons = [
   ),
 ];
 
-export const jsLessons = [...methodLessons, ...foundations, ...typeLessons, ...logicLessons];
-const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "js-string", "js-boolean", "js-return", "js-arithmetic", "js-remainder", "js-equality", "js-comparisons", "js-logic", "js-or", "js-not", "js-or-fallback", "js-short-circuit", "js-logic-order", "js-nullish", "js-if", "js-for", "js-objects", "js-template", "js-includes", "js-slice", "js-push", "js-map", "js-filter", "js-budget"];
+export const jsLessons = [...methodLessons, ...foundations, ...typeLessons, ...logicLessons, ...decisionLessons];
+const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "js-string", "js-boolean", "js-return", "js-arithmetic", "js-remainder", "js-equality", "js-comparisons", "js-logic", "js-or", "js-not", "js-or-fallback", "js-short-circuit", "js-logic-order", "js-nullish", "js-if", "js-else-if", "js-ternary", "js-switch", "js-for", "js-objects", "js-template", "js-includes", "js-slice", "js-push", "js-map", "js-filter", "js-budget"];
 export const lessons = [
   ...[...jsLessons].sort((a, b) => learningOrder.indexOf(a.id) - learningOrder.indexOf(b.id)),
   ...otherLessons,

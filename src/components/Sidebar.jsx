@@ -16,7 +16,7 @@ import {
   SiDocker,
 } from "react-icons/si";
 import { FaJava } from "react-icons/fa";
-import { courses } from "../data";
+import { courses, courseGroups } from "../data";
 
 export const navigation = [
   { id: "learn", label: "Lernen", icon: BookOpen },
@@ -77,7 +77,11 @@ export function Sidebar({ view, course, onNavigate, onCourse, open, onClose }) {
         <div className="sidebar-divider" />
         <div className="sidebar-label">Lernbereiche</div>
         <nav className="course-nav" aria-label="Lernbereiche">
-          {courses.map((item) => {
+          {courseGroups.map((group) => (
+            <section className="course-group" key={group.name} aria-label={group.name}>
+              <h2>{group.name}</h2>
+              {group.ids.map((id) => {
+            const item = courses.find((entry) => entry.id === id);
             const Icon = courseIcons[item.id];
             return (
               <button
@@ -90,7 +94,9 @@ export function Sidebar({ view, course, onNavigate, onCourse, open, onClose }) {
                 <span>{item.name}</span>
               </button>
             );
-          })}
+              })}
+            </section>
+          ))}
         </nav>
         <div className="sidebar-footer">Dein Tempo. Dein Weg.</div>
       </aside>

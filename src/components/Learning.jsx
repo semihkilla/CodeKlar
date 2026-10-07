@@ -278,10 +278,10 @@ export function Learning({
         <h1>Verstehe, was dein Code tut.</h1>
         <p>Lerne Methoden, probiere sie aus und wende sie direkt an.</p>
       </div>
-      {course === "js" && (
+      {(
         <div className="learning-path">
           <div className="path-heading">
-            <span>JavaScript · Schritt {lessonIndex + 1} von {available.length}</span>
+            <span>{courseName} · Schritt {lessonIndex + 1} von {available.length}</span>
             <button className="text-button" onClick={() => goTo((nextOpen || available[0]).id)}>
               {Object.keys(progress.solved).some((id) => available.some((item) => item.id === id)) ? "Lernpfad fortsetzen" : "Lernpfad beginnen"}
               <ArrowRight size={17} />
@@ -289,16 +289,21 @@ export function Learning({
           </div>
           <details>
             <summary>Alle Schritte im Lernpfad</summary>
-            <ol className="path-steps">
-              {available.map((item, i) => (
+            {categories.map((category) => (
+              <section className="path-category" key={category} aria-label={`${category}-Lektionen`}>
+                <h3>{category} <small>{available.filter((item) => item.category === category && progress.solved[item.id]).length} / {available.filter((item) => item.category === category).length} gelöst</small></h3>
+                <ol className="path-steps">
+              {available.filter((item) => item.category === category).map((item) => (
                 <li key={item.id}>
                   <button aria-current={item.id === lesson.id ? "step" : undefined} onClick={() => goTo(item.id)}>
-                    <span>{i + 1}. {item.title}</span>
+                    <span>{available.indexOf(item) + 1}. {item.title}</span>
                     {progress.solved[item.id] && <span className="path-solved"><Check size={15} /> Gelöst</span>}
                   </button>
                 </li>
               ))}
-            </ol>
+                </ol>
+              </section>
+            ))}
           </details>
         </div>
       )}

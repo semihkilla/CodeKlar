@@ -165,6 +165,33 @@ test("logic tasks expose precedence, operand values and unsafe property access",
   }
 });
 
+test("course groups and per-language topic progress remain navigable on mobile", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".course-group")).toHaveCount(5);
+  await expect(page.getByRole("region", { name: "Programmiersprachen", exact: true }).getByRole("button", { name: "JavaScript", exact: true })).toBeVisible();
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  const controls = page.getByRole("region", { name: "Kontrollfluss-Lektionen", exact: true });
+  await expect(controls.locator(".path-steps button")).toHaveCount(5);
+  await controls.getByRole("button", { name: /Mehrere Fälle mit else if/ }).click();
+  await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill("function rang(punkte) { if (punkte >= 50) return 'Silber'; if (punkte >= 80) return 'Gold'; return 'Bronze'; }");
+  await page.getByRole("button", { name: "Lösung prüfen" }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("4 / 6 bestanden");
+  await page.getByLabel("JavaScript-Code").fill("function rang(punkte) { if (punkte < 50) return 'Bronze'; if (punkte < 80) return 'Silber'; return 'Gold'; }");
+  await page.getByRole("button", { name: "Lösung prüfen" }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("6 / 6 bestanden");
+  await expect(controls.getByRole("heading")).toContainText("1 / 5 gelöst");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Navigation öffnen" }).click();
+  await page.getByRole("button", { name: "Java", exact: true }).click();
+  await expect(page.locator(".path-heading")).toContainText("Java · Schritt 1 von 1");
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  await expect(page.locator(".path-category")).toHaveCount(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole("button", { name: "Navigation öffnen" }).click();
+  await page.screenshot({ path: "/tmp/codeklar-grouped-navigation-mobile.png", fullPage: false, animations: "disabled" });
+});
+
 test("mutating the input cannot pass the map task", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();

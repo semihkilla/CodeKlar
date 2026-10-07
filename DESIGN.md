@@ -46,3 +46,7 @@ Die Lernansicht wird nicht mehr bei jedem Lektionswechsel vollständig neu einge
 ## Logik-Lektionen und längere Lektionsauswahl
 
 Der JavaScript-Lernpfad enthält jetzt 28 Codeaufgaben. Themen und Lektionsauswahl stehen auf eigenen Zeilen; beide scrollen bei Bedarf horizontal innerhalb ihres Bereichs. Elf Lern-Integrationstests und fünf PWA-Tests prüfen unter anderem die Operatorrangfolge, Rückgabewerte, fehlende Konten und den erhaltenen Themenausschnitt. Die Operatorenansicht wird zusätzlich auf Seitenüberlauf bei 390 und 1505 Pixeln Breite geprüft.
+
+## Kategorisierte Lernbereiche
+
+Die Navigation besitzt fünf Gruppen: Programmiersprachen, Webgestaltung, Frameworks/Bibliotheken, Datenbanken und Werkzeuge. Der Lernpfad ist nun in jedem vorhandenen Kurs verfügbar und gruppiert seine Schritte nach Themen mit dem tatsächlichen Lösungsfortschritt. Zwölf Lern-Integrationstests und fünf PWA-Prüfungen decken die Erweiterung ab; dazu gehört ein mobiler Wechsel von einer JavaScript-Kontrollflussaufgabe zum Java-Lernpfad und die gruppierte Navigation.

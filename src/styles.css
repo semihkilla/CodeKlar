@@ -259,6 +259,11 @@ button:not(:disabled):hover {
 }
 .path-steps button[aria-current="step"] { border-color: var(--accent); background: var(--accent-soft); }
 .path-solved { display: flex; align-items: center; gap: 4px; color: var(--accent); flex-shrink: 0; }
+.path-category h3 { font-size: 15px; margin: 18px 0 8px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.path-category h3 small { color: var(--muted); font-size: 12px; font-weight: normal; }
+.course-group h2 { color: var(--muted); font-size: 11px; font-weight: 600; margin: 18px 0 6px; padding: 0 10px; }
+.course-group .course-link { width: 100%; text-align: left; }
+.course-group:first-child h2 { margin-top: 2px; }
 .lesson-pagination { margin: 18px 0; }
 .lesson-pagination .button { min-height: 44px; white-space: normal; }
 .topic-tabs {

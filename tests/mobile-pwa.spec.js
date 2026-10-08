@@ -141,6 +141,13 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("3 / 3 bestanden");
   await expect(page.getByLabel("Eigene Testergebnisse")).toContainText("Null in der Mitte");
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Eine Queue ohne wiederholtes shift verwalten" }).click();
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill(jsLessons.find(item => item.id === "js-queue-head").solution);
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("5 / 5 bestanden");
+
 
 });
 

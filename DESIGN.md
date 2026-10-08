@@ -72,3 +72,7 @@ Der bestehende Editor erhält bei Modulaufgaben eine horizontale Datei-Reiterlei
 ## Selbst geschriebene Tests
 
 Das Thema Eigene Tests verwendet die vorhandenen Moduldatei-Reiter. Die Ausgabe trennt benannte Assertions mit Soll-/Ist-Werten von der Prüfung, ob fehlerhafte Varianten erkannt werden. Die Aufgabenbeschreibung erläutert die injizierte Prüffunktion; Code ausführen verwendet die aktuelle funktion.js, Lösung prüfen die festen Prüfvarianten. Einundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests decken auch leere Tests, Selbstvergleiche, falsche Erwartungen, Testcodefehler, Fehler-Assertions, mobile Ausgabe und das Testen ohne Netzwerk ab. Temporäre Screenshot-Evidenz: /tmp/codeklar-own-tests-mobile.png. Playwright wird verwendet, da das Browser-Plugin nicht verfügbar ist.
+
+## Stack und Queue
+
+Vier neue Lektionen nutzen die bestehenden Lern-, Aufgaben- und Ausgabeansichten im eigenen Thema Stack & Queue. Die horizontale Themenauswahl und der gruppierte Lernpfad übernehmen den Bereich. Zweiundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen unter anderem LIFO/FIFO-Verwechslungen, die Reihenfolge der Undo-Sicherung, leere Entnahmen, falsy-Werte, unveränderte Eingaben und Queue-Code ohne Netzwerk. Die mobile Ausgabe wird bei 390 × 844 geprüft; Screenshot: /tmp/codeklar-stack-queue-mobile.png. Playwright/Chromium dient als Browserprüfung, da kein Browser-Plugin verfügbar ist.

@@ -525,3 +525,53 @@ test("throw assertions report misuse and own test results remain readable on mob
   await page.getByRole("button", { name: "Zurücksetzen", exact: true }).click();
   await expect(page.getByLabel("JavaScript-Code")).toHaveValue(lesson.starter);
 });
+
+test("stack and queue exercises distinguish order, preserve input and handle empty dequeues", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  await expect(page).toHaveTitle(/codeklar/i);
+  const output = page.getByLabel("Code-Ausgabe");
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  }
+  const stack = await open("js-stack");
+  await check("function stapelLeeren(werte) { return [...werte]; }");
+  await expect(output).toContainText("2 / 5 bestanden");
+  await check("function stapelLeeren(werte) { return werte.reverse(); }");
+  await expect(output).toContainText("Die Eingabe wurde verändert");
+  await check(stack.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  const undo = await open("js-stack-undo");
+  await check(undo.solution.replace("verlauf.push(text);\n      text = aktion.text;", "text = aktion.text;\n      verlauf.push(text);"));
+  await expect(output).toContainText("1 / 5 bestanden");
+  await check(undo.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  const queue = await open("js-queue");
+  await check(queue.solution.replace("warteschlange.shift()", "warteschlange.pop()"));
+  await expect(output).toContainText("2 / 5 bestanden");
+  await check(queue.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  const head = await open("js-queue-head");
+  await check(head.solution.replace("entnommen.push(null);", "entnommen.push(null); kopf += 1;"));
+  await expect(output).toContainText("4 / 5 bestanden");
+  await check(head.solution.replace("kopf < werte.length", "werte[kopf]"));
+  await expect(output).toContainText("4 / 5 bestanden");
+  await check(head.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-stack-queue-mobile.png", fullPage: false });
+  expect(errors).toEqual([]);
+  await page.reload();
+  await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});

@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 54 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 58 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -97,6 +97,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
 - `src/testing.js`: Vier Aufgaben für selbst geschriebene Assertions, Randfälle, Strukturvergleiche und erwartete Fehler.
 - `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
+- `src/linearStructures.js`: Vier Aufgaben zu Stack, Undo-Verlauf, Queue und Kopfindex.
 - `src/structures.js`: Fünf Aufgaben zu Object.keys/entries, Map-Zuordnungen und Set-Eindeutigkeit.
 - `src/io.js`: Sechs Aufgaben zu Eingaben, Textzeilen, JSON und einfachem CSV.
 - `src/components/FileLab.jsx`: Echte Text-/JSON-/CSV-Dateien öffnen, bearbeiten und herunterladen; persistenter Notizentwurf.
@@ -139,3 +140,9 @@ Das Thema **Eigene Tests** führt die Testhilfen `gleich(ist, soll, name)` und `
 In `main.js` exportierst du `pruefe(funktion, { gleich, wirft })` und schreibst deine Assertions. **Code ausführen** verwendet die aktuelle, editierbare `funktion.js` und zeigt Testnamen, Erwartungen und Ergebnisse. **Lösung prüfen** übergibt der Testfunktion unabhängig von dieser Datei zuerst eine korrekte Implementierung und danach absichtlich fehlerhafte Varianten. Verwende deshalb den Funktionsparameter für deine Aufrufe. Der korrekte Code muss alle Assertions bestehen und jede fehlerhafte Variante muss durch mindestens eine fehlgeschlagene Assertion erkannt werden. Leere Tests, bloße Ausgaben und Programmfehler reichen nicht zum Bestehen. Nur die Aufgabenprüfung aktualisiert den Fortschritt. Dies ist eine Lernprüfung, kein manipulationssicherer Wettbewerb.
 
 Alle vier Übungen funktionieren auch offline nach dem vollständigen ersten Laden der PWA. Die Browserprüfungen decken fehlende Randfälle, Selbstvergleiche, leere und fehlerhafte Tests, das Bearbeiten der zu testenden Funktion, Fehler-Assertions und erhaltenen Fortschritt ab.
+
+## Stack und Queue
+
+Das Thema **Stack & Queue** ergänzt vier ausführbare Übungen. Ein Stack entnimmt mit `pop` den zuletzt abgelegten Wert (LIFO); eine Queue entnimmt mit `shift` den zuerst eingefügten Wert (FIFO). Der Undo-Verlauf sichert den alten Text vor einer Änderung und stellt frühere Zustände wieder her. Das Queue-Protokoll verwendet einen Kopfindex statt wiederholtem Verschieben der Arrayelemente.
+
+Tests prüfen die Entnahmereihenfolge, leere Eingaben, doppelte Werte, gültige Werte `0`/`false`/`''`, leere Entnahmen vor späteren Einfügungen und unveränderte Eingabedaten. Es wird das Verhalten geprüft, keine vorgeschriebene Syntax oder Laufzeitkomplexität. Beim Kopfindex bleiben verbrauchte Einträge in dieser ersten Version gespeichert; Kompaktierung, Ringpuffer, Redo und weitere Datenstrukturen folgen später.

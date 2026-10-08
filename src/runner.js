@@ -44,6 +44,42 @@ self.onmessage = async ({data}) => {
       try { namespace = await import(build(data.entry)); }
       finally { for (const url of urls.values()) URL.revokeObjectURL(url); }
     }
+    if (data.workshop) {
+      const suite = namespace?.[data.functionName];
+      if (typeof suite !== 'function') throw new Error('Exportiere die Testfunktion pruefe aus main.js.');
+      const variants = [{name: 'Korrekter Code', code: data.workshop.correct, correct: true}, ...(data.tests ? data.workshop.mutations : [])];
+      const results = [];
+      let ownTests = [];
+      let baselinePassed = false;
+      for (const variant of variants) {
+        const checks = [];
+        let suiteError;
+        const display = value => typeof value === 'string' ? JSON.stringify(value) : stringify(value);
+        const add = (passed, actual, expected, name) => {
+          if (checks.length >= 50) throw new Error('Höchstens 50 Assertions pro Testlauf.');
+          checks.push({passed, actual: display(actual), expected: display(expected), name: String(name || 'Assertion ' + (checks.length + 1)).slice(0, 200)});
+        };
+        const helpers = Object.freeze({
+          gleich: (actual, expected, name) => add(equal(actual, expected), actual, expected, name),
+          wirft: (callback, name) => {
+            if (typeof callback !== 'function') throw new Error('wirft erwartet eine Funktion, z. B. () => liesJSON(text).');
+            let thrown = false;
+            try { callback(); } catch { thrown = true; }
+            add(thrown, thrown ? 'Fehler geworfen' : 'Kein Fehler', 'Fehler geworfen', name);
+          },
+        });
+        const target = data.tests ? new Function(variant.code.replace(/^export /, '') + '\\nreturn ' + data.workshop.target + ';')() : namespace[data.workshop.target];
+        if (typeof target !== 'function') throw new Error('Exportiere auch ' + data.workshop.target + ' aus main.js, um deine aktuelle Datei auszuführen.');
+        try { await suite(target, helpers); } catch (error) { suiteError = error.message; }
+        if (variant.correct) ownTests = checks;
+        const valid = !suiteError && checks.length > 0;
+        const passed = valid && (variant.correct ? checks.every(check => check.passed) : baselinePassed && checks.some(check => !check.passed));
+        if (variant.correct) baselinePassed = passed;
+        results.push({input: variant.name, expected: true, actual: suiteError || (!checks.length ? 'Keine Assertion ausgeführt' : variant.correct ? (passed ? 'Alle eigenen Tests bestanden' : 'Eigene Tests schlagen bei korrektem Code fehl') : (!baselinePassed ? 'Zuerst müssen deine Tests korrekten Code bestehen lassen' : passed ? 'Fehler erkannt' : 'Fehler bleibt unentdeckt')), passed});
+      }
+      self.postMessage({logs, ownTests, ...(data.tests ? {results} : {}), workshopMessage: data.tests ? null : results[0].actual === 'Eigene Tests schlagen bei korrektem Code fehl' ? 'Mindestens eine eigene Assertion ist fehlgeschlagen' : results[0].actual});
+      return;
+    }
     if (!data.tests) {
       if (!data.modules) new Function('console', data.code)(console);
       self.postMessage({logs});

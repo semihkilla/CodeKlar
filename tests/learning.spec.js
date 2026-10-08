@@ -464,3 +464,64 @@ test("desktop and mobile remain readable; mobile navigation works", async ({
   ).toBe(true);
   expect(errors).toEqual([]);
 });
+
+test("learner-written assertions reject empty, tautological and broken suites and detect missing boundaries", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  await expect(page).toHaveTitle(/codeklar/i);
+  await page.getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Mit Assertions Ergebnisse prüfen" }).click();
+  const output = page.getByLabel("Code-Ausgabe");
+  for (const body of ["", "gleich(addieren(2, 3), addieren(2, 3), 'Selbstvergleich');", "throw new Error('Abbruch');", "gleich(addieren(2, 3), 6, 'falsche Erwartung');", "gleich(addieren(2, 3), '5', 'falscher Typ');"]) {
+    await page.getByLabel("JavaScript-Code").fill(`export function pruefe(addieren, {gleich}) { ${body} }`);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+    await expect(output).toContainText(`${body.includes("Selbstvergleich") ? 1 : 0} / 3 bestanden`);
+    await expect(page.getByText(`0 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+    if (body.includes('falscher Typ')) {
+      await expect(output.getByLabel("Eigene Testergebnisse")).toContainText('Erwartet: "5"');
+      await expect(output.getByLabel("Eigene Testergebnisse")).toContainText('Erhalten: 5');
+    }
+  }
+  await page.getByLabel("JavaScript-Code").fill("export function pruefe(addieren, {gleich}) { gleich(addieren(2, 3), 5, 'nur normaler Fall'); }");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(output).toContainText("2 / 3 bestanden");
+  await expect(output).toContainText("Fehler bleibt unentdeckt");
+  const lesson = jsLessons.find(item => item.id === "js-test-equal");
+  await page.getByLabel("JavaScript-Code").fill(lesson.solution);
+  await page.getByRole("button", { name: "Code ausführen", exact: true }).click();
+  await expect(output.getByLabel("Eigene Testergebnisse")).toContainText("Alle eigenen Tests bestanden");
+  await expect(page.getByText(`0 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+  await page.getByRole("tab", { name: "funktion.js", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill("export function addieren(a, b) { return a - b; }");
+  await page.getByRole("button", { name: "Code ausführen", exact: true }).click();
+  await expect(output).toContainText("Mindestens eine eigene Assertion ist fehlgeschlagen");
+  await expect(output.getByLabel("Eigene Testergebnisse").locator(".failed")).toHaveCount(1);
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(output).toContainText("3 / 3 bestanden");
+  await page.reload();
+  await expect(page.getByText(`1 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("throw assertions report misuse and own test results remain readable on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Erwartete Fehler mit Tests absichern" }).click();
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  const lesson = jsLessons.find(item => item.id === "js-test-throws");
+  await page.getByLabel("JavaScript-Code").fill("export function pruefe(liesJSON, {wirft}) { wirft(null, 'kein Aufruf'); }");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("wirft erwartet eine Funktion");
+  await page.getByLabel("JavaScript-Code").fill(lesson.solution);
+  await page.getByRole("button", { name: "Code ausführen", exact: true }).click();
+  await expect(page.getByLabel("Eigene Testergebnisse")).toContainText("Fehler geworfen");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("3 / 3 bestanden");
+  await page.getByLabel("Code-Ausgabe").scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-own-tests-mobile.png", fullPage: false });
+  await page.getByRole("button", { name: "Zurücksetzen", exact: true }).click();
+  await expect(page.getByLabel("JavaScript-Code")).toHaveValue(lesson.starter);
+});

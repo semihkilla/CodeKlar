@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 50 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 54 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -93,3 +93,7 @@ Zwei neue Objektlektionen erklären Object.keys und Object.entries. Drei Aufgabe
 ## Ausbau: Imports und Module
 
 Vier Projekte ergänzen benannte Imports/Exports, Standard-Exports, Import-Aliase und Re-Exports. Mehrere virtuelle Dateien sind direkt editierbar und werden gemeinsam als native ES-Module geprüft. Ungültige Syntax, fehlende Pfade oder Exporte, Zyklen und Endlosschleifen führen zu Rückmeldungen. Nur lokale mitgelieferte Module laufen im Browser-Spielplatz; npm und dynamische Imports folgen später. Selbst geschriebene Tests sind der nächste Lernschritt.
+
+## Ausbau: Eigene Tests
+
+Vier neue Übungen behandeln Assertions, leere Arrays und Null als Randfälle, verschachtelte Strukturvergleiche und erwartete synchrone Fehler. Lernende schreiben echte Testfunktionen in main.js. Der Spielplatz zeigt benannte Assertion-Ergebnisse und prüft die Tests zusätzlich gegen fehlerhafte Implementierungen. Fortschritt zählt nur, wenn die korrekte Implementierung besteht und alle vorgegebenen Fehler erkannt werden. Testhilfen sind lokal im Spielplatz verfügbar; Jest/Vitest, asynchrone Fehler und weitere Datenstrukturen folgen als spätere Schritte.

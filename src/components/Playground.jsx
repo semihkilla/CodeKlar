@@ -29,6 +29,7 @@ export function Playground({ lesson, tab, record }) {
     const output = await runJavaScript({
       code,
       ...(files ? { files } : {}),
+      ...(lesson.testWorkshop ? { workshop: lesson.testWorkshop, functionName: lesson.functionName } : {}),
       ...(test
         ? {
             tests: lesson.tests,
@@ -59,7 +60,7 @@ export function Playground({ lesson, tab, record }) {
           {Object.keys(files).map((name) => <button key={name} role="tab" aria-selected={activeFile === name} className={activeFile === name ? "selected" : ""} onClick={() => setActiveFile(name)}>{name}</button>)}
         </div>}
         <CodeEditor code={files ? files[activeFile] : code} setCode={files ? (value) => setFiles((previous) => ({ ...previous, [activeFile]: value })) : setCode} onRun={() => run(false)} />
-        {files && <p className="module-caption">Alle Dateien werden gemeinsam ausgeführt. Änderungen bleiben beim Wechsel der Datei-Reiter erhalten. Geprüft wird der Export aus main.js.</p>}
+        {files && <p className="module-caption">{lesson.testWorkshop ? "Schreibe Tests in main.js. Code ausführen testet deine aktuelle funktion.js. Lösung prüfen ersetzt den Funktionsparameter durch korrekten Code und fehlerhafte Varianten; funktion.js dient dann als Referenz." : "Alle Dateien werden gemeinsam ausgeführt. Änderungen bleiben beim Wechsel der Datei-Reiter erhalten. Geprüft wird der Export aus main.js."}</p>}
         <div className="editor-actions">
           <button
             className="button primary"
@@ -123,11 +124,21 @@ export function Playground({ lesson, tab, record }) {
           {result &&
             !result.error &&
             !result.results &&
+            !result.ownTests &&
             !result.logs?.length && (
               <span className="console-empty">
                 Code ausgeführt. Nutze console.log(), um Werte auszugeben.
               </span>
             )}
+          {result?.ownTests && <div className="own-test-results" aria-label="Eigene Testergebnisse">
+            <h3>Deine Assertions</h3>
+            {result.workshopMessage && <p>{result.workshopMessage}</p>}
+            {result.ownTests.map((item, i) => <div key={i} className={`test-result ${item.passed ? "passed" : "failed"}`}>
+              {item.passed ? <Check size={16} /> : <X size={16} />}
+              <div><strong>{item.name}</strong><span>Erwartet: {item.expected}</span><span>Erhalten: {item.actual}</span></div>
+            </div>)}
+          </div>}
+          {result?.results && lesson.testWorkshop && <h3>Erkennen deine Tests die Fehler?</h3>}
           {result?.results?.map((item, i) => (
             <div
               key={i}
@@ -135,11 +146,10 @@ export function Playground({ lesson, tab, record }) {
             >
               {item.passed ? <Check size={16} /> : <X size={16} />}
               <div>
-                <strong>Test {i + 1}</strong>
-                <span>Eingabe: {JSON.stringify(item.input)}</span>
+                <strong>{lesson.testWorkshop ? item.input : `Test ${i + 1}`}</strong>
+                {!lesson.testWorkshop && <span>Eingabe: {JSON.stringify(item.input)}</span>}
                 <span>
-                  Erwartet: {JSON.stringify(item.expected)} · Erhalten:{" "}
-                  {item.actual}
+                  {lesson.testWorkshop ? item.actual : `Erwartet: ${JSON.stringify(item.expected)} · Erhalten: ${item.actual}`}
                 </span>
                 {item.changed && <span>Die Eingabe wurde verändert.</span>}
               </div>

@@ -175,10 +175,10 @@ function LessonPanel({
                   <ArrowRight size={18} />
                 </button>
                 <div className="task-example">
-                  <span>Beispieleingabe</span>
+                  <span>{lesson.testWorkshop ? "Prüfvariante" : "Beispieleingabe"}</span>
                   <code>{JSON.stringify(lesson.tests[0].input)}</code>
-                  <span>Erwartete Rückgabe</span>
-                  <code>{JSON.stringify(lesson.tests[0].expected)}</code>
+                  <span>{lesson.testWorkshop ? "Erwartung an deine Tests" : "Erwartete Rückgabe"}</span>
+                  <code>{lesson.testWorkshop ? "Alle Assertions bestehen" : JSON.stringify(lesson.tests[0].expected)}</code>
                 </div>
               </>
             ) : (

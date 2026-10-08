@@ -134,6 +134,14 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await expect(page.getByLabel("JavaScript-Code")).toHaveValue("export function berechnen(wert) {\n  return wert + 5;\n}");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "/tmp/codeklar-modules-mobile.png", fullPage: false, animations: "disabled" });
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Leere Arrays und Null gezielt testen" }).click();
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill(jsLessons.find(item => item.id === "js-test-boundaries").solution);
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("3 / 3 bestanden");
+  await expect(page.getByLabel("Eigene Testergebnisse")).toContainText("Null in der Mitte");
+
 });
 
 test("install button invokes the available browser prompt and respects dismissal", async ({

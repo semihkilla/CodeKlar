@@ -68,3 +68,7 @@ Zwei neue Lektionen ergänzen das bestehende Thema Objekte. Map und Set bilden d
 ## Mehrere Moduldateien
 
 Der bestehende Editor erhält bei Modulaufgaben eine horizontale Datei-Reiterleiste mit 44-Pixel-Touchflächen. Ein Hinweis verdeutlicht die gemeinsame Ausführung aller Dateien. Zurücksetzen betrifft das ganze Projekt; die Lösungsansicht nennt jeden Dateinamen. Neunzehn Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen auch Importgraphen, fehlende Exporte, Zyklen, Zeitlimit, erhaltene Editorinhalte und Modulcode ohne Netzwerk auf dem Handy.
+
+## Selbst geschriebene Tests
+
+Das Thema Eigene Tests verwendet die vorhandenen Moduldatei-Reiter. Die Ausgabe trennt benannte Assertions mit Soll-/Ist-Werten von der Prüfung, ob fehlerhafte Varianten erkannt werden. Die Aufgabenbeschreibung erläutert die injizierte Prüffunktion; Code ausführen verwendet die aktuelle funktion.js, Lösung prüfen die festen Prüfvarianten. Einundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests decken auch leere Tests, Selbstvergleiche, falsche Erwartungen, Testcodefehler, Fehler-Assertions, mobile Ausgabe und das Testen ohne Netzwerk ab. Temporäre Screenshot-Evidenz: /tmp/codeklar-own-tests-mobile.png. Playwright wird verwendet, da das Browser-Plugin nicht verfügbar ist.

@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { jsLessons } from "../src/data.js";
 import { readFile } from "node:fs/promises";
 import { parseCsv, writeCsv, MAX_FILE_BYTES } from "../src/fileFormats.js";
+import { prepareModules } from "../src/moduleFiles.js";
 
 test("examples execute; syntax errors and infinite loops stay inside the playground", async ({
   page,
@@ -57,12 +58,17 @@ test("all JavaScript challenges accept correct solutions and reject constants", 
     await page.getByRole("row").filter({ hasText: lesson.title }).click();
     await page
       .getByLabel("JavaScript-Code")
-      .fill(`function ${lesson.functionName}(input) { return null; }`);
+      .fill(`${lesson.solutionFiles ? "export " : ""}function ${lesson.functionName}(input) { return null; }`);
     await page.getByRole("button", { name: "Lösung prüfen" }).click();
     await expect(page.getByLabel("Code-Ausgabe")).toContainText(
       `0 / ${lesson.tests.length} bestanden`,
     );
-    await page.getByLabel("JavaScript-Code").fill(lesson.solution);
+    if (lesson.solutionFiles) {
+      for (const [name, code] of Object.entries(lesson.solutionFiles)) {
+        await page.getByRole("tab", { name, exact: true }).click();
+        await page.getByLabel("JavaScript-Code").fill(code);
+      }
+    } else await page.getByLabel("JavaScript-Code").fill(lesson.solution);
     await page.getByRole("button", { name: "Lösung prüfen" }).click();
     await expect(page.getByLabel("Code-Ausgabe")).toContainText(
       `${lesson.tests.length} / ${lesson.tests.length} bestanden`,
@@ -259,6 +265,43 @@ test("Map presence and Set value types are checked independently from truthiness
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "/tmp/codeklar-structures-mobile.png", fullPage: false, animations: "disabled" });
+});
+
+test("module projects validate real imports and project-local paths", () => {
+  const valid = prepareModules({ "main.js": "import {x} from './lib/werte.js'; export {x};", "lib/werte.js": "export const x = 3;" });
+  expect(valid.modules["main.js"].imports[0].path).toBe("lib/werte.js");
+  expect(() => prepareModules({ "main.js": "import x from './fehlt.js';" })).toThrow(/Datei nicht gefunden/);
+  expect(() => prepareModules({ "main.js": "import x from 'https:\/\/example.com/x.js';" })).toThrow(/lokale Dateipfade/);
+  expect(() => prepareModules({ "main.js": "import x from '../draussen.js';" })).toThrow(/verlässt/);
+  expect(() => prepareModules({ "main.js": "import('paket');" })).toThrow(/Dynamische Imports/);
+  expect(() => prepareModules({ "main.js": "export const = 3;" })).toThrow(/main.js/);
+});
+
+test("file tabs preserve module edits; missing exports, cycles and loops are reported", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Benannte Exports zwischen Dateien verwenden" }).click();
+  await page.getByRole("tab", { name: "mathe.js", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill("export function doppelt(zahl) { return zahl * 2; }");
+  await page.getByRole("tab", { name: "main.js", exact: true }).click();
+  await page.getByRole("tab", { name: "mathe.js", exact: true }).click();
+  await expect(page.getByLabel("JavaScript-Code")).toHaveValue("export function doppelt(zahl) { return zahl * 2; }");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("3 / 3 bestanden");
+  await page.getByLabel("JavaScript-Code").fill("export default function doppelt(zahl) { return zahl * 2; }");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("doppelt");
+  await expect(page.getByLabel("Code-Ausgabe")).not.toContainText("3 / 3 bestanden");
+  await page.getByLabel("JavaScript-Code").fill("import './main.js'; export const doppelt = x => x * 2;");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("Zyklische Imports");
+  await page.getByLabel("JavaScript-Code").fill("export function doppelt(x) { while (true) {} }");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("Zeitlimit erreicht", { timeout: 5000 });
+  await page.getByRole("button", { name: "Zurücksetzen", exact: true }).click();
+  await expect(page.getByRole("tab", { name: "main.js", exact: true })).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("tab", { name: "mathe.js", exact: true }).click();
+  await expect(page.getByLabel("JavaScript-Code")).toHaveValue("export function doppelt(zahl) {\n  return zahl;\n}");
 });
 
 test("file lab imports, edits, validates, downloads and preserves a JSON note", async ({ page }) => {

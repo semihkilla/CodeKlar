@@ -124,6 +124,16 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
   await page.getByRole("row").filter({ hasText: "Textdateien in Zeilen zerlegen" }).click();
   await expect(lab.getByLabel("Dateiinhalt")).toHaveValue("Offline-Notiz\n");
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Einen benannten Import lokal umbenennen" }).click();
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill("import { berechnen as plusFuenf } from './rechnung.js'; export function mitAlias(wert) { return plusFuenf(wert); }");
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("3 / 3 bestanden");
+  await page.getByRole("tab", { name: "rechnung.js", exact: true }).click();
+  await expect(page.getByLabel("JavaScript-Code")).toHaveValue("export function berechnen(wert) {\n  return wert + 5;\n}");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-modules-mobile.png", fullPage: false, animations: "disabled" });
 });
 
 test("install button invokes the available browser prompt and respects dismissal", async ({

@@ -64,3 +64,7 @@ Im neuen Thema Ein-/Ausgabe & Dateien führt ein Direktlink zu einem Bereich unt
 ## Datenstrukturen: Objekte, Map und Set
 
 Zwei neue Lektionen ergänzen das bestehende Thema Objekte. Map und Set bilden das neue Thema Datenstrukturen mit drei direkt auswählbaren Aufgaben. Die vorhandene mobile Themenleiste, Lernpfadgruppierung und Codeprüfung werden unverändert verwendet. Siebzehn Lern-/Datei-Tests und fünf PWA-Tests prüfen die Erweiterung; der neue Regressionstest unterscheidet Map-Schlüsselpräsenz von truthy-Werten und erhält primitive Werttypen beim Entfernen von Duplikaten.
+
+## Mehrere Moduldateien
+
+Der bestehende Editor erhält bei Modulaufgaben eine horizontale Datei-Reiterleiste mit 44-Pixel-Touchflächen. Ein Hinweis verdeutlicht die gemeinsame Ausführung aller Dateien. Zurücksetzen betrifft das ganze Projekt; die Lösungsansicht nennt jeden Dateinamen. Neunzehn Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen auch Importgraphen, fehlende Exporte, Zyklen, Zeitlimit, erhaltene Editorinhalte und Modulcode ohne Netzwerk auf dem Handy.

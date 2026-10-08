@@ -11,18 +11,24 @@ export function Playground({ lesson, tab, record }) {
       ? lesson.solution
       : lesson.example;
   const [code, setCode] = useState(initial);
+  const initialFiles = taskMode ? lesson.starterFiles : tab === "solution" ? lesson.solutionFiles : lesson.exampleFiles;
+  const [files, setFiles] = useState(initialFiles);
+  const [activeFile, setActiveFile] = useState("main.js");
   const [result, setResult] = useState(null);
   const [running, setRunning] = useState(false);
   useEffect(() => {
     setCode(initial);
+    setFiles(initialFiles);
+    setActiveFile("main.js");
     setResult(null);
-  }, [initial]);
+  }, [initial, initialFiles]);
   async function run(test = false) {
     if (running) return;
     setRunning(true);
     setResult(null);
     const output = await runJavaScript({
       code,
+      ...(files ? { files } : {}),
       ...(test
         ? {
             tests: lesson.tests,
@@ -49,7 +55,11 @@ export function Playground({ lesson, tab, record }) {
           <strong>Spielplatz</strong>
           <span>JavaScript</span>
         </div>
-        <CodeEditor code={code} setCode={setCode} onRun={() => run(false)} />
+        {files && <div className="module-file-tabs" role="tablist" aria-label="Projektdateien">
+          {Object.keys(files).map((name) => <button key={name} role="tab" aria-selected={activeFile === name} className={activeFile === name ? "selected" : ""} onClick={() => setActiveFile(name)}>{name}</button>)}
+        </div>}
+        <CodeEditor code={files ? files[activeFile] : code} setCode={files ? (value) => setFiles((previous) => ({ ...previous, [activeFile]: value })) : setCode} onRun={() => run(false)} />
+        {files && <p className="module-caption">Alle Dateien werden gemeinsam ausgeführt. Änderungen bleiben beim Wechsel der Datei-Reiter erhalten. Geprüft wird der Export aus main.js.</p>}
         <div className="editor-actions">
           <button
             className="button primary"
@@ -64,6 +74,8 @@ export function Playground({ lesson, tab, record }) {
             disabled={running}
             onClick={() => {
               setCode(initial);
+              setFiles(initialFiles);
+              setActiveFile("main.js");
               setResult(null);
             }}
           >

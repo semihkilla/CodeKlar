@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 46 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 50 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -94,6 +94,8 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 ## Aufbau
 
 - `src/data.js`: Lernbereiche, Lektionen, Aufgaben und Testfälle.
+- `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
+- `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
 - `src/structures.js`: Fünf Aufgaben zu Object.keys/entries, Map-Zuordnungen und Set-Eindeutigkeit.
 - `src/io.js`: Sechs Aufgaben zu Eingaben, Textzeilen, JSON und einfachem CSV.
 - `src/components/FileLab.jsx`: Echte Text-/JSON-/CSV-Dateien öffnen, bearbeiten und herunterladen; persistenter Notizentwurf.
@@ -120,3 +122,11 @@ Wähle in JavaScript das Thema **Ein-/Ausgabe & Dateien**. Unter den Lektionen f
 Der aktuelle Notizentwurf wird lokal gespeichert und bleibt bei einem Neuladen erhalten. Bei blockierter Speicherung erscheint ein Hinweis. Originaldateien werden nicht überschrieben. Nach dem ersten vollständigen Laden funktionieren das Labor und die Downloads auch offline. Die Dateiauswahl und das Speichern/Teilen bestimmt der Browser; ein echter iPhone-Download wurde nicht manuell geprüft.
 
 Das Labor zeigt zusätzlich die verwendeten Browser-APIs und ein Node.js-Beispiel zu Ordnern, Lesen und Schreiben mit node:fs/promises. Node.js-Dateisystem- und Terminalzugriffe laufen nicht im isolierten Browser-Spielplatz.
+
+## Imports und Module
+
+Das Thema **Imports & Module** enthält vier Projekte mit jeweils zwei oder drei Dateien. Die Datei-Reiter im Spielplatz wechseln zwischen main.js und Hilfsmodulen, ohne ihre Änderungen zu verlieren. Ausführen und Prüfen verwenden das gesamte Projekt. Die Aufgabenfunktion muss aus main.js exportiert werden; die Lösungsansicht zeigt alle Dateien. Zurücksetzen stellt alle Dateien des aktuellen Beispiels beziehungsweise der Aufgabe wieder her.
+
+Der Browser führt native ES-Module als temporäre Blob-Module innerhalb des bestehenden isolierten Workers aus. Acorn liest Imports und Re-Exports als Syntaxknoten; lokale relative Pfade werden auf vorhandene Projektdateien aufgelöst. Externe URLs, npm-Paketnamen und dynamische Imports sind in dieser ersten Stufe nicht verfügbar; zyklische Imports werden mit einer Meldung abgewiesen. Wie bisher blockiert die CSP Netzwerkzugriffe und die Ausführung endet nach zwei Sekunden. Das Projekt bleibt nach dem ersten Laden offline ausführbar.
+
+Die Aufgaben erklären zusätzlich, wie npm-Pakete in eigenen Node-/Vite-Projekten installiert und importiert werden. Der Lernspielplatz lädt solche Pakete nicht nach.

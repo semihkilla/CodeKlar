@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 46 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 50 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -89,3 +89,7 @@ Sechs Aufgaben ergänzen trim, Zeilenzerlegung, JSON.parse mit Strukturprüfung 
 ## Ausbau: Datenstrukturen, erste Stufe
 
 Zwei neue Objektlektionen erklären Object.keys und Object.entries. Drei Aufgaben im Thema Datenstrukturen behandeln Map-Zähler, has/get/set und Set-Eindeutigkeit. Die Übungen prüfen auch vorhandene Werte 0/false/null, unterschiedliche Schlüsseltypen, doppelte Schlüssel, Einfügereihenfolge und unveränderte Eingaben. Weitere Datenstrukturen, Module mit import/export und selbst geschriebene Tests folgen schrittweise.
+
+## Ausbau: Imports und Module
+
+Vier Projekte ergänzen benannte Imports/Exports, Standard-Exports, Import-Aliase und Re-Exports. Mehrere virtuelle Dateien sind direkt editierbar und werden gemeinsam als native ES-Module geprüft. Ungültige Syntax, fehlende Pfade oder Exporte, Zyklen und Endlosschleifen führen zu Rückmeldungen. Nur lokale mitgelieferte Module laufen im Browser-Spielplatz; npm und dynamische Imports folgen später. Selbst geschriebene Tests sind der nächste Lernschritt.

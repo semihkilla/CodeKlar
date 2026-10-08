@@ -207,7 +207,7 @@ function LessonPanel({
           <>
             <h3>Der Lösungsweg</h3>
             {lesson.course === "js" && (
-              <pre className="solution-code">{lesson.solution}</pre>
+              lesson.solutionFiles ? Object.entries(lesson.solutionFiles).map(([name, code]) => <div key={name}><h4>{name}</h4><pre className="solution-code">{code}</pre></div>) : <pre className="solution-code">{lesson.solution}</pre>
             )}
             <p>{lesson.explanation}</p>
             <div className="lesson-note">

@@ -80,3 +80,7 @@ Vier neue Lektionen nutzen die bestehenden Lern-, Aufgaben- und Ausgabeansichten
 ## Klammern und verkettete Listen
 
 Die Klammerprüfung ergänzt die bestehende Stack-Auswahl; drei weitere Lektionen bilden das neue Thema Verkettete Listen. Syntax, Erklärung, Hinweise und Ausgaben verwenden die vorhandene responsive Oberfläche. Dreiundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen zusätzlich falsche Klammerreihenfolge, umgedrehte Ketten, übersprungene letzte Knoten, null/falsy-Nutzdaten, Eingabemutation und Listenaufbau offline. Die mobile Ergebnisansicht wird auf Seitenüberlauf geprüft und unter /tmp/codeklar-linked-list-mobile.png festgehalten. Das Browser-Plugin ist nicht verfügbar; die Prüfung nutzt Playwright/Chromium.
+
+## Suchen, Löschen und Umkehren
+
+Drei weitere Lektionen erweitern die bestehende Kategorie Verkettete Listen. Vierundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen nun auch lose statt strikter Vergleiche, versehentliches Löschen aller Duplikate, Mutation beim Umkehren, mobilen Ergebnisüberlauf und Umkehren ohne Netzwerk. Playwright/Chromium dient als Browserprüfung; Screenshot-Evidenz: /tmp/codeklar-list-operations-mobile.png. Das Browser-Plugin ist nicht verfügbar.

@@ -6,6 +6,12 @@ function lesson(data) {
   };
 }
 
+function chain(werte) {
+  let kopf = null;
+  for (let i = werte.length - 1; i >= 0; i -= 1) kopf = { wert: werte[i], next: kopf };
+  return kopf;
+}
+
 export const linkedStructureLessons = [
   lesson({
     id: "js-stack-brackets", category: "Stack & Queue", name: "Klammern prüfen", title: "Verschachtelte Klammern mit einem Stack prüfen",
@@ -62,5 +68,74 @@ export const linkedStructureLessons = [
     hints: ["Du musst den alten Kopf weder ändern noch durchlaufen.", "Erzeuge ein neues Objekt und verwende daten.kopf als dessen next-Wert."],
     solution: "function vorneEinfuegen(daten) {\n  return { wert: daten.wert, next: daten.kopf };\n}",
     explanation: "Der neue Knoten enthält den neuen Wert und zeigt auf die bisherige Kette. Bei einer leeren Liste wird next automatisch null. Die neue Objektinstanz ergänzt die Struktur, ohne alte Knoten zu überschreiben.",
+  }),
+  lesson({
+    id: "js-linked-search", name: "Wert suchen", title: "Den ersten Treffer in einer verketteten Liste finden",
+    description: "Zum Suchen gehst du vom Kopf aus durch die Knoten und vergleichst jeden Wert. Der erste Treffer bestimmt die Position; ohne Treffer ergibt sich -1.",
+    syntax: "let position = 0;\nif (knoten.wert === gesucht) return position;\nknoten = knoten.next;\nposition += 1;",
+    parts: [["===", "Vergleicht ohne automatische Typumwandlung: 1 und '1' sind verschieden."], ["position", "Zählt ab 0 die bereits durchlaufenen Knoten."], ["return position", "Beendet die Suche beim ersten passenden Knoten."], ["-1", "Kennzeichnet einen fehlenden Treffer; Position 0 ist dagegen ein gültiger Treffer."]],
+    note: "Prüfe nicht if (position), um einen Treffer zu erkennen: 0 ist falsy und -1 ist truthy. Ein Treffer liegt bei position >= 0 vor.",
+    detail: "Die Eingabe enthält eine gültige endliche Liste mit primitiven JSON-Werten und einen gesuchten primitiven Wert. Die Suche liest Knoten und verändert sie nicht. Anders als beim Array kannst du eine Position nicht direkt anspringen; im schlechtesten Fall musst du alle Knoten durchlaufen. Diese Übung sucht Werte, keine Objektidentitäten.",
+    functionName: "listenPosition", parameter: "daten",
+    task: "Schreibe listenPosition(daten). daten enthält {kopf, gesucht}. Gib die Position des ersten Knotens zurück, dessen wert mit === zu gesucht passt. Zähle ab 0. Bei einer leeren Liste oder fehlendem Treffer gib -1 zurück. Erhalte die Liste unverändert und unterscheide Zahlen, Strings, Booleans und null.",
+    tests: [
+      { input: { kopf: chain(["A", "B", "C"]), gesucht: "B" }, expected: 1 },
+      { input: { kopf: null, gesucht: "A" }, expected: -1 },
+      { input: { kopf: chain(["A", "A", "B"]), gesucht: "A" }, expected: 0 },
+      { input: { kopf: chain([1, "1", false, 0, "", null]), gesucht: "1" }, expected: 1 },
+      { input: { kopf: chain([1, "1", false, 0, "", null]), gesucht: false }, expected: 2 },
+      { input: { kopf: chain([1, "1", false, 0, "", null]), gesucht: 0 }, expected: 3 },
+      { input: { kopf: chain([1, "1", false, 0, "", null]), gesucht: "" }, expected: 4 },
+      { input: { kopf: chain([1, "1", false, 0, "", null]), gesucht: null }, expected: 5 },
+      { input: { kopf: chain(["A", "B"]), gesucht: "X" }, expected: -1 },
+    ],
+    hints: ["Beginne am Kopf und mit position = 0. Prüfe den Knoten selbst auf null.", "Bei knoten.wert === daten.gesucht gibst du die Position sofort zurück. Sonst gehe weiter und erhöhe sie. Nach der Schleife folgt return -1."],
+    solution: "function listenPosition(daten) {\n  let knoten = daten.kopf;\n  let position = 0;\n  while (knoten !== null) {\n    if (knoten.wert === daten.gesucht) return position;\n    knoten = knoten.next;\n    position += 1;\n  }\n  return -1;\n}",
+    explanation: "Jeder Knoten wird der Reihe nach geprüft. return beendet die Funktion beim ersten Treffer, sodass spätere gleiche Werte nicht die Position überschreiben. Die strikte Gleichheit erhält die Werttypen; der Endmarker wird unabhängig von den Nutzdaten geprüft.",
+  }),
+  lesson({
+    id: "js-linked-delete", name: "Ersten Treffer löschen", title: "Einen Knoten entfernen und die übrigen Werte erhalten",
+    description: "Beim Entfernen soll die Kette ohne den ausgewählten Knoten weiterführen. In dieser Übung entsteht eine neue Liste, damit die ursprüngliche Kette unverändert bleibt.",
+    syntax: "if (!entfernt && knoten.wert === gesucht) {\n  entfernt = true;\n} else {\n  ende.next = { wert: knoten.wert, next: null };\n  ende = ende.next;\n}",
+    parts: [["entfernt", "Merkt sich, ob der erste Treffer schon übersprungen wurde."], ["!entfernt && …", "Erlaubt genau eine Entfernung, auch bei mehreren gleichen Werten."], ["Hilfsknoten", "Ein zusätzlicher Startknoten vereinfacht Kopf, leere Liste und erste Einfügung."], ["ende.next = neuerKnoten", "Verknüpft einen neu erzeugten Knoten mit der neuen Ergebnisliste."], ["start.next", "Gibt die echte Liste ohne den zusätzlichen Hilfsknoten zurück."]],
+    note: "Die Zuweisung ende.next verändert hier nur neu erzeugte Knoten. Würdest du next eines Eingabeknotens ändern, würdest du die alte Liste mutieren; das ist in dieser Aufgabe nicht erlaubt.",
+    detail: "Der erste passende Wert wird ausgelassen, weitere gleiche Werte bleiben erhalten. Ohne Treffer enthält die Ergebnisliste alle Werte. Beim letzten verbleibenden Knoten endet next mit null. Die Lösung kopiert alle erhaltenen Knoten; auch andere Lösungen mit unveränderter Eingabe und gleichem Ergebnis sind erlaubt. In-place-Löschen wäre eine andere Aufgabenstellung.",
+    functionName: "erstenWertEntfernen", parameter: "daten",
+    task: "Schreibe erstenWertEntfernen(daten) für {kopf, gesucht}. Gib eine Liste zurück, in der nur der erste Knoten mit wert === gesucht fehlt. Erhalte Reihenfolge und spätere Duplikate. Bei keinem Treffer bleiben alle Werte erhalten; ist das Ergebnis leer, gib null zurück. Kein Eingabeknoten darf verändert werden. Die Werte sind primitive JSON-Werte.",
+    tests: [
+      { input: { kopf: chain(["A", "B", "A"]), gesucht: "A" }, expected: chain(["B", "A"]) },
+      { input: { kopf: chain(["A", "B", "C"]), gesucht: "B" }, expected: chain(["A", "C"]) },
+      { input: { kopf: chain(["A", "B"]), gesucht: "B" }, expected: chain(["A"]) },
+      { input: { kopf: null, gesucht: "A" }, expected: null },
+      { input: { kopf: chain(["A"]), gesucht: "A" }, expected: null },
+      { input: { kopf: chain(["A", "B"]), gesucht: "X" }, expected: chain(["A", "B"]) },
+      { input: { kopf: chain([false, 0, false]), gesucht: false }, expected: chain([0, false]) },
+      { input: { kopf: chain([1, "1", null, ""]), gesucht: "1" }, expected: chain([1, null, ""]) },
+      { input: { kopf: chain([0, null, ""]), gesucht: null }, expected: chain([0, ""]) },
+    ],
+    hints: ["Lege start = { next: null }, ende = start und entfernt = false an. Durchlaufe die alte Liste, ohne ihre next-Felder zu ändern.", "Überspringe den ersten Treffer und setze entfernt auf true. Für jeden anderen Wert erzeuge einen neuen Knoten, hänge ihn an ende.next und bewege ende weiter. Gib start.next zurück."],
+    solution: "function erstenWertEntfernen(daten) {\n  const start = { next: null };\n  let ende = start;\n  let entfernt = false;\n  let knoten = daten.kopf;\n  while (knoten !== null) {\n    if (!entfernt && knoten.wert === daten.gesucht) {\n      entfernt = true;\n    } else {\n      ende.next = { wert: knoten.wert, next: null };\n      ende = ende.next;\n    }\n    knoten = knoten.next;\n  }\n  return start.next;\n}",
+    explanation: "Der Hilfsknoten ist nur ein Anker für die neue Kette. Die erste Übereinstimmung wird übersprungen; die Markierung verhindert das Entfernen weiterer Duplikate. Alle anderen Werte werden in ihrer Reihenfolge kopiert. Die Eingabeknoten bleiben unverändert.",
+  }),
+  lesson({
+    id: "js-linked-reverse", name: "Liste umkehren", title: "Eine verkettete Liste ohne Eingabemutation umkehren",
+    description: "Du kannst eine Liste umkehren, indem du ihre Werte von vorne liest und für jeden Wert einen neuen Knoten vor die bisherige Ergebnisliste setzt.",
+    syntax: "let umgekehrt = null;\numgekehrt = { wert: knoten.wert, next: umgekehrt };\n// A → B → C wird C → B → A",
+    parts: [["umgekehrt = null", "Beginnt mit einer leeren Ergebnisliste."], ["neuer Knoten vor dem Ergebnis", "Der zuletzt gelesene Wert wird zum neuen Kopf."], ["next: umgekehrt", "Verknüpft den neuen Knoten mit dem bisherigen Ergebnis."], ["knoten = knoten.next", "Liest die Eingabe weiter, ohne ihre Verweise zu ändern."]],
+    note: "Das klassische Umkehren durch Überschreiben der vorhandenen next-Verweise verändert die Eingabe. Hier sollen alte und umgekehrte Liste gleichzeitig nutzbar bleiben; erzeuge deshalb neue Knoten.",
+    detail: "Bei n Knoten benötigt diese Lösung einen Durchlauf und n neue Knoten. Sie braucht also lineare Zeit und zusätzlichen linearen Speicher. In-place-Umkehren mit konstantem Hilfsspeicher wäre möglich, wenn Mutation erlaubt wäre. Die Tests prüfen Ergebnis und unveränderte Eingabe, keine bestimmte Syntax oder gemessene Laufzeit.",
+    functionName: "listeUmkehren", parameter: "kopf",
+    task: "Schreibe listeUmkehren(kopf). Gib eine Liste mit allen Werten in umgekehrter Reihenfolge zurück. Die ursprünglichen Knoten und next-Verweise bleiben unverändert. Eine leere Liste ergibt null. Erhalte primitive Werte einschließlich null, 0, false und ''. Die Eingabe ist eine endliche gültige Liste ohne Zyklen.",
+    tests: [
+      { input: chain(["A", "B", "C"]), expected: chain(["C", "B", "A"]) },
+      { input: null, expected: null },
+      { input: chain([7]), expected: chain([7]) },
+      { input: chain([0, false, "", null]), expected: chain([null, "", false, 0]) },
+      { input: chain([1, 1, 2]), expected: chain([2, 1, 1]) },
+      { input: chain([null, "A"]), expected: chain(["A", null]) },
+    ],
+    hints: ["Beginne mit umgekehrt = null und einer lokalen Referenz auf den aktuellen Eingabeknoten.", "Setze für jeden gelesenen Wert einen neuen Knoten vor umgekehrt und gehe danach in der Eingabe zu next."],
+    solution: "function listeUmkehren(kopf) {\n  let umgekehrt = null;\n  let knoten = kopf;\n  while (knoten !== null) {\n    umgekehrt = { wert: knoten.wert, next: umgekehrt };\n    knoten = knoten.next;\n  }\n  return umgekehrt;\n}",
+    explanation: "Zuerst wird der erste Wert zum letzten Knoten der Ergebnisliste. Jeder weitere gelesene Wert wird davor gesetzt. So entsteht die umgekehrte Reihenfolge, während die ursprüngliche Liste unverändert bleibt.",
   }),
 ];

@@ -623,3 +623,44 @@ test("bracket nesting and linked-list exercises catch reversed links, skipped va
   await page.reload();
   await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
 });
+
+test("list operations distinguish strict matches, first deletion and nonmutating reversal", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  const output = page.getByLabel("Code-Ausgabe");
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  }
+  const search = await open("js-linked-search");
+  await check(search.solution.replace("knoten.wert === daten.gesucht", "knoten.wert == daten.gesucht"));
+  await expect(output).toContainText("6 / 9 bestanden");
+  await check(search.solution);
+  await expect(output).toContainText("9 / 9 bestanden");
+  const deletion = await open("js-linked-delete");
+  await check(deletion.solution.replace("!entfernt && knoten.wert === daten.gesucht", "knoten.wert === daten.gesucht"));
+  await expect(output).toContainText("7 / 9 bestanden");
+  await check(deletion.solution);
+  await expect(output).toContainText("9 / 9 bestanden");
+  const reverse = await open("js-linked-reverse");
+  await check("function listeUmkehren(kopf) { let vorher = null; let knoten = kopf; while (knoten !== null) { const danach = knoten.next; knoten.next = vorher; vorher = knoten; knoten = danach; } return vorher; }");
+  await expect(output).toContainText("2 / 6 bestanden");
+  await expect(output).toContainText("Die Eingabe wurde verändert");
+  await check(reverse.solution);
+  await expect(output).toContainText("6 / 6 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-list-operations-mobile.png", fullPage: false });
+  expect(errors).toEqual([]);
+  await page.reload();
+  await expect(page.getByText(`3 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});

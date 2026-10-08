@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 62 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 65 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -105,3 +105,7 @@ Vier neue Übungen erklären Stack mit push/pop, einen Undo-Verlauf, Queue mit p
 ## Ausbau: Klammerprüfung und verkettete Listen
 
 Eine zusätzliche Stack-Aufgabe prüft drei Klammerarten inklusive falscher Verschachtelung. Drei Listenübungen behandeln `{wert, next}`, Aufbau in ursprünglicher Reihenfolge, Durchlaufen bis null und Einfügen vor dem Kopf. Erklärungen unterscheiden Objekt-Referenzen, Variablenzuweisung und Mutation sowie null als Wert und als Endmarkierung. Bestehende Fortschritts-IDs bleiben erhalten; alle neuen Aufgaben sind offline ausführbar. Weitere Listenoperationen, Zyklenerkennung, Bäume und Graphen folgen schrittweise.
+
+## Ausbau: Weitere Listenoperationen
+
+Drei weitere Aufgaben im vorhandenen Listenthema suchen die erste Position, entfernen den ersten passenden Knoten und kehren die Wertefolge um. Randfälle behandeln fehlende Treffer, leere und einelementige Listen, Duplikate, unterschiedliche Werttypen und unveränderte Eingaben. Erklärungen unterscheiden Mutation vorhandener Knoten von Änderungen an neu erzeugten Ergebnisknoten. Bäume, Graphen und Zyklenerkennung bleiben nächste Ausbauschritte.

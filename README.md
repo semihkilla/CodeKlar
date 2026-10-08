@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 62 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 65 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -97,7 +97,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
 - `src/testing.js`: Vier Aufgaben für selbst geschriebene Assertions, Randfälle, Strukturvergleiche und erwartete Fehler.
 - `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
-- `src/linkedStructures.js`: Klammerprüfung und drei Aufgaben zum Aufbau, Lesen und Ergänzen verketteter Listen.
+- `src/linkedStructures.js`: Klammerprüfung und sechs Aufgaben zum Aufbau, Lesen, Ergänzen, Suchen, Löschen und Umkehren verketteter Listen.
 - `src/linearStructures.js`: Vier Aufgaben zu Stack, Undo-Verlauf, Queue und Kopfindex.
 - `src/structures.js`: Fünf Aufgaben zu Object.keys/entries, Map-Zuordnungen und Set-Eindeutigkeit.
 - `src/io.js`: Sechs Aufgaben zu Eingaben, Textzeilen, JSON und einfachem CSV.
@@ -152,4 +152,10 @@ Tests prüfen die Entnahmereihenfolge, leere Eingaben, doppelte Werte, gültige 
 
 Die Klammerprüfung im Thema **Stack & Queue** verarbeitet `()`, `[]` und `{}` mit einem Stack. Sie erkennt falsche Verschachtelungen, ungeöffnete schließende Klammern und ungeschlossene öffnende Klammern. Andere Textzeichen werden ignoriert; die Funktion ist kein JavaScript-Parser und behandelt Klammern in Strings und Kommentaren genauso wie andere Klammern.
 
-Drei Übungen im Thema **Verkettete Listen** bauen Knoten `{wert, next}` aus einem Array, lesen eine Kette und setzen einen neuen Knoten vor den Kopf. `next` ist ein frei gewählter Eigenschaftsname. Die Endreferenz `null` unterscheidet sich von einem gültigen Knoten mit `wert: null`. Die Aufgaben verwenden endliche, gültige Listen ohne Zyklen und erhalten die Eingabedaten. Vorne einfügen kann bestehende Knoten über Referenzen teilen; eine tiefe Kopie wird ebenfalls akzeptiert, da die Prüfung Struktur und unveränderte Eingabe bewertet. Zyklenerkennung, Suchen, Löschen sowie Bäume und Graphen folgen später.
+Drei Übungen im Thema **Verkettete Listen** bauen Knoten `{wert, next}` aus einem Array, lesen eine Kette und setzen einen neuen Knoten vor den Kopf. `next` ist ein frei gewählter Eigenschaftsname. Die Endreferenz `null` unterscheidet sich von einem gültigen Knoten mit `wert: null`. Die Aufgaben verwenden endliche, gültige Listen ohne Zyklen und erhalten die Eingabedaten. Vorne einfügen kann bestehende Knoten über Referenzen teilen; eine tiefe Kopie wird ebenfalls akzeptiert, da die Prüfung Struktur und unveränderte Eingabe bewertet. Zyklenerkennung sowie Bäume und Graphen folgen später.
+
+## Weitere Listenoperationen
+
+Drei weitere Übungen behandeln die Position des ersten strikt gleichen Werts, das Entfernen genau des ersten passenden Knotens und das Umkehren einer Liste ohne Eingabemutation. Die Suchposition beginnt bei 0, ein fehlender Treffer ergibt -1. Zahlen und Strings bleiben durch `===` verschieden; `null`, `0`, `false` und leere Strings sind gültige Nutzdaten.
+
+Löschen und Umkehren erzeugen in den gezeigten Lösungen neue Knoten. Beim Löschen verknüpft ein Hilfsknoten die neue Kette und eine Markierung verhindert das Entfernen späterer Duplikate. Beim Umkehren wird jeder gelesene Wert vor den bisherigen Ergebniskopf gesetzt. Die Übungen prüfen Ergebnis und unveränderte Eingabe, nicht eine vorgeschriebene Implementierung. In-place-Verfahren werden als Alternative bei ausdrücklich erlaubter Mutation erklärt, sind hier aber keine gültige Lösung.

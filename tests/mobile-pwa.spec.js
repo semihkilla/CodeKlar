@@ -153,6 +153,13 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByLabel("JavaScript-Code").fill(jsLessons.find(item => item.id === "js-linked-build").solution);
   await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("5 / 5 bestanden");
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Eine verkettete Liste ohne Eingabemutation umkehren" }).click();
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill(jsLessons.find(item => item.id === "js-linked-reverse").solution);
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("6 / 6 bestanden");
+
 
 
 

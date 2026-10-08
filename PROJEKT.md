@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 65 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 69 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -109,3 +109,7 @@ Eine zusätzliche Stack-Aufgabe prüft drei Klammerarten inklusive falscher Vers
 ## Ausbau: Weitere Listenoperationen
 
 Drei weitere Aufgaben im vorhandenen Listenthema suchen die erste Position, entfernen den ersten passenden Knoten und kehren die Wertefolge um. Randfälle behandeln fehlende Treffer, leere und einelementige Listen, Duplikate, unterschiedliche Werttypen und unveränderte Eingaben. Erklärungen unterscheiden Mutation vorhandener Knoten von Änderungen an neu erzeugten Ergebnisknoten. Bäume, Graphen und Zyklenerkennung bleiben nächste Ausbauschritte.
+
+## Ausbau: Rekursion
+
+Vier neue Lektionen führen Basisfall, rekursiven Aufruf, Call Stack und Rückgabewerte ein. Countdown und Fakultät beginnen mit Zahlen; rekursives Knotenzählen und verschachtelte Arrays verbinden das Muster mit den bisherigen Datenstrukturen. Lernende unterscheiden ! als JavaScript-Operator von n! als mathematischer Notation. Ergebnisprüfung, lokale Fortschritts-IDs und Offline-Ausführung werden beibehalten; Bäume sind der nächste Lernbereich.

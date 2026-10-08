@@ -84,3 +84,7 @@ Die Klammerprüfung ergänzt die bestehende Stack-Auswahl; drei weitere Lektione
 ## Suchen, Löschen und Umkehren
 
 Drei weitere Lektionen erweitern die bestehende Kategorie Verkettete Listen. Vierundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen nun auch lose statt strikter Vergleiche, versehentliches Löschen aller Duplikate, Mutation beim Umkehren, mobilen Ergebnisüberlauf und Umkehren ohne Netzwerk. Playwright/Chromium dient als Browserprüfung; Screenshot-Evidenz: /tmp/codeklar-list-operations-mobile.png. Das Browser-Plugin ist nicht verfügbar.
+
+## Rekursion
+
+Das neue Thema Rekursion umfasst vier Lektionen in den bestehenden Lern-, Aufgaben- und Ausgabeansichten. Fünfundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen unter anderem fehlende Basisfälle, falsche Startwerte, nicht verwendete Rückgabewerte, falsy-Knotenwerte, mutierte Unterarrays und rekursive Code-Ausführung offline. Der mobile Screenshot /tmp/codeklar-recursion-mobile.png zeigt die Ergebnisansicht bei 390 × 844 ohne Seitenüberlauf. Playwright/Chromium wird verwendet, da kein Browser-Plugin verfügbar ist.

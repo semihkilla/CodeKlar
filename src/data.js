@@ -7,6 +7,7 @@ import { ioLessons } from "./io";
 import { structureLessons } from "./structures";
 import { linearStructureLessons } from "./linearStructures";
 import { linkedStructureLessons } from "./linkedStructures";
+import { recursionLessons } from "./recursion";
 import { moduleLessons } from "./modules";
 import { testingLessons } from "./testing";
 
@@ -585,8 +586,8 @@ export const otherLessons = [
   ),
 ];
 
-export const jsLessons = [...methodLessons, ...foundations, ...typeLessons, ...logicLessons, ...decisionLessons, ...loopLessons, ...ioLessons, ...structureLessons, ...linearStructureLessons, ...linkedStructureLessons, ...moduleLessons, ...testingLessons];
-const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "js-string", "js-boolean", "js-return", "js-arithmetic", "js-remainder", "js-equality", "js-comparisons", "js-logic", "js-or", "js-not", "js-or-fallback", "js-short-circuit", "js-logic-order", "js-nullish", "js-if", "js-else-if", "js-ternary", "js-switch", "js-for", "js-while", "js-for-of", "js-break", "js-continue", "js-objects", "js-object-keys", "js-object-entries", "js-map-count", "js-map-has", "js-set-unique", "js-stack", "js-stack-undo", "js-stack-brackets", "js-queue", "js-queue-head", "js-linked-build", "js-linked-read", "js-linked-prepend", "js-linked-search", "js-linked-delete", "js-linked-reverse", "js-template", "js-includes", "js-slice", "js-push", "js-map", "js-filter", "js-input-trim", "js-text-lines", "js-json-parse", "js-json-stringify", "js-csv-read", "js-csv-write", "js-module-named", "js-module-default", "js-module-alias", "js-module-reexport", "js-test-equal", "js-test-boundaries", "js-test-structures", "js-test-throws", "js-budget"];
+export const jsLessons = [...methodLessons, ...foundations, ...typeLessons, ...logicLessons, ...decisionLessons, ...loopLessons, ...ioLessons, ...structureLessons, ...linearStructureLessons, ...linkedStructureLessons, ...recursionLessons, ...moduleLessons, ...testingLessons];
+const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "js-string", "js-boolean", "js-return", "js-arithmetic", "js-remainder", "js-equality", "js-comparisons", "js-logic", "js-or", "js-not", "js-or-fallback", "js-short-circuit", "js-logic-order", "js-nullish", "js-if", "js-else-if", "js-ternary", "js-switch", "js-for", "js-while", "js-for-of", "js-break", "js-continue", "js-objects", "js-object-keys", "js-object-entries", "js-map-count", "js-map-has", "js-set-unique", "js-stack", "js-stack-undo", "js-stack-brackets", "js-queue", "js-queue-head", "js-linked-build", "js-linked-read", "js-linked-prepend", "js-linked-search", "js-linked-delete", "js-linked-reverse", "js-recursion-countdown", "js-recursion-factorial", "js-recursion-list-length", "js-recursion-nested-sum", "js-template", "js-includes", "js-slice", "js-push", "js-map", "js-filter", "js-input-trim", "js-text-lines", "js-json-parse", "js-json-stringify", "js-csv-read", "js-csv-write", "js-module-named", "js-module-default", "js-module-alias", "js-module-reexport", "js-test-equal", "js-test-boundaries", "js-test-structures", "js-test-throws", "js-budget"];
 export const lessons = [
   ...[...jsLessons].sort((a, b) => learningOrder.indexOf(a.id) - learningOrder.indexOf(b.id)),
   ...otherLessons,

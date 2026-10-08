@@ -664,3 +664,53 @@ test("list operations distinguish strict matches, first deletion and nonmutating
   await page.reload();
   await expect(page.getByText(`3 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
 });
+
+test("recursive exercises catch missing bases and returns while preserving nested arrays", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  const output = page.getByLabel("Code-Ausgabe");
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  }
+  const countdown = await open("js-recursion-countdown");
+  await check(countdown.solution.replace("return [0]", "return []"));
+  await expect(output).toContainText("0 / 4 bestanden");
+  await check(countdown.solution);
+  await expect(output).toContainText("4 / 4 bestanden");
+  const factorial = await open("js-recursion-factorial");
+  await check("function fakultaet(n) { return n * fakultaet(n - 1); }");
+  await expect(output).toContainText("0 / 5 bestanden");
+  await check(factorial.solution.replace("return 1", "return 0"));
+  await expect(output).toContainText("0 / 5 bestanden");
+  await check(factorial.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  const length = await open("js-recursion-list-length");
+  await check(length.solution.replace("kopf === null", "!kopf?.wert"));
+  await expect(output).toContainText("3 / 4 bestanden");
+  await check(length.solution);
+  await expect(output).toContainText("4 / 4 bestanden");
+  const nested = await open("js-recursion-nested-sum");
+  await check(nested.solution.replace("summe += verschachteltSummieren(teil)", "verschachteltSummieren(teil)"));
+  await expect(output).toContainText("4 / 7 bestanden");
+  await check("function verschachteltSummieren(daten) { if (!Array.isArray(daten)) return daten; let summe = 0; while (daten.length) summe += verschachteltSummieren(daten.shift()); return summe; }");
+  await expect(output).toContainText("3 / 7 bestanden");
+  await expect(output).toContainText("Die Eingabe wurde verändert");
+  await check(nested.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-recursion-mobile.png", fullPage: false });
+  expect(errors).toEqual([]);
+  await page.reload();
+  await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});

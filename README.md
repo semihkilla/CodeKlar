@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 65 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 69 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -97,6 +97,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
 - `src/testing.js`: Vier Aufgaben für selbst geschriebene Assertions, Randfälle, Strukturvergleiche und erwartete Fehler.
 - `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
+- `src/recursion.js`: Vier Aufgaben zu Basisfällen, Rückgabewerten, Knotenzählen und verschachtelten Arrays.
 - `src/linkedStructures.js`: Klammerprüfung und sechs Aufgaben zum Aufbau, Lesen, Ergänzen, Suchen, Löschen und Umkehren verketteter Listen.
 - `src/linearStructures.js`: Vier Aufgaben zu Stack, Undo-Verlauf, Queue und Kopfindex.
 - `src/structures.js`: Fünf Aufgaben zu Object.keys/entries, Map-Zuordnungen und Set-Eindeutigkeit.
@@ -159,3 +160,9 @@ Drei Übungen im Thema **Verkettete Listen** bauen Knoten `{wert, next}` aus ein
 Drei weitere Übungen behandeln die Position des ersten strikt gleichen Werts, das Entfernen genau des ersten passenden Knotens und das Umkehren einer Liste ohne Eingabemutation. Die Suchposition beginnt bei 0, ein fehlender Treffer ergibt -1. Zahlen und Strings bleiben durch `===` verschieden; `null`, `0`, `false` und leere Strings sind gültige Nutzdaten.
 
 Löschen und Umkehren erzeugen in den gezeigten Lösungen neue Knoten. Beim Löschen verknüpft ein Hilfsknoten die neue Kette und eine Markierung verhindert das Entfernen späterer Duplikate. Beim Umkehren wird jeder gelesene Wert vor den bisherigen Ergebniskopf gesetzt. Die Übungen prüfen Ergebnis und unveränderte Eingabe, nicht eine vorgeschriebene Implementierung. In-place-Verfahren werden als Alternative bei ausdrücklich erlaubter Mutation erklärt, sind hier aber keine gültige Lösung.
+
+## Rekursion
+
+Vier Übungen im Thema **Rekursion** behandeln einen Countdown mit Basisfall, die Fakultät, die rekursive Länge einer verketteten Liste und die Summe verschachtelter Arrays. Erklärungen zeigen lokale Variablen pro Aufruf, den Call Stack, Rückgabewerte und die Verkleinerung des Problems. `Array.isArray` unterscheidet Zahlen als Basisfälle von Arrays als Teilstrukturen. Das mathematische `n!` wird ausdrücklich von JavaScripts logischem `!` unterschieden.
+
+Die Übungen verwenden kleine, gültige Eingaben: Countdown 0–20, Fakultät 0–10, kurze endliche Listen und kleine zyklusfreie Arrays aus Zahlen und weiteren Arrays. Sie prüfen Ergebnisse und unveränderte Eingaben, keine vorgeschriebene Syntax; iterative Alternativen sind ebenfalls gültig. Fehlende Basisfälle, falsche Startwerte und ignorierte Teilergebnisse werden durch die Lernprüfungen sichtbar. Rekursive Stacküberläufe bleiben in der Ausführungsumgebung, und die Oberfläche bleibt benutzbar. Bäume, Graphen, Memoisierung und weiterführende Laufzeitbetrachtungen folgen später.

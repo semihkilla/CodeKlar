@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 58 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 62 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -97,6 +97,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
 - `src/testing.js`: Vier Aufgaben für selbst geschriebene Assertions, Randfälle, Strukturvergleiche und erwartete Fehler.
 - `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
+- `src/linkedStructures.js`: Klammerprüfung und drei Aufgaben zum Aufbau, Lesen und Ergänzen verketteter Listen.
 - `src/linearStructures.js`: Vier Aufgaben zu Stack, Undo-Verlauf, Queue und Kopfindex.
 - `src/structures.js`: Fünf Aufgaben zu Object.keys/entries, Map-Zuordnungen und Set-Eindeutigkeit.
 - `src/io.js`: Sechs Aufgaben zu Eingaben, Textzeilen, JSON und einfachem CSV.
@@ -146,3 +147,9 @@ Alle vier Übungen funktionieren auch offline nach dem vollständigen ersten Lad
 Das Thema **Stack & Queue** ergänzt vier ausführbare Übungen. Ein Stack entnimmt mit `pop` den zuletzt abgelegten Wert (LIFO); eine Queue entnimmt mit `shift` den zuerst eingefügten Wert (FIFO). Der Undo-Verlauf sichert den alten Text vor einer Änderung und stellt frühere Zustände wieder her. Das Queue-Protokoll verwendet einen Kopfindex statt wiederholtem Verschieben der Arrayelemente.
 
 Tests prüfen die Entnahmereihenfolge, leere Eingaben, doppelte Werte, gültige Werte `0`/`false`/`''`, leere Entnahmen vor späteren Einfügungen und unveränderte Eingabedaten. Es wird das Verhalten geprüft, keine vorgeschriebene Syntax oder Laufzeitkomplexität. Beim Kopfindex bleiben verbrauchte Einträge in dieser ersten Version gespeichert; Kompaktierung, Ringpuffer, Redo und weitere Datenstrukturen folgen später.
+
+## Klammerprüfung und verkettete Listen
+
+Die Klammerprüfung im Thema **Stack & Queue** verarbeitet `()`, `[]` und `{}` mit einem Stack. Sie erkennt falsche Verschachtelungen, ungeöffnete schließende Klammern und ungeschlossene öffnende Klammern. Andere Textzeichen werden ignoriert; die Funktion ist kein JavaScript-Parser und behandelt Klammern in Strings und Kommentaren genauso wie andere Klammern.
+
+Drei Übungen im Thema **Verkettete Listen** bauen Knoten `{wert, next}` aus einem Array, lesen eine Kette und setzen einen neuen Knoten vor den Kopf. `next` ist ein frei gewählter Eigenschaftsname. Die Endreferenz `null` unterscheidet sich von einem gültigen Knoten mit `wert: null`. Die Aufgaben verwenden endliche, gültige Listen ohne Zyklen und erhalten die Eingabedaten. Vorne einfügen kann bestehende Knoten über Referenzen teilen; eine tiefe Kopie wird ebenfalls akzeptiert, da die Prüfung Struktur und unveränderte Eingabe bewertet. Zyklenerkennung, Suchen, Löschen sowie Bäume und Graphen folgen später.

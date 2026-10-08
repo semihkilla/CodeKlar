@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 58 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 62 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -101,3 +101,7 @@ Vier neue Übungen behandeln Assertions, leere Arrays und Null als Randfälle, v
 ## Ausbau: Stack und Queue
 
 Vier neue Übungen erklären Stack mit push/pop, einen Undo-Verlauf, Queue mit push/shift und die Entnahme mit einem Kopfindex. Das eigene Thema Stack & Queue liegt im JavaScript-Lernpfad nach Map und Set. Alle Übungen prüfen unveränderte Eingaben sowie passende Randfälle und sind offline verfügbar. Klammerprüfung, verkettete Listen, Bäume und Graphen bleiben spätere Lernschritte.
+
+## Ausbau: Klammerprüfung und verkettete Listen
+
+Eine zusätzliche Stack-Aufgabe prüft drei Klammerarten inklusive falscher Verschachtelung. Drei Listenübungen behandeln `{wert, next}`, Aufbau in ursprünglicher Reihenfolge, Durchlaufen bis null und Einfügen vor dem Kopf. Erklärungen unterscheiden Objekt-Referenzen, Variablenzuweisung und Mutation sowie null als Wert und als Endmarkierung. Bestehende Fortschritts-IDs bleiben erhalten; alle neuen Aufgaben sind offline ausführbar. Weitere Listenoperationen, Zyklenerkennung, Bäume und Graphen folgen schrittweise.

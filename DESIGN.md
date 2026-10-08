@@ -76,3 +76,7 @@ Das Thema Eigene Tests verwendet die vorhandenen Moduldatei-Reiter. Die Ausgabe 
 ## Stack und Queue
 
 Vier neue Lektionen nutzen die bestehenden Lern-, Aufgaben- und Ausgabeansichten im eigenen Thema Stack & Queue. Die horizontale Themenauswahl und der gruppierte Lernpfad übernehmen den Bereich. Zweiundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen unter anderem LIFO/FIFO-Verwechslungen, die Reihenfolge der Undo-Sicherung, leere Entnahmen, falsy-Werte, unveränderte Eingaben und Queue-Code ohne Netzwerk. Die mobile Ausgabe wird bei 390 × 844 geprüft; Screenshot: /tmp/codeklar-stack-queue-mobile.png. Playwright/Chromium dient als Browserprüfung, da kein Browser-Plugin verfügbar ist.
+
+## Klammern und verkettete Listen
+
+Die Klammerprüfung ergänzt die bestehende Stack-Auswahl; drei weitere Lektionen bilden das neue Thema Verkettete Listen. Syntax, Erklärung, Hinweise und Ausgaben verwenden die vorhandene responsive Oberfläche. Dreiundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen zusätzlich falsche Klammerreihenfolge, umgedrehte Ketten, übersprungene letzte Knoten, null/falsy-Nutzdaten, Eingabemutation und Listenaufbau offline. Die mobile Ergebnisansicht wird auf Seitenüberlauf geprüft und unter /tmp/codeklar-linked-list-mobile.png festgehalten. Das Browser-Plugin ist nicht verfügbar; die Prüfung nutzt Playwright/Chromium.

@@ -58,7 +58,7 @@ test("all JavaScript challenges accept correct solutions and reject constants", 
     await page.getByRole("row").filter({ hasText: lesson.title }).click();
     await page
       .getByLabel("JavaScript-Code")
-      .fill(`${lesson.solutionFiles ? "export " : ""}function ${lesson.functionName}(input) { return null; }`);
+      .fill(`${lesson.solutionFiles ? "export " : ""}function ${lesson.functionName}(input) { return { __falscheAntwort: true }; }`);
     await page.getByRole("button", { name: "Lösung prüfen" }).click();
     await expect(page.getByLabel("Code-Ausgabe")).toContainText(
       `0 / ${lesson.tests.length} bestanden`,
@@ -571,6 +571,54 @@ test("stack and queue exercises distinguish order, preserve input and handle emp
   await output.scrollIntoViewIfNeeded();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "/tmp/codeklar-stack-queue-mobile.png", fullPage: false });
+  expect(errors).toEqual([]);
+  await page.reload();
+  await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});
+
+test("bracket nesting and linked-list exercises catch reversed links, skipped values and mutation", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  const output = page.getByLabel("Code-Ausgabe");
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  }
+  const brackets = await open("js-stack-brackets");
+  await check("function klammernGueltig(text) { let anzahl = 0; for (const zeichen of text) { if ('([{'.includes(zeichen)) anzahl += 1; if (')]}'.includes(zeichen)) anzahl -= 1; } return anzahl === 0; }");
+  await expect(output).toContainText("6 / 9 bestanden");
+  await check(brackets.solution);
+  await expect(output).toContainText("9 / 9 bestanden");
+  const build = await open("js-linked-build");
+  await check(build.solution.replace("let i = werte.length - 1; i >= 0; i -= 1", "let i = 0; i < werte.length; i += 1"));
+  await expect(output).toContainText("2 / 5 bestanden");
+  await check(build.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  const read = await open("js-linked-read");
+  await check(read.solution.replace("knoten !== null", "knoten !== null && knoten.wert"));
+  await expect(output).toContainText("3 / 5 bestanden");
+  await check(read.solution.replace("knoten !== null", "knoten?.next"));
+  await expect(output).toContainText("1 / 5 bestanden");
+  await check(read.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  const prepend = await open("js-linked-prepend");
+  await check("function vorneEinfuegen(daten) { const ergebnis = {wert: daten.wert, next: structuredClone(daten.kopf)}; if (daten.kopf) daten.kopf.next = null; return ergebnis; }");
+  await expect(output).toContainText("3 / 4 bestanden");
+  await expect(output).toContainText("Die Eingabe wurde verändert");
+  await check(prepend.solution);
+  await expect(output).toContainText("4 / 4 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-linked-list-mobile.png", fullPage: false });
   expect(errors).toEqual([]);
   await page.reload();
   await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();

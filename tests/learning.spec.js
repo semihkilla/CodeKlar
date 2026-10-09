@@ -1070,3 +1070,45 @@ test('async playground waits for timer promises, handles rejected awaits and sti
   await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
   await expect(output).toContainText('4 / 4 bestanden');
 });
+
+test('classes regex and promise variants expose lost this, stale regex positions and wrong completion rules', async ({ page }) => {
+  test.setTimeout(60000);
+  await page.goto('/');
+  const output = page.getByLabel('Code-Ausgabe');
+  const variants = [
+    ['js-class-bind', code => code.replace('.bind(rechner)', ''), '1 / 4'],
+    ['js-regex-test', code => code.replace('/^[0-9]+$/', '/^[0-9]+$/m'), '6 / 7'],
+    ['js-regex-state', code => code.replace('muster.lastIndex = 0;', ''), '2 / 4'],
+    ['js-error-custom', code => code.replace('daten.wert < daten.min || daten.wert > daten.max', 'daten.wert <= daten.min || daten.wert >= daten.max'), '3 / 5'],
+    ['js-async-any', code => code.replace('Promise.any(jobs)', 'Promise.race(jobs)').replace('  const jobs =', '  if (daten.length === 0) return null;\n  const jobs ='), '3 / 4'],
+    ['js-async-finally', code => code.replace('job.finally(', 'job.then('), '0 / 3'],
+  ];
+  for (const [id, mutate, expected] of variants) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+    await page.getByRole('row').filter({ hasText: lesson.title }).click();
+    await page.getByLabel('JavaScript-Code').fill(mutate(lesson.solution));
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+    await expect(output).toContainText(`${expected} bestanden`);
+    await page.getByLabel('JavaScript-Code').fill(lesson.solution);
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+    await expect(output).toContainText(`${lesson.tests.length} / ${lesson.tests.length} bestanden`);
+  }
+});
+
+test('UTC date lessons retain leap days, offsets and calendar boundaries in a different timezone', async ({ browser }) => {
+  const context = await browser.newContext({ timezoneId: 'Pacific/Honolulu', viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  await page.goto('/');
+  for (const id of ['js-date-iso', 'js-date-parts', 'js-date-add', 'js-date-difference']) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByLabel('Schnellnavigation').getByRole('button', { name: 'Übungen', exact: true }).click();
+    await page.getByRole('row').filter({ hasText: lesson.title }).click();
+    await page.getByRole('button', { name: 'Code bearbeiten', exact: true }).click();
+    await page.getByLabel('JavaScript-Code').fill(lesson.solution);
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+    await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${lesson.tests.length} / ${lesson.tests.length} bestanden`);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await context.close();
+});

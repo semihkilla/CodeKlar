@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 69 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 73 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -97,6 +97,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
 - `src/testing.js`: Vier Aufgaben für selbst geschriebene Assertions, Randfälle, Strukturvergleiche und erwartete Fehler.
 - `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
+- `src/trees.js`: Vier Aufgaben zu Binärbaum-Knotenzahl, Höhe, Preorder und Inorder.
 - `src/recursion.js`: Vier Aufgaben zu Basisfällen, Rückgabewerten, Knotenzählen und verschachtelten Arrays.
 - `src/linkedStructures.js`: Klammerprüfung und sechs Aufgaben zum Aufbau, Lesen, Ergänzen, Suchen, Löschen und Umkehren verketteter Listen.
 - `src/linearStructures.js`: Vier Aufgaben zu Stack, Undo-Verlauf, Queue und Kopfindex.
@@ -166,3 +167,9 @@ Löschen und Umkehren erzeugen in den gezeigten Lösungen neue Knoten. Beim Lös
 Vier Übungen im Thema **Rekursion** behandeln einen Countdown mit Basisfall, die Fakultät, die rekursive Länge einer verketteten Liste und die Summe verschachtelter Arrays. Erklärungen zeigen lokale Variablen pro Aufruf, den Call Stack, Rückgabewerte und die Verkleinerung des Problems. `Array.isArray` unterscheidet Zahlen als Basisfälle von Arrays als Teilstrukturen. Das mathematische `n!` wird ausdrücklich von JavaScripts logischem `!` unterschieden.
 
 Die Übungen verwenden kleine, gültige Eingaben: Countdown 0–20, Fakultät 0–10, kurze endliche Listen und kleine zyklusfreie Arrays aus Zahlen und weiteren Arrays. Sie prüfen Ergebnisse und unveränderte Eingaben, keine vorgeschriebene Syntax; iterative Alternativen sind ebenfalls gültig. Fehlende Basisfälle, falsche Startwerte und ignorierte Teilergebnisse werden durch die Lernprüfungen sichtbar. Rekursive Stacküberläufe bleiben in der Ausführungsumgebung, und die Oberfläche bleibt benutzbar. Bäume, Graphen, Memoisierung und weiterführende Laufzeitbetrachtungen folgen später.
+
+## Binärbäume
+
+Vier Übungen im Thema **Bäume** verwenden Knoten `{wert, links, rechts}`. `null` als Kindreferenz bezeichnet einen leeren Teilbaum; ein vorhandener Knoten mit `wert: null` bleibt ein Knoten. Jede Eingabe ist ein kleiner gültiger Binärbaum ohne Zyklen oder gemeinsam genutzte Kindknoten.
+
+Knotenzählen addiert die Wurzel und beide Teilbaumgrößen. Die Höhe zählt in diesen Übungen **Knoten auf dem längsten Wurzel-Blatt-Weg**: leerer Baum 0, Blatt 1. `Math.max` wählt die größere Teilhöhe. Preorder besucht Wurzel–links–rechts, Inorder links–Wurzel–rechts. Es werden allgemeine Binärbäume verwendet; Inorder ist daher keine Sortieraufgabe. Die Tests enthalten leere, einseitige, verzweigte und unsortierte Bäume sowie Duplikate und falsy-Werte. Alle Eingabeknoten bleiben unverändert. Postorder, Breitensuche und binäre Suchbäume folgen später.

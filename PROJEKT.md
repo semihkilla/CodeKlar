@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 69 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 73 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -113,3 +113,7 @@ Drei weitere Aufgaben im vorhandenen Listenthema suchen die erste Position, entf
 ## Ausbau: Rekursion
 
 Vier neue Lektionen führen Basisfall, rekursiven Aufruf, Call Stack und Rückgabewerte ein. Countdown und Fakultät beginnen mit Zahlen; rekursives Knotenzählen und verschachtelte Arrays verbinden das Muster mit den bisherigen Datenstrukturen. Lernende unterscheiden ! als JavaScript-Operator von n! als mathematischer Notation. Ergebnisprüfung, lokale Fortschritts-IDs und Offline-Ausführung werden beibehalten; Bäume sind der nächste Lernbereich.
+
+## Ausbau: Bäume
+
+Vier neue Lektionen erklären Wurzel, Blatt, Kindreferenzen und Teilbäume. Ausführbare Aufgaben zählen Knoten, berechnen die Höhe in Knoten und durchlaufen einen allgemeinen Binärbaum in Preorder und Inorder. Beispiele unterscheiden Höhe und Knotenzahl sowie Traversierung und Sortierung. Kleine gültige Bäume mit Duplikaten und falsy-Werten werden verwendet; Eingabemutation ist nicht erlaubt. Postorder, Breitensuche und Suchbäume sind spätere Schritte.

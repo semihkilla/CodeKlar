@@ -714,3 +714,50 @@ test("recursive exercises catch missing bases and returns while preserving neste
   await page.reload();
   await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
 });
+
+test("tree exercises distinguish height, both subtrees and traversal order", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  const output = page.getByLabel("Code-Ausgabe");
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  }
+  const count = await open("js-tree-count");
+  await check(count.solution.replace(" + baumKnoten(baum.rechts)", ""));
+  await expect(output).toContainText("2 / 7 bestanden");
+  await check(count.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  const height = await open("js-tree-height");
+  await check(height.solution.replace("Math.max(baumHoehe(baum.links), baumHoehe(baum.rechts))", "baumHoehe(baum.links) + baumHoehe(baum.rechts)"));
+  await expect(output).toContainText("3 / 7 bestanden");
+  await check(height.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  const preorder = await open("js-tree-preorder");
+  await check(preorder.solution.replace("...preorder(baum.links), ...preorder(baum.rechts)", "...preorder(baum.rechts), ...preorder(baum.links)"));
+  await expect(output).toContainText("3 / 7 bestanden");
+  await check(preorder.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  const inorder = await open("js-tree-inorder");
+  await check(inorder.solution.replace("...inorder(baum.links), baum.wert, ...inorder(baum.rechts)", "baum.wert, ...inorder(baum.links), ...inorder(baum.rechts)"));
+  await expect(output).toContainText("4 / 7 bestanden");
+  await check(inorder.solution.replace("...inorder(baum.rechts)];", "...inorder(baum.rechts)].sort();"));
+  await expect(output).toContainText("4 / 7 bestanden");
+  await check(inorder.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-trees-mobile.png", fullPage: false });
+  expect(errors).toEqual([]);
+  await page.reload();
+  await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});

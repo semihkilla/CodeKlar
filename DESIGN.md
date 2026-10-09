@@ -88,3 +88,7 @@ Drei weitere Lektionen erweitern die bestehende Kategorie Verkettete Listen. Vie
 ## Rekursion
 
 Das neue Thema Rekursion umfasst vier Lektionen in den bestehenden Lern-, Aufgaben- und Ausgabeansichten. Fünfundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen unter anderem fehlende Basisfälle, falsche Startwerte, nicht verwendete Rückgabewerte, falsy-Knotenwerte, mutierte Unterarrays und rekursive Code-Ausführung offline. Der mobile Screenshot /tmp/codeklar-recursion-mobile.png zeigt die Ergebnisansicht bei 390 × 844 ohne Seitenüberlauf. Playwright/Chromium wird verwendet, da kein Browser-Plugin verfügbar ist.
+
+## Binärbäume
+
+Vier neue Lektionen im Thema Bäume nutzen Syntaxbeispiele mit einer kleinen Baumskizze und die vorhandenen Lern-/Aufgabenansichten. Sechsundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen unter anderem vergessene Teilbäume, Knotenzahl statt Höhe, vertauschte Traversierung, falsches Sortieren der Inorder-Ausgabe, mobile Darstellung und Baumcode ohne Netz. Playwright/Chromium wird verwendet, da das Browser-Plugin nicht verfügbar ist. Screenshot-Evidenz bei 390 × 844: /tmp/codeklar-trees-mobile.png.

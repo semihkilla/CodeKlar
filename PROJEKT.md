@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 73 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 77 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -117,3 +117,7 @@ Vier neue Lektionen führen Basisfall, rekursiven Aufruf, Call Stack und Rückga
 ## Ausbau: Bäume
 
 Vier neue Lektionen erklären Wurzel, Blatt, Kindreferenzen und Teilbäume. Ausführbare Aufgaben zählen Knoten, berechnen die Höhe in Knoten und durchlaufen einen allgemeinen Binärbaum in Preorder und Inorder. Beispiele unterscheiden Höhe und Knotenzahl sowie Traversierung und Sortierung. Kleine gültige Bäume mit Duplikaten und falsy-Werten werden verwendet; Eingabemutation ist nicht erlaubt. Postorder, Breitensuche und Suchbäume sind spätere Schritte.
+
+## Ausbau: Weitere Traversierungen und Suchbäume
+
+Vier neue Lektionen ergänzen Postorder, Breitensuche mit FIFO-Kopfindex sowie Suchen und Einfügen in binären Suchbäumen. Der neue Suchbaumbereich erklärt die Teilbaumordnung, endliche Zahlen, Duplikatregeln, Objekt-Spread und flache Kopien. Die Einfügung erhält Eingabeknoten und baut neue Knoten entlang des geänderten Pfads auf. Automatische Balancierung, Validierung und weitere Suchbaumoperationen bleiben spätere Schritte.

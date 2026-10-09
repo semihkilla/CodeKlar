@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 73 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 77 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -97,7 +97,7 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
 - `src/testing.js`: Vier Aufgaben für selbst geschriebene Assertions, Randfälle, Strukturvergleiche und erwartete Fehler.
 - `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
-- `src/trees.js`: Vier Aufgaben zu Binärbaum-Knotenzahl, Höhe, Preorder und Inorder.
+- `src/trees.js`: Acht Aufgaben zu Knotenzahl, Höhe, Traversierungen sowie Suchbaum-Suche und -Einfügung.
 - `src/recursion.js`: Vier Aufgaben zu Basisfällen, Rückgabewerten, Knotenzählen und verschachtelten Arrays.
 - `src/linkedStructures.js`: Klammerprüfung und sechs Aufgaben zum Aufbau, Lesen, Ergänzen, Suchen, Löschen und Umkehren verketteter Listen.
 - `src/linearStructures.js`: Vier Aufgaben zu Stack, Undo-Verlauf, Queue und Kopfindex.
@@ -172,4 +172,10 @@ Die Übungen verwenden kleine, gültige Eingaben: Countdown 0–20, Fakultät 0�
 
 Vier Übungen im Thema **Bäume** verwenden Knoten `{wert, links, rechts}`. `null` als Kindreferenz bezeichnet einen leeren Teilbaum; ein vorhandener Knoten mit `wert: null` bleibt ein Knoten. Jede Eingabe ist ein kleiner gültiger Binärbaum ohne Zyklen oder gemeinsam genutzte Kindknoten.
 
-Knotenzählen addiert die Wurzel und beide Teilbaumgrößen. Die Höhe zählt in diesen Übungen **Knoten auf dem längsten Wurzel-Blatt-Weg**: leerer Baum 0, Blatt 1. `Math.max` wählt die größere Teilhöhe. Preorder besucht Wurzel–links–rechts, Inorder links–Wurzel–rechts. Es werden allgemeine Binärbäume verwendet; Inorder ist daher keine Sortieraufgabe. Die Tests enthalten leere, einseitige, verzweigte und unsortierte Bäume sowie Duplikate und falsy-Werte. Alle Eingabeknoten bleiben unverändert. Postorder, Breitensuche und binäre Suchbäume folgen später.
+Knotenzählen addiert die Wurzel und beide Teilbaumgrößen. Die Höhe zählt in diesen Übungen **Knoten auf dem längsten Wurzel-Blatt-Weg**: leerer Baum 0, Blatt 1. `Math.max` wählt die größere Teilhöhe. Preorder besucht Wurzel–links–rechts, Inorder links–Wurzel–rechts. Es werden allgemeine Binärbäume verwendet; Inorder ist daher keine Sortieraufgabe. Die Tests enthalten leere, einseitige, verzweigte und unsortierte Bäume sowie Duplikate und falsy-Werte. Alle Eingabeknoten bleiben unverändert. Weitere Suchbaumoperationen und Graphen folgen später.
+
+## Postorder, Breitensuche und Suchbäume
+
+Postorder verarbeitet links–rechts–Wurzel. Breitensuche verwendet eine FIFO-Queue mit Kopfindex und besucht Ebenen von oben nach unten, innerhalb einer Ebene von links nach rechts. Beide Aufgaben lesen allgemeine Binärbäume mit primitiven JSON-Werten und erhalten die Eingabe.
+
+Zwei Übungen im Thema **Binäre Suchbäume** behandeln Suche und Einfügen in gültige Suchbäume mit unterschiedlichen endlichen Zahlen. Die Ordnung gilt für ganze Teilbäume: links stehen kleinere, rechts größere Werte. Suche folgt nur dem passenden Zweig. Einfügen erzeugt neue Knoten entlang des Suchpfads und ignoriert vorhandene Werte; unveränderte Teilbäume dürfen geteilt werden. Tiefe Kopien mit gleicher Struktur werden ebenfalls akzeptiert. Weder Ordnungsvalidierung noch automatisches Balancieren ist Teil dieser ersten Stufe. Ein unbalancierter Suchbaum kann zu einer Kette werden. Weitere Suchbaumoperationen, Balancierung und Graphen folgen später.

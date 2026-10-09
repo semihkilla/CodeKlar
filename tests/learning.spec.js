@@ -761,3 +761,51 @@ test("tree exercises distinguish height, both subtrees and traversal order", asy
   await page.reload();
   await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
 });
+
+test("advanced tree exercises distinguish queue order, search direction and immutable insertion", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  const output = page.getByLabel("Code-Ausgabe");
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  }
+  const post = await open("js-tree-postorder");
+  await check(post.solution.replace("...postorder(baum.links), ...postorder(baum.rechts)", "...postorder(baum.rechts), ...postorder(baum.links)"));
+  await expect(output).toContainText("3 / 7 bestanden");
+  await check(post.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  const bfs = await open("js-tree-bfs");
+  await check(bfs.solution.replace("const knoten = queue[kopf];\n    kopf += 1;", "const knoten = queue.pop();"));
+  await expect(output).toContainText("3 / 7 bestanden");
+  await check(bfs.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  const search = await open("js-bst-search");
+  await check(search.solution.replace("? knoten.links : knoten.rechts", "? knoten.rechts : knoten.links"));
+  await expect(output).toContainText("4 / 8 bestanden");
+  await check(search.solution);
+  await expect(output).toContainText("8 / 8 bestanden");
+  const insert = await open("js-bst-insert");
+  await check(insert.solution.replace("if (daten.wert === baum.wert) return baum;", ""));
+  await expect(output).toContainText("5 / 7 bestanden");
+  await check("function suchbaumEinfuegen(daten) { function einfuegen(baum) { if (baum === null) return {wert: daten.wert, links: null, rechts: null}; if (daten.wert === baum.wert) return baum; if (daten.wert < baum.wert) baum.links = einfuegen(baum.links); else baum.rechts = einfuegen(baum.rechts); return baum; } return einfuegen(daten.baum); }");
+  await expect(output).toContainText("3 / 7 bestanden");
+  await expect(output).toContainText("Die Eingabe wurde verändert");
+  await check(insert.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-search-trees-mobile.png", fullPage: false });
+  expect(errors).toEqual([]);
+  await page.reload();
+  await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});

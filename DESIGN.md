@@ -92,3 +92,7 @@ Das neue Thema Rekursion umfasst vier Lektionen in den bestehenden Lern-, Aufgab
 ## Binärbäume
 
 Vier neue Lektionen im Thema Bäume nutzen Syntaxbeispiele mit einer kleinen Baumskizze und die vorhandenen Lern-/Aufgabenansichten. Sechsundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen unter anderem vergessene Teilbäume, Knotenzahl statt Höhe, vertauschte Traversierung, falsches Sortieren der Inorder-Ausgabe, mobile Darstellung und Baumcode ohne Netz. Playwright/Chromium wird verwendet, da das Browser-Plugin nicht verfügbar ist. Screenshot-Evidenz bei 390 × 844: /tmp/codeklar-trees-mobile.png.
+
+## Weitere Traversierungen und binäre Suchbäume
+
+Zwei zusätzliche Baumlektionen behandeln Postorder und Breitensuche. Zwei Aufgaben bilden das Thema Binäre Suchbäume. Siebenundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen vertauschte Kinder, Stack statt FIFO, falsche Suchrichtung, mehrfach eingefügte gleiche Werte, Eingabemutation, mobile Ausgabe und Suchbaumcode offline. Die mobile Ansicht wird bei 390 × 844 auf Seitenüberlauf geprüft; Screenshot: /tmp/codeklar-search-trees-mobile.png. Playwright/Chromium wird verwendet, weil das Browser-Plugin nicht verfügbar ist.

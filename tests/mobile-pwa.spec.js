@@ -171,6 +171,13 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByLabel("JavaScript-Code").fill(jsLessons.find(item => item.id === "js-tree-inorder").solution);
   await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("7 / 7 bestanden");
+  await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: "Einen Suchbaum ohne Eingabemutation erweitern" }).click();
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await page.getByLabel("JavaScript-Code").fill(jsLessons.find(item => item.id === "js-bst-insert").solution);
+  await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  await expect(page.getByLabel("Code-Ausgabe")).toContainText("7 / 7 bestanden");
+
 
 
 });

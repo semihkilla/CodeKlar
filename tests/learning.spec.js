@@ -886,3 +886,52 @@ test('project library covers every course, runs its game and downloads complete 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: '/tmp/codeklar-projects-desktop.png', fullPage: true });
 });
+
+test('DFS follows branch order and shortest paths reject longer routes and falsy-name truncation', async ({ page }) => {
+  await page.goto('/');
+  const output = page.getByLabel('Code-Ausgabe');
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+    await page.getByRole('row').filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel('JavaScript-Code').fill(code);
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+  }
+  const dfs = await open('js-graph-dfs');
+  await check(jsLessons.find(item => item.id === 'js-graph-bfs').solution.replaceAll('graphBreitensuche', 'graphTiefensuche'));
+  await expect(output).toContainText('6 / 7 bestanden');
+  await check(dfs.solution);
+  await expect(output).toContainText('7 / 7 bestanden');
+  const shortest = await open('js-graph-shortest');
+  await check(`function kuerzesterWeg({ graph, start, ziel }) {
+    if (!Object.hasOwn(graph, start) || !Object.hasOwn(graph, ziel)) return [];
+    const gesehen = new Set();
+    function suche(name, pfad) {
+      if (gesehen.has(name)) return [];
+      gesehen.add(name);
+      const weg = [...pfad, name];
+      if (name === ziel) return weg;
+      for (const nachbar of graph[name]) {
+        const gefunden = suche(nachbar, weg);
+        if (gefunden.length) return gefunden;
+      }
+      return [];
+    }
+    return suche(start, []);
+  }`);
+  await expect(output).toContainText('10 / 11 bestanden');
+  await check(shortest.solution.replace('while (schritt !== null)', 'while (schritt)'));
+  await expect(output).toContainText('10 / 11 bestanden');
+  await check(shortest.solution.replace('return pfad.reverse();', 'return pfad;'));
+  await expect(output).toContainText('5 / 11 bestanden');
+  await check(shortest.solution);
+  await expect(output).toContainText('11 / 11 bestanden');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Code bearbeiten', exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: '/tmp/codeklar-shortest-path-mobile.png' });
+});

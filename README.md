@@ -196,3 +196,11 @@ Die Klick-Challenge und die CSS-Quest-Karten lassen sich direkt in einer isolier
 Die Bibliothek wird als eigener Chunk geladen und vom Service Worker vorab gespeichert: Filtern, Lesen, Browser-Demos und ZIP-Download funktionieren nach der ersten vollständigen Online-Ladung auch offline. Mobil bleiben die vier Hauptbereiche der unteren Navigation bestehen; Projektkarten und Dateireiter scrollen innerhalb ihrer Zeilen.
 
 Validierung dieser Beispiele: C/C++ kompiliert und ausgeführt, SQLite-Rangliste ausgeführt, Python-Eingabeprüfung und JSON-Rekord getestet, Java-Quellstart geprüft sowie React und Angular installiert und erfolgreich gebaut. Spring Boot, C# und der Docker-Container sind hier nicht mit ihrer vollständigen Laufzeit getestet. Die Browser-Tests prüfen mobile Filter, Quellcodewechsel, ZIP-Inhalte, die interaktive Demo und den ersten Offline-Aufruf des Projektbereichs.
+
+## JavaScript: Tiefensuche und kürzeste Wege
+
+Zwei weitere ausführbare Lektionen im Thema **Graphen** ergänzen den JavaScript-Lernpfad. DFS besucht einen Nachbarzweig vollständig, bevor sie zum nächsten zurückkehrt; die rekursive Preorder hält die gespeicherte Nachbarreihenfolge ein. Eine frühe Set-Markierung verhindert Endlosschleifen bei Zyklen. Sehr tiefe Graphen können den JavaScript-Aufrufstack überlaufen; eine iterative Variante folgt später.
+
+Die Wegsuche verwendet BFS mit einer Vorgänger-Map. Sie findet einen Weg mit der kleinsten Kantenzahl in einem gerichteten, ungewichteten Graphen. Bei gleich kurzen Wegen entscheidet die Nachbarreihenfolge. Die Map markiert Knoten beim Einreihen und speichert ihren ersten Vorgänger. Rückverfolgung endet ausdrücklich bei `null`, damit leere Stringnamen erhalten bleiben; `reverse()` verändert ausschließlich das neu erzeugte Pfadarray. Fehlende Endpunkte oder unerreichbare Ziele ergeben `[]`, ein vorhandener Start gleich Ziel ergibt `[start]`. Unterschiedliche Kantengewichte benötigen andere Algorithmen.
+
+Tests prüfen DFS gegenüber BFS, Zyklen, Selbstschleifen, doppelte Kanten, gerichtete Erreichbarkeit, längere Alternativrouten, Gleichstände und eigene Schlüssel wie `__proto__` und `constructor`. Beide Aufgaben erhalten die Eingaben, haben Hinweise und erklärten Lösungscode und funktionieren im Offline-Spielplatz. Damit enthält JavaScript 83 automatisch geprüfte Aufgaben.

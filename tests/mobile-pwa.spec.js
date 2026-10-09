@@ -277,3 +277,24 @@ test.describe("iPhone installation instructions", () => {
     await expect(page.getByRole("dialog")).toContainText("Zum Home-Bildschirm");
   });
 });
+
+test('project examples and interactive demo load offline before their first visit', async ({ page, context }) => {
+  await page.goto('/');
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
+  await context.setOffline(true);
+  await page.getByLabel('Schnellnavigation').getByRole('button', { name: 'Übungen', exact: true }).click();
+  await page.getByRole('button', { name: 'Projektideen für alle Lernbereiche' }).click();
+  await expect(page.getByRole('heading', { name: 'Klick-Challenge', exact: true })).toBeVisible();
+  const demo = page.frameLocator('iframe[title="Klick-Challenge ausprobieren"]');
+  await demo.getByRole('button', { name: 'Neue Runde' }).click();
+  await demo.getByRole('button', { name: 'Klick!', exact: true }).click();
+  await expect(demo.locator('#score')).toContainText('Punkte: 1');
+  await page.getByLabel('Lernbereich', { exact: true }).selectOption('c');
+  await expect(page.getByLabel('Projektbeispiele').getByRole('button')).toHaveCount(3);
+  const downloading = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Projekt als ZIP herunterladen' }).click();
+  expect((await downloading).suggestedFilename()).toBe('codeklar-c-calculator.zip');
+  await page.screenshot({ path: '/tmp/codeklar-projects-mobile.png', fullPage: true });
+});

@@ -854,3 +854,35 @@ test("BST validation carries ancestor bounds and graph BFS handles cycles and ow
   await page.reload();
   await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
 });
+
+test('project library covers every course, runs its game and downloads complete files on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('navigation', { name: 'Schnellnavigation' }).getByRole('button', { name: 'Übungen' }).click();
+  await page.getByRole('button', { name: 'Projektideen für alle Lernbereiche' }).click();
+  await expect(page.getByRole('heading', { name: 'Aus Funktionen werden Projekte.' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Projektbeispiele' }).getByRole('button')).toHaveCount(12);
+  const game = page.frameLocator('iframe[title="Klick-Challenge ausprobieren"]');
+  await game.getByRole('button', { name: 'Neue Runde' }).click();
+  await game.getByRole('button', { name: 'Klick!', exact: true }).click();
+  await expect(game.locator('#score')).toContainText('Punkte: 1');
+  await page.getByLabel('Lernbereich', { exact: true }).selectOption('spring');
+  await expect(page.getByRole('heading', { name: 'Taschenrechner-API', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'src/main/java/de/codeklar/Calculator.java', exact: true }).click();
+  await expect(page.getByLabel('Quellcode src/main/java/de/codeklar/Calculator.java')).toContainText('@GetMapping');
+  const downloaded = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Projekt als ZIP herunterladen' }).click();
+  const archive = await downloaded;
+  const { unzipSync, strFromU8 } = await import('fflate');
+  const files = unzipSync(await readFile(await archive.path()));
+  expect(strFromU8(files['pom.xml'])).toContain('spring-boot-starter-web');
+  expect(strFromU8(files['README.md'])).toContain('mvn spring-boot:run');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.getByLabel('Projekt suchen').fill('nicht-vorhanden');
+  await expect(page.getByText('Keine Projekte gefunden.')).toBeVisible();
+  await page.getByLabel('Projekt suchen').fill('');
+  await page.setViewportSize({ width: 1505, height: 1045 });
+  await expect(page.getByRole('heading', { name: 'Taschenrechner-API', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: '/tmp/codeklar-projects-desktop.png', fullPage: true });
+});

@@ -23,7 +23,7 @@ function SearchField({ value, onChange, placeholder }) {
   );
 }
 
-export function Exercises({ progress, openLesson }) {
+export function Exercises({ progress, openLesson, openProjects }) {
   const [query, setQuery] = useState("");
   const [course, setCourse] = useState("all");
   const [status, setStatus] = useState("all");
@@ -43,6 +43,7 @@ export function Exercises({ progress, openLesson }) {
       <div className="page-intro">
         <h1>Vom Verstehen zum Anwenden.</h1>
         <p>Kleine Aufgaben. Klare Rückmeldung. Dein nächster Schritt.</p>
+      <button className="text-button" onClick={openProjects}>Projektideen für alle Lernbereiche →</button>
       </div>
       <div className="library-toolbar">
         <SearchField

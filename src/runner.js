@@ -9,6 +9,7 @@ const equal = (a, b) => {
   const keys = Object.keys(a);
   return keys.length === Object.keys(b).length && keys.every(key => Object.prototype.hasOwnProperty.call(b, key) && equal(a[key], b[key]));
 };
+const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
 const stringify = value => {
   if (typeof value === 'string') return value;
   if (value === undefined) return 'undefined';
@@ -81,11 +82,11 @@ self.onmessage = async ({data}) => {
       return;
     }
     if (!data.tests) {
-      if (!data.modules) new Function('console', data.code)(console);
+      if (!data.modules) await new AsyncFunction('console', data.code)(console);
       self.postMessage({logs});
       return;
     }
-    const fn = data.modules ? namespace[data.functionName] : new Function('console', data.code + '\\nreturn typeof ' + data.functionName + ' === "function" ? ' + data.functionName + ' : null;')(console);
+    const fn = data.modules ? namespace[data.functionName] : await new AsyncFunction('console', data.code + '\\nreturn typeof ' + data.functionName + ' === "function" ? ' + data.functionName + ' : null;')(console);
     if (typeof fn !== 'function') throw new Error('Die Funktion ' + data.functionName + ' fehlt.' + (data.modules ? ' Exportiere sie aus ' + data.entry + '.' : ''));
     const results = [];
     for (const test of data.tests) {

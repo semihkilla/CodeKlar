@@ -220,3 +220,18 @@ Vier weitere ausführbare Lektionen erweitern **Arrays**. `find` liefert den ers
 `reduce` berechnet einen Warenkorbwert aus `preisCent * menge`. Der ausdrücklich erklärte Startwert `0` liefert auch bei einem leeren Warenkorb ein Ergebnis. Cent-Beträge und sichere ganzzahlige Eingaben halten dieses Beispiel frei von Dezimalpreis-Rundungsproblemen. Der Lösungstext verfolgt den Akkumulator über zwei Positionen und unterscheidet implizite Arrow-Rückgabe von einem Funktionsblock mit `return`.
 
 24 neue Fälle prüfen erste statt aller Treffer, Wert statt Index, Treffer `0`, leere Listen, some/every-Verwechslungen, Startwert und Stückzahlen. Die Aufgaben erhalten ihre Eingaben und sind mobil sowie offline ausführbar. JavaScript enthält nun 91 automatisch geprüfte Aufgaben.
+
+## Größerer JavaScript-Ausbau: Funktionen, Objektzugriffe, Strings und Promises
+
+26 weitere Lektionen mit 108 neuen Prüffällen bringen den JavaScript-Lernpfad auf **117 automatisch geprüfte Aufgaben**:
+
+- **Funktionen:** Arrow-Ausdrücke und Objekt-Rückgaben, Callbacks, Standardparameter, Rest-Parameter, Spread beim Aufruf, Block-Scope, Closure-Zähler, unabhängige Closures und Funktions-Factories.
+- **Objektzugriffe:** Destructuring mit Umbenennung und Standardwerten, Object Rest, flache und verschachtelte Kopien, Optional Chaining mit `??` und berechnete eigene Schlüssel.
+- **Asynchroner Code:** `Promise.resolve`, `then`-Ketten, `async/await`, lokale Fehlerbehandlung, `Promise.all` mit unterschiedlich schnellen lokalen Timer-Jobs und `Promise.allSettled`.
+- **String-Werkzeuge:** `split`/`join`, wörtliche `replaceAll`-Suche, `padStart` und negative Indizes mit `at`.
+
+Jede Lektion enthält Syntaxbausteine, Erklärung, Aufgabe, Hinweise und Lösung. Die Funktionen werden mit variierenden Eingaben und unveränderten Eingabedaten geprüft. Syntax und bestimmte Methoden sind Lernziele; die automatische Bewertung schreibt keine konkrete Implementierung vor. Die neuen Bereiche ergänzen den Lernpfad vor ihren Anwendungen. DOM-Ereignisse, HTTP-Fetch und Browser-Speicherung folgen in späteren Lektionen.
+
+Der isolierte Worker führt normalen Spielplatzcode jetzt über einen AsyncFunction-Körper aus und wartet auf dessen Abschluss. Damit lässt sich `await` auch auf oberster Ebene im Spielplatz nutzen, einschließlich Beispielen und Aufgabenprüfungen. Das ist eine Spielplatzfunktion: In einer üblichen Script-Datei braucht `await` weiterhin eine async-Funktion oder ein Modul mit Top-Level-Await. Netzwerkzugriff bleibt durch den bestehenden iframe-CSP blockiert. Nicht erfüllte Promises und Endlosschleifen bleiben vom harten Zeitlimit begrenzt. Unbeaufsichtigte Timer oder Promise-Ketten ohne `await` werden nicht automatisch bis zum Abschluss verfolgt; die Beispiele warten ausdrücklich auf ihre Arbeit.
+
+Regressionsprüfungen erkennen fehlende Arrow-Rückgaben, gekoppelte Closure-Zustände, verlustbehaftete `||`-Fallbacks, Mutation über flach kopierte verschachtelte Objekte, nur einmalige Stringersetzung und `return promise` ohne das für ein lokales catch notwendige await. Ein eigener Spielplatztest prüft Timer-Ergebnisse, abgelehntes await, Timeout, Wiederherstellung und Promise.all-Reihenfolge. Mobile Offline-Prüfungen führen auch Closures, Objektkopien, Promises und Stringformatierung aus. Reacts Laufzeit liegt in einem getrennten Build-Chunk und wird ebenfalls für Offline-Nutzung vorab gespeichert.

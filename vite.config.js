@@ -3,6 +3,15 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   esbuild: { jsx: "automatic" },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (["/node_modules/react/", "/node_modules/react-dom/", "/node_modules/scheduler/"].some(path => id.includes(path))) return "react-runtime";
+        },
+      },
+    },
+  },
   plugins: [
     VitePWA({
       registerType: "prompt",

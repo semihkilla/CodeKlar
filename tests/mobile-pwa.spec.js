@@ -60,6 +60,7 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   context,
   request,
 }) => {
+  test.setTimeout(60000);
   await page.goto("/");
   const manifest = await (await request.get("/manifest.webmanifest")).json();
   expect(manifest.display).toBe("standalone");
@@ -184,7 +185,7 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("7 / 7 bestanden");
 
-  for (const id of ["js-graph-dfs", "js-graph-shortest", "js-sort-numbers", "js-sort-ranking", "js-find-index", "js-binary-search", "js-array-find", "js-array-some", "js-array-every", "js-array-reduce"]) {
+  for (const id of ["js-graph-dfs", "js-graph-shortest", "js-sort-numbers", "js-sort-ranking", "js-find-index", "js-binary-search", "js-array-find", "js-array-some", "js-array-every", "js-array-reduce", "js-fn-closure", "js-fn-independent", "js-obj-nested", "js-obj-optional", "js-async-catch", "js-async-all", "js-async-settled", "js-str-pad"]) {
     const lesson = jsLessons.find(item => item.id === id);
     await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
     await page.getByRole("row").filter({ hasText: lesson.title }).click();

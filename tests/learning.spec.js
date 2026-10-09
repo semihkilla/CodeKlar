@@ -51,7 +51,7 @@ test("wrong answers are not solved; valid solutions persist after reload", async
 test("all JavaScript challenges accept correct solutions and reject constants", async ({
   page,
 }) => {
-  test.setTimeout(90000);
+  test.setTimeout(150000);
   await page.goto("/");
   for (const lesson of jsLessons) {
     await page.getByRole("button", { name: "Übungen", exact: true }).click();
@@ -1018,4 +1018,55 @@ test('array queries preserve zero, distinguish some from every and reduce quanti
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Code bearbeiten', exact: true }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('functions and object lessons catch missing returns, shared state, defaults and shallow-copy mutation', async ({ page }) => {
+  test.setTimeout(60000);
+  await page.goto('/');
+  const output = page.getByLabel('Code-Ausgabe');
+  const variants = [
+    ['js-fn-arrow-object', code => code.replace('({ wert })', '{ wert }'), '0 / 5'],
+    ['js-fn-independent', code => code.replace('const b = erzeuge(daten.b);', 'const b = a;'), '1 / 4'],
+    ['js-obj-optional', code => code.replace('?? "Unbekannt"', '|| "Unbekannt"'), '5 / 6'],
+    ['js-obj-nested', () => 'function nested(daten) { const neu = { ...daten.benutzer }; neu.profil.stadt = daten.stadt; return neu; }', '1 / 3'],
+    ['js-str-replace-all', code => code.replace('.replaceAll(', '.replace('), '2 / 5'],
+    ['js-async-catch', code => code.replace('return await laden;', 'return laden;'), '2 / 4'],
+  ];
+  for (const [id, mutate, expected] of variants) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+    await page.getByRole('row').filter({ hasText: lesson.title }).click();
+    await page.getByLabel('JavaScript-Code').fill(mutate(lesson.solution));
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+    await expect(output).toContainText(`${expected} bestanden`);
+    await page.getByLabel('JavaScript-Code').fill(lesson.solution);
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+    await expect(output).toContainText(`${lesson.tests.length} / ${lesson.tests.length} bestanden`);
+  }
+});
+
+test('async playground waits for timer promises, handles rejected awaits and still stops infinite waits', async ({ page }) => {
+  await page.goto('/');
+  const code = page.getByLabel('JavaScript-Code');
+  const output = page.getByLabel('Code-Ausgabe');
+  await code.fill('const wert = await new Promise(resolve => setTimeout(() => resolve(7), 30)); console.log(wert);');
+  await page.getByRole('button', { name: 'Code ausführen', exact: true }).click();
+  await expect(output).toContainText('7');
+  await code.fill('await Promise.reject(new Error("Laden fehlgeschlagen"));');
+  await page.getByRole('button', { name: 'Code ausführen', exact: true }).click();
+  await expect(output).toContainText('Laden fehlgeschlagen');
+  await code.fill('await new Promise(() => {});');
+  await page.getByRole('button', { name: 'Code ausführen', exact: true }).click();
+  await expect(output).toContainText('Zeitlimit erreicht', { timeout: 5000 });
+  await code.fill('console.log(await Promise.resolve("Wieder bereit"));');
+  await page.getByRole('button', { name: 'Code ausführen', exact: true }).click();
+  await expect(output).toContainText('Wieder bereit');
+  await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+  const lesson = jsLessons.find(item => item.id === 'js-async-all');
+  await page.getByRole('row').filter({ hasText: lesson.title }).click();
+  await code.fill(lesson.example);
+  await page.getByRole('button', { name: 'Code ausführen', exact: true }).click();
+  await expect(output).toContainText('[6,2]');
+  await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+  await expect(output).toContainText('4 / 4 bestanden');
 });

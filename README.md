@@ -212,3 +212,11 @@ Vier Lektionen im Thema **Sortieren & Suchen** erklären numerisches `sort`, Ver
 `findIndex` erwartet einen Boolean-Callback und liefert den ersten Index oder -1; Index 0 ist ein gültiger Treffer. `sort` erwartet dagegen einen negativen, null oder positiven Vergleichswert. Die binäre Suche halbiert den Suchbereich, merkt Treffer und sucht links weiter, um die erste Position bei Duplikaten zu finden. Sie setzt numerische aufsteigende Sortierung voraus und sortiert nicht selbst. Die automatische Prüfung bewertet Ergebnisse und Eingabemutation, nicht die verwendete Syntax oder Laufzeitkomplexität.
 
 27 Übungsfälle prüfen numerische statt lexikografischer Ordnung, negative Zahlen, Dezimalzahlen, Sortiergleichstände, unveränderte Eingaben, fehlende Werte, erste/letzte Positionen und Duplikate. Alle vier Lektionen stehen auch offline im mobilen Spielplatz bereit. JavaScript enthält damit 87 automatisch geprüfte Aufgaben.
+
+## JavaScript: find, some, every und reduce
+
+Vier weitere ausführbare Lektionen erweitern **Arrays**. `find` liefert den ersten passenden Wert und bei fehlendem Treffer `undefined`; die Übung normalisiert diesen zu `null` mit `??`, damit ein gültiger Treffer `0` erhalten bleibt. `some` prüft mindestens einen passenden Artikelbestand und ergibt für `[]` false. `every` prüft alle vorhandenen Zahlen auf Nichtnegativität und ergibt für `[]` true. Die Beispiele verwenden ausdrücklich dichte Arrays und gültige endliche Zahlen; Lücken in Arrays und unbekannte Datentypen gehören nicht zu diesen Aufgaben.
+
+`reduce` berechnet einen Warenkorbwert aus `preisCent * menge`. Der ausdrücklich erklärte Startwert `0` liefert auch bei einem leeren Warenkorb ein Ergebnis. Cent-Beträge und sichere ganzzahlige Eingaben halten dieses Beispiel frei von Dezimalpreis-Rundungsproblemen. Der Lösungstext verfolgt den Akkumulator über zwei Positionen und unterscheidet implizite Arrow-Rückgabe von einem Funktionsblock mit `return`.
+
+24 neue Fälle prüfen erste statt aller Treffer, Wert statt Index, Treffer `0`, leere Listen, some/every-Verwechslungen, Startwert und Stückzahlen. Die Aufgaben erhalten ihre Eingaben und sind mobil sowie offline ausführbar. JavaScript enthält nun 91 automatisch geprüfte Aufgaben.

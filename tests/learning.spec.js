@@ -977,3 +977,45 @@ test('sorting checks numeric order and mutation; search checks zero, boundaries 
   await page.getByRole('button', { name: 'Code bearbeiten', exact: true }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
+
+test('array queries preserve zero, distinguish some from every and reduce quantities with an initial value', async ({ page }) => {
+  await page.goto('/');
+  const output = page.getByLabel('Code-Ausgabe');
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+    await page.getByRole('row').filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel('JavaScript-Code').fill(code);
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+  }
+  const find = await open('js-array-find');
+  await check(find.solution.replace('?? null', '|| null'));
+  await expect(output).toContainText('5 / 6 bestanden');
+  await check(find.solution.replace('.find(', '.findIndex('));
+  await expect(output).toContainText('0 / 6 bestanden');
+  await check(find.solution);
+  await expect(output).toContainText('6 / 6 bestanden');
+  const some = await open('js-array-some');
+  await check(some.solution.replace('.some(', '.every('));
+  await expect(output).toContainText('3 / 6 bestanden');
+  await check(some.solution);
+  await expect(output).toContainText('6 / 6 bestanden');
+  const every = await open('js-array-every');
+  await check(every.solution.replace('.every(', '.some('));
+  await expect(output).toContainText('4 / 6 bestanden');
+  await check(every.solution);
+  await expect(output).toContainText('6 / 6 bestanden');
+  const reduce = await open('js-array-reduce');
+  await check(reduce.solution.replace(' * artikel.menge', ''));
+  await expect(output).toContainText('2 / 6 bestanden');
+  await check(reduce.solution.replace(',\n    0', ''));
+  await expect(output).toContainText('0 / 6 bestanden');
+  await check(reduce.solution);
+  await expect(output).toContainText('6 / 6 bestanden');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Code bearbeiten', exact: true }).click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

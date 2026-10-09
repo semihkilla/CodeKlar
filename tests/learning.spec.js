@@ -935,3 +935,45 @@ test('DFS follows branch order and shortest paths reject longer routes and falsy
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: '/tmp/codeklar-shortest-path-mobile.png' });
 });
+
+test('sorting checks numeric order and mutation; search checks zero, boundaries and duplicate first matches', async ({ page }) => {
+  await page.goto('/');
+  const output = page.getByLabel('Code-Ausgabe');
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+    await page.getByRole('row').filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel('JavaScript-Code').fill(code);
+    await page.getByRole('button', { name: 'Lösung prüfen', exact: true }).click();
+  }
+  const numeric = await open('js-sort-numbers');
+  await check(numeric.solution.replace('.sort((a, b) => a - b)', '.sort()'));
+  await expect(output).toContainText('4 / 6 bestanden');
+  await check(numeric.solution.replace('[...zahlen]', 'zahlen'));
+  await expect(output).toContainText('2 / 6 bestanden');
+  await check(numeric.solution);
+  await expect(output).toContainText('6 / 6 bestanden');
+  const ranking = await open('js-sort-ranking');
+  await check(ranking.solution.replace('if (a.name < b.name) return -1;', '').replace('if (a.name > b.name) return 1;', ''));
+  await expect(output).toContainText('4 / 5 bestanden');
+  await check(ranking.solution);
+  await expect(output).toContainText('5 / 5 bestanden');
+  const linear = await open('js-find-index');
+  await check(linear.solution.replace('daten.gesucht);', 'daten.gesucht) || -1;'));
+  await expect(output).toContainText('4 / 6 bestanden');
+  await check(linear.solution);
+  await expect(output).toContainText('6 / 6 bestanden');
+  const binary = await open('js-binary-search');
+  await check(binary.solution.replace('if (zahlen[mitte] === gesucht) treffer = mitte;', 'if (zahlen[mitte] === gesucht) return mitte;'));
+  await expect(output).toContainText('8 / 10 bestanden');
+  await check(binary.solution.replace('links <= rechts', 'links < rechts'));
+  await expect(output).toContainText('4 / 10 bestanden');
+  await check(binary.solution);
+  await expect(output).toContainText('10 / 10 bestanden');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Code bearbeiten', exact: true }).click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

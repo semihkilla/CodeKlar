@@ -809,3 +809,48 @@ test("advanced tree exercises distinguish queue order, search direction and immu
   await page.reload();
   await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
 });
+
+test("BST validation carries ancestor bounds and graph BFS handles cycles and own keys", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/");
+  const output = page.getByLabel("Code-Ausgabe");
+  async function open(id) {
+    const lesson = jsLessons.find(item => item.id === id);
+    await page.getByRole("button", { name: "Übungen", exact: true }).click();
+    await page.getByRole("row").filter({ hasText: lesson.title }).click();
+    return lesson;
+  }
+  async function check(code) {
+    await page.getByLabel("JavaScript-Code").fill(code);
+    await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
+  }
+  const minimum = await open("js-bst-min");
+  await check(minimum.solution.replace("knoten.links !== null", "knoten.links?.wert"));
+  await expect(output).toContainText("4 / 5 bestanden");
+  await check(minimum.solution);
+  await expect(output).toContainText("5 / 5 bestanden");
+  const valid = await open("js-bst-valid");
+  await check("function suchbaumGueltig(baum) { if (baum === null) return true; if (baum.links !== null && baum.links.wert >= baum.wert) return false; if (baum.rechts !== null && baum.rechts.wert <= baum.wert) return false; return suchbaumGueltig(baum.links) && suchbaumGueltig(baum.rechts); }");
+  await expect(output).toContainText("6 / 8 bestanden");
+  await check(valid.solution);
+  await expect(output).toContainText("8 / 8 bestanden");
+  const neighbors = await open("js-graph-neighbors");
+  await check("function graphNachbarn(daten) { if (!daten.graph[daten.name]) return []; return [...daten.graph[daten.name]]; }");
+  await expect(output).toContainText("5 / 6 bestanden");
+  await check(neighbors.solution);
+  await expect(output).toContainText("6 / 6 bestanden");
+  const bfs = await open("js-graph-bfs");
+  await check(bfs.solution.replace("gesehen.add(nachbar);", ""));
+  await expect(output).toContainText("Zeitlimit erreicht", { timeout: 5000 });
+  await check(bfs.solution);
+  await expect(output).toContainText("7 / 7 bestanden");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Code bearbeiten", exact: true }).click();
+  await output.scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/codeklar-graphs-mobile.png", fullPage: false });
+  expect(errors).toEqual([]);
+  await page.reload();
+  await expect(page.getByText(`4 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});

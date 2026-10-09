@@ -96,3 +96,7 @@ Vier neue Lektionen im Thema Bäume nutzen Syntaxbeispiele mit einer kleinen Bau
 ## Weitere Traversierungen und binäre Suchbäume
 
 Zwei zusätzliche Baumlektionen behandeln Postorder und Breitensuche. Zwei Aufgaben bilden das Thema Binäre Suchbäume. Siebenundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen vertauschte Kinder, Stack statt FIFO, falsche Suchrichtung, mehrfach eingefügte gleiche Werte, Eingabemutation, mobile Ausgabe und Suchbaumcode offline. Die mobile Ansicht wird bei 390 × 844 auf Seitenüberlauf geprüft; Screenshot: /tmp/codeklar-search-trees-mobile.png. Playwright/Chromium wird verwendet, weil das Browser-Plugin nicht verfügbar ist.
+
+## Suchbaumprüfung und Graphen
+
+Zwei weitere Suchbaumlektionen und das neue Thema Graphen verwenden die vorhandenen responsiven Lern- und Aufgabenansichten. Achtundzwanzig Lern-/Datei-/Modulprüfungen und fünf Produktions-PWA-Tests prüfen geerbte Wertgrenzen, geerbte Objekteigenschaften, Zyklen ohne Besuchsmarkierung, UI-Erholung nach dem Zeitlimit, BFS-Reihenfolge und Offline-Ausführung. Bei 390 × 844 wird die Ausgabe ohne Seitenüberlauf geprüft; Screenshot: /tmp/codeklar-graphs-mobile.png. Playwright/Chromium dient als Browserprüfung, da das Browser-Plugin nicht verfügbar ist.

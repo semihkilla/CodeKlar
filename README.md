@@ -32,7 +32,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 
 ## Erste Version
 
-- 77 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
+- 81 ausführbare JavaScript-Codeaufgaben: Variablen, Datentypen und Typumwandlung, Funktionen, Rechnen, Vergleiche, Restoperator, Logik, fehlende Werte, Entscheidungen, Schleifen, Objekte, Map, Set, Strings und Arrays.
 - Navigation nach Programmiersprachen, Webgestaltung, Frameworks, Datenbanken und Werkzeugen; Lernpfade aller Bereiche mit Themen und Fortschritt je Thema.
 - Geordneter JavaScript-Lernpfad mit direktem Einstieg, Fortsetzen bei der ersten offenen Aufgabe, Übersicht aller Schritte und Vor-/Zurück-Navigation.
 - Miniprojekt Budget-Rechner: Ausgaben summieren, Rest berechnen und Budgetgrenze prüfen; alle Beträge in ganzen Cent.
@@ -97,7 +97,8 @@ Bei System-Chromium: `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run t
 - `src/modules.js`: Vier mehrteilige Modulaufgaben zu benannten und Standard-Exports, Aliasen und Re-Exports.
 - `src/testing.js`: Vier Aufgaben für selbst geschriebene Assertions, Randfälle, Strukturvergleiche und erwartete Fehler.
 - `src/moduleFiles.js`: Syntaxprüfung und Auflösung lokaler virtueller Modulpfade mit Acorn.
-- `src/trees.js`: Acht Aufgaben zu Knotenzahl, Höhe, Traversierungen sowie Suchbaum-Suche und -Einfügung.
+- `src/graphs.js`: Nachbarlisten und Graph-Breitensuche mit Set und FIFO-Queue.
+- `src/trees.js`: Zehn Aufgaben zu Knotenzahl, Höhe, Traversierungen und Suchbaumoperationen.
 - `src/recursion.js`: Vier Aufgaben zu Basisfällen, Rückgabewerten, Knotenzählen und verschachtelten Arrays.
 - `src/linkedStructures.js`: Klammerprüfung und sechs Aufgaben zum Aufbau, Lesen, Ergänzen, Suchen, Löschen und Umkehren verketteter Listen.
 - `src/linearStructures.js`: Vier Aufgaben zu Stack, Undo-Verlauf, Queue und Kopfindex.
@@ -179,3 +180,9 @@ Knotenzählen addiert die Wurzel und beide Teilbaumgrößen. Die Höhe zählt in
 Postorder verarbeitet links–rechts–Wurzel. Breitensuche verwendet eine FIFO-Queue mit Kopfindex und besucht Ebenen von oben nach unten, innerhalb einer Ebene von links nach rechts. Beide Aufgaben lesen allgemeine Binärbäume mit primitiven JSON-Werten und erhalten die Eingabe.
 
 Zwei Übungen im Thema **Binäre Suchbäume** behandeln Suche und Einfügen in gültige Suchbäume mit unterschiedlichen endlichen Zahlen. Die Ordnung gilt für ganze Teilbäume: links stehen kleinere, rechts größere Werte. Suche folgt nur dem passenden Zweig. Einfügen erzeugt neue Knoten entlang des Suchpfads und ignoriert vorhandene Werte; unveränderte Teilbäume dürfen geteilt werden. Tiefe Kopien mit gleicher Struktur werden ebenfalls akzeptiert. Weder Ordnungsvalidierung noch automatisches Balancieren ist Teil dieser ersten Stufe. Ein unbalancierter Suchbaum kann zu einer Kette werden. Weitere Suchbaumoperationen, Balancierung und Graphen folgen später.
+
+## Suchbaumprüfung und Graphen
+
+Zwei weitere Suchbaumübungen finden das Minimum und prüfen die strikte Ordnung mit geerbten unteren/oberen Grenzen. Direkte Kindvergleiche allein übersehen Verstöße gegen weiter entfernte Vorfahren. Duplikate sind in der Validierung ungültig; die Eingaben enthalten endliche Zahlen in strukturell gültigen, zyklusfreien Binärbäumen.
+
+Das Thema **Graphen** stellt gerichtete Nachbarlisten als Objekte mit eigenen String-Schlüsseln vor. Alle genannten Nachbarn sind eigene vorhandene Knoten. Die Nachbarübung bewahrt Reihenfolge und doppelte Kanten; `Object.hasOwn` unterscheidet eigene Knoten von geerbten Eigenschaften. BFS besucht nur vom Start erreichbare Knoten, hält die Nachbarreihenfolge ein und markiert Namen bereits beim Einreihen in einem Set. Dadurch sind Rückkanten, Selbstschleifen und mehrere Wege zum selben Knoten erlaubt. Ein fehlender eigener Start ergibt []; auch leere Stringnamen und Namen wie __proto__ werden unterstützt. Eingabedaten bleiben unverändert. Tiefensuche, kürzeste Wege und weitere Graphoperationen folgen später.

@@ -48,7 +48,7 @@ Die App gemeinsam mit dem Assistenten entwickeln, der die Umsetzung übernimmt. 
 
 ## Umgesetzt in Version 0.1
 
-React und Vite bilden die Oberfläche. Die App enthält 77 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
+React und Vite bilden die Oberfläche. Die App enthält 81 JavaScript-Codeaufgaben, elf weitere Wissenslektionen, eine durchsuchbare Referenz, Aufgabenfilter und tatsächlichen lokalen Fortschritt mit JSON-Export. Nur JavaScript ist derzeit ausführbar; die übrigen Bereiche enthalten Erklärungen und Wissensfragen.
 
 Weitere Kursinhalte, Konten, Synchronisierung, SQL-Ausführung und Laufzeitumgebungen für andere Sprachen sind spätere Ausbauschritte.
 
@@ -121,3 +121,7 @@ Vier neue Lektionen erklären Wurzel, Blatt, Kindreferenzen und Teilbäume. Ausf
 ## Ausbau: Weitere Traversierungen und Suchbäume
 
 Vier neue Lektionen ergänzen Postorder, Breitensuche mit FIFO-Kopfindex sowie Suchen und Einfügen in binären Suchbäumen. Der neue Suchbaumbereich erklärt die Teilbaumordnung, endliche Zahlen, Duplikatregeln, Objekt-Spread und flache Kopien. Die Einfügung erhält Eingabeknoten und baut neue Knoten entlang des geänderten Pfads auf. Automatische Balancierung, Validierung und weitere Suchbaumoperationen bleiben spätere Schritte.
+
+## Ausbau: Suchbaumprüfung und Graphen
+
+Minimum und Ordnungsvalidierung erweitern die Suchbaumlektionen. Zwei neue Graphaufgaben behandeln gerichtete Nachbarlisten, Object.hasOwn, eine Set-Besuchsmenge und BFS mit FIFO-Kopfindex. Tests decken Vorfahrengrenzen, Minimum 0, Zyklen, Selbstschleifen, Mehrfachkanten, getrennte Komponenten und ungewöhnliche Stringnamen ab. Daten bleiben unverändert und alle Aufgaben funktionieren offline. Graph-DFS und kürzeste Wege sind spätere Schritte.

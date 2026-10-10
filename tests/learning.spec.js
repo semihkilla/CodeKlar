@@ -1232,3 +1232,21 @@ test('browser reference solutions agree with native DOM, events and response obj
   },lessons);
   expect(failures).toEqual([]);
 });
+
+test('practical number array and game tasks expose wrong rounding, shared rows, mutation and boundary errors',async({page})=>{
+  test.setTimeout(90000);await page.goto('/');
+  const variants=[
+    ['js-math-round',code=>code.replace('Math.floor(daten)','Math.trunc(daten)'),'3 / 5'],
+    ['js-math-dice',code=>code.replace('Math.floor','Math.round'),'2 / 5'],
+    ['js-array-flat',code=>code.replace('.flat(1)','.flat(Infinity)'),'4 / 5'],
+    ['js-array-splice',code=>code.replace('[...daten.liste]','daten.liste'),'0 / 6'],
+    ['js-array-grid',code=>code.replace('Array.from({ length: daten.hoehe }, () => Array.from({ length: daten.breite }, () => 0))','Array(daten.hoehe).fill(Array.from({ length: daten.breite }, () => 0))'),'3 / 5'],
+    ['js-game-collision',code=>code.replaceAll(' < ',' <= ').replaceAll(' > ',' >= '),'4 / 6'],
+    ['js-shop-checkout',code=>code.replace('warenwert >= daten.gratisAbCent','warenwert > daten.gratisAbCent'),'4 / 6'],
+  ];
+  for(const [id,mutate,expected] of variants){
+    const lesson=jsLessons.find(item=>item.id===id);await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByLabel('JavaScript-Code').fill(mutate(lesson.solution));await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${expected} bestanden`);
+    await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${lesson.tests.length} / ${lesson.tests.length} bestanden`);
+  }
+  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'/tmp/codeklar-checkout-mobile.png',fullPage:true});
+});

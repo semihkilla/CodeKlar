@@ -1,4 +1,5 @@
 import { buildProjects } from "./buildProjects";
+import { webProjects } from "./webProjects";
 
 const existingProjects = [
   {
@@ -436,4 +437,4 @@ const existingProjects = [
   }
 ];
 
-export const projects = [...existingProjects, ...buildProjects];
+export const projects = [...existingProjects, ...buildProjects, ...webProjects];

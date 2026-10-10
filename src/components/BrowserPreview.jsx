@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 export function BrowserPreview({ html, onActions, busy }) {
   const frame = useRef(null);
   const handler = useRef(onActions);
   const focus = useRef(null);
+  const token = useRef(null);
+  const [readyToken, setReadyToken] = useState(null);
   handler.current=onActions;
   const source = useMemo(() => {
     const parsed=new DOMParser().parseFromString(html,'text/html');
@@ -15,7 +17,7 @@ export function BrowserPreview({ html, onActions, busy }) {
       }
     });
     const nonce=crypto.randomUUID();
-    return `<!doctype html><html lang="de"><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'"><style>body{background:#111827;color:#eef2ff;font:16px system-ui;padding:18px}button,input,select{font:inherit;padding:10px;margin:5px;border-radius:8px;max-width:100%;box-sizing:border-box}button{background:#a18aff;color:#111827;border:0;cursor:pointer}input{background:#202c41;color:white;border:1px solid #64748b}li{padding:8px}button:disabled{opacity:.5}*{box-sizing:border-box}form{display:flex;flex-wrap:wrap;gap:6px}.done{text-decoration:line-through}.active{color:#6ee7b7}ul{padding-left:22px}</style></head><body>${parsed.body.innerHTML}<script nonce="${nonce}">
+    return { token: nonce, html: `<!doctype html><html lang="de"><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'"><style>body{background:#111827;color:#eef2ff;font:16px system-ui;padding:18px}button,input,select{font:inherit;padding:10px;margin:5px;border-radius:8px;max-width:100%;box-sizing:border-box}button{background:#a18aff;color:#111827;border:0;cursor:pointer}input{background:#202c41;color:white;border:1px solid #64748b}li{padding:8px}button:disabled{opacity:.5}*{box-sizing:border-box}form{display:flex;flex-wrap:wrap;gap:6px}.done{text-decoration:line-through}.active{color:#6ee7b7}ul{padding-left:22px}</style></head><body>${parsed.body.innerHTML}<script nonce="${nonce}">
       const selector=node=>'[data-codeklar-node="'+node.getAttribute('data-codeklar-node')+'"]';
       const send=actions=>parent.postMessage({kind:'codeklar-preview',actions},'*');
       let timer;
@@ -43,10 +45,13 @@ export function BrowserPreview({ html, onActions, busy }) {
       });
       const prior=${JSON.stringify(focus.current).replaceAll("<", "\\u003c")};
       if(prior){const node=document.querySelector(prior.selector);if(node){node.focus();try{node.setSelectionRange(prior.selection,prior.selection);}catch{}}}
-    </script></body></html>`;
+      parent.postMessage({kind:'codeklar-preview-ready',token:${JSON.stringify(nonce)}},'*');
+    </script></body></html>` };
   },[html]);
-  useEffect(()=>{
+  token.current=source.token;
+  useLayoutEffect(()=>{
     const listen=event=>{
+      if(event.source===frame.current?.contentWindow&&event.data?.kind==='codeklar-preview-ready'&&event.data.token===token.current){setReadyToken(event.data.token);return;}
       if(event.source!==frame.current?.contentWindow||event.data?.kind!=='codeklar-preview'||!Array.isArray(event.data.actions))return;
       const actions=event.data.actions.slice(0,30);
       const last=actions.at(-1);focus.current=last?.type==='input'?last:null;
@@ -54,5 +59,6 @@ export function BrowserPreview({ html, onActions, busy }) {
     };
     window.addEventListener('message',listen);return()=>window.removeEventListener('message',listen);
   },[]);
-  return <section className="browser-preview"><h3>Deine Browser-Vorschau</h3><p>Bearbeite den Code und starte ihn. Danach kannst du die Oberfläche hier bedienen.</p><iframe ref={frame} title="Interaktive Browser-Vorschau" sandbox="allow-scripts" style={{pointerEvents:busy?"none":"auto"}} srcDoc={source} /><span role="status">{busy?'Aktion wird ausgeführt …':''}</span></section>;
+  const ready=readyToken===source.token;
+  return <section className="browser-preview"><h3>Deine Browser-Vorschau</h3><p>Bearbeite den Code und starte ihn. Danach kannst du die Oberfläche hier bedienen.</p><iframe ref={frame} title="Interaktive Browser-Vorschau" sandbox="allow-scripts" style={{pointerEvents:busy||!ready?"none":"auto"}} srcDoc={source.html} /><span role="status">{busy?'Aktion wird ausgeführt …':!ready?'Vorschau wird geladen …':''}</span></section>;
 }

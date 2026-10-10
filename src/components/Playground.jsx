@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Play, RotateCcw, Check, X, FlaskConical } from "lucide-react";
 import { CodeEditor } from "./CodeEditor";
+import { downloadBrowserProject } from "../browserDownload";
+import { BrowserPreview } from "./BrowserPreview";
 import { runJavaScript } from "../runner";
 
 export function Playground({ lesson, tab, record }) {
@@ -16,6 +18,29 @@ export function Playground({ lesson, tab, record }) {
   const [activeFile, setActiveFile] = useState("main.js");
   const [result, setResult] = useState(null);
   const [running, setRunning] = useState(false);
+  const [html, setHtml] = useState(lesson.browser?.html || "");
+  const [browserTab, setBrowserTab] = useState("js");
+  const history = useRef([]);
+  const seed = useRef({});
+  const busy = useRef(false);
+  const storageKey = `codeklar-browser-sandbox-${lesson.id}`;
+  function readBrowserStorage() {
+    try { return JSON.parse(localStorage.getItem(storageKey) || "null") || lesson.browser?.storage || {}; }
+    catch { return lesson.browser?.storage || {}; }
+  }
+  function persistBrowserStorage(output) {
+    if (!output.storage) return;
+    try { localStorage.setItem(storageKey, JSON.stringify(output.storage)); }
+    catch { output.logs = [...(output.logs || []), "Spielstand konnte nicht dauerhaft gespeichert werden."]; }
+  }
+  async function interact(actions) {
+    if(busy.current) return;
+    busy.current=true;setRunning(true);
+    if(history.current.length+actions.length>200){setResult({logs:[],error:"Starte den Code erneut, um weitere Aktionen auszuprobieren."});setRunning(false);busy.current=false;return;}
+    history.current=[...history.current,...actions];
+    const output=await runJavaScript({code,functionName:lesson.functionName,initializeBrowser:taskMode || tab === "solution",browserInput:lesson.tests?.[0]?.input,...(files?{files,functionName:lesson.functionName}:{}),browser:{...lesson.browser,html,storage:seed.current},browserActions:history.current});
+    persistBrowserStorage(output);setResult(output);setRunning(false);busy.current=false;
+  }
   useEffect(() => {
     setCode(initial);
     setFiles(initialFiles);
@@ -23,12 +48,16 @@ export function Playground({ lesson, tab, record }) {
     setResult(null);
   }, [initial, initialFiles]);
   async function run(test = false) {
-    if (running) return;
+    if (busy.current) return;
+    busy.current=true;
+    history.current=[];
+    seed.current=readBrowserStorage();
     setRunning(true);
     setResult(null);
     const output = await runJavaScript({
       code,
-      ...(files ? { files } : {}),
+      ...(lesson.browser ? { functionName:lesson.functionName, browserInput:lesson.tests?.[0]?.input, initializeBrowser:taskMode || tab === "solution", browser: { ...lesson.browser, html, storage: test ? lesson.browser.storage || {} : seed.current } } : {}),
+      ...(files ? { files, functionName: lesson.functionName } : {}),
       ...(lesson.testWorkshop ? { workshop: lesson.testWorkshop, functionName: lesson.functionName } : {}),
       ...(test
         ? {
@@ -38,8 +67,10 @@ export function Playground({ lesson, tab, record }) {
           }
         : {}),
     });
+    if (!test && lesson.browser) persistBrowserStorage(output);
     setResult(output);
     setRunning(false);
+    busy.current=false;
     if (test)
       record(
         lesson.id,
@@ -59,7 +90,8 @@ export function Playground({ lesson, tab, record }) {
         {files && <div className="module-file-tabs" role="tablist" aria-label="Projektdateien">
           {Object.keys(files).map((name) => <button key={name} role="tab" aria-selected={activeFile === name} className={activeFile === name ? "selected" : ""} onClick={() => setActiveFile(name)}>{name}</button>)}
         </div>}
-        <CodeEditor code={files ? files[activeFile] : code} setCode={files ? (value) => setFiles((previous) => ({ ...previous, [activeFile]: value })) : setCode} onRun={() => run(false)} />
+        {lesson.browser && <><p className="browser-caption">Probiere HTML und Events in der Vorschau aus. API-Antworten sind Beispieldaten; der Speicher gehört nur zu dieser Übung.</p><div className="module-file-tabs" role="tablist" aria-label="Browserdateien"><button role="tab" aria-selected={browserTab === "js"} onClick={() => setBrowserTab("js")}>JavaScript</button><button role="tab" aria-selected={browserTab === "html"} onClick={() => setBrowserTab("html")}>HTML</button></div></>}
+        {lesson.browser && browserTab === "html" ? <CodeEditor code={html} setCode={setHtml} language="HTML" onRun={() => run(false)} /> : <CodeEditor code={files ? files[activeFile] : code} setCode={files ? (value) => setFiles((previous) => ({ ...previous, [activeFile]: value })) : setCode} onRun={() => run(false)} />}
         {files && <p className="module-caption">{lesson.testWorkshop ? "Schreibe Tests in main.js. Code ausführen testet deine aktuelle funktion.js. Lösung prüfen ersetzt den Funktionsparameter durch korrekten Code und fehlerhafte Varianten; funktion.js dient dann als Referenz." : "Alle Dateien werden gemeinsam ausgeführt. Änderungen bleiben beim Wechsel der Datei-Reiter erhalten. Geprüft wird der Export aus main.js."}</p>}
         <div className="editor-actions">
           <button
@@ -75,6 +107,8 @@ export function Playground({ lesson, tab, record }) {
             disabled={running}
             onClick={() => {
               setCode(initial);
+              setHtml(lesson.browser?.html || "");
+              history.current=[];
               setFiles(initialFiles);
               setActiveFile("main.js");
               setResult(null);
@@ -83,6 +117,8 @@ export function Playground({ lesson, tab, record }) {
             <RotateCcw size={18} />
             Zurücksetzen
           </button>
+          {lesson.category === "Browser-Projekte" && <button className="button secondary" onClick={() => downloadBrowserProject(lesson)}>Referenzprojekt als ZIP</button>}
+          {lesson.browser && <button className="button secondary" disabled={running} onClick={() => {localStorage.removeItem(storageKey);history.current=[];setResult(null);}}>Übungsspeicher leeren</button>}
           {taskMode && (
             <button
               className="button test-button"
@@ -95,6 +131,7 @@ export function Playground({ lesson, tab, record }) {
           )}
         </div>
       </section>
+      {lesson.browser && result?.html && <BrowserPreview html={result.html} onActions={interact} busy={running} />}
       <section
         className="output-panel"
         aria-label="Code-Ausgabe"

@@ -60,7 +60,7 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   context,
   request,
 }) => {
-  test.setTimeout(60000);
+  test.setTimeout(90000);
   await page.goto("/");
   const manifest = await (await request.get("/manifest.webmanifest")).json();
   expect(manifest.display).toBe("standalone");
@@ -110,6 +110,8 @@ test("installed service worker keeps app, fonts, code execution and progress ava
     .getByRole("button", { name: "Nachschlagen", exact: true })
     .click();
   await page.getByRole("textbox").fill("append");
+  await expect(page.locator(".reference-entry")).toHaveCount(2);
+  await page.getByLabel("Lernbereich filtern").selectOption("python");
   await expect(page.locator(".reference-entry")).toHaveCount(1);
   await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
   await page.getByRole("row").filter({ hasText: "Textdateien in Zeilen zerlegen" }).click();
@@ -185,7 +187,7 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("7 / 7 bestanden");
 
-  for (const id of ["js-graph-dfs", "js-graph-shortest", "js-sort-numbers", "js-sort-ranking", "js-find-index", "js-binary-search", "js-array-find", "js-array-some", "js-array-every", "js-array-reduce", "js-fn-closure", "js-fn-independent", "js-obj-nested", "js-obj-optional", "js-async-catch", "js-async-all", "js-async-settled", "js-str-pad", "js-class-bind", "js-class-private", "js-error-json", "js-regex-state", "js-date-add", "js-async-any", "js-async-finally"]) {
+  for (const id of ["js-graph-dfs", "js-graph-shortest", "js-sort-numbers", "js-sort-ranking", "js-find-index", "js-binary-search", "js-array-find", "js-array-some", "js-array-every", "js-array-reduce", "js-fn-closure", "js-fn-independent", "js-obj-nested", "js-obj-optional", "js-async-catch", "js-async-all", "js-async-settled", "js-str-pad", "js-class-bind", "js-class-private", "js-error-json", "js-regex-state", "js-date-add", "js-async-any", "js-async-finally", "js-dom-create", "js-event-delegate", "js-storage-load", "js-fetch-ui", "js-browser-todo", "js-browser-highscore"]) {
     const lesson = jsLessons.find(item => item.id === id);
     await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
     await page.getByRole("row").filter({ hasText: lesson.title }).click();
@@ -304,4 +306,14 @@ test('project examples and interactive demo load offline before their first visi
   await page.getByRole('button', { name: 'Projekt als ZIP herunterladen' }).click();
   expect((await downloading).suggestedFilename()).toBe('codeklar-c-calculator.zip');
   await page.screenshot({ path: '/tmp/codeklar-projects-mobile.png', fullPage: true });
+});
+
+test('browser module preview and reference download work offline on first use',async({page,context})=>{
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  const lesson=jsLessons.find(item=>item.id==='js-browser-modules');
+  await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('button',{name:'Code bearbeiten',exact:true}).click();
+  for(const [name,code] of Object.entries(lesson.solutionFiles)){await page.getByRole('tab',{name,exact:true}).click();await page.getByLabel('JavaScript-Code').fill(code);}
+  await page.getByRole('button',{name:'Code ausführen',exact:true}).click();const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');await preview.locator('#a').fill('2');await preview.locator('#b').fill('3');await preview.getByRole('button').click();await expect(preview.locator('#ergebnis')).toHaveText('5');
+  const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Referenzprojekt als ZIP'}).click();expect((await downloading).suggestedFilename()).toBe('js-browser-modules.zip');
+  await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText('10 / 10 bestanden');
 });

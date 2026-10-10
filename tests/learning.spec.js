@@ -51,7 +51,7 @@ test("wrong answers are not solved; valid solutions persist after reload", async
 test("all JavaScript challenges accept correct solutions and reject constants", async ({
   page,
 }) => {
-  test.setTimeout(150000);
+  test.setTimeout(300000);
   await page.goto("/");
   for (const lesson of jsLessons) {
     await page.getByRole("button", { name: "Übungen", exact: true }).click();
@@ -391,6 +391,8 @@ test("quiz answers, reference search and exercise filters update their views", a
   await expect(page.getByText("1 von 1 Aufgaben gelöst")).toBeVisible();
   await page.getByRole("button", { name: "Nachschlagen", exact: true }).click();
   await page.getByRole("textbox").fill("append");
+  await expect(page.locator(".reference-entry")).toHaveCount(2);
+  await page.getByLabel("Lernbereich filtern").selectOption("python");
   await expect(page.locator(".reference-entry")).toHaveCount(1);
   await expect(page.locator(".reference-entry")).toContainText("None");
   await page.getByRole("button", { name: "Übungen", exact: true }).click();
@@ -1111,4 +1113,122 @@ test('UTC date lessons retain leap days, offsets and calendar boundaries in a di
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await context.close();
+});
+
+async function openBrowserLesson(page, id, example = false, mobile = false) {
+  const lesson = jsLessons.find(item => item.id === id);
+  await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+  await page.getByRole('row').filter({ hasText: lesson.title }).click();
+  if (example) await page.getByRole('tab', { name: 'Erklärung', exact: true }).click();
+  if (mobile) await page.getByRole('button', { name: 'Code bearbeiten', exact: true }).click();
+  return lesson;
+}
+
+test('browser calculator preview supports mobile form input, keyboard submit and all operations', async ({ page }) => {
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.setViewportSize({width:390,height:844});await page.goto('/');
+  const lesson=await openBrowserLesson(page,'js-browser-calculator');
+  await expect(page.getByLabel('Bedienung im Beispieltest')).toContainText('Eingabe bei #a: \"2\"');
+  await page.getByRole('button',{name:'Code bearbeiten',exact:true}).click();
+  await page.getByLabel('JavaScript-Code').fill(lesson.solution);
+  await page.getByRole('tab',{name:'HTML',exact:true}).click();
+  await page.getByLabel('HTML-Code').fill(lesson.browser.html.replace('Taschenrechner','Mein Rechner')+'<script>throw new Error("Untrusted script")</script>');
+  await page.getByRole('tab',{name:'JavaScript',exact:true}).click();
+  await page.getByRole('button',{name:'Code ausführen',exact:true}).click();
+  const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');
+  await expect(preview.getByRole('heading',{name:'Mein Rechner'})).toBeVisible();
+  await expect(preview.locator('#a')).toBeVisible();
+  await preview.locator('#a').fill('7');await preview.locator('#b').fill('3');
+  await preview.getByRole('button').click();await expect(preview.locator('#ergebnis')).toHaveText('10');
+  await preview.locator('#op').selectOption('/');await preview.locator('#b').fill('0');
+  await preview.locator('#b').press('Enter');await expect(preview.locator('#ergebnis')).toHaveText('Division durch 0');
+  await preview.locator('#op').selectOption('*');await preview.locator('#a').fill('0');await preview.locator('#b').fill('2');
+  await preview.getByRole('button').click();await expect(preview.locator('#ergebnis')).toHaveText('0');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'/tmp/codeklar-browser-mobile.png',fullPage:true});
+  await page.setViewportSize({width:1505,height:1045});
+  await page.screenshot({path:'/tmp/codeklar-browser-desktop.png',fullPage:true});
+  await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();
+  await expect(page.getByLabel('Code-Ausgabe')).toContainText('10 / 10 bestanden');expect(errors).toEqual([]);
+});
+
+test('browser todo safely displays user text, delegates deletion and restores isolated saved tasks',async({page})=>{
+  await page.goto('/');const lesson=await openBrowserLesson(page,'js-browser-todo');
+  await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Code ausführen',exact:true}).click();
+  const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');
+  await preview.locator('#neu').fill('<img src=x onerror=alert(1)>');await preview.getByRole('button',{name:'Hinzufügen'}).click();
+  await expect(preview.locator('#liste li')).toHaveCount(1);await expect(preview.locator('#liste')).toContainText('<img src=x onerror=alert(1)>');await expect(preview.locator('img')).toHaveCount(0);
+  await preview.locator('#neu').fill('JavaScript lernen');await preview.locator('#neu').press('Enter');await expect(preview.locator('#liste li')).toHaveCount(2);
+  await page.reload();await openBrowserLesson(page,'js-browser-todo');await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Code ausführen',exact:true}).click();await expect(preview.locator('#liste li')).toHaveCount(2);
+  await preview.locator('#liste li').first().getByRole('button').click();await expect(preview.locator('#liste li')).toHaveCount(1);await expect(preview.locator('#liste')).toContainText('JavaScript lernen');
+  await page.getByRole('button',{name:'Übungsspeicher leeren'}).click();await page.getByRole('button',{name:'Code ausführen',exact:true}).click();await expect(preview.locator('#liste li')).toHaveCount(0);
+  await expect(page.getByText(`0 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});
+
+test('browser highscore survives a new round and app reload without counting preview actions as solved',async({page})=>{
+  await page.goto('/');const lesson=await openBrowserLesson(page,'js-browser-highscore');await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Code ausführen',exact:true}).click();
+  const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');
+  await preview.getByRole('button',{name:'Treffer +1'}).click();await expect(preview.locator('#stand')).toHaveText('Punkte: 1 · Highscore: 1');
+  await preview.getByRole('button',{name:'Treffer +1'}).click();await expect(preview.locator('#stand')).toHaveText('Punkte: 2 · Highscore: 2');
+  await preview.getByRole('button',{name:'Neue Runde'}).click();await expect(preview.locator('#stand')).toHaveText('Punkte: 0 · Highscore: 2');
+  await page.reload();await openBrowserLesson(page,'js-browser-highscore');await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Code ausführen',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('Punkte: 0 · Highscore: 2');
+  await expect(page.getByText(`0 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
+});
+
+test('module browser project edits affect preview and its ZIP runs with a native browser DOM',async({page,context})=>{
+  test.setTimeout(60000);
+  await page.goto('/');const lesson=await openBrowserLesson(page,'js-browser-modules');
+  for(const [name,code] of Object.entries(lesson.solutionFiles)){await page.getByRole('tab',{name,exact:true}).click();await page.getByLabel('JavaScript-Code').fill(code);}
+  await page.getByRole('button',{name:'Code ausführen',exact:true}).click();const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');
+  await preview.locator('#a').fill('9');await preview.locator('#b').fill('4');await preview.locator('#op').selectOption('-');await preview.getByRole('button').click();await expect(preview.locator('#ergebnis')).toHaveText('5');
+  await page.getByRole('tab',{name:'rechner.js',exact:true}).click();await page.getByLabel('JavaScript-Code').fill(lesson.solutionFiles['rechner.js'].replace('a - b','a + b'));
+  await page.getByRole('button',{name:'Code ausführen',exact:true}).click();await preview.locator('#a').fill('9');await preview.locator('#b').fill('4');await preview.locator('#op').selectOption('-');await preview.getByRole('button').click();await expect(preview.locator('#ergebnis')).toHaveText('13');
+  const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Referenzprojekt als ZIP'}).click();const download=await downloading;expect(download.suggestedFilename()).toBe('js-browser-modules.zip');
+  const {unzipSync,strFromU8}=await import('fflate');const files=unzipSync(await readFile(await download.path()));expect(Object.keys(files).sort()).toEqual(['README.md','index.html','main.js','rechner.js','start.js','style.css']);expect(strFromU8(files['README.md'])).toContain('Referenzlösung');
+  await context.route('http://localhost:5173/export-test/**',route=>{const path=new URL(route.request().url()).pathname.replace('/export-test/','')||'index.html';const bytes=files[path];return route.fulfill({status:bytes?200:404,body:bytes?Buffer.from(bytes):'Missing',contentType:path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html'});});
+  const native=await context.newPage();await native.goto('http://localhost:5173/export-test/');await native.locator('#a').fill('9');await native.locator('#b').fill('4');await native.locator('#op').selectOption('-');await native.getByRole('button').click();await expect(native.locator('#ergebnis')).toHaveText('5');await native.close();
+});
+
+test('browser runner isolates storage, blocks real fetch and stops both setup and event loops',async({page})=>{
+  await page.goto('/');
+  async function run(code,options={}){return page.evaluate(async({code,options})=>{const {runJavaScript}=await import('/src/runner.js');return runJavaScript({code,browser:{html:'<button id="loop">Loop</button><p id="output"></p>',storage:{},fixtures:{}},...options});},{code,options});}
+  await page.evaluate(()=>localStorage.setItem('app-private-test','secret'));
+  expect((await run('console.log(localStorage.getItem("app-private-test"))')).logs).toEqual(['null']);
+  expect((await run('console.log(localStorage.setItem("x", 1),localStorage.removeItem("x"))')).logs).toEqual(['undefined undefined']);
+  expect((await run('await fetch("constructor")')).error).toContain('Keine lokale API-Antwort');
+  expect((await run('await fetch("https://example.com")')).error).toContain('Keine lokale API-Antwort');
+  expect((await run('while(true){}')).error).toContain('Zeitlimit');
+  expect((await run('document.querySelector("#loop").addEventListener("click",()=>{while(true){}});',{browserActions:[{selector:'#loop',type:'click'}]})).error).toContain('Zeitlimit');
+  expect((await run('document.querySelector("#output").textContent="wieder bereit";')).html).toContain('wieder bereit');
+  await page.getByRole('button',{name:'Übungen',exact:true}).click();await expect(page.getByRole('heading',{name:'Vom Verstehen zum Anwenden.'})).toBeVisible();
+});
+
+test('browser reference solutions agree with native DOM, events and response objects',async({page})=>{
+  await page.goto('/');
+  const lessons=jsLessons.filter(lesson=>lesson.browser&&!lesson.solutionFiles);
+  const failures=await page.evaluate(async lessons=>{
+    const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor,failures=[];
+    for(const lesson of lessons)for(const [index,check] of lesson.tests.entries()){
+      const environment={...lesson.browser,...check.browser};
+      // A fresh document avoids touching React's DOM or sharing event listeners between cases.
+      const document=new DOMParser().parseFromString(environment.html,'text/html');
+      const store=new Map(Object.entries(environment.storage||{}));
+      const storage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,String(value)),removeItem:key=>store.delete(key),clear:()=>store.clear()};
+      const fetch=async(url,options={})=>{
+        const fixture=environment.fixtures[url];if(!fixture||fixture.networkError)throw new TypeError('Netzwerkfehler');
+        let body=fixture.body,status=fixture.status??200;
+        if(fixture.echoJson){if(options.method!=='POST')status=405;else if(!new Headers(options.headers).get('content-type')?.includes('application/json'))status=400;else body=JSON.parse(options.body);}
+        return new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json'}});
+      };
+      try{
+        const fn=await new AsyncFunction('document','localStorage','fetch',lesson.solution+'\nreturn '+lesson.functionName)(document,storage,fetch);
+        let actual=await fn(structuredClone(check.input));
+        for(const action of check.actions){const target=document.querySelector(action.selector);if(action.value!==undefined)target.value=action.value;if(action.checked!==undefined)target.checked=action.checked;const event=action.key?new KeyboardEvent(action.type,{key:action.key,bubbles:true,cancelable:true}):new Event(action.type,{bubbles:true,cancelable:true});target.dispatchEvent(event);await new Promise(resolve=>setTimeout(resolve,10));}
+        if(typeof actual==='function')actual=actual();
+        if(JSON.stringify(actual)!==JSON.stringify(check.expected))failures.push({id:lesson.id,index,actual,expected:check.expected});
+      }catch(error){failures.push({id:lesson.id,index,error:error.message});}
+    }
+    return failures;
+  },lessons);
+  expect(failures).toEqual([]);
 });

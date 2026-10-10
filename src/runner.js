@@ -119,6 +119,10 @@ export async function runJavaScript(value) {
     }
     catch (error) { return Promise.resolve({ logs: [], error: error.message }); }
   }
+  if (value.browser) {
+    const { runBrowserJavaScript } = await import("./browserRunner");
+    return runBrowserJavaScript(value);
+  }
   return new Promise((resolve) => {
     const iframe = document.createElement("iframe");
     iframe.setAttribute("sandbox", "allow-scripts");

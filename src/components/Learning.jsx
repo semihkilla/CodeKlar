@@ -3,6 +3,7 @@ import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
+import { ProcessingLab } from "./ProcessingLab";
 import { ComputerSystemsLab } from "./ComputerSystemsLab";
 import { ComputerLab } from "./ComputerLab";
 import { FileLab } from "./FileLab";
@@ -419,7 +420,7 @@ export function Learning({
           </div>
         )}
       </div>
-      {course === "computer" && <><ComputerLab /><ComputerSystemsLab /></>}
+      {course === "computer" && <><ComputerLab /><ComputerSystemsLab /><ProcessingLab /></>}
       {lesson.category === "Ein-/Ausgabe & Dateien" && <FileLab />}
       <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">
         <button className="button secondary" disabled={lessonIndex === 0} onClick={() => goTo(available[lessonIndex - 1].id)}>Vorherige Lektion</button>

@@ -1,3 +1,4 @@
+import { computerProcessingLessons } from "./computerProcessingLessons";
 import { computerAdvancedLessons } from "./computerAdvancedLessons";
 // Sprachübergreifende Grundlagen; bewusst getrennt vom JavaScript-Lernpfad.
 const basics = [
@@ -819,4 +820,4 @@ const basics = [
   }
 ];
 
-export const computerLessons = [...basics, ...computerAdvancedLessons];
+export const computerLessons = [...basics, ...computerAdvancedLessons, ...computerProcessingLessons];

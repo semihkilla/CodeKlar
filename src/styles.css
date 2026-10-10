@@ -2086,3 +2086,5 @@ body {
 .network-stages .reached-stage { background:var(--accent-soft); }
 .network-stages [aria-current="step"] { border-color:var(--accent); }
 @media (max-width:480px) { .ram-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.scheduler-trace { display:flex; flex-wrap:wrap; gap:8px; list-style:none; padding:0; }
+.scheduler-trace li { display:flex; flex-direction:column; gap:8px; align-items:center; min-width:44px; padding:12px; border:1px solid var(--border); border-radius:8px; background:var(--accent-soft); }

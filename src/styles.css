@@ -2050,3 +2050,21 @@ body {
 .project-build{margin:20px 0;padding:16px;border:1px solid var(--border);border-radius:12px;min-width:0}.project-build-switch{display:flex;flex-wrap:wrap;gap:10px}.project-build-switch button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}.project-build progress{display:block;width:100%;margin:12px 0}.project-checkpoints{padding-left:24px}.project-checkpoints li{padding:12px 0;border-bottom:1px solid var(--border)}.project-checkpoints label{display:flex;align-items:center;gap:12px;cursor:pointer;line-height:1.5}.project-checkpoints input{width:22px;height:22px;flex-shrink:0;accent-color:var(--accent)}.project-checkpoints p{margin:10px 0}.project-checkpoints button{min-height:44px;white-space:normal;text-align:left}
 
 .project-demo-expanded{height:560px}
+
+/* Computergrundlagen: native experiments, usable without a code editor. */
+.computer-lab { margin: 24px 0; padding: clamp(16px, 3vw, 28px); border: 1px solid var(--border); border-radius: 16px; }
+.computer-lab p { line-height: 1.6; }
+.computer-experiment { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+.bit-grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; max-width: 600px; }
+.bit-toggle { display: flex; flex-direction: column; gap: 8px; align-items: center; padding: 12px 0; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: inherit; cursor: pointer; min-height: 64px; }
+.bit-toggle strong { font-size: 22px; }
+.bit-toggle.is-set { background: var(--accent); color: #101322; }
+.computer-field { display: flex; flex-direction: column; gap: 10px; margin: 18px 0; max-width: 600px; }
+.computer-field input:not([type="range"]) { width: 100%; box-sizing: border-box; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: inherit; font: inherit; }
+.computer-field input[type="range"] { width: 100%; accent-color: var(--accent); min-height: 32px; }
+.computer-results { display: flex; flex-wrap: wrap; gap: 12px 24px; padding: 16px 0; }
+.computer-results span { display: flex; flex-direction: column; gap: 6px; }
+.computer-results strong { font-family: "JetBrains Mono", monospace; }
+.computer-byte-output { white-space: pre-wrap; overflow-wrap: anywhere; padding: 16px; border: 1px solid var(--border); border-radius: 8px; line-height: 1.8; }
+.computer-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+@media (max-width: 480px) { .bit-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } }

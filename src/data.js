@@ -1,3 +1,4 @@
+import { computerLessons } from "./computerLessons";
 import { foundations } from "./foundations";
 import { typeLessons } from "./types";
 import { logicLessons } from "./logic";
@@ -23,6 +24,7 @@ import { buildLessons } from "./buildLessons";
 import { webLessons } from "./webLessons";
 
 export const courseGroups = [
+  { name: "Computergrundlagen", ids: ["computer"] },
   { name: "Programmiersprachen", ids: ["js", "java", "python", "c"] },
   { name: "Webgestaltung", ids: ["css"] },
   { name: "Frameworks & Bibliotheken", ids: ["react", "angular", "spring"] },
@@ -31,6 +33,7 @@ export const courseGroups = [
 ];
 
 export const courses = [
+  { id: "computer", name: "Computer verstehen", mark: "01", description: "Bits, Bytes, CPU und Speicher sprachübergreifend verstehen." },
   {
     id: "js",
     name: "JavaScript",
@@ -602,6 +605,7 @@ const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "
 export const lessons = [
   ...[...jsLessons].sort((a, b) => learningOrder.indexOf(a.id) - learningOrder.indexOf(b.id)),
   ...otherLessons,
+  ...computerLessons,
 ];
 export const lessonById = Object.fromEntries(
   lessons.map((lesson) => [lesson.id, lesson]),

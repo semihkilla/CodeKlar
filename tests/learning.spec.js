@@ -175,7 +175,7 @@ test("logic tasks expose precedence, operand values and unsafe property access",
 
 test("course groups and per-language topic progress remain navigable on mobile", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".course-group")).toHaveCount(5);
+  await expect(page.locator(".course-group")).toHaveCount(6);
   await expect(page.getByRole("region", { name: "Programmiersprachen", exact: true }).getByRole("button", { name: "JavaScript", exact: true })).toBeVisible();
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
   const controls = page.getByRole("region", { name: "Kontrollfluss-Lektionen", exact: true });
@@ -1363,4 +1363,84 @@ test('request reference frontend cancels a real local HTTP request',async({page}
 
 test('browser preview waits for its own bridge readiness and ignores stale readiness tokens',async({page})=>{
   await page.addInitScript(()=>{window.addEventListener('message',event=>{if(event.data?.kind==='codeklar-preview-ready'&&!window.allowPreviewReady){window.previewReady=event.data;window.previewSource=event.source;event.stopImmediatePropagation();}},true);});await page.goto('/');const lesson=await openBrowserLesson(page,'js-browser-modules');for(const [name,code] of Object.entries(lesson.solutionFiles)){await page.getByRole('tab',{name,exact:true}).click();await page.getByLabel('JavaScript-Code').fill(code);}await page.getByRole('button',{name:'Code ausführen',exact:true}).click();const iframe=page.locator('iframe[title="Interaktive Browser-Vorschau"]');await page.waitForFunction(()=>!!window.previewReady);await expect(iframe).toHaveCSS('pointer-events','none');await expect(page.getByText('Vorschau wird geladen …',{exact:true})).toBeVisible();await page.evaluate(()=>{window.allowPreviewReady=true;window.dispatchEvent(new MessageEvent('message',{source:window.previewSource,data:{kind:'codeklar-preview-ready',token:'alte-vorschau'}}));});await expect(iframe).toHaveCSS('pointer-events','none');await page.evaluate(()=>window.dispatchEvent(new MessageEvent('message',{source:window.previewSource,data:window.previewReady})));await expect(iframe).toHaveCSS('pointer-events','auto');const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');await preview.locator('#a').fill('2');await preview.locator('#b').fill('3');await preview.getByRole('button').click();await expect(preview.locator('#ergebnis')).toHaveText('5');
+});
+
+test('computer fundamentals quizzes reject wrong answers and preserve completed progress', async ({ page }) => {
+  const { computerLessons } = await import('../src/computerLessons.js');
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Verstehe, wie dein Computer arbeitet.' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Aufgabe', exact: true }).click();
+  await page.getByRole('radio', { name: computerLessons[0].options[0], exact: true }).click();
+  await page.getByRole('button', { name: 'Antwort prüfen' }).click();
+  await expect(page.getByText('Noch nicht ganz.', { exact: true })).toBeVisible();
+  await expect(page.getByText('0 von 24 Aufgaben gelöst', { exact: true })).toBeVisible();
+  for (const lesson of computerLessons) {
+    await page.getByRole('button', { name: 'Übungen', exact: true }).click();
+    await page.getByLabel('Lernbereich filtern').selectOption('computer');
+    await page.getByRole('row').filter({ hasText: lesson.title }).click();
+    await expect(page.getByRole('heading', { name: lesson.title, exact: true })).toBeVisible();
+    await page.getByRole('radio', { name: lesson.options[lesson.answer], exact: true }).click();
+    await page.getByRole('button', { name: 'Antwort prüfen' }).click();
+    await expect(page.getByText('Richtig! Gut verstanden.', { exact: true })).toBeVisible();
+  }
+  await expect(page.getByText('24 von 24 Aufgaben gelöst', { exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
+  await expect(page.getByText('24 von 24 Aufgaben gelöst', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Nachschlagen', exact: true }).click();
+  await page.getByLabel('Zum Beispiel map, === oder Python …').fill('Little Endian');
+  await expect(page.getByRole('heading', { name: 'Little Endian und Big Endian', exact: true })).toBeVisible();
+});
+
+test('computer lab demonstrates byte interpretation UTF-8 and persistent memory on desktop and mobile', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  page.on('console', msg => { if (['error','warning'].includes(msg.type())) errors.push(msg.text()); });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
+  const lab = page.getByRole('region', { name: 'Computer-Labor', exact: true });
+  const byte = page.getByLabel('Byte-Auswertung');
+  await expect(byte).toContainText('00101010');
+  await page.getByRole('button', { name: 'Bit 128', exact: true }).click();
+  await expect(byte).toContainText('10101010');
+  await expect(byte).toContainText('0xAA');
+  await expect(byte).toContainText('-86');
+  await page.getByLabel('Vorzeichenloser Wert (0–255)').fill('255');
+  await expect(byte).toContainText('11111111');
+  await expect(byte).toContainText('0xFF');
+  await expect(byte).toContainText('-1');
+  await page.getByLabel('Vorzeichenloser Wert (0–255)').fill('0');
+  await expect(byte).toContainText('00000000');
+  for (const [text, units, points, hex] of [['Aä😀',4,3,'41 C3 A4 F0 9F 98 80'], ['e\u0301',2,2,'65 CC 81'], ['',0,0,'Keine Bytes (leerer Text)']]) {
+    await page.getByLabel('Text für UTF-8', { exact: true }).fill(text);
+    await expect(page.getByLabel('UTF-8-Hexbytes')).toHaveText(hex);
+    await expect(page.getByLabel('Text-Auswertung')).toContainText(`UTF-16-Codeunits ${units}`);
+    await expect(page.getByLabel('Text-Auswertung')).toContainText(`Codepoints ${points}`);
+  }
+  const memory = page.getByLabel('Speichermodell');
+  for (const command of ['LOAD aus RAM','ADD 5','STORE ins RAM','SAVE auf SSD','Strom ausschalten']) {
+    await page.getByRole('button', { name: command, exact: true }).click();
+    if (command === 'ADD 5') { await expect(memory).toContainText('CPU-Register 12'); await expect(memory).toContainText('RAM 7'); }
+  }
+  await expect(memory).toContainText('CPU-Register leer');
+  await expect(memory).toContainText('RAM leer');
+  await expect(memory).toContainText('SSD 12');
+  await expect(page.getByRole('button', { name: 'Simulation beendet' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Modell zurücksetzen' }).click();
+  await expect(memory).toContainText('RAM 7');
+  await expect(memory).toContainText('SSD leer');
+  await page.getByLabel('Text für UTF-8', { exact: true }).fill('Aä😀');
+  await lab.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: '/tmp/codeklar-computer-desktop.png', animations: 'disabled' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await lab.scrollIntoViewIfNeeded();
+  for (const button of await page.locator('.bit-toggle').all()) { const box = await button.boundingBox(); expect(box.width).toBeGreaterThanOrEqual(44); expect(box.height).toBeGreaterThanOrEqual(44); }
+  await page.getByRole('button', { name: 'Bit 1', exact: true }).click();
+  await expect(byte).toContainText('00000001');
+  await page.screenshot({ path: '/tmp/codeklar-computer-mobile.png', animations: 'disabled' });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');
+  expect(await page.locator('vite-error-overlay').count()).toBe(0);
+  expect(errors).toEqual([]);
 });

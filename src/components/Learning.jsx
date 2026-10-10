@@ -3,6 +3,7 @@ import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
+import { ComputerLab } from "./ComputerLab";
 import { FileLab } from "./FileLab";
 
 export function ProgressStrip({ solved, total }) {
@@ -287,8 +288,8 @@ export function Learning({
   return (
     <div className="learning-page" data-mobile-pane={mobilePane}>
       <div className="page-intro">
-        <h1>Verstehe, was dein Code tut.</h1>
-        <p>Lerne Methoden, probiere sie aus und wende sie direkt an.</p>
+        <h1>{course === "computer" ? "Verstehe, wie dein Computer arbeitet." : "Verstehe, was dein Code tut."}</h1>
+        <p>{course === "computer" ? "Von einzelnen Bits bis zu CPU, Speicher und laufenden Programmen." : "Lerne Methoden, probiere sie aus und wende sie direkt an."}</p>
       </div>
       {(
         <div className="learning-path">
@@ -411,13 +412,13 @@ export function Learning({
               </div>
               <p className="detail-text">{lesson.detail}</p>
               <div className="static-note">
-                Dieser Lernbereich enthält Wissensfragen. Eine Laufzeitumgebung
-                für {courseName} ist noch nicht integriert.
+                {course === "computer" ? "Prüfe dein Verständnis unter „Aufgabe“ und experimentiere im Computer-Labor darunter." : `Dieser Lernbereich enthält Wissensfragen. Eine Laufzeitumgebung für ${courseName} ist noch nicht integriert.`}
               </div>
             </section>
           </div>
         )}
       </div>
+      {course === "computer" && <ComputerLab />}
       {lesson.category === "Ein-/Ausgabe & Dateien" && <FileLab />}
       <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">
         <button className="button secondary" disabled={lessonIndex === 0} onClick={() => goTo(available[lessonIndex - 1].id)}>Vorherige Lektion</button>

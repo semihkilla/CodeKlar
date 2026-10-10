@@ -332,3 +332,29 @@ test('URL catalog and request lab demos and starters load on their first offline
   await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Projektideen für alle Lernbereiche'}).click();await page.getByLabel('Projekt suchen').fill('URL-Katalog');await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').click();const catalog=page.frameLocator('iframe[title="URL-Katalog ausprobieren"]');await catalog.locator('#suche').fill('Kurs');await expect(catalog.locator('#status')).toHaveText('3 Treffer · Seite 1 von 1');await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Startgerüst als ZIP herunterladen'}).click();expect((await downloading).suggestedFilename()).toBe('codeklar-js-url-catalog-start.zip');
   await page.getByLabel('Projekt suchen').fill('Anfrage-Labor');await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').click();const lab=page.frameLocator('iframe[title="Anfrage-Labor ausprobieren"]');await lab.locator('#delay').selectOption('1500');await lab.getByRole('button',{name:'Anfrage starten'}).click();await expect(lab.locator('#status')).toHaveText('Lädt …');await lab.getByRole('button',{name:'Abbrechen',exact:true}).click();await expect(lab.locator('#status')).toHaveText('Abgebrochen');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('computer course and interactive labs work on their first offline visit', async ({ page, context }) => {
+  await page.goto('/');
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await page.reload();
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await context.setOffline(true);
+  await page.getByRole('button', { name: 'Navigation öffnen', exact: true }).click();
+  await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Ein Bit: zwei unterscheidbare Zustände' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Aufgabe', exact: true }).click();
+  await page.getByRole('radio', { name: '8', exact: true }).click();
+  await page.getByRole('button', { name: 'Antwort prüfen' }).click();
+  await expect(page.getByText('1 von 24 Aufgaben gelöst', { exact: true })).toBeVisible();
+  await page.getByLabel('Text für UTF-8', { exact: true }).fill('ä😀');
+  await expect(page.getByLabel('UTF-8-Hexbytes')).toHaveText('C3 A4 F0 9F 98 80');
+  await page.getByRole('button', { name: 'Bit 128', exact: true }).click();
+  await expect(page.getByLabel('Byte-Auswertung')).toContainText('-86');
+  for (const name of ['LOAD aus RAM','ADD 5','STORE ins RAM','SAVE auf SSD','Strom ausschalten']) await page.getByRole('button', { name, exact: true }).click();
+  await expect(page.getByLabel('Speichermodell')).toContainText('SSD 12');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.reload();
+  await page.getByRole('button', { name: 'Navigation öffnen', exact: true }).click();
+  await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
+  await expect(page.getByText('1 von 24 Aufgaben gelöst', { exact: true })).toBeVisible();
+});

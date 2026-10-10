@@ -1,4 +1,5 @@
 import {
+  Cpu,
   BookOpen,
   Rocket,
   ClipboardList,
@@ -27,6 +28,7 @@ export const navigation = [
   { id: "progress", label: "Fortschritt", icon: ChartNoAxesColumnIncreasing },
 ];
 const courseIcons = {
+  computer: Cpu,
   js: SiJavascript,
   java: FaJava,
   python: SiPython,

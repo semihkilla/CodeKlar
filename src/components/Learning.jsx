@@ -180,7 +180,7 @@ function LessonPanel({
                   {lesson.browser && !!lesson.tests[0].actions?.length && <>
                     <span>Bedienung im Beispieltest</span>
                     <ol aria-label="Bedienung im Beispieltest">{lesson.tests[0].actions.map((action, i) => <li key={i}>
-                      {action.type === "input" ? `Eingabe bei ${action.selector}: ${JSON.stringify(action.value)}` : action.type === "submit" ? `Formular ${action.selector} absenden` : action.type === "keydown" ? `Taste ${action.key} bei ${action.selector}` : `${action.selector} anklicken`}
+                      {action.type === "advance" ? `Zeit um ${action.ms} ms vorspulen` : action.type === "input" ? `Eingabe bei ${action.selector}: ${JSON.stringify(action.value)}` : action.type === "submit" ? `Formular ${action.selector} absenden` : action.type === "keydown" ? `Taste ${action.key} bei ${action.selector}` : `${action.selector} anklicken`}
                     </li>)}</ol>
                   </>}
                   <span>{lesson.testWorkshop ? "Erwartung an deine Tests" : "Erwartete Rückgabe"}</span>

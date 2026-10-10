@@ -37,7 +37,7 @@ export function BrowserPreview({ html, onActions, busy }) {
       });
       document.addEventListener('submit',event=>{event.preventDefault();send([{type:'submit',selector:selector(event.target)}]);});
       document.addEventListener('keydown',event=>{
-        if(!['Enter','Escape'].includes(event.key))return;
+        if(!['Enter','Escape','ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(event.key))return;
         event.preventDefault();flush();const actions=[{type:'keydown',selector:selector(event.target),key:event.key,value:event.target.value}];
         if(event.key==='Enter'&&event.target.form){for(const input of event.target.form.querySelectorAll('input,textarea,select'))actions.unshift({type:'input',selector:selector(input),value:input.value,checked:input.checked});actions.push({type:'submit',selector:selector(event.target.form)});}send(actions);
       });

@@ -51,7 +51,7 @@ test("wrong answers are not solved; valid solutions persist after reload", async
 test("all JavaScript challenges accept correct solutions and reject constants", async ({
   page,
 }) => {
-  test.setTimeout(300000);
+  test.setTimeout(360000);
   await page.goto("/");
   for (const lesson of jsLessons) {
     await page.getByRole("button", { name: "Übungen", exact: true }).click();
@@ -1205,7 +1205,7 @@ test('browser runner isolates storage, blocks real fetch and stops both setup an
 
 test('browser reference solutions agree with native DOM, events and response objects',async({page})=>{
   await page.goto('/');
-  const lessons=jsLessons.filter(lesson=>lesson.browser&&!lesson.solutionFiles);
+  const lessons=jsLessons.filter(lesson=>lesson.browser&&!lesson.browser.clock&&!lesson.solutionFiles);
   const failures=await page.evaluate(async lessons=>{
     const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor,failures=[];
     for(const lesson of lessons)for(const [index,check] of lesson.tests.entries()){
@@ -1249,4 +1249,33 @@ test('practical number array and game tasks expose wrong rounding, shared rows, 
     await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${lesson.tests.length} / ${lesson.tests.length} bestanden`);
   }
   await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'/tmp/codeklar-checkout-mobile.png',fullPage:true});
+});
+
+test('controlled clock supports mobile stopwatch pause resume and cancellation without changing course progress',async({page})=>{
+  await page.setViewportSize({width:390,height:844});await page.goto('/');const lesson=await openBrowserLesson(page,'js-time-stopwatch',false,true);await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Code ausführen',exact:true}).click();const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');
+  await preview.getByRole('button',{name:'Start',exact:true}).click();await page.getByRole('button',{name:'Zeit +1000 ms',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('1000');
+  await preview.getByRole('button',{name:'Pause',exact:true}).click();await page.getByRole('button',{name:'Zeit +1000 ms',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('1000');
+  await preview.getByRole('button',{name:'Start',exact:true}).click();await page.getByRole('button',{name:'Zeit +100 ms',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('1100');await preview.getByRole('button',{name:'Reset',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('0');
+  await expect(page.getByText(`0 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'/tmp/codeklar-clock-mobile.png',fullPage:true});
+});
+
+test('reaction game rejects early clicks and movement game responds to buttons and arrows',async({page})=>{
+  await page.goto('/');let lesson=await openBrowserLesson(page,'js-time-reaction');await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Code ausführen',exact:true}).click();const preview=page.frameLocator('iframe[title="Interaktive Browser-Vorschau"]');
+  await preview.locator('#stand').waitFor();await preview.locator('#start').evaluate(node=>{node.click();node.ownerDocument.querySelector('#treffer').click();});await expect(preview.locator('#stand')).toHaveText('Fehlstart');await page.getByRole('button',{name:'Zeit +1000 ms',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('Fehlstart');
+  await preview.getByRole('button',{name:'Neue Runde',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('Warten');await page.getByRole('button',{name:'Zeit +1000 ms',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('Bereit');await preview.getByRole('button',{name:'Jetzt!',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('500');
+  lesson=await openBrowserLesson(page,'js-time-move');await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Code ausführen',exact:true}).click();await preview.getByRole('button',{name:'Rechts',exact:true}).click();await page.getByRole('button',{name:'Zeit +100 ms',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('10');await expect(preview.locator('#figur')).toHaveCSS('transform','matrix(1, 0, 0, 1, 10, 0)');
+  await preview.getByRole('button',{name:'Links',exact:true}).press('ArrowLeft');await page.getByRole('button',{name:'Zeit +100 ms',exact:true}).click();await expect(preview.locator('#stand')).toHaveText('0');
+});
+
+test('clock bounds callback storms and preserves the existing real timer runner',async({page})=>{
+  await page.goto('/');const run=async(code,browser,actions=[])=>page.evaluate(async({code,browser,actions})=>{const {runJavaScript}=await import('/src/runner.js');return runJavaScript({code,browser,browserActions:actions});},{code,browser,actions});
+  const clock={html:'<p>Uhr</p>',clock:true};expect((await run('setInterval(()=>{},1);',clock,[{type:'advance',ms:2000}])).error).toContain('Zu viele Timer');expect((await run('setTimeout(()=>{while(true){}},10);',clock,[{type:'advance',ms:10}])).error).toContain('Zeitlimit');
+  expect((await run('await new Promise(resolve=>setTimeout(resolve,10));console.log("echte Zeit");',{html:'<p>Normal</p>'})).logs).toEqual(['echte Zeit']);
+  const result=await run('const order=[];queueMicrotask(()=>order.push("micro"));setTimeout(()=>order.push("timer"),1);console.log("bereit");',clock,[{type:'advance',ms:1}]);expect(result.error).toBeUndefined();expect(result.clock).toBe(1);
+});
+
+test('downloaded stopwatch project uses real browser time and pauses its display',async({page,context})=>{
+  await page.goto('/');await openBrowserLesson(page,'js-time-stopwatch');const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Referenzprojekt als ZIP'}).click();const download=await downloading;expect(download.suggestedFilename()).toBe('js-time-stopwatch.zip');
+  const {unzipSync}=await import('fflate');const files=unzipSync(await readFile(await download.path()));await context.route('http://localhost:5173/time-export/**',route=>{const path=new URL(route.request().url()).pathname.replace('/time-export/','')||'index.html';return route.fulfill({status:files[path]?200:404,body:files[path]?Buffer.from(files[path]):'Missing',contentType:path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html'});});
+  const native=await context.newPage();await native.goto('http://localhost:5173/time-export/');await native.getByRole('button',{name:'Start',exact:true}).click();await expect.poll(async()=>Number(await native.locator('#stand').textContent())).toBeGreaterThan(0);await native.getByRole('button',{name:'Pause',exact:true}).click();const paused=await native.locator('#stand').textContent();await native.evaluate(()=>new Promise(resolve=>setTimeout(resolve,200)));await expect(native.locator('#stand')).toHaveText(paused);await native.getByRole('button',{name:'Reset',exact:true}).click();await expect(native.locator('#stand')).toHaveText('0');await native.close();
 });

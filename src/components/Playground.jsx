@@ -23,6 +23,7 @@ export function Playground({ lesson, tab, record }) {
   const history = useRef([]);
   const seed = useRef({});
   const busy = useRef(false);
+  const pendingActions = useRef([]);
   const storageKey = `codeklar-browser-sandbox-${lesson.id}`;
   function readBrowserStorage() {
     try { return JSON.parse(localStorage.getItem(storageKey) || "null") || lesson.browser?.storage || {}; }
@@ -34,12 +35,20 @@ export function Playground({ lesson, tab, record }) {
     catch { output.logs = [...(output.logs || []), "Spielstand konnte nicht dauerhaft gespeichert werden."]; }
   }
   async function interact(actions) {
+    pendingActions.current.push(...actions);
     if(busy.current) return;
     busy.current=true;setRunning(true);
-    if(history.current.length+actions.length>200){setResult({logs:[],error:"Starte den Code erneut, um weitere Aktionen auszuprobieren."});setRunning(false);busy.current=false;return;}
-    history.current=[...history.current,...actions];
-    const output=await runJavaScript({code,functionName:lesson.functionName,initializeBrowser:taskMode || tab === "solution",browserInput:lesson.tests?.[0]?.input,...(files?{files,functionName:lesson.functionName}:{}),browser:{...lesson.browser,html,storage:seed.current},browserActions:history.current});
-    persistBrowserStorage(output);setResult(output);setRunning(false);busy.current=false;
+    try {
+      while(pendingActions.current.length) {
+        const nextActions=pendingActions.current.splice(0);
+        if(history.current.length+nextActions.length>200){setResult({logs:[],error:"Starte den Code erneut, um weitere Aktionen auszuprobieren."});pendingActions.current=[];break;}
+        history.current=[...history.current,...nextActions];
+        const output=await runJavaScript({code,functionName:lesson.functionName,initializeBrowser:taskMode || tab === "solution",browserInput:lesson.tests?.[0]?.input,...(files?{files,functionName:lesson.functionName}:{}),browser:{...lesson.browser,html,storage:seed.current},browserActions:history.current});
+        persistBrowserStorage(output);setResult(output);
+      }
+    } finally {
+      setRunning(false);busy.current=false;
+    }
   }
   useEffect(() => {
     setCode(initial);
@@ -51,6 +60,7 @@ export function Playground({ lesson, tab, record }) {
     if (busy.current) return;
     busy.current=true;
     history.current=[];
+    pendingActions.current=[];
     seed.current=readBrowserStorage();
     setRunning(true);
     setResult(null);
@@ -131,6 +141,7 @@ export function Playground({ lesson, tab, record }) {
           )}
         </div>
       </section>
+      {lesson.browser?.clock && result?.html && <section className="output-panel" aria-label="Übungsuhr"><strong>Übungsuhr: {result.clock || 0} ms</strong><p>Die Zeit läuft hier durch deine Eingaben. Im heruntergeladenen Projekt läuft sie automatisch.</p><div className="editor-actions">{[16,100,1000].map(ms=><button className="button secondary" key={ms} disabled={running} onClick={()=>interact([{type:"advance",ms}])}>Zeit +{ms} ms</button>)}</div></section>}
       {lesson.browser && result?.html && <BrowserPreview html={result.html} onActions={interact} busy={running} />}
       <section
         className="output-panel"

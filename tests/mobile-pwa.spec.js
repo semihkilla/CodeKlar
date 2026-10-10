@@ -60,7 +60,7 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   context,
   request,
 }) => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
   await page.goto("/");
   const manifest = await (await request.get("/manifest.webmanifest")).json();
   expect(manifest.display).toBe("standalone");
@@ -187,7 +187,7 @@ test("installed service worker keeps app, fonts, code execution and progress ava
   await page.getByRole("button", { name: "Lösung prüfen", exact: true }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("7 / 7 bestanden");
 
-  for (const id of ["js-graph-dfs", "js-graph-shortest", "js-sort-numbers", "js-sort-ranking", "js-find-index", "js-binary-search", "js-array-find", "js-array-some", "js-array-every", "js-array-reduce", "js-fn-closure", "js-fn-independent", "js-obj-nested", "js-obj-optional", "js-async-catch", "js-async-all", "js-async-settled", "js-str-pad", "js-class-bind", "js-class-private", "js-error-json", "js-regex-state", "js-date-add", "js-async-any", "js-async-finally", "js-dom-create", "js-event-delegate", "js-storage-load", "js-fetch-ui", "js-browser-todo", "js-browser-highscore", "js-math-round", "js-math-dice", "js-array-splice", "js-array-grid", "js-obj-from-entries", "js-game-collision", "js-shop-checkout"]) {
+  for (const id of ["js-graph-dfs", "js-graph-shortest", "js-sort-numbers", "js-sort-ranking", "js-find-index", "js-binary-search", "js-array-find", "js-array-some", "js-array-every", "js-array-reduce", "js-fn-closure", "js-fn-independent", "js-obj-nested", "js-obj-optional", "js-async-catch", "js-async-all", "js-async-settled", "js-str-pad", "js-class-bind", "js-class-private", "js-error-json", "js-regex-state", "js-date-add", "js-async-any", "js-async-finally", "js-dom-create", "js-event-delegate", "js-storage-load", "js-fetch-ui", "js-browser-todo", "js-browser-highscore", "js-math-round", "js-math-dice", "js-array-splice", "js-array-grid", "js-obj-from-entries", "js-game-collision", "js-shop-checkout", "js-time-timeout", "js-time-debounce", "js-time-frame-loop", "js-time-stopwatch", "js-time-reaction", "js-time-move"]) {
     const lesson = jsLessons.find(item => item.id === id);
     await page.getByLabel("Schnellnavigation").getByRole("button", { name: "Übungen", exact: true }).click();
     await page.getByRole("row").filter({ hasText: lesson.title }).click();

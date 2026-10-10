@@ -1,4 +1,6 @@
-export const projects = [
+import { buildProjects } from "./buildProjects";
+
+const existingProjects = [
   {
     "id": "js-click",
     "course": "js",
@@ -433,3 +435,5 @@ export const projects = [
     "demo": null
   }
 ];
+
+export const projects = [...existingProjects, ...buildProjects];

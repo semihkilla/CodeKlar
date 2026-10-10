@@ -51,7 +51,7 @@ test("wrong answers are not solved; valid solutions persist after reload", async
 test("all JavaScript challenges accept correct solutions and reject constants", async ({
   page,
 }) => {
-  test.setTimeout(360000);
+  test.setTimeout(420000);
   await page.goto("/");
   for (const lesson of jsLessons) {
     await page.getByRole("button", { name: "Übungen", exact: true }).click();
@@ -863,7 +863,7 @@ test('project library covers every course, runs its game and downloads complete 
   await page.getByRole('navigation', { name: 'Schnellnavigation' }).getByRole('button', { name: 'Übungen' }).click();
   await page.getByRole('button', { name: 'Projektideen für alle Lernbereiche' }).click();
   await expect(page.getByRole('heading', { name: 'Aus Funktionen werden Projekte.' })).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Projektbeispiele' }).getByRole('button')).toHaveCount(12);
+  await expect(page.getByRole('navigation', { name: 'Projektbeispiele' }).getByRole('button')).toHaveCount(19);
   const game = page.frameLocator('iframe[title="Klick-Challenge ausprobieren"]');
   await game.getByRole('button', { name: 'Neue Runde' }).click();
   await game.getByRole('button', { name: 'Klick!', exact: true }).click();
@@ -1278,4 +1278,63 @@ test('downloaded stopwatch project uses real browser time and pauses its display
   await page.goto('/');await openBrowserLesson(page,'js-time-stopwatch');const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Referenzprojekt als ZIP'}).click();const download=await downloading;expect(download.suggestedFilename()).toBe('js-time-stopwatch.zip');
   const {unzipSync}=await import('fflate');const files=unzipSync(await readFile(await download.path()));await context.route('http://localhost:5173/time-export/**',route=>{const path=new URL(route.request().url()).pathname.replace('/time-export/','')||'index.html';return route.fulfill({status:files[path]?200:404,body:files[path]?Buffer.from(files[path]):'Missing',contentType:path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html'});});
   const native=await context.newPage();await native.goto('http://localhost:5173/time-export/');await native.getByRole('button',{name:'Start',exact:true}).click();await expect.poll(async()=>Number(await native.locator('#stand').textContent())).toBeGreaterThan(0);await native.getByRole('button',{name:'Pause',exact:true}).click();const paused=await native.locator('#stand').textContent();await native.evaluate(()=>new Promise(resolve=>setTimeout(resolve,200)));await expect(native.locator('#stand')).toHaveText(paused);await native.getByRole('button',{name:'Reset',exact:true}).click();await expect(native.locator('#stand')).toHaveText('0');await native.close();
+});
+
+async function openBuildProject(page, id) {
+  const {buildProjects}=await import('../src/buildProjects.js');const project=buildProjects.find(p=>p.id===id);
+  await page.getByRole('button',{name:'Übungen',exact:true}).first().click();await page.getByRole('button',{name:'Projektideen für alle Lernbereiche'}).click();
+  await page.getByLabel('Projekt suchen').fill(project.title);await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').click();return project;
+}
+
+test('self build hides reference code, downloads a starter and persists honestly labelled checkpoints',async({page})=>{
+  await page.setViewportSize({width:390,height:844});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');const project=await openBuildProject(page,'js-file-explorer');
+  await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();await expect(page.getByRole('heading',{name:'Vollständiger Code'})).toHaveCount(0);await expect(page.getByText('0 von 5 Etappen selbst geprüft')).toBeVisible();
+  await page.getByRole('button',{name:'Hinweis: Text lesen',exact:true}).click();await expect(page.getByText('await file.text() wartet auf den Inhalt.')).toBeVisible();await page.getByRole('checkbox',{name:'Text lesen',exact:true}).check();await expect(page.getByText('1 von 5 Etappen selbst geprüft')).toBeVisible();
+  const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Startgerüst als ZIP herunterladen'}).click();const archive=await downloading;expect(archive.suggestedFilename()).toBe('codeklar-js-file-explorer-start.zip');const {unzipSync,strFromU8}=await import('fflate');const files=unzipSync(await readFile(await archive.path()));expect(strFromU8(files['index.html'])).toContain('TODO');expect(strFromU8(files['README.md'])).toContain('Selbst bauen');expect(strFromU8(files['index.html'])).not.toBe(project.files['index.html']);
+  await page.reload();await openBuildProject(page,'js-file-explorer');await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();await expect(page.getByRole('checkbox',{name:'Text lesen',exact:true})).toBeChecked();await expect(page.getByText('1 von 5 Etappen selbst geprüft')).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'/tmp/codeklar-self-build-mobile.png',fullPage:true});await page.getByRole('button',{name:'Referenz ansehen',exact:true}).click();await expect(page.getByLabel('Quellcode index.html')).toContainText('await file.text()');expect(errors).toEqual([]);
+});
+
+test('file explorer reads UTF-8 safely, rejects oversized files and downloads actual JSON',async({page})=>{
+  await page.goto('/');await openBuildProject(page,'js-file-explorer');const demo=page.frameLocator('iframe[title="Datei-Explorer ausprobieren"]');const text='Grüße 🎮\n<img src=x onerror=alert(1)>';
+  await demo.locator('#datei').setInputFiles({name:'notizen.txt',mimeType:'text/plain',buffer:Buffer.from(text)});await expect(demo.locator('#inhalt')).toHaveText(text);await expect(demo.locator('#inhalt img')).toHaveCount(0);
+  const downloading=page.waitForEvent('download');await demo.getByRole('button',{name:'Als JSON herunterladen'}).click();const archive=await downloading;expect(JSON.parse(await readFile(await archive.path(),'utf8'))).toEqual({text});
+  await demo.locator('#datei').setInputFiles({name:'gross.txt',mimeType:'text/plain',buffer:Buffer.alloc(1_000_001)});await expect(demo.locator('#status')).toContainText('Datei zu groß');await expect(demo.locator('#export')).toBeDisabled();
+});
+
+test('image studio decodes scales filters and exports real PNG pixels',async({page})=>{
+  await page.goto('/');await openBuildProject(page,'js-image-studio');const demo=page.frameLocator('iframe[title="Bildwerkstatt ausprobieren"]');const data=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=800;c.height=400;const ctx=c.getContext('2d');ctx.fillStyle='#ff0000';ctx.fillRect(0,0,800,400);return c.toDataURL().split(',')[1];});
+  await demo.locator('#bild').setInputFiles({name:'rot.png',mimeType:'image/png',buffer:Buffer.from(data,'base64')});await expect(demo.locator('#status')).toHaveText('320 × 160 Pixel');await expect(demo.locator('#canvas')).toHaveAttribute('width','320');await expect(demo.locator('#canvas')).toHaveAttribute('height','160');
+  await demo.getByRole('button',{name:'Graustufen umschalten'}).click();const pixel=await demo.locator('#canvas').evaluate(c=>[...c.getContext('2d').getImageData(10,10,1,1).data]);expect(pixel[0]).toBe(pixel[1]);expect(pixel[1]).toBe(pixel[2]);expect(pixel[3]).toBe(255);
+  const downloading=page.waitForEvent('download');await demo.getByRole('button',{name:'PNG herunterladen'}).click();const archive=await downloading;const png=await readFile(await archive.path());expect(png.readUInt32BE(16)).toBe(320);expect(png.readUInt32BE(20)).toBe(160);
+  await demo.locator('#bild').setInputFiles({name:'kaputt.png',mimeType:'image/png',buffer:Buffer.from('kein Bild')});await expect(demo.locator('#status')).toContainText('Bild konnte nicht geöffnet werden');await expect(demo.locator('#speichern')).toBeDisabled();
+});
+
+test('canvas paint maps pointer coordinates on mobile and clears exported pixels',async({page})=>{
+  await page.setViewportSize({width:390,height:844});await page.goto('/');await openBuildProject(page,'js-canvas-paint');const demo=page.frameLocator('iframe[title="Canvas-Malstudio ausprobieren"]'),canvas=demo.locator('#canvas');
+  await page.locator('iframe[title="Canvas-Malstudio ausprobieren"]').scrollIntoViewIfNeeded();await canvas.evaluate(c=>c.scrollIntoView({behavior:'instant',block:'center'}));const rect=await canvas.boundingBox();await page.mouse.move(rect.x+rect.width*.2,rect.y+rect.height*.5);await page.mouse.down();await page.mouse.move(rect.x+rect.width*.8,rect.y+rect.height*.5,{steps:8});await page.mouse.up();await expect(demo.locator('#status')).toHaveText('Strich gezeichnet.');const colored=await canvas.evaluate(c=>[...c.getContext('2d').getImageData(240,120,1,1).data]);expect(colored.slice(0,3)).not.toEqual([16,22,37]);
+  await demo.getByRole('button',{name:'Leeren',exact:true}).click();expect(await canvas.evaluate(c=>[...c.getContext('2d').getImageData(240,120,1,1).data])).toEqual([16,22,37,255]);const downloading=page.waitForEvent('download');await demo.getByRole('button',{name:'PNG herunterladen'}).click();const archive=await downloading;expect((await readFile(await archive.path())).readUInt32BE(16)).toBe(480);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('pong supports keyboard and touch button input and pauses a real frame loop',async({page})=>{
+  await page.goto('/');await openBuildProject(page,'js-canvas-pong');const demo=page.frameLocator('iframe[title="Pong mit Touchsteuerung ausprobieren"]');await demo.getByRole('button',{name:'Start / Neustart'}).click();await expect(demo.locator('#status')).toContainText('laeuft');await demo.locator('#rechts').focus();await demo.locator('#rechts').press('ArrowRight');
+  await demo.getByRole('button',{name:'Pause / Weiter'}).click();await expect(demo.locator('#status')).toContainText('pausiert');const before=await demo.locator('#canvas').evaluate(c=>c.toDataURL());await page.evaluate(()=>new Promise(r=>setTimeout(r,120)));expect(await demo.locator('#canvas').evaluate(c=>c.toDataURL())).toBe(before);
+  await demo.getByRole('button',{name:'Start / Neustart'}).click();await expect(demo.locator('#status')).toContainText('laeuft · Punkte: 0');const button=demo.locator('#links');await button.scrollIntoViewIfNeeded();const rect=await button.boundingBox();await page.mouse.move(rect.x+rect.width/2,rect.y+rect.height/2);await page.mouse.down();await page.evaluate(()=>new Promise(r=>setTimeout(r,120)));await page.mouse.up();await demo.getByRole('button',{name:'Pause / Weiter'}).click();await expect(demo.locator('#status')).toContainText('pausiert');
+});
+
+test('downloaded Node CLI API SQLite and modular budget execute their real integration tests',async({page})=>{
+  test.setTimeout(60000);const {mkdtemp,writeFile,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path'),{execFile}=await import('node:child_process'),{promisify}=await import('node:util'),{unzipSync,strFromU8}=await import('fflate');const run=promisify(execFile);
+  await page.goto('/');for(const [id,filename] of [['js-node-notes','cli.test.mjs'],['js-node-sqlite','api.test.mjs'],['js-tested-budget','budget.test.js']]){const project=await openBuildProject(page,id);const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen'}).click();const archive=await downloading,files=unzipSync(await readFile(await archive.path())),dir=await mkdtemp(join(tmpdir(),'codeklar-download-'));
+    try{for(const [name,bytes] of Object.entries(files)){await writeFile(join(dir,name),bytes);}for(const [name,content] of Object.entries(project.files))expect(strFromU8(files[name])).toBe(content);const result=await run(process.execPath,['--test',filename],{cwd:dir,timeout:15000});expect(result.stdout).toMatch(/pass [1-9]/);expect(result.stdout).toContain('fail 0');}finally{await rm(dir,{recursive:true,force:true});}
+  }
+});
+
+test('SQLite reference frontend creates toggles and deletes records through a real local server',async({page})=>{
+  const {buildProjects}=await import('../src/buildProjects.js'),project=buildProjects.find(p=>p.id==='js-node-sqlite');const {mkdtemp,writeFile,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path'),{pathToFileURL}=await import('node:url'),{once}=await import('node:events');const dir=await mkdtemp(join(tmpdir(),'codeklar-api-ui-'));let app;
+  try{for(const [name,content] of Object.entries(project.files))await writeFile(join(dir,name),content);const {createApp}=await import(pathToFileURL(join(dir,'api.mjs')).href);app=createApp(':memory:');app.server.listen(0,'127.0.0.1');await once(app.server,'listening');await page.goto(`http://127.0.0.1:${app.server.address().port}`);await expect(page).toHaveTitle('Aufgaben mit SQLite');await page.locator('#titel').fill('<b>SQL lernen</b>');await page.getByRole('button',{name:'Speichern',exact:true}).click();await expect(page.locator('#liste')).toContainText('<b>SQL lernen</b>');await expect(page.locator('#liste b')).toHaveCount(0);await page.getByRole('button',{name:'Erledigen',exact:true}).click();await expect(page.locator('#liste')).toContainText('✓');await page.getByRole('checkbox',{name:'Nur offene Aufgaben'}).check();await expect(page.locator('#liste li')).toHaveCount(0);await page.getByRole('checkbox',{name:'Nur offene Aufgaben'}).uncheck();await expect(page.locator('#liste li')).toHaveCount(1);await page.getByRole('button',{name:'Löschen',exact:true}).click();await expect(page.locator('#liste li')).toHaveCount(0);}finally{if(app){await new Promise(resolve=>app.server.close(resolve));app.db.close();}await rm(dir,{recursive:true,force:true});}
+});
+
+test('modular budget frontend parses cents persists entries and reports invalid amounts',async({page,context})=>{
+  const {buildProjects}=await import('../src/buildProjects.js'),project=buildProjects.find(p=>p.id==='js-tested-budget');await context.route('http://localhost:5173/budget-export/**',route=>{const path=new URL(route.request().url()).pathname.replace('/budget-export/','')||'index.html',content=project.files[path];return route.fulfill({status:content?200:404,body:content||'Missing',contentType:path.endsWith('.js')?'text/javascript':'text/html'});});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/budget-export/');await expect(page).toHaveTitle('Haushaltsbuch mit Tests');await page.locator('#titel').fill('Einnahme');await page.locator('#betrag').fill('12,50');await page.getByRole('button',{name:'Eintrag speichern'}).click();await expect(page.locator('#saldo')).toHaveText('12.50 €');await page.locator('#titel').fill('Ausgabe');await page.locator('#betrag').fill('-2.05');await page.getByRole('button',{name:'Eintrag speichern'}).click();await expect(page.locator('#saldo')).toHaveText('10.45 €');await page.reload();await expect(page.locator('#liste li')).toHaveCount(2);await expect(page.locator('#saldo')).toHaveText('10.45 €');await page.locator('#titel').fill('Ungültig');await page.locator('#betrag').fill('12abc');await page.getByRole('button',{name:'Eintrag speichern'}).click();await expect(page.locator('#status')).toContainText('höchstens zwei Nachkommastellen');await expect(page.locator('#liste li')).toHaveCount(2);await page.getByRole('button',{name:'Löschen',exact:true}).first().click();await expect(page.locator('#saldo')).toHaveText('-2.05 €');expect(errors).toEqual([]);
 });

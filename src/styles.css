@@ -2068,3 +2068,21 @@ body {
 .computer-byte-output { white-space: pre-wrap; overflow-wrap: anywhere; padding: 16px; border: 1px solid var(--border); border-radius: 8px; line-height: 1.8; }
 .computer-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 @media (max-width: 480px) { .bit-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } }
+.system-lab-tabs { display:flex; flex-wrap:wrap; gap:10px; }
+.computer-field select, .computer-field textarea { width:100%; min-height:44px; box-sizing:border-box; padding:12px; border:1px solid var(--border); background:var(--surface); color:inherit; border-radius:8px; font:inherit; }
+.computer-field textarea { font-family:var(--mono); resize:vertical; line-height:1.6; }
+.computer-flow { padding:16px; border:1px solid var(--border); border-radius:8px; overflow-wrap:anywhere; }
+.computer-table-wrap { overflow-x:auto; }
+.computer-table { border-collapse:collapse; width:100%; margin:16px 0; font-family:var(--mono); }
+.computer-table caption { text-align:left; padding-bottom:12px; font:inherit; }
+.computer-table td, .computer-table th { text-align:left; border-bottom:1px solid var(--border); padding:12px 8px; }
+.computer-table th { font-size:12px; }
+.current-model-row { background:var(--accent-soft); }
+.ram-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:16px; }
+.ram-grid span { display:flex; flex-direction:column; gap:8px; padding:12px; border:1px solid var(--border); border-radius:8px; font-size:12px; }
+.ram-grid strong { font:18px var(--mono); }
+.network-stages { display:flex; flex-wrap:wrap; gap:8px; padding:0; list-style:none; }
+.network-stages li { padding:12px; border:1px solid var(--border); border-radius:8px; }
+.network-stages .reached-stage { background:var(--accent-soft); }
+.network-stages [aria-current="step"] { border-color:var(--accent); }
+@media (max-width:480px) { .ram-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }

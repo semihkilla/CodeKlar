@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { computerLessons } from "../src/computerLessons.js";
 import { jsLessons } from "../src/data.js";
 import { readFile } from "node:fs/promises";
 
@@ -345,7 +346,7 @@ test('computer course and interactive labs work on their first offline visit', a
   await page.getByRole('tab', { name: 'Aufgabe', exact: true }).click();
   await page.getByRole('radio', { name: '8', exact: true }).click();
   await page.getByRole('button', { name: 'Antwort prüfen' }).click();
-  await expect(page.getByText('1 von 24 Aufgaben gelöst', { exact: true })).toBeVisible();
+  await expect(page.getByText(`1 von ${computerLessons.length} Aufgaben gelöst`, { exact: true })).toBeVisible();
   await page.getByLabel('Text für UTF-8', { exact: true }).fill('ä😀');
   await expect(page.getByLabel('UTF-8-Hexbytes')).toHaveText('C3 A4 F0 9F 98 80');
   await page.getByRole('button', { name: 'Bit 128', exact: true }).click();
@@ -356,5 +357,18 @@ test('computer course and interactive labs work on their first offline visit', a
   await page.reload();
   await page.getByRole('button', { name: 'Navigation öffnen', exact: true }).click();
   await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
-  await expect(page.getByText('1 von 24 Aufgaben gelöst', { exact: true })).toBeVisible();
+  await expect(page.getByText(`1 von ${computerLessons.length} Aufgaben gelöst`, { exact: true })).toBeVisible();
+});
+
+test('system CPU and JavaScript memory binary and microtask lessons work offline on first use',async({page,context})=>{
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();
+  const lab=page.getByRole('region',{name:'System-Labor',exact:true});await lab.getByRole('tab',{name:'Lern-CPU',exact:true}).click();
+  await page.getByLabel('CPU-Programm',{exact:true}).fill('SET 255\nADD 1\nSTORE 0\nHALT');await page.getByRole('button',{name:'CPU bis HALT ausführen'}).click();await expect(page.getByLabel('CPU-Zustand')).toContainText('Register 0');await expect(page.getByLabel('CPU-Zustand')).toContainText('HALT');
+  await lab.getByRole('tab',{name:'Referenzen',exact:true}).click();await page.getByLabel('Kopierstrategie').selectOption('deep');await page.getByRole('button',{name:'b.profil.punkte erhöhen'}).click();await expect(page.getByLabel('Referenz-Auswertung')).toContainText('a.profil.punkte 1');
+  await lab.getByRole('tab',{name:'Netzwerk',exact:true}).click();for(let i=0;i<5;i++)await page.getByRole('button',{name:'Netzwerk-Schritt',exact:true}).click();await expect(page.getByLabel('Simulierte HTTP-Antwort')).toContainText('200 OK');
+  for(const id of ['binary','endian-read','decode-fatal','bigint','deep-copy','microtasks','cpu-step']){
+    const lesson=jsLessons.find(l=>l.id==='js-system-'+id);await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('button',{name:'Code bearbeiten',exact:true}).click();await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${lesson.tests.length} / ${lesson.tests.length} bestanden`);
+  }
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

@@ -1,5 +1,6 @@
+import { computerAdvancedLessons } from "./computerAdvancedLessons";
 // Sprachübergreifende Grundlagen; bewusst getrennt vom JavaScript-Lernpfad.
-export const computerLessons = [
+const basics = [
   {
     "id": "computer-bit",
     "course": "computer",
@@ -817,3 +818,5 @@ export const computerLessons = [
     "explanation": "Der Zugriff auf ausgelagerte Seiten erfordert zusätzliche und meist langsamere Ein-/Ausgabe."
   }
 ];
+
+export const computerLessons = [...basics, ...computerAdvancedLessons];

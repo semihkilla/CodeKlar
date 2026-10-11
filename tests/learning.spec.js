@@ -1705,3 +1705,25 @@ test('capstone reference ZIPs execute real Node tests and starter ZIPs require i
     }
   }
 });
+
+test('reading cards stay readable across every course and topic with unbroken syntax labels',async({page})=>{
+  test.setTimeout(120000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
+  const samples=[...new Map(lessons.map(lesson=>[`${lesson.course}/${lesson.category}`,lesson])).values()];
+  await page.setViewportSize({width:390,height:844});
+  for(const lesson of samples){
+    await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();
+    await page.getByLabel('Aufgaben suchen …').fill(lesson.title);
+    await page.getByRole('row').filter({hasText:lesson.title}).click();
+    await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+    const card=page.locator('.lesson-panel');await expect(card.getByRole('heading',{name:'Die Bausteine erklärt'})).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),lesson.id).toBe(true);
+  }
+  await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill('Arrays verändern mit .map()');await page.getByRole('row').filter({hasText:'Arrays verändern mit .map()'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+  for(const width of [320,390,768,1505]){
+    await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();
+    const term=page.locator('.syntax-parts dt').filter({hasText:'neuerWert'});expect(await term.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-reading-${width}.png`,animations:'disabled'});
+  }
+  await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});

@@ -136,7 +136,9 @@ function LessonPanel({
           <>
             <p className="lesson-description">{lesson.description}</p>
             {lesson.debugging && <div className="debugging-guide"><strong>Dein Fehlerlabor</strong><p>{lesson.debugging.strategy}</p><p>{lesson.debugging.symptom}</p></div>}
+            <h3 className="reading-label">So sieht die Syntax aus</h3>
             <pre className="syntax-strip">{lesson.syntax}</pre>
+            <h3 className="reading-label">Die Bausteine erklärt</h3>
             <dl className="syntax-parts">
               {lesson.parts.map(([name, text]) => (
                 <div key={name}>
@@ -147,6 +149,7 @@ function LessonPanel({
                 </div>
               ))}
             </dl>
+            <h3 className="reading-label">Was passiert dabei?</h3>
             <p className="detail-text">{lesson.detail}</p>
             <div className="lesson-note">
               <Info size={20} />

@@ -120,7 +120,7 @@ export default function App() {
           {view === "exercises" && (
             <Exercises progress={progress} openLesson={openLesson} openProjects={() => navigate("projects")} />
           )}
-          {view === "projects" && <Suspense fallback={<p role="status">Projektbeispiele werden geladen …</p>}><Projects course={course} /></Suspense>}
+          {view === "projects" && <Suspense fallback={<p role="status">Projektbeispiele werden geladen …</p>}><Projects course={course} openLesson={openLesson} /></Suspense>}
           {view === "reference" && <Reference openLesson={openLesson} />}
           {view === "progress" && (
             <ProgressView progress={progress} openLesson={openLesson} />

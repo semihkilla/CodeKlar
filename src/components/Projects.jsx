@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { zipSync, strToU8 } from 'fflate';
 import { projects } from '../projects';
-import { courses } from '../data';
+import { courses, lessonById } from '../data';
 import { ProjectBuild } from './ProjectBuild';
 
-export default function Projects({ course }) {
+export default function Projects({ course, openLesson }) {
   const [filter, setFilter] = useState('all');
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(projects.find(p => p.course === course)?.id || projects[0].id);
@@ -46,6 +46,7 @@ export default function Projects({ course }) {
         {project.demo && <><h3>Direkt ausprobieren</h3><iframe className={`project-demo${project.build ? " project-demo-expanded" : ""}`} title={`${project.title} ausprobieren`} sandbox="allow-scripts allow-downloads" srcDoc={`<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; form-action 'none';">${project.demo}`} /></>}
         {(!buildMode || !project.build) && <><h3>Vollständiger Code</h3><div className="project-files" aria-label="Projektdateien">{Object.keys(project.files).map(path => <button key={path} aria-pressed={filename === path} onClick={() => { setFile(path); setCopyStatus(''); }}>{path}</button>)}</div>
         <div className="project-code-head"><span>{filename}</span><button onClick={copy}>Code kopieren</button></div><pre className="project-code" tabIndex={0} aria-label={`Quellcode ${filename}`}><code>{project.files[filename]}</code></pre><p role="status">{copyStatus}</p></>}
+        {project.lessonIds && <section className="project-related" aria-label="Passende Übungen"><h3>Die Bausteine einzeln üben</h3><p>Übe die Regeln zuerst im Spielplatz, dann verbinde sie in deinem eigenen Projekt.</p>{project.lessonIds.map(id => <button key={id} className="text-button" onClick={() => openLesson(id, 'task')}>{lessonById[id].title} →</button>)}</section>}
         <h3>Was die Funktionen hier bewirken</h3><dl>{project.concepts.map(c => <div key={c.name}><dt>{c.name}</dt><dd>{c.explanation}</dd></div>)}</dl>
         <h3>Deine nächsten Herausforderungen</h3><ul>{project.ideas.map(s => <li key={s}>{s}</li>)}</ul><p className="project-hint">Baue zunächst das Beispiel nach. Verändere dann eine Sache, erkläre sie in eigenen Worten und prüfe das Ergebnis. Diese Beispiele ergänzen den Lernpfad; sie zählen nicht automatisch als gelöste Übung.</p>
       </article> : <p role="status">Keine Projekte gefunden. Ändere den Suchbegriff oder Lernbereich.</p>}

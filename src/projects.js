@@ -1,3 +1,4 @@
+import { capstoneProjects } from "./capstoneProjects";
 import { byteProjects } from "./byteProjects";
 import { buildProjects } from "./buildProjects";
 import { webProjects } from "./webProjects";
@@ -438,4 +439,4 @@ const existingProjects = [
   }
 ];
 
-export const projects = [...existingProjects, ...buildProjects, ...webProjects, ...byteProjects];
+export const projects = [...existingProjects, ...buildProjects, ...webProjects, ...byteProjects, ...capstoneProjects];

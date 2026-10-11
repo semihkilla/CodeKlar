@@ -103,7 +103,7 @@ function LessonPanel({
               Gelöst
             </>
           ) : (
-            "Einfach"
+            lesson.debugging ? "Fehlerlabor" : lesson.category === "Projektbausteine" ? "Praxis" : "Einfach"
           )}
         </span>
       </div>
@@ -135,6 +135,7 @@ function LessonPanel({
         {tab === "explanation" && (
           <>
             <p className="lesson-description">{lesson.description}</p>
+            {lesson.debugging && <div className="debugging-guide"><strong>Dein Fehlerlabor</strong><p>{lesson.debugging.strategy}</p><p>{lesson.debugging.symptom}</p></div>}
             <pre className="syntax-strip">{lesson.syntax}</pre>
             <dl className="syntax-parts">
               {lesson.parts.map(([name, text]) => (

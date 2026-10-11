@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { lessonById } from "./data";
+import { cleanReviews, nextReview } from "./review";
 
 const key = "codeklar-progress-v1";
-const empty = () => ({ solved: {}, attempted: {} });
+const empty = () => ({ solved: {}, attempted: {}, reviews: {} });
 
 function read() {
   try {
@@ -19,6 +20,7 @@ function read() {
           clean[field][id] = date;
       }
     }
+    clean.reviews = cleanReviews(value.reviews, lessonById);
     return clean;
   } catch {
     return empty();
@@ -37,12 +39,15 @@ export function useProgress() {
     }
   }, [progress]);
   function record(id, passed) {
+    if (!Object.hasOwn(lessonById, id)) return;
+    const now = Date.now();
     setProgress((previous) => ({
-      attempted: { ...previous.attempted, [id]: new Date().toISOString() },
+      reviews: { ...previous.reviews, [id]: nextReview(previous.reviews[id], passed, now) },
+      attempted: { ...previous.attempted, [id]: new Date(now).toISOString() },
       solved: passed
         ? {
             ...previous.solved,
-            [id]: previous.solved[id] || new Date().toISOString(),
+            [id]: previous.solved[id] || new Date(now).toISOString(),
           }
         : previous.solved,
     }));

@@ -7,6 +7,8 @@ import {
   Download,
   ArrowRight,
 } from "lucide-react";
+import { ReviewPractice } from "./ReviewPractice";
+import { reviewQueue } from "../review";
 import { courses, lessons } from "../data";
 
 function SearchField({ value, onChange, placeholder }) {
@@ -27,11 +29,12 @@ export function Exercises({ progress, openLesson, openProjects }) {
   const [query, setQuery] = useState("");
   const [course, setCourse] = useState("all");
   const [status, setStatus] = useState("all");
+  const reviewIds = new Set(reviewQueue(lessons, progress).map(item => item.lesson.id));
   const filtered = lessons.filter(
     (item) =>
       (course === "all" || course === item.course) &&
       (status === "all" ||
-        (status === "solved"
+        (status === "review" ? reviewIds.has(item.id) : status === "solved"
           ? progress.solved[item.id]
           : !progress.solved[item.id])) &&
       `${item.title} ${item.category}`
@@ -71,6 +74,7 @@ export function Exercises({ progress, openLesson, openProjects }) {
           <option value="all">Alle Aufgaben</option>
           <option value="open">Noch offen</option>
           <option value="solved">Gelöst</option>
+          <option value="review">Zur Wiederholung</option>
         </select>
       </div>
       <div className="list-caption">
@@ -244,6 +248,7 @@ export function ProgressView({ progress, openLesson }) {
           </strong>
         </div>
       </div>
+      <ReviewPractice progress={progress} openLesson={openLesson} />
       <div className="section-heading">
         <h2>Deine Lernbereiche</h2>
         <button className="button secondary" onClick={exportProgress}>

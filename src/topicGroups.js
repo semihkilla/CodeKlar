@@ -6,7 +6,7 @@ const groups = {
     ["algorithms", "Datenstrukturen & Algorithmen", ["Datenstrukturen", "Stack & Queue", "Verkettete Listen", "Rekursion", "Bäume", "Binäre Suchbäume", "Graphen", "Sortieren & Suchen"]],
     ["web", "Browser & Web", ["DOM", "Events & Formulare", "Browser-Speicherung", "HTTP & fetch", "URL & Web-Daten", "Timer & Animation", "Dateien & Bilder", "Canvas & Spiele"]],
     ["async", "Asynchroner Code", ["Asynchroner Code", "Asynchrone Abläufe", "Iteratoren & Generatoren", "Streams & Pipelines", "Parallele Arbeit", "Worker & Nachrichten"]],
-    ["practice", "Projekte & Werkzeuge", ["Ein-/Ausgabe & Dateien", "Imports & Module", "Eigene Tests", "Fehlerbehandlung", "Node.js & Terminal", "APIs & SQL", "Projektarchitektur", "Projekte & Tests", "Browser-Projekte", "Praxisaufgaben", "Projekte"]],
+    ["practice", "Projekte & Werkzeuge", ["Ein-/Ausgabe & Dateien", "Imports & Module", "Eigene Tests", "Fehlersuche", "Projektbausteine", "Fehlerbehandlung", "Node.js & Terminal", "APIs & SQL", "Projektarchitektur", "Projekte & Tests", "Browser-Projekte", "Praxisaufgaben", "Projekte"]],
     ["internals", "Sprache & Speicher", ["Klassen & this", "Objekte & Prototypen", "Speicher & Referenzen", "Ausführungsmodell", "Bits & Binärdaten", "Text & Kodierung", "Zahlen & Genauigkeit", "Daten & Protokolle", "Dateiformate praktisch"]],
   ],
   computer: [

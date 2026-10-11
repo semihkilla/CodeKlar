@@ -867,7 +867,7 @@ test('project library covers every course, runs its game and downloads complete 
   await page.getByRole('navigation', { name: 'Schnellnavigation' }).getByRole('button', { name: 'Übungen' }).click();
   await page.getByRole('button', { name: 'Projektideen für alle Lernbereiche' }).click();
   await expect(page.getByRole('heading', { name: 'Aus Funktionen werden Projekte.' })).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Projektbeispiele' }).getByRole('button')).toHaveCount(22);
+  await expect(page.getByRole('navigation', { name: 'Projektbeispiele' }).getByRole('button')).toHaveCount(25);
   const game = page.frameLocator('iframe[title="Klick-Challenge ausprobieren"]');
   await game.getByRole('button', { name: 'Neue Runde' }).click();
   await game.getByRole('button', { name: 'Klick!', exact: true }).click();
@@ -1618,4 +1618,90 @@ test("chapters follow exercise links and collapse the full mobile learning path"
   await selector.selectOption("execution");
   await expect(page.locator(".topic-tabs button")).toHaveCount(2);
   await expect(selector).toHaveValue("execution");
+});
+
+test('practice pack solutions pass all cases while broken starters fail', async ({page}) => {
+  test.setTimeout(90000);
+  const {practiceLessons}=await import('../src/practiceLessons.js');
+  await page.goto('/');
+  for (const lesson of practiceLessons) {
+    const run=code=>page.evaluate(async({lesson,code})=>{const {runJavaScript}=await import('/src/runner.js');return runJavaScript({code,functionName:lesson.functionName,tests:lesson.tests,preserveInput:lesson.preserveInput});},{lesson,code});
+    const correct=await run(lesson.solution);expect(correct.error,lesson.id).toBeUndefined();expect(correct.results.every(item=>item.passed),lesson.id).toBe(true);
+    const broken=await run(lesson.starter);expect(!!broken.error || broken.results.some(item=>!item.passed),lesson.id).toBe(true);
+  }
+});
+
+test('review schedule handles failures intervals legacy progress and corrupted records',async()=>{
+  const {nextReview,reviewQueue,cleanReviews}=await import('../src/review.js');const now=Date.parse('2026-10-11T12:00:00Z'),DAY=86400000;
+  let state;for(const days of [1,3,7,14,14]){state=nextReview(state,true,now);expect(Date.parse(state.due)).toBe(now+days*DAY);}
+  state=nextReview(state,false,now);expect(state.streak).toBe(0);expect(state.lastResult).toBe(false);expect(Date.parse(state.due)).toBe(now);expect(nextReview(state,true,now).streak).toBe(1);
+  const local=[{id:'failed'},{id:'old'},{id:'future'},{id:'fresh'},{id:'untried'}];
+  const progress={solved:{old:new Date(now-8*DAY).toISOString(),future:new Date(now).toISOString(),fresh:new Date(now).toISOString()},attempted:{failed:new Date(now).toISOString()},reviews:{fresh:nextReview(undefined,true,now)}};
+  expect(reviewQueue(local,progress,now).map(row=>row.lesson.id)).toEqual(['failed','old']);
+  progress.reviews.future=nextReview(undefined,false,now);expect(reviewQueue(local,progress,now).filter(row=>row.retry).map(row=>row.lesson.id)).toEqual(['failed','future']);
+  const valid=nextReview(undefined,true,now);expect(cleanReviews({a:valid,b:{...valid,streak:-1},missing:valid},{a:{},b:{}})).toEqual({a:valid});expect(cleanReviews([],{})).toEqual({});
+});
+
+test('review practice migrates old progress retries failed solved lessons and exports new schedule',async({page})=>{
+  const old=new Date(Date.now()-8*86400000).toISOString();
+  await page.addInitScript(({old})=>{if(window!==window.top||localStorage.getItem('codeklar-progress-v1'))return;localStorage.setItem('codeklar-progress-v1',JSON.stringify({solved:{'js-map':old},attempted:{'js-practice-zero':new Date().toISOString()},reviews:{'js-map':{streak:'bad'}}}));},{old});
+  await page.goto('/');const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.getByRole('button',{name:'Fortschritt',exact:true}).click();const panel=page.getByRole('region',{name:'Gezielt wiederholen'});
+  await expect(panel).toContainText('2 Aufgaben bereit');await expect(panel.locator('li').first()).toContainText('Null ist ein gültiger Preis');
+  await panel.getByRole('button',{name:'Fehlersuche: Null ist ein gültiger Preis wiederholen'}).click();
+  await expect(page.getByLabel('JavaScript-Code')).toHaveValue(/preis \|\| 10/);
+  await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText('3 / 4 bestanden');
+  await page.getByLabel('JavaScript-Code').fill('function repairZero(daten){return daten.preis ?? 10;}');await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText('4 / 4 bestanden');
+  let stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));expect(stored.solved['js-map']).toBe(old);expect(stored.reviews['js-practice-zero'].streak).toBe(1);expect(stored.reviews['js-practice-zero'].attempts).toBe(2);
+  await page.getByLabel('JavaScript-Code').fill('function repairZero(){return 1;}');await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText('0 / 4 bestanden');
+  await page.getByRole('button',{name:'Fortschritt',exact:true}).click();await expect(panel).toContainText('2 Aufgaben bereit');
+  const exporting=page.waitForEvent('download');await page.getByRole('button',{name:'Fortschritt exportieren'}).click();const file=await exporting;const backup=JSON.parse(await readFile(await file.path(),'utf8'));expect(backup.reviews['js-practice-zero'].lastResult).toBe(false);expect(backup.solved['js-practice-zero']).toBeTruthy();
+  await page.reload();await page.getByRole('button',{name:'Fortschritt',exact:true}).click();await expect(panel).toContainText('2 Aufgaben bereit');
+  await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Status filtern').selectOption('review');await expect(page.getByRole('row')).toHaveCount(3);
+  await page.getByLabel('Lernbereich filtern').selectOption('python');await expect(page.getByRole('row')).toHaveCount(1);expect(errors).toEqual([]);
+});
+
+test('review empty and ready states fit mobile and desktop without errors',async({page})=>{
+  await page.goto('/');const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.getByRole('button',{name:'Fortschritt',exact:true}).click();await expect(page.getByRole('region',{name:'Gezielt wiederholen'})).toContainText('Gerade ist nichts fällig');
+  await page.evaluate(()=>localStorage.setItem('codeklar-progress-v1',JSON.stringify({solved:{},attempted:{'js-practice-numeric-sort':new Date().toISOString()}})));await page.reload();
+  for(const width of [390,1505]){
+    await page.setViewportSize({width,height:844});
+    if(width===390)await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Fortschritt',exact:true}).click();
+    const panel=page.getByRole('region',{name:'Gezielt wiederholen'});await expect(panel).toContainText('1 Aufgabe bereit');
+    await panel.getByLabel('Wiederholungsbereich').selectOption('python');await expect(panel).toContainText('Gerade ist nichts fällig');await panel.getByLabel('Wiederholungsbereich').selectOption('js');await expect(panel).toContainText('Zehn steht vor Zwei');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:`/tmp/codeklar-review-${width}.png`,animations:'disabled'});
+  }
+  await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});
+
+test('capstone demos support quiz grading inventory transactions and a complete maze on touch',async({page})=>{
+  await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Projektideen für alle Lernbereiche'}).click();
+  const choose=async name=>{await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').filter({hasText:name}).click();return page.frameLocator(`iframe[title="${name} ausprobieren"]`);};
+  let frame=await choose('Lernkarten-Trainer');await expect(frame.locator('#question')).toContainText('zuerst rein');await frame.getByLabel('Deine Antwort').fill('falsch');await frame.getByRole('button',{name:'Antwort prüfen'}).click();await expect(frame.getByRole('status')).toContainText('Noch nicht richtig');await frame.getByLabel('Deine Antwort').fill(' FIFO ');await frame.getByRole('button',{name:'Antwort prüfen'}).click();await expect(frame.getByRole('status')).toContainText('Richtig');await expect(frame.locator('#plan')).toContainText('fifo: Tag 1');
+  frame=await choose('Inventar-Dashboard');await frame.getByLabel('Menge').fill('6');await frame.getByRole('button',{name:'Buchen'}).click();await expect(frame.getByRole('status')).toContainText('Abgelehnt');await frame.getByLabel('Menge').fill('5');await frame.getByRole('button',{name:'Buchen'}).click();await expect(frame.getByRole('status')).toContainText('erfolgreich');await expect(frame.locator('#rows tr').first()).toContainText('0');await expect(frame.locator('#value')).toContainText('45,00');
+  frame=await choose('Schlüssel-Labyrinth');for(const name of ['Rechts','Rechts','Unten','Unten','Links','Links'])await frame.getByRole('button',{name,exact:true}).click();await expect(frame.getByRole('status')).toContainText('Gewonnen');await expect(frame.getByRole('status')).toContainText('Züge: 6');await frame.getByRole('button',{name:'Neue Runde'}).click();await expect(frame.getByRole('status')).toContainText('Züge: 0');
+  await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();await expect(page.getByLabel('Quellcode domain.js')).toHaveCount(0);await page.getByRole('checkbox').first().check();await expect(page.getByRole('region',{name:'Selbst bauen'})).toContainText('1 von 5');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.getByRole('region',{name:'Passende Übungen'}).getByRole('button',{name:/Im Raster gegen Wände prüfen/}).click();await expect(page.getByLabel('Hauptbereich',{exact:true})).toHaveValue('practice');await expect(page.getByRole('heading',{name:'Projektbaustein: Im Raster gegen Wände prüfen',exact:true})).toBeVisible();
+});
+
+test('capstone reference ZIPs execute real Node tests and starter ZIPs require implementation',async({page,context})=>{
+  test.setTimeout(90000);const {capstoneProjects}=await import('../src/capstoneProjects.js');const {unzipSync,strFromU8}=await import('fflate');const {mkdtemp,writeFile,rm}=await import('node:fs/promises');const {tmpdir}=await import('node:os');const {join}=await import('node:path');const {spawnSync}=await import('node:child_process');
+  await page.goto('/');await page.getByRole('button',{name:'Projekte',exact:true}).click();
+  for(const project of capstoneProjects){
+    await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').filter({hasText:project.title}).click();
+    for(const starter of [false,true]){
+      if(starter)await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();else await page.getByRole('button',{name:'Beispiel ansehen',exact:true}).click();
+      const downloading=page.waitForEvent('download');await page.getByRole('button',{name:starter?'Startgerüst als ZIP herunterladen':'Projekt als ZIP herunterladen',exact:true}).click();const archive=await downloading;const files=unzipSync(await readFile(await archive.path()));expect(strFromU8(files['domain.js'])).toBe(starter?project.build.starterFiles['domain.js']:project.files['domain.js']);
+      if(!starter){
+        const prefix=`/capstone-native-${project.id}/`;
+        await context.route('http://localhost:5173'+prefix+'**',route=>{const path=new URL(route.request().url()).pathname.replace(prefix,'')||'index.html';const bytes=files[path];return route.fulfill({status:bytes?200:404,body:bytes?Buffer.from(bytes):'Missing',contentType:path.endsWith('.js')?'text/javascript':'text/html'});});
+        const native=await context.newPage();await native.goto('http://localhost:5173'+prefix);
+        if(project.id.endsWith('cards')){await native.getByLabel('Deine Antwort').fill('fifo');await native.getByRole('button',{name:'Antwort prüfen'}).click();await expect(native.getByRole('status')).toContainText('Richtig');}
+        else if(project.id.endsWith('stock')){await native.getByLabel('Menge').fill('5');await native.getByRole('button',{name:'Buchen'}).click();await expect(native.locator('#value')).toContainText('45,00');}
+        else {for(const key of ['ArrowRight','ArrowRight','ArrowDown','ArrowDown','ArrowLeft','ArrowLeft'])await native.keyboard.press(key);await expect(native.getByRole('status')).toContainText('Gewonnen');}
+        await native.close();
+      }
+      const dir=await mkdtemp(join(tmpdir(),'codeklar-capstone-'));try{for(const name of ['domain.js','domain.test.js','package.json'])await writeFile(join(dir,name),files[name]);const result=spawnSync(process.execPath,['--test','domain.test.js'],{cwd:dir,encoding:'utf8',timeout:10000});if(starter)expect(result.status).not.toBe(0);else expect(result.status,result.stdout+result.stderr).toBe(0);}finally{await rm(dir,{recursive:true,force:true});}
+    }
+  }
 });

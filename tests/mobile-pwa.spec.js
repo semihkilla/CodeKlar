@@ -347,10 +347,14 @@ test('computer course and interactive labs work on their first offline visit', a
   await page.getByRole('radio', { name: '8', exact: true }).click();
   await page.getByRole('button', { name: 'Antwort prüfen' }).click();
   await expect(page.getByText(`1 von ${computerLessons.length} Aufgaben gelöst`, { exact: true })).toBeVisible();
+  await page.getByText('Selbst ausprobieren',{exact:true}).click();
+  await page.getByLabel('Grundlagen-Experiment',{exact:true}).selectOption('text');
   await page.getByLabel('Text für UTF-8', { exact: true }).fill('ä😀');
   await expect(page.getByLabel('UTF-8-Hexbytes')).toHaveText('C3 A4 F0 9F 98 80');
+  await page.getByLabel('Grundlagen-Experiment',{exact:true}).selectOption('bits');
   await page.getByRole('button', { name: 'Bit 128', exact: true }).click();
   await expect(page.getByLabel('Byte-Auswertung')).toContainText('-86');
+  await page.getByLabel('Grundlagen-Experiment',{exact:true}).selectOption('memory');
   for (const name of ['LOAD aus RAM','ADD 5','STORE ins RAM','SAVE auf SSD','Strom ausschalten']) await page.getByRole('button', { name, exact: true }).click();
   await expect(page.getByLabel('Speichermodell')).toContainText('SSD 12');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -363,6 +367,7 @@ test('computer course and interactive labs work on their first offline visit', a
 test('system CPU and JavaScript memory binary and microtask lessons work offline on first use',async({page,context})=>{
   await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
   await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();
+  await page.getByText('Selbst ausprobieren',{exact:true}).click();await page.getByLabel('Werkstattbereich',{exact:true}).selectOption('systems');
   const lab=page.getByRole('region',{name:'System-Labor',exact:true});await lab.getByRole('tab',{name:'Lern-CPU',exact:true}).click();
   await page.getByLabel('CPU-Programm',{exact:true}).fill('SET 255\nADD 1\nSTORE 0\nHALT');await page.getByRole('button',{name:'CPU bis HALT ausführen'}).click();await expect(page.getByLabel('CPU-Zustand')).toContainText('Register 0');await expect(page.getByLabel('CPU-Zustand')).toContainText('HALT');
   await lab.getByRole('tab',{name:'Referenzen',exact:true}).click();await page.getByLabel('Kopierstrategie').selectOption('deep');await page.getByRole('button',{name:'b.profil.punkte erhöhen'}).click();await expect(page.getByLabel('Referenz-Auswertung')).toContainText('a.profil.punkte 1');
@@ -375,7 +380,7 @@ test('system CPU and JavaScript memory binary and microtask lessons work offline
 
 test('processing labs byte workshop and stream exercises work offline before first visit',async({page,context})=>{
   await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
-  await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();await page.getByRole('button',{name:'Beispielfolge laden',exact:true}).click();await expect(page.getByLabel('Cache-Auswertung')).toContainText('Treffer 2');for(let i=0;i<6;i++)await page.getByRole('button',{name:'Scheduler-Schritt',exact:true}).click();await expect(page.getByLabel('CPU-Zeitverlauf').locator('strong')).toHaveText(['A','B','C','A','C','A']);
+  await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();await page.getByText('Selbst ausprobieren',{exact:true}).click();await page.getByLabel('Werkstattbereich',{exact:true}).selectOption('processing');await page.getByRole('button',{name:'Beispielfolge laden',exact:true}).click();await expect(page.getByLabel('Cache-Auswertung')).toContainText('Treffer 2');await page.getByLabel('Verarbeitungs-Experiment',{exact:true}).selectOption('schedule');for(let i=0;i<6;i++)await page.getByRole('button',{name:'Scheduler-Schritt',exact:true}).click();await expect(page.getByLabel('CPU-Zeitverlauf').locator('strong')).toHaveText(['A','B','C','A','C','A']);
   for(const id of ['readable','decoder-stream','decoder-flush','transfer','batches','frames']){const lesson=jsLessons.find(l=>l.id==='js-flow-'+id);await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('button',{name:'Code bearbeiten',exact:true}).click();await page.getByLabel('JavaScript-Code').fill(lesson.solution);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${lesson.tests.length} / ${lesson.tests.length} bestanden`);}
   await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Projektideen für alle Lernbereiche'}).click();await page.getByLabel('Projekt suchen').fill('Byte-Werkstatt');await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').click();const demo=page.frameLocator('iframe[title="Byte-Werkstatt ausprobieren"]');await demo.locator('#file').setInputFiles({name:'offline.txt',mimeType:'text/plain',buffer:Buffer.from('Offline ä😀')});await expect(demo.locator('#text')).toHaveText('Offline ä😀');await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Startgerüst als ZIP herunterladen'}).click();expect((await downloading).suggestedFilename()).toBe('codeklar-js-byte-workshop-start.zip');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

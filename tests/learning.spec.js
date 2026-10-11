@@ -1403,7 +1403,9 @@ test('computer lab demonstrates byte interpretation UTF-8 and persistent memory 
   page.on('console', msg => { if (['error','warning'].includes(msg.type())) errors.push(msg.text()); });
   await page.goto('/');
   await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
+  await page.getByText('Selbst ausprobieren', { exact: true }).click();
   const lab = page.getByRole('region', { name: 'Computer-Labor', exact: true });
+  await page.getByText('Andere Schreibweisen: Hex und negative Zahlen',{exact:true}).click();
   const byte = page.getByLabel('Byte-Auswertung');
   await expect(byte).toContainText('00101010');
   await page.getByRole('button', { name: 'Bit 128', exact: true }).click();
@@ -1416,12 +1418,15 @@ test('computer lab demonstrates byte interpretation UTF-8 and persistent memory 
   await expect(byte).toContainText('-1');
   await page.getByLabel('Vorzeichenloser Wert (0–255)').fill('0');
   await expect(byte).toContainText('00000000');
+  await page.getByLabel('Grundlagen-Experiment', { exact: true }).selectOption('text');
+  await page.getByText('Warum Zeichen unterschiedlich gezählt werden',{exact:true}).click();
   for (const [text, units, points, hex] of [['Aä😀',4,3,'41 C3 A4 F0 9F 98 80'], ['e\u0301',2,2,'65 CC 81'], ['',0,0,'Keine Bytes (leerer Text)']]) {
     await page.getByLabel('Text für UTF-8', { exact: true }).fill(text);
     await expect(page.getByLabel('UTF-8-Hexbytes')).toHaveText(hex);
     await expect(page.getByLabel('Text-Auswertung')).toContainText(`UTF-16-Codeunits ${units}`);
     await expect(page.getByLabel('Text-Auswertung')).toContainText(`Codepoints ${points}`);
   }
+  await page.getByLabel('Grundlagen-Experiment', { exact: true }).selectOption('memory');
   const memory = page.getByLabel('Speichermodell');
   for (const command of ['LOAD aus RAM','ADD 5','STORE ins RAM','SAVE auf SSD','Strom ausschalten']) {
     await page.getByRole('button', { name: command, exact: true }).click();
@@ -1434,7 +1439,9 @@ test('computer lab demonstrates byte interpretation UTF-8 and persistent memory 
   await page.getByRole('button', { name: 'Modell zurücksetzen' }).click();
   await expect(memory).toContainText('RAM 7');
   await expect(memory).toContainText('SSD leer');
+  await page.getByLabel('Grundlagen-Experiment', { exact: true }).selectOption('text');
   await page.getByLabel('Text für UTF-8', { exact: true }).fill('Aä😀');
+  await page.getByLabel('Grundlagen-Experiment', { exact: true }).selectOption('bits');
   await lab.scrollIntoViewIfNeeded();
   await page.screenshot({ path: '/tmp/codeklar-computer-desktop.png', animations: 'disabled' });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -1506,14 +1513,17 @@ test('system labs show truth tables carry chains editable CPU references and HTT
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});
   await page.goto('/');await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Verstehe, wie dein Computer arbeitet.'})).toBeVisible();
+  await page.getByText('Selbst ausprobieren',{exact:true}).click();await page.getByLabel('Werkstattbereich',{exact:true}).selectOption('systems');
   const lab=page.getByRole('region',{name:'System-Labor',exact:true});
   await page.getByLabel('Logikgatter', {exact:true}).selectOption('XOR');
   await expect(lab.getByText('Ausgang 1',{exact:true})).toBeVisible();
   await lab.getByRole('button',{name:'Eingang B: 0',exact:true}).click();await expect(lab.getByText('Ausgang 0',{exact:true})).toBeVisible();
   await page.getByLabel('Logikgatter',{exact:true}).selectOption('NOT');await expect(lab.getByRole('button',{name:'Eingang B: 1',exact:true})).toBeDisabled();await expect(lab.getByRole('table').first().locator('tbody tr')).toHaveCount(2);
+  await lab.getByRole('tab',{name:'Addition',exact:true}).click();
   await expect(page.getByRole('region',{name:'Addier-Labor'})).toContainText('10000 (16)');
   await page.getByLabel('Zahl A (0–15)').fill('3');await page.getByLabel('Zahl B (0–15)').fill('2');await expect(page.getByRole('region',{name:'Addier-Labor'})).toContainText('00101 (5)');
   await lab.getByRole('tab',{name:'Lern-CPU',exact:true}).click();
+  await page.getByText('Speicherzellen und Maschinenbytes ansehen',{exact:true}).click();
   await page.getByRole('button',{name:'CPU-Schritt',exact:true}).click();await expect(page.getByLabel('CPU-Zustand')).toContainText('Register 7');
   await page.getByRole('button',{name:'CPU bis HALT ausführen'}).click();await expect(page.getByLabel('CPU-Zustand')).toContainText('HALT');await expect(page.getByLabel('CPU-RAM').locator('span').first()).toContainText('12');
   await page.getByLabel('CPU-Beispiel').selectOption('loop');await page.getByRole('button',{name:'CPU bis HALT ausführen'}).click();await expect(page.getByLabel('CPU-Zustand')).toContainText('Register 0');await expect(page.getByLabel('CPU-Zustand')).toContainText('HALT');
@@ -1552,9 +1562,11 @@ test('cache and scheduling models preserve state enforce capacity and finish all
 
 test('cache and scheduler labs remain readable and interactive on mobile and desktop',async({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});await page.goto('/');await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();
+  await page.getByText('Selbst ausprobieren',{exact:true}).click();await page.getByLabel('Werkstattbereich',{exact:true}).selectOption('processing');
   const lab=page.getByRole('region',{name:'Cache und Zeitplanung',exact:true});await page.getByRole('button',{name:'Beispielfolge laden',exact:true}).click();await expect(page.getByLabel('Cache-Auswertung')).toContainText('Treffer 2');await expect(page.getByLabel('Cache-Auswertung')).toContainText('Fehlschläge 3');await expect(page.getByLabel('Cache-Auswertung')).toContainText('C → A');
   await page.getByLabel('Cacheplätze').selectOption('1');await page.getByLabel('Zugriffsschlüssel').fill('Z');await page.getByRole('button',{name:'Cache-Zugriff',exact:true}).click();await page.getByRole('button',{name:'Cache-Zugriff',exact:true}).click();await expect(page.getByLabel('Cache-Auswertung')).toContainText('Treffer 1');
   await page.getByLabel('Zugriffsschlüssel').fill('');await page.getByRole('button',{name:'Cache-Zugriff',exact:true}).click();await expect(page.getByRole('region',{name:'Cache-Labor'}).getByRole('status')).toContainText('1 bis 12');
+  await page.getByLabel('Verarbeitungs-Experiment',{exact:true}).selectOption('schedule');
   for(let i=0;i<6;i++)await page.getByRole('button',{name:'Scheduler-Schritt',exact:true}).click();await expect(page.getByLabel('CPU-Zeitverlauf').locator('strong')).toHaveText(['A','B','C','A','C','A']);await expect(page.getByRole('button',{name:'Scheduler-Schritt',exact:true})).toBeDisabled();
   await page.getByLabel('Zeitscheibe').selectOption('3');for(let i=0;i<3;i++)await page.getByRole('button',{name:'Scheduler-Schritt',exact:true}).click();await expect(page.getByLabel('CPU-Zeitverlauf').locator('strong')).toHaveText(['A','A','A','B','C','C']);
   await lab.scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-processing-desktop.png',animations:'disabled'});await page.setViewportSize({width:390,height:844});await lab.scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-processing-mobile.png',animations:'disabled'});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
@@ -1715,7 +1727,7 @@ test('reading cards stay readable across every course and topic with unbroken sy
     await page.getByLabel('Aufgaben suchen …').fill(lesson.title);
     await page.getByRole('row').filter({hasText:lesson.title}).click();
     await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
-    const card=page.locator('.lesson-panel');await expect(card.getByRole('heading',{name:'Die Bausteine erklärt'})).toBeVisible();
+    const card=page.locator('.lesson-panel');await expect(card.getByRole('heading',{name:lesson.course==='computer'?'Ein kleines Beispiel':'Die Bausteine erklärt'})).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),lesson.id).toBe(true);
   }
   await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill('Arrays verändern mit .map()');await page.getByRole('row').filter({hasText:'Arrays verändern mit .map()'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
@@ -1726,4 +1738,47 @@ test('reading cards stay readable across every course and topic with unbroken sy
     if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-reading-${width}.png`,animations:'disabled'});
   }
   await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});
+
+
+test('computer reading starts small and experiment switches preserve work on mobile', async ({page}) => {
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto('/');await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();
+  const card=page.locator('.lesson-panel');
+  await expect(card).toContainText('Ein Bit ist wie ein Schalter');
+  await expect(card.getByRole('listitem')).toHaveCount(3);
+  await expect(page.getByLabel('Grundlagen-Experiment',{exact:true})).toBeHidden();
+  await expect(card.getByText('Bits sind keine winzigen geschriebenen Ziffern im Chip.',{exact:false})).toBeHidden();
+  await card.getByText('Genauer verstehen: Begriffe und Details',{exact:true}).click();
+  await expect(card.getByText('Bits sind keine winzigen geschriebenen Ziffern im Chip.',{exact:false})).toBeVisible();
+  await card.getByText('Genauer verstehen: Begriffe und Details',{exact:true}).click();
+  for(const width of [320,390,768,1505]) {
+    await page.setViewportSize({width,height:960});await card.scrollIntoViewIfNeeded();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-computer-simple-${width}.png`,animations:'disabled'});
+  }
+  await page.setViewportSize({width:390,height:844});
+  await page.getByText('Selbst ausprobieren',{exact:true}).click();
+  await expect(page.getByRole('region',{name:'Bit-Labor',exact:true})).toBeVisible();
+  await expect(page.getByRole('region',{name:'Text-Labor',exact:true})).toBeHidden();
+  await page.getByRole('button',{name:'Bit 1',exact:true}).click();
+  await expect(page.getByLabel('Byte-Auswertung')).toContainText('Dezimal 43');
+  await page.getByLabel('Grundlagen-Experiment',{exact:true}).selectOption('text');
+  await page.getByLabel('Text für UTF-8',{exact:true}).fill('ä');
+  await expect(page.getByRole('region',{name:'Bit-Labor',exact:true})).toBeHidden();
+  await page.getByLabel('Werkstattbereich',{exact:true}).selectOption('processing');
+  await page.getByRole('button',{name:'Beispielfolge laden',exact:true}).click();
+  await page.getByLabel('Verarbeitungs-Experiment',{exact:true}).selectOption('schedule');
+  await page.getByRole('button',{name:'Scheduler-Schritt',exact:true}).click();
+  await page.getByLabel('Werkstattbereich',{exact:true}).selectOption('basics');
+  await expect(page.getByLabel('Text für UTF-8',{exact:true})).toHaveValue('ä');
+  await page.getByLabel('Grundlagen-Experiment',{exact:true}).selectOption('bits');
+  await expect(page.getByLabel('Byte-Auswertung')).toContainText('Dezimal 43');
+  await page.getByLabel('Werkstattbereich',{exact:true}).selectOption('processing');
+  await expect(page.getByLabel('CPU-Zeitverlauf').locator('strong')).toHaveText(['A']);
+  await page.getByLabel('Verarbeitungs-Experiment',{exact:true}).selectOption('cache');
+  await expect(page.getByLabel('Cache-Auswertung')).toContainText('Treffer 2');
+  await expect(page.getByText('0 von 73 Aufgaben gelöst',{exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  expect(errors).toEqual([]);
 });

@@ -4,9 +4,8 @@ import { courses, lessons } from "../data";
 import { groupTopics } from "../topicGroups";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
-import { ProcessingLab } from "./ProcessingLab";
-import { ComputerSystemsLab } from "./ComputerSystemsLab";
-import { ComputerLab } from "./ComputerLab";
+import { ComputerWorkshop } from "./ComputerWorkshop";
+import { computerGuides } from "../computerGuides";
 import { FileLab } from "./FileLab";
 
 export function ProgressStrip({ solved, total }) {
@@ -134,6 +133,19 @@ function LessonPanel({
       >
         {tab === "explanation" && (
           <>
+            {lesson.course === "computer" ? <>
+              <p className="lesson-description">{computerGuides[lesson.id]?.[0] ?? lesson.description}</p>
+              {computerGuides[lesson.id] && <><h3 className="reading-label">Schritt für Schritt</h3><ol className="computer-reading-steps">{computerGuides[lesson.id][1].map(text => <li key={text}>{text}</li>)}</ol></>}
+              <h3 className="reading-label">Ein kleines Beispiel</h3>
+              <pre className="syntax-strip">{lesson.example}</pre>
+              <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>
+                <p>{lesson.description}</p>
+                <pre className="syntax-strip">{lesson.syntax}</pre>
+                <dl className="syntax-parts">{lesson.parts.filter(([, text]) => text !== lesson.description).map(([name, text]) => <div key={name}><dt><code>{name}</code></dt><dd>{text}</dd></div>)}</dl>
+                <p className="detail-text">{lesson.detail}</p>
+                <div className="lesson-note"><Info size={20} /><span>{lesson.note}</span></div>
+              </details>
+            </> : <>
             <p className="lesson-description">{lesson.description}</p>
             {lesson.debugging && <div className="debugging-guide"><strong>Dein Fehlerlabor</strong><p>{lesson.debugging.strategy}</p><p>{lesson.debugging.symptom}</p></div>}
             <h3 className="reading-label">So sieht die Syntax aus</h3>
@@ -155,6 +167,7 @@ function LessonPanel({
               <Info size={20} />
               <span>{lesson.note}</span>
             </div>
+            </>}
             <button
               className="text-button go-task"
               onClick={() => setTab("task")}
@@ -399,7 +412,7 @@ export function Learning({
         </div>
       )}
       <div
-        className={`learning-workspace ${course === "js" ? `mobile-pane-${mobilePane}` : ""}`}
+        className={`learning-workspace ${course === "computer" ? "computer-workspace" : ""} ${course === "js" ? `mobile-pane-${mobilePane}` : ""}`}
       >
         <LessonPanel
           key={`lesson-${lesson.id}`}
@@ -418,7 +431,7 @@ export function Learning({
             tab={tab}
             record={record}
           />
-        ) : (
+        ) : course === "computer" ? null : (
           <div className="playground-column">
             <section className="editor-panel">
               <div className="panel-header">
@@ -442,7 +455,7 @@ export function Learning({
           </div>
         )}
       </div>
-      {course === "computer" && <><ComputerLab /><ComputerSystemsLab /><ProcessingLab /></>}
+      {course === "computer" && <ComputerWorkshop />}
       {lesson.category === "Ein-/Ausgabe & Dateien" && <FileLab />}
       <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">
         <button className="button secondary" disabled={lessonIndex === 0} onClick={() => goTo(available[lessonIndex - 1].id)}>Vorherige Lektion</button>

@@ -45,15 +45,16 @@ function CpuLab() {
   }
   return <section className="computer-experiment" aria-label="Programmierbare Lern-CPU">
     <h3>Dein eigenes kleines Maschinenprogramm</h3>
-    <p>Erfundene 8-Bit-CPU mit einem Register, 16 RAM-Zellen und maximal 128 Schritten. PC zählt Befehlszeilen ab 0. Die angezeigten Zwei-Byte-Befehle sind unser Lernformat, kein ARM oder x86.</p>
+    <p>Starte mit „7 + 5 speichern“. CPU-Schritt führt genau einen Befehl aus. Beobachte den Registerwert: erst 7, dann 12. STORE legt das Ergebnis in einer RAM-Zelle ab; HALT beendet das Programm.</p>
     <label className="computer-field">CPU-Beispiel<select aria-label="CPU-Beispiel" defaultValue="sum" onChange={e=>edit(cpuExamples[e.target.value])}><option value="sum">7 + 5 speichern</option><option value="overflow">Überlauf: 255 + 1</option><option value="loop">Schleife: von 3 auf 0</option></select></label>
     <label className="computer-field">CPU-Programm<textarea aria-label="CPU-Programm" value={text} maxLength={4000} rows={8} spellCheck={false} onChange={e=>edit(e.target.value)} /></label>
-    <p>SET n setzt das Register; ADD n addiert modulo 256. LOAD/STORE n lesen/schreiben RAM-Adresse 0–15. JZ n springt bei Register 0; JMP n springt immer. HALT beendet. Kommentare beginnen mit #.</p>
+    <details className="reading-more"><summary>Befehle und Regeln nachschlagen</summary><p>Unser erfundenes 8-Bit-Modell hat ein Register, 16 RAM-Zellen und maximal 128 Schritte. PC ist die nächste Befehlszeile, ab 0 gezählt. Die Zwei-Byte-Befehle sind ein Lernformat, kein ARM oder x86.</p><p>SET n setzt das Register; ADD n addiert modulo 256. LOAD/STORE n lesen/schreiben RAM-Adresse 0–15. JZ n springt bei Register 0; JMP n springt immer. HALT beendet. Kommentare beginnen mit #.</p></details>
     <div className="computer-actions"><button className="button primary" disabled={state.halted || !!state.error} onClick={()=>execute(false)}>CPU-Schritt</button><button className="button secondary" disabled={state.halted || !!state.error} onClick={()=>execute(true)}>CPU bis HALT ausführen</button><button className="button secondary" onClick={()=>{setProgram(null);setState(initialCpuState());setError("");}}>CPU zurücksetzen</button></div>
     <div className="computer-results" aria-label="CPU-Zustand"><span>PC <strong>{state.pc}</strong></span><span>Register <strong>{state.register}</strong></span><span>Schritte <strong>{state.steps}</strong></span><span>Status <strong>{state.halted ? "HALT" : state.error ? "Gestoppt" : "Bereit"}</strong></span></div>
     <p role="status">{error || state.error || `Zuletzt: ${state.last}`}</p>
+    <details className="reading-more"><summary>Speicherzellen und Maschinenbytes ansehen</summary>
     {program && <div className="computer-table-wrap"><table className="computer-table"><caption>Befehle und Maschinenbytes (Hex)</caption><thead><tr><th>PC</th><th>Befehl</th><th>Bytes</th></tr></thead><tbody>{program.map((cmd,i)=><tr key={i} className={i===state.pc ? "current-model-row" : ""}><td>{i}</td><td>{cmd.op}{cmd.op === "HALT" ? "" : ` ${cmd.value}`}</td><td>{cmd.bytes.map(b=>b.toString(16).toUpperCase().padStart(2,"0")).join(" ")}</td></tr>)}</tbody></table></div>}
-    <div className="ram-grid" aria-label="CPU-RAM">{state.ram.map((value,i)=><span key={i}>Adresse {i}<strong>{value}</strong></span>)}</div>
+    <div className="ram-grid" aria-label="CPU-RAM">{state.ram.map((value,i)=><span key={i}>Adresse {i}<strong>{value}</strong></span>)}</div></details>
   </section>;
 }
 function ReferenceLab() {
@@ -93,7 +94,7 @@ function NetworkLab() {
 }
 export function ComputerSystemsLab() {
   const [tab,setTab]=useState("gates");
-  const tabs=[["gates","Gatter & Addition"],["cpu","Lern-CPU"],["references","Referenzen"],["network","Netzwerk"]];
+  const tabs=[["gates","Schalterlogik"],["addition","Addition"],["cpu","Lern-CPU"],["references","Referenzen"],["network","Netzwerk"]];
   return <section className="computer-lab" aria-label="System-Labor"><h2>System-Labor</h2><p>Baue Schaltungen, programmiere eine kleine CPU und verfolge, wie Daten geteilt oder übertragen werden. Experimente sind getrennt vom Quiz-Fortschritt.</p>
     <div className="system-lab-tabs" role="tablist" aria-label="System-Experimente">{tabs.map(([id,label])=><button key={id} role="tab" id={`system-tab-${id}`} aria-controls={`system-panel-${id}`} aria-selected={tab===id} tabIndex={tab===id ? 0 : -1} onKeyDown={event=>{
       if (!["ArrowRight","ArrowLeft","Home","End"].includes(event.key)) return;
@@ -102,7 +103,8 @@ export function ComputerSystemsLab() {
       const next=event.key==="Home"?0:event.key==="End"?tabs.length-1:(current+(event.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;
       setTab(tabs[next][0]);event.currentTarget.parentElement.querySelectorAll('[role="tab"]')[next].focus();
     }} className={`button ${tab===id ? "primary" : "secondary"}`} onClick={()=>setTab(id)}>{label}</button>)}</div>
-    <div id="system-panel-gates" role="tabpanel" aria-labelledby="system-tab-gates" hidden={tab!=="gates"}><GateLab/><AdderLab/></div>
+    <div id="system-panel-gates" role="tabpanel" aria-labelledby="system-tab-gates" hidden={tab!=="gates"}><GateLab/></div>
+    <div id="system-panel-addition" role="tabpanel" aria-labelledby="system-tab-addition" hidden={tab!=="addition"}><AdderLab/></div>
     <div id="system-panel-cpu" role="tabpanel" aria-labelledby="system-tab-cpu" hidden={tab!=="cpu"}><CpuLab/></div>
     <div id="system-panel-references" role="tabpanel" aria-labelledby="system-tab-references" hidden={tab!=="references"}><ReferenceLab/></div>
     <div id="system-panel-network" role="tabpanel" aria-labelledby="system-tab-network" hidden={tab!=="network"}><NetworkLab/></div>

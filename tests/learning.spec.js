@@ -1782,3 +1782,82 @@ test('computer reading starts small and experiment switches preserve work on mob
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });
+
+// Reference tools: actual array semantics and caught errors, without executing learner code.
+test('comparison models preserve input and error examples link to valid repair lessons', async () => {
+  const { parseComparisonInput, compareMethods } = await import('../src/methodComparison.js');
+  const { errorExamples, runErrorExample, displayValue } = await import('../src/errorExamples.js');
+  for (const data of [[], [0], [-2,0,3,5], [1,2,3,4]]) {
+    const original = [...data];
+    const result = compareMethods(data);
+    expect(result.mapped).toEqual(data.map(n => n * 2));
+    expect(result.filtered).toEqual(data.filter(n => n % 2 === 0));
+    expect(result.returned).toBeUndefined();expect(result.collected).toEqual(result.mapped);
+    expect(data).toEqual(original);expect(result.traces.filter).toHaveLength(data.length);
+  }
+  expect(compareMethods([-2,0,3,5], 'square', 'positive')).toMatchObject({mapped:[4,0,9,25],filtered:[3,5]});
+  expect(parseComparisonInput('[]')).toEqual([]);
+  for (const text of ['[', '{}', '["2"]', '[null]', '[1e999]', '[10001]', JSON.stringify(Array(21).fill(1)), ' '.repeat(2001)]) expect(() => parseComparisonInput(text)).toThrow();
+  const fixes = [[2,4,6], 'Gast', 20, 2, {name:'Ada'}, 0, [2,4,6], [2,4,6], [1,2,10], [0,0]];
+  for (const [index, item] of errorExamples.entries()) {
+    expect(lessons.find(lesson => lesson.id === item.lesson), item.id).toBeTruthy();
+    const broken = runErrorExample(item), fixed = runErrorExample(item,true);
+    expect(fixed, item.id).toEqual({ok:true,value:fixes[index]});
+    if (item.type !== 'Logikfehler') expect(broken).toMatchObject({ok:false,name:item.type});
+    else {expect(broken.ok).toBe(true);expect(broken.value).not.toEqual(fixed.value);}
+  }
+  expect(displayValue([undefined,undefined])).toBe('[undefined, undefined]');
+});
+
+test('method comparison updates shared data traces validation and mobile state without errors', async ({page}) => {
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});
+  await page.goto('/');await page.getByRole('button',{name:'Nachschlagen',exact:true}).click();
+  await page.getByRole('button',{name:'Methoden vergleichen',exact:true}).click();
+  const tool=page.getByRole('region',{name:'Methodenvergleich',exact:true});
+  await expect(tool.getByRole('article',{name:'map-Ergebnis'})).toContainText('[2, 4, 6, 8]');
+  await expect(tool.getByRole('article',{name:'filter-Ergebnis'})).toContainText('[2, 4]');
+  await expect(tool.getByRole('article',{name:'forEach-Ergebnis'})).toContainText('undefined');
+  await tool.getByLabel('Zahlenliste (JSON)',{exact:true}).fill('[-2, 0, 3, 5]');
+  await tool.getByText('Rechnung und Filter ändern',{exact:true}).click();
+  await tool.getByLabel('Rechnung für map und forEach',{exact:true}).selectOption('square');
+  await tool.getByLabel('Bedingung für filter',{exact:true}).selectOption('positive');
+  await expect(tool.getByRole('article',{name:'map-Ergebnis'})).toContainText('[4, 0, 9, 25]');
+  await expect(tool.getByRole('article',{name:'filter-Ergebnis'})).toContainText('[3, 5]');
+  await tool.getByText('Callback Schritt für Schritt verfolgen',{exact:true}).click();
+  await tool.getByLabel('Methode verfolgen',{exact:true}).selectOption('filter');
+  await tool.getByRole('button',{name:'Nächsten Callback zeigen'}).click();await expect(tool.getByRole('status')).toContainText('Index 0, Wert -2. Bedingung: false');
+  await tool.getByRole('button',{name:'Nächsten Callback zeigen'}).click();await expect(tool.getByRole('status')).toContainText('Index 1, Wert 0');
+  await tool.getByLabel('Zahlenliste (JSON)',{exact:true}).fill('[<script>]');await expect(tool.getByRole('alert')).toContainText('JSON-Zahlenliste');
+  await expect(tool.getByRole('article')).toHaveCount(0);
+  await tool.getByRole('button',{name:'Leere Liste',exact:true}).click();await tool.getByText('Callback Schritt für Schritt verfolgen',{exact:true}).click();await expect(tool.getByRole('status')).toHaveText('Leere Liste: kein Callback-Aufruf.');await expect(tool.getByRole('button',{name:'Nächsten Callback zeigen'})).toBeDisabled();
+  await tool.getByRole('button',{name:'Startbeispiel',exact:true}).click();
+  await page.getByRole('button',{name:'Fehler verstehen',exact:true}).click();await page.getByRole('button',{name:'Methoden vergleichen',exact:true}).click();await expect(tool.getByLabel('Rechnung für map und forEach',{exact:true})).toHaveValue('square');
+  for (const width of [320,390,768,1505]) {
+    await page.setViewportSize({width,height:960});await tool.scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-compare-${width}.png`,animations:'disabled'});
+  }
+  await tool.getByRole('article',{name:'map-Ergebnis'}).getByRole('button',{name:'Passende Übung öffnen →'}).click();await expect(page.getByRole('heading',{name:'Arrays verändern mit .map()',exact:true})).toBeVisible();
+  await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});
+
+test('error guide runs every failure and correction searches and opens a repair exercise', async ({page}) => {
+  const {errorExamples, displayValue}=await import('../src/errorExamples.js');
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});
+  await page.goto('/');await page.getByRole('button',{name:'Nachschlagen',exact:true}).click();await page.getByRole('button',{name:'Fehler verstehen',exact:true}).click();
+  const tool=page.getByRole('region',{name:'Fehler verstehen',exact:true});
+  for (const item of errorExamples) {
+    await tool.getByLabel('Fehlerbeispiel',{exact:true}).selectOption(item.id);
+    await expect(tool.getByLabel('Fehlerausgabe')).toHaveText('Noch nicht ausgeführt.');
+    await tool.getByRole('button',{name:'Fehlerbeispiel ausführen',exact:true}).click();
+    await expect(tool.getByLabel('Fehlerausgabe')).toContainText(item.type === 'Logikfehler' ? 'Keine Ausnahme geworfen.' : item.type);
+    await tool.getByRole('button',{name:'Korrektur ausprobieren',exact:true}).click();
+    await expect(tool.getByLabel('Korrigierte Ausgabe')).toHaveText(`Ergebnis: ${displayValue(item.corrected())}`);
+  }
+  await tool.getByLabel('Fehler suchen',{exact:true}).fill('keinepassendehilfe');await expect(tool.getByRole('status')).toContainText('Kein Beispiel gefunden');
+  await tool.getByLabel('Fehler suchen',{exact:true}).fill('return');await tool.getByLabel('Fehlerbeispiel',{exact:true}).selectOption('return');
+  await tool.getByRole('button',{name:'Fehlerbeispiel ausführen',exact:true}).click();await expect(tool.getByLabel('Fehlerausgabe')).toContainText('[undefined, undefined, undefined]');
+  await tool.getByRole('button',{name:'Korrektur ausprobieren',exact:true}).click();
+  for(const width of [320,390,768,1505]) {await page.setViewportSize({width,height:960});await tool.scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-errors-${width}.png`,animations:'disabled'});}
+  await tool.getByRole('button',{name:'Dazu selbst eine Aufgabe lösen →'}).click();await expect(page.getByRole('heading',{name:'Fehlersuche: map liefert leere Werte',exact:true})).toBeVisible();await expect(page.getByRole('tab',{name:'Aufgabe',exact:true})).toHaveAttribute('aria-selected','true');
+  expect(errors).toEqual([]);expect(await page.locator('vite-error-overlay').count()).toBe(0);
+});

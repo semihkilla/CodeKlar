@@ -398,3 +398,19 @@ test('review practice and all capstone demos work on their first offline visit',
   frame=await choose('Schlüssel-Labyrinth');for(const name of ['Rechts','Rechts','Unten','Unten','Links','Links'])await frame.getByRole('button',{name,exact:true}).click();await expect(frame.getByRole('status')).toContainText('Gewonnen');await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Startgerüst als ZIP herunterladen'}).click();expect((await downloading).suggestedFilename()).toBe('codeklar-js-capstone-maze-start.zip');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([]);await page.screenshot({path:'/tmp/codeklar-capstone-offline.png',animations:'disabled'});
 });
+
+test('method comparison and error guide work on their first offline visit', async ({page,context}) => {
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Nachschlagen',exact:true}).click();
+  await page.getByRole('button',{name:'Methoden vergleichen',exact:true}).click();
+  const compare=page.getByRole('region',{name:'Methodenvergleich',exact:true});
+  await compare.getByLabel('Zahlenliste (JSON)',{exact:true}).fill('[0, 3, 4]');
+  await expect(compare.getByRole('article',{name:'map-Ergebnis'})).toContainText('[0, 6, 8]');await expect(compare.getByRole('article',{name:'filter-Ergebnis'})).toContainText('[0, 4]');
+  await page.getByRole('button',{name:'Fehler verstehen',exact:true}).click();
+  const guide=page.getByRole('region',{name:'Fehler verstehen',exact:true});
+  await guide.getByLabel('Fehlerbeispiel',{exact:true}).selectOption('json');await guide.getByRole('button',{name:'Fehlerbeispiel ausführen',exact:true}).click();await expect(guide.getByLabel('Fehlerausgabe')).toContainText('SyntaxError');
+  await guide.getByRole('button',{name:'Korrektur ausprobieren',exact:true}).click();await expect(guide.getByLabel('Korrigierte Ausgabe')).toContainText('{"name":"Ada"}');
+  await guide.getByRole('button',{name:'Dazu selbst eine Aufgabe lösen →'}).click();await expect(page.getByRole('heading',{name:jsLessons.find(lesson=>lesson.id==='js-error-json').title,exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([]);
+});

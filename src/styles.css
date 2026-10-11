@@ -2172,3 +2172,34 @@ body {
 .computer-workshop select { width: 100%; min-width: 0; }
 .computer-workshop [hidden] { display: none !important; }
 @media (max-width: 600px) { .computer-workshop { padding: 16px; } .computer-reading-steps { gap: 14px; } }
+
+.reference-modes { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.reference-tool { border: 1px solid var(--border); border-radius: 14px; padding: 24px; background: var(--surface); min-width: 0; }
+.reference-tool p { line-height: 1.75; max-width: 80ch; }
+.reference-tool h2 { font-size: 24px; line-height: 1.4; }
+.tool-controls { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px; margin: 24px 0 16px; }
+.tool-controls label { display: grid; gap: 10px; flex: 1 1 220px; min-width: 0; line-height: 1.5; }
+.tool-controls input, .tool-controls select, .tool-controls textarea { width: 100%; min-width: 0; min-height: 44px; padding: 12px; color: var(--text); background: var(--code); border: 1px solid var(--border); border-radius: 8px; }
+.tool-controls textarea { resize: vertical; font-family: var(--mono); }
+.tool-presets { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.method-cards, .error-explanation-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 24px 0; }
+.method-card, .error-explanation { border: 1px solid var(--border); border-radius: 12px; padding: 20px; min-width: 0; overflow-wrap: anywhere; background: var(--background); }
+.method-card h3 { color: var(--accent); font-size: 22px; }
+.error-explanation h4 { font-size: 17px; line-height: 1.6; margin: 0 0 16px; }
+.tool-code { font: 13px/1.8 var(--mono); background: var(--code); padding: 14px; border: 1px solid var(--border); border-radius: 8px; white-space: pre-wrap; overflow-wrap: anywhere; margin: 16px 0; }
+.method-card dl { margin: 20px 0; }
+.method-card dt { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 8px; }
+.method-card dd { margin: 0; font: 16px/1.7 var(--mono); color: var(--text); }
+.tool-source code, .tool-output { overflow-wrap: anywhere; }
+.tool-output { padding: 14px; margin-top: 16px; font: 14px/1.8 var(--mono); background: var(--success-soft); border-radius: 8px; }
+.tool-output-error { background: var(--error-soft); }
+.tool-error { padding: 16px; background: var(--error-soft); border-radius: 8px; color: var(--error); }
+.tool-badge { display: inline-block; color: var(--accent); background: var(--accent-soft); padding: 6px 10px; border-radius: 6px; }
+.tool-trace { border-top: 1px solid var(--border); padding-top: 12px; }
+.tool-trace [role="status"] { padding: 20px 0; line-height: 1.8; }
+.tool-footnote { color: var(--muted); font-size: 14px; margin-top: 20px; }
+@media (max-width: 1200px) { .method-cards, .error-explanation-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .reference-tool { padding: 16px; } .reference-tool h2 { font-size: 21px; } .method-card, .error-explanation { padding: 16px; } .reference-modes { display: grid; grid-template-columns: 1fr 1fr; } .reference-modes button:first-child { grid-column: 1 / -1; } }
+.tool-code { font-variant-ligatures: none; font-feature-settings: "calt" 0, "liga" 0; }
+.comparison-rules { flex: 1 1 100%; margin: 0; }
+.comparison-rules .tool-controls { margin-top: 0; }

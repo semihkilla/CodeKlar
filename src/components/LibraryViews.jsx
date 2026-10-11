@@ -7,6 +7,8 @@ import {
   Download,
   ArrowRight,
 } from "lucide-react";
+import { MethodComparison } from "./MethodComparison";
+import { ErrorGuide } from "./ErrorGuide";
 import { ReviewPractice } from "./ReviewPractice";
 import { reviewQueue } from "../review";
 import { courses, lessons } from "../data";
@@ -130,6 +132,7 @@ export function Exercises({ progress, openLesson, openProjects }) {
 }
 
 export function Reference({ openLesson }) {
+  const [mode, setMode] = useState("lookup");
   const [query, setQuery] = useState("");
   const [course, setCourse] = useState("all");
   const filtered = lessons.filter(
@@ -147,6 +150,12 @@ export function Reference({ openLesson }) {
           Operatoren und Methoden – mit Bedeutung, Rückgabewert und Beispiel.
         </p>
       </div>
+      <nav className="reference-modes" aria-label="Nachschlagewerkzeuge">
+        {[["lookup", "Begriffe suchen"], ["compare", "Methoden vergleichen"], ["errors", "Fehler verstehen"]].map(([id, label]) => <button key={id} className={`button ${mode === id ? "primary" : "secondary"}`} aria-pressed={mode === id} onClick={() => setMode(id)}>{label}</button>)}
+      </nav>
+      <div hidden={mode !== "compare"}><MethodComparison openLesson={openLesson} /></div>
+      <div hidden={mode !== "errors"}><ErrorGuide openLesson={openLesson} /></div>
+      <div hidden={mode !== "lookup"}>
       <div className="library-toolbar">
         <SearchField
           value={query}
@@ -198,6 +207,7 @@ export function Reference({ openLesson }) {
           Dazu gibt es noch keinen Eintrag. Versuche einen anderen Begriff.
         </div>
       )}
+      </div>
     </>
   );
 }

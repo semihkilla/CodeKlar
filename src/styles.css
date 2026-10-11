@@ -2088,3 +2088,12 @@ body {
 @media (max-width:480px) { .ram-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 .scheduler-trace { display:flex; flex-wrap:wrap; gap:8px; list-style:none; padding:0; }
 .scheduler-trace li { display:flex; flex-direction:column; gap:8px; align-items:center; min-width:44px; padding:12px; border:1px solid var(--border); border-radius:8px; background:var(--accent-soft); }
+
+/* Select a chapter first; the scrolling rows contain only its topics. */
+.topic-group-select { display: flex; flex-direction: column; gap: 6px; width: 100%; min-width: 0; }
+.topic-group-select > span { color: var(--muted); font-size: 13px; }
+.topic-group-select select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: 16px; }
+.path-chapter { border-top: 1px solid var(--border); }
+.path-chapter > summary { color: var(--text); font-weight: 600; }
+.path-chapter > summary small { display: inline-block; margin-left: 12px; color: var(--muted); font-size: 12px; font-weight: normal; }
+.path-chapter .path-category { padding-left: 12px; }

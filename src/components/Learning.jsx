@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
+import { groupTopics } from "../topicGroups";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
 import { ProcessingLab } from "./ProcessingLab";
@@ -274,7 +275,9 @@ export function Learning({
     rows.forEach((row) => observer.observe(row));
     return () => observer.disconnect();
   }, [lesson.id]);
-  const categories = [...new Set(available.map((item) => item.category))];
+  const groups = groupTopics(course, available);
+  const activeGroup = groups.find((group) => group.categories.includes(lesson.category));
+  const categories = activeGroup.categories;
   const lessonIndex = available.indexOf(lesson);
   const nextOpen = available.find((item) => !progress.solved[item.id]);
   function goTo(id) {
@@ -304,7 +307,10 @@ export function Learning({
           </div>
           <details>
             <summary>Alle Schritte im Lernpfad</summary>
-            {categories.map((category) => (
+            {groups.map((group) => (
+              <details className="path-chapter" key={group.id} open={group.id === activeGroup.id}>
+                <summary>{group.name}<small>{group.lessons.filter((item) => progress.solved[item.id]).length} / {group.lessons.length} gelöst</small></summary>
+                {group.categories.map((category) => (
               <section className="path-category" key={category} aria-label={`${category}-Lektionen`}>
                 <h3>{category} <small>{available.filter((item) => item.category === category && progress.solved[item.id]).length} / {available.filter((item) => item.category === category).length} gelöst</small></h3>
                 <ol className="path-steps">
@@ -318,11 +324,23 @@ export function Learning({
               ))}
                 </ol>
               </section>
+                ))}
+              </details>
             ))}
           </details>
         </div>
       )}
       <div className="topic-navigation">
+        <label className="topic-group-select">
+          <span>Hauptbereich</span>
+          <select aria-label="Hauptbereich" value={activeGroup.id} onChange={(event) => {
+            const group = groups.find((item) => item.id === event.target.value);
+            setLessonId(group.lessons.find((item) => !progress.solved[item.id])?.id || group.lessons[0].id);
+            setTab("explanation");
+          }}>
+            {groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}
+          </select>
+        </label>
         <div className="topic-tabs" aria-label="Themen" ref={topicRef}>
           {categories.map((category) => (
             <button

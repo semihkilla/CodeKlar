@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { computerLessons } from "../src/computerLessons.js";
+import { groupTopics } from "../src/topicGroups.js";
+import { lessons } from "../src/data.js";
 import { jsLessons } from "../src/data.js";
 import { readFile } from "node:fs/promises";
 import { parseCsv, writeCsv, MAX_FILE_BYTES } from "../src/fileFormats.js";
@@ -96,7 +98,8 @@ test("ordered learning path resumes after a solved foundation and remains usable
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
   await expect(page.locator(".path-steps button")).toHaveCount(jsLessons.length);
   await expect(page.locator(".path-steps li").first()).toContainText("Gelöst");
-  await page.locator(".path-steps button").last().click();
+  await page.locator(".path-chapter > summary").filter({ hasText: "Projekte & Werkzeuge" }).click();
+  await page.getByRole("region", { name: "Projekte-Lektionen", exact: true }).getByRole("button", { name: /Miniprojekt: Deinen Budget-Rechner bauen/ }).click();
   await expect(page.getByRole("heading", { name: "Miniprojekt: Deinen Budget-Rechner bauen" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Nächste Lektion" })).toBeDisabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -131,13 +134,12 @@ test("mobile topic scroll remains at the selected area across category and lesso
     return active.left >= bounds.left - 1 && active.right <= bounds.right + 1;
   });
   expect(await isSelectedVisible()).toBe(true);
-  await row.evaluate((element) => { element.scrollLeft = element.scrollWidth; });
-  const position = await row.evaluate((element) => element.scrollLeft);
-  expect(position).toBeGreaterThan(0);
+  await page.getByLabel("Hauptbereich", { exact: true }).selectOption("practice");
   await row.getByRole("button", { name: "Projekte", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Miniprojekt: Deinen Budget-Rechner bauen" })).toBeVisible();
-  expect(Math.abs(await row.evaluate((element) => element.scrollLeft) - position)).toBeLessThanOrEqual(2);
+  await expect(page.getByLabel("Hauptbereich", { exact: true })).toHaveValue("practice");
   expect(await isSelectedVisible()).toBe(true);
+  await page.getByLabel("Hauptbereich", { exact: true }).selectOption("data");
   await row.getByRole("button", { name: "Arrays", exact: true }).click();
   const arraysPosition = await row.evaluate((element) => element.scrollLeft);
   await page.locator(".lesson-picker").getByRole("button", { name: ".filter()", exact: true }).click();
@@ -179,6 +181,7 @@ test("course groups and per-language topic progress remain navigable on mobile",
   await expect(page.locator(".course-group")).toHaveCount(6);
   await expect(page.getByRole("region", { name: "Programmiersprachen", exact: true }).getByRole("button", { name: "JavaScript", exact: true })).toBeVisible();
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  await page.locator(".path-chapter > summary").filter({ hasText: "Einstieg" }).click();
   const controls = page.getByRole("region", { name: "Kontrollfluss-Lektionen", exact: true });
   await expect(controls.locator(".path-steps button")).toHaveCount(4);
   await controls.getByRole("button", { name: /Mehrere Fälle mit else if/ }).click();
@@ -1565,4 +1568,54 @@ test('byte workshop demo and downloaded modules inspect files safely export repo
   await demo.locator('#file').setInputFiles({name:'large.bin',mimeType:'application/octet-stream',buffer:Buffer.alloc(65537)});await expect(demo.locator('#status')).toContainText('maximal 64 KiB');await demo.locator('#example').selectOption('png');await expect(demo.locator('#summary')).toContainText('PNG-Hinweis');await expect(demo.locator('#text')).toContainText('Keine gültige');
   const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen'}).click();const {unzipSync}=await import('fflate'),files=unzipSync(await readFile(await (await downloading).path()));await context.route('http://localhost:5173/byte-export/**',route=>{const path=new URL(route.request().url()).pathname.replace('/byte-export/','')||'index.html';return route.fulfill({status:files[path]?200:404,body:files[path]?Buffer.from(files[path]):'Missing',contentType:path.endsWith('.js')?'text/javascript':'text/html'});});const native=await context.newPage(),errors=[];native.on('pageerror',e=>errors.push(e.message));await native.goto('http://localhost:5173/byte-export/');await expect(native.locator('#hex')).toHaveText('41 C3 A4 F0 9F 98 80');await native.locator('#file').setInputFiles({name:'invalid.bin',mimeType:'application/octet-stream',buffer:Buffer.from([195])});await expect(native.locator('#text')).toContainText('Keine gültige');await native.locator('#file').setInputFiles({name:'empty',mimeType:'application/octet-stream',buffer:Buffer.alloc(0)});await expect(native.locator('#summary')).toContainText('0 Bytes · 0 Bits');expect(errors).toEqual([]);await native.close();
   await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();const starterDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Startgerüst als ZIP herunterladen'}).click();expect((await starterDownload).suggestedFilename()).toBe('codeklar-js-byte-workshop-start.zip');
+});
+
+
+test("chapter grouping covers every lesson once and keeps new topics reachable", () => {
+  for (const course of new Set(lessons.map((item) => item.course))) {
+    const available = lessons.filter((item) => item.course === course);
+    const groups = groupTopics(course, available);
+    expect(groups.some((item) => item.id === "more")).toBe(false);
+    const ids = groups.flatMap((item) => item.lessons.map((lesson) => lesson.id));
+    expect(ids.sort()).toEqual(available.map((item) => item.id).sort());
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(groups.length).toBeLessThanOrEqual(7);
+  }
+  const future = { id: "future", category: "Neues Thema" };
+  expect(groupTopics("js", [future])[0].lessons).toEqual([future]);
+});
+
+test("chapters follow exercise links and collapse the full mobile learning path", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const selector = page.getByLabel("Hauptbereich", { exact: true });
+  await expect(selector).toHaveValue("data");
+  await expect(selector.locator("option")).toHaveCount(7);
+  await expect(page.locator(".topic-tabs button")).toHaveCount(9);
+  await selector.selectOption("start");
+  await expect(page.locator(".topic-tabs button")).toHaveCount(6);
+  await expect(page.locator(".topic-tabs").getByRole("button", { name: "DOM", exact: true })).toHaveCount(0);
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  await expect(page.locator(".path-chapter[open]")).toHaveCount(1);
+  await page.locator(".path-chapter > summary").filter({ hasText: "Browser & Web" }).click();
+  const dom = page.getByRole("region", { name: "DOM-Lektionen", exact: true });
+  await dom.locator("button").first().click();
+  await expect(selector).toHaveValue("web");
+  await expect(page.locator(".topic-tabs button[aria-pressed=true]")).toHaveText("DOM");
+  await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
+  await page.getByRole("button", { name: "Übungen", exact: true }).click();
+  const target = jsLessons.find((item) => item.category === "Worker & Nachrichten");
+  await page.getByRole("row").filter({ hasText: target.title }).click();
+  await expect(selector).toHaveValue("async");
+  await expect(page.locator(".topic-tabs button[aria-pressed=true]")).toHaveText("Worker & Nachrichten");
+  for (const width of [390, 1505]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `/tmp/codeklar-chapters-${width}.png`, animations: "disabled" });
+  }
+  await page.getByRole("button", { name: "Computer verstehen", exact: true }).click();
+  await expect(selector.locator("option")).toHaveCount(5);
+  await selector.selectOption("execution");
+  await expect(page.locator(".topic-tabs button")).toHaveCount(2);
+  await expect(selector).toHaveValue("execution");
 });

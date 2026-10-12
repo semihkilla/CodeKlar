@@ -1,3 +1,4 @@
+import { computerTheoryLessons } from "./computerTheoryLessons";
 import { computerPracticeLessons } from "./computerPracticeLessons";
 import { computerProcessingLessons } from "./computerProcessingLessons";
 import { computerAdvancedLessons } from "./computerAdvancedLessons";
@@ -821,4 +822,4 @@ const basics = [
   }
 ];
 
-export const computerLessons = [...basics, ...computerAdvancedLessons, ...computerProcessingLessons, ...computerPracticeLessons];
+export const computerLessons = [...basics, ...computerAdvancedLessons, ...computerProcessingLessons, ...computerPracticeLessons, ...computerTheoryLessons];

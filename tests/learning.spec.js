@@ -1370,7 +1370,7 @@ test('browser preview waits for its own bridge readiness and ignores stale readi
 });
 
 test('computer fundamentals quizzes reject wrong answers and preserve completed progress', async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
   await page.goto('/');
   await page.getByRole('button', { name: 'Computer verstehen', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Verstehe, wie dein Computer arbeitet.' })).toBeVisible();
@@ -1920,5 +1920,18 @@ test('computer practice scenarios stay clear on mobile and wrong answers allow a
   await page.getByRole('button',{name:'Einen Hinweis zeigen',exact:true}).click();await expect(page.locator('.hint')).toContainText(lesson.hints[0]);
   await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText(lesson.explanation,{exact:true})).toBeVisible();
   for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-computer-practice-${width}.png`,animations:'disabled'});}
+  expect(errors).toEqual([]);await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);
+});
+
+test('new computer teaching lessons present three steps before optional technical detail',async({page})=>{
+  test.setTimeout(90000);const {computerTheoryLessons}=await import('../src/computerTheoryLessons.js');const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/');
+  for(const lesson of computerTheoryLessons){
+    await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('computer');await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();
+    await expect(page.getByText(`Lernstoff · ${lesson.difficulty}`,{exact:true})).toBeVisible();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+    const panel=page.locator('.lesson-panel');await expect(panel.getByRole('listitem')).toHaveCount(3);await expect(panel.getByText(lesson.guide[1][1],{exact:true})).toBeVisible();
+    await expect(panel.getByText(lesson.detail,{exact:true})).toBeHidden();await panel.getByText('Genauer verstehen: Begriffe und Details',{exact:true}).click();await expect(panel.getByText(lesson.detail,{exact:true})).toBeVisible();
+  }
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-computer-theory-${width}.png`,animations:'disabled'});}
   expect(errors).toEqual([]);await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);
 });

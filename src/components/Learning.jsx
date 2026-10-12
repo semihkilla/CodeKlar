@@ -28,7 +28,7 @@ function Quiz({ lesson, record }) {
   const correct = selected === lesson.answer;
   return (
     <div className="quiz">
-      {lesson.difficulty && <span className="tool-badge">Praxis · {lesson.difficulty}</span>}
+      {lesson.difficulty && <span className="tool-badge">{lesson.kind === "theory" ? "Lernstoff" : "Praxis"} · {lesson.difficulty}</span>}
       <p>{lesson.question}</p>
       <div
         className="quiz-options"
@@ -91,6 +91,7 @@ function LessonPanel({
 }) {
   const [hintCount, setHintCount] = useState(0);
   const sample = lesson.challenge?.sample || lesson.tests?.[0];
+  const guide = lesson.guide || computerGuides[lesson.id];
   return (
     <section className="lesson-panel">
       <div className="lesson-title">
@@ -137,8 +138,8 @@ function LessonPanel({
         {tab === "explanation" && (
           <>
             {lesson.course === "computer" ? <>
-              <p className="lesson-description">{computerGuides[lesson.id]?.[0] ?? lesson.description}</p>
-              {computerGuides[lesson.id] && <><h3 className="reading-label">Schritt für Schritt</h3><ol className="computer-reading-steps">{computerGuides[lesson.id][1].map(text => <li key={text}>{text}</li>)}</ol></>}
+              <p className="lesson-description">{guide?.[0] ?? lesson.description}</p>
+              {guide && <><h3 className="reading-label">Schritt für Schritt</h3><ol className="computer-reading-steps">{guide[1].map(text => <li key={text}>{text}</li>)}</ol></>}
               <h3 className="reading-label">Ein kleines Beispiel</h3>
               <pre className="syntax-strip">{lesson.example}</pre>
               <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>

@@ -448,3 +448,10 @@ test('all five new courses and both science labs work on their first offline vis
   }
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('native math formulas and substituted lab values render on first offline visit',async({page,context})=>{
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Physik-Grundlagen',exact:true}).click();await expect(page.locator('.lesson-panel .science-example').first().locator('math')).toHaveCount(2);await expect(page.locator('.lesson-panel pre')).toHaveCount(0);
+  await page.getByText('Bewegungs-Labor: Strecke und Zeit',{exact:true}).click();await expect(page.getByRole('region',{name:'Bewegungs-Labor',exact:true}).locator('mfrac')).toHaveCount(2);
+  await page.getByLabel('Zeit in Sekunden').fill('10');await expect(page.getByLabel('Modellergebnis')).toContainText('10 m/s');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

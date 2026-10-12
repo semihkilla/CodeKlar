@@ -7,6 +7,7 @@ import {
   Download,
   ArrowRight,
 } from "lucide-react";
+import { ScienceExample } from "./MathFormula";
 import { ChallengeList } from "./ChallengeList";
 import { MethodComparison } from "./MethodComparison";
 import { ErrorGuide } from "./ErrorGuide";
@@ -196,7 +197,7 @@ export function Reference({ openLesson }) {
             <div>
               <h2>{item.title}</h2>
               <p>{item.description}</p>
-              <pre>{item.syntax}</pre>
+              {["physics","electrical"].includes(item.course) ? <ScienceExample lesson={item} compact /> : <pre>{item.syntax}</pre>}
               <small>{item.note}</small>
             </div>
             <button

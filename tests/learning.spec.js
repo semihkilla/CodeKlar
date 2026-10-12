@@ -1971,3 +1971,17 @@ test('science exercise answers agree with the stated arithmetic and units',async
   expect(answer('electrical-series')).toBe(`${100+200} Ω`);expect(answer('electrical-parallel')).toBe(`${1/(1/100+1/100)} Ω`);
   expect(answer('electrical-nodes')).toBe(`${10-4} mA`);expect(answer('electrical-loop')).toBe(`${5-2} V`);
 });
+
+test('science formulas use mathematical notation in lessons reference and interactive labs',async({page})=>{
+  test.setTimeout(90000);const {scienceLessons}=await import('../src/scienceLessons.js');const {scienceMath}=await import('../src/scienceMath.js');const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});await page.goto('/');
+  for(const lesson of scienceLessons){
+    await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+    const panel=page.locator('.lesson-panel');await expect(panel.locator('pre')).toHaveCount(0);await expect(panel.locator('.science-example').first()).toBeVisible();
+    if(scienceMath[lesson.id]){await expect(panel.locator('.science-example').first().locator('math')).toHaveCount(2);await expect(panel.locator('math').first()).toBeVisible();}
+  }
+  await page.getByRole('button',{name:'Nachschlagen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('electrical');await page.getByLabel('Zum Beispiel map, === oder Python …').fill('Ohmschen');await expect(page.locator('.reference-entry math')).toBeVisible();await expect(page.locator('.reference-entry pre')).toHaveCount(0);
+  await page.getByRole('button',{name:'Elektrotechnik',exact:true}).click();await page.getByText('Ohm-Labor: Spannung, Widerstand und Strom',{exact:true}).click();const lab=page.getByRole('region',{name:'Ohm-Labor',exact:true});await expect(lab.locator('mfrac')).toHaveCount(2);await page.getByLabel('Spannung in Volt').fill('12');await expect(lab.locator('math').last()).toContainText('12');await expect(page.getByLabel('Modellergebnis')).toContainText('12 mA');
+  await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill('Mit dem Ohmschen Gesetz rechnen');await page.getByRole('row').filter({hasText:'Mit dem Ohmschen Gesetz rechnen'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-math-${width}.png`,animations:'disabled'});}
+  await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});

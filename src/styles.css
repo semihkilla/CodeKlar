@@ -2214,3 +2214,12 @@ body {
 .challenge-clock [role="status"]:empty { display: none; }
 @media (max-width: 700px) { .challenge-cards { grid-template-columns: minmax(0,1fr); } .challenge-list, .challenge-clock { padding: 16px; } }
 .quiz > .tool-badge { margin-bottom: 14px; }
+
+/* Native mathematical notation, separate from code examples. */
+.science-example { margin: 16px 0 24px; padding: 20px; background: var(--accent-soft); border: 1px solid var(--border); border-radius: 12px; min-width: 0; }
+.math-expression { overflow-x: auto; max-width: 100%; padding: 18px 8px; color: var(--text); }
+.math-expression math { font-size: 1.35rem; width: max-content; min-width: 100%; font-family: math, "STIX Two Math", "Cambria Math", serif; }
+.math-example-label { display: block; color: var(--muted); font-size: 13px; margin-top: 12px; }
+.math-legend { margin: 16px 0 0; padding-left: 20px; font-family: inherit; font-size: 14px; line-height: 1.8; }
+.science-example p { font: inherit; line-height: 1.8; margin-bottom: 12px; }
+@media (max-width:600px) { .science-example { padding: 14px; } .math-expression math { font-size: 1.15rem; } }

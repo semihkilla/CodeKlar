@@ -3,6 +3,7 @@ import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { groupTopics } from "../topicGroups";
 import { ChallengeClock, ComplexityCheck } from "./ChallengeTools";
+import { ScienceExample } from "./MathFormula";
 import { ScienceLab } from "./ScienceLab";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
@@ -93,6 +94,7 @@ function LessonPanel({
   const [hintCount, setHintCount] = useState(0);
   const sample = lesson.challenge?.sample || lesson.tests?.[0];
   const guide = lesson.guide || computerGuides[lesson.id];
+  const science = ["physics","electrical"].includes(lesson.course);
   return (
     <section className="lesson-panel">
       <div className="lesson-title">
@@ -142,10 +144,10 @@ function LessonPanel({
               <p className="lesson-description">{guide?.[0] ?? lesson.description}</p>
               {guide && <><h3 className="reading-label">Schritt für Schritt</h3><ol className="computer-reading-steps">{guide[1].map(text => <li key={text}>{text}</li>)}</ol></>}
               <h3 className="reading-label">Ein kleines Beispiel</h3>
-              <pre className="syntax-strip">{lesson.example}</pre>
+              {science ? <ScienceExample lesson={lesson} /> : <pre className="syntax-strip">{lesson.example}</pre>}
               <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>
                 <p>{lesson.description}</p>
-                <pre className="syntax-strip">{lesson.syntax}</pre>
+                {science ? <ScienceExample lesson={lesson} compact /> : <pre className="syntax-strip">{lesson.syntax}</pre>}
                 <dl className="syntax-parts">{lesson.parts.filter(([, text]) => text !== lesson.description).map(([name, text]) => <div key={name}><dt><code>{name}</code></dt><dd>{text}</dd></div>)}</dl>
                 <p className="detail-text">{lesson.detail}</p>
                 <div className="lesson-note"><Info size={20} /><span>{lesson.note}</span></div>

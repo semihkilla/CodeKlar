@@ -14,6 +14,8 @@ import { ReviewPractice } from "./ReviewPractice";
 import { reviewQueue } from "../review";
 import { courses, lessons } from "../data";
 
+const terminalLabels = { linux: "Linux", macos: "macOS", windows: "Windows" };
+
 function SearchField({ value, onChange, placeholder }) {
   return (
     <label className="search-field">
@@ -114,7 +116,7 @@ export function Exercises({ progress, openLesson, openProjects }) {
             </span>
             <span role="cell">
               <strong>{item.title}</strong>
-              <small>{item.category}</small>
+              <small>{item.category}{terminalLabels[item.course] && ` · ${terminalLabels[item.course]}`}</small>
             </span>
             <span role="cell">
               {courses.find((course) => course.id === item.course).name}

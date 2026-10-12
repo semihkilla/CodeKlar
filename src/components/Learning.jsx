@@ -3,6 +3,7 @@ import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { groupTopics } from "../topicGroups";
 import { ChallengeClock, ComplexityCheck } from "./ChallengeTools";
+import { ScienceLab } from "./ScienceLab";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
 import { ComputerWorkshop } from "./ComputerWorkshop";
@@ -137,7 +138,7 @@ function LessonPanel({
       >
         {tab === "explanation" && (
           <>
-            {lesson.course === "computer" ? <>
+            {(lesson.course === "computer" || lesson.guide) ? <>
               <p className="lesson-description">{guide?.[0] ?? lesson.description}</p>
               {guide && <><h3 className="reading-label">Schritt für Schritt</h3><ol className="computer-reading-steps">{guide[1].map(text => <li key={text}>{text}</li>)}</ol></>}
               <h3 className="reading-label">Ein kleines Beispiel</h3>
@@ -311,12 +312,14 @@ export function Learning({
   const siblings = available.filter(
     (item) => item.category === lesson.category,
   );
-  const courseName = courses.find((item) => item.id === course).name;
+  const activeCourse = courses.find((item) => item.id === course);
+  const courseName = activeCourse.name;
+  const guided = course === "computer" || activeCourse.guided;
   return (
     <div className="learning-page" data-mobile-pane={mobilePane}>
       <div className="page-intro">
-        <h1>{course === "computer" ? "Verstehe, wie dein Computer arbeitet." : "Verstehe, was dein Code tut."}</h1>
-        <p>{course === "computer" ? "Von einzelnen Bits bis zu CPU, Speicher und laufenden Programmen." : "Lerne Methoden, probiere sie aus und wende sie direkt an."}</p>
+        <h1>{activeCourse.headline || (course === "computer" ? "Verstehe, wie dein Computer arbeitet." : "Verstehe, was dein Code tut.")}</h1>
+        <p>{activeCourse.headline ? activeCourse.description : course === "computer" ? "Von einzelnen Bits bis zu CPU, Speicher und laufenden Programmen." : "Lerne Methoden, probiere sie aus und wende sie direkt an."}</p>
       </div>
       {(
         <div className="learning-path">
@@ -418,7 +421,7 @@ export function Learning({
       )}
       {lesson.challenge && <ChallengeClock key={lesson.id} lesson={lesson} />}
       <div
-        className={`learning-workspace ${course === "computer" ? "computer-workspace" : ""} ${course === "js" ? `mobile-pane-${mobilePane}` : ""}`}
+        className={`learning-workspace ${guided ? "computer-workspace" : ""} ${course === "js" ? `mobile-pane-${mobilePane}` : ""}`}
       >
         <LessonPanel
           key={`lesson-${lesson.id}`}
@@ -437,7 +440,7 @@ export function Learning({
             tab={tab}
             record={record}
           />
-        ) : course === "computer" ? null : (
+        ) : guided ? null : (
           <div className="playground-column">
             <section className="editor-panel">
               <div className="panel-header">
@@ -462,6 +465,7 @@ export function Learning({
         )}
       </div>
       {course === "computer" && <ComputerWorkshop />}
+      {["physics","electrical"].includes(course) && <ScienceLab key={course} course={course} />}
       {lesson.category === "Ein-/Ausgabe & Dateien" && <FileLab />}
       <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">
         <button className="button secondary" disabled={lessonIndex === 0} onClick={() => goTo(available[lessonIndex - 1].id)}>Vorherige Lektion</button>

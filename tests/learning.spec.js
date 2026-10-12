@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { computerLessons } from "../src/computerLessons.js";
 import { groupTopics } from "../src/topicGroups.js";
-import { lessons } from "../src/data.js";
+import { lessons, courseGroups } from "../src/data.js";
 import { jsLessons } from "../src/data.js";
 import { readFile } from "node:fs/promises";
 import { parseCsv, writeCsv, MAX_FILE_BYTES } from "../src/fileFormats.js";
@@ -178,7 +178,7 @@ test("logic tasks expose precedence, operand values and unsafe property access",
 
 test("course groups and per-language topic progress remain navigable on mobile", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".course-group")).toHaveCount(6);
+  await expect(page.locator(".course-group")).toHaveCount(courseGroups.length);
   await expect(page.getByRole("region", { name: "Programmiersprachen", exact: true }).getByRole("button", { name: "JavaScript", exact: true })).toBeVisible();
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
   await page.locator(".path-chapter > summary").filter({ hasText: "Einstieg" }).click();
@@ -1719,15 +1719,16 @@ test('capstone reference ZIPs execute real Node tests and starter ZIPs require i
 });
 
 test('reading cards stay readable across every course and topic with unbroken syntax labels',async({page})=>{
-  test.setTimeout(120000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
+  test.setTimeout(180000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
   const samples=[...new Map(lessons.map(lesson=>[`${lesson.course}/${lesson.category}`,lesson])).values()];
   await page.setViewportSize({width:390,height:844});
   for(const lesson of samples){
     await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();
+    await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);
     await page.getByLabel('Aufgaben suchen …').fill(lesson.title);
     await page.getByRole('row').filter({hasText:lesson.title}).click();
     await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
-    const card=page.locator('.lesson-panel');await expect(card.getByRole('heading',{name:lesson.course==='computer'?'Ein kleines Beispiel':'Die Bausteine erklärt'})).toBeVisible();
+    const card=page.locator('.lesson-panel');await expect(card.getByRole('heading',{name:lesson.course==='computer'||lesson.guide?'Ein kleines Beispiel':'Die Bausteine erklärt'})).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),lesson.id).toBe(true);
   }
   await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill('Arrays verändern mit .map()');await page.getByRole('row').filter({hasText:'Arrays verändern mit .map()'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
@@ -1934,4 +1935,39 @@ test('new computer teaching lessons present three steps before optional technica
   }
   for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-computer-theory-${width}.png`,animations:'disabled'});}
   expect(errors).toEqual([]);await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);
+});
+
+test('new terminal and science courses grade every quiz and keep progress across reload',async({page})=>{
+  test.setTimeout(120000);const {terminalLessons}=await import('../src/terminalLessons.js');const {scienceLessons}=await import('../src/scienceLessons.js');
+  await page.goto('/');
+  for(const lesson of [...terminalLessons,...scienceLessons]){
+    await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();
+    await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();
+  }
+  await page.reload();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));for(const lesson of [...terminalLessons,...scienceLessons])expect(saved.solved[lesson.id]).toBeTruthy();
+});
+
+test('new course navigation explanations and science labs fit mobile and desktop',async({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});await page.goto('/');
+  for(const name of ['Linux-Befehle','macOS-Befehle','Windows-Befehle','Physik-Grundlagen','Elektrotechnik']){
+    await page.getByRole('button',{name,exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await expect(page.getByRole('heading',{name:'Ein kleines Beispiel',exact:true})).toBeVisible();await expect(page.getByLabel('JavaScript-Code')).toHaveCount(0);
+  }
+  await page.getByText('Ohm-Labor: Spannung, Widerstand und Strom',{exact:true}).click();await expect(page.getByLabel('Modellergebnis')).toContainText('0,005 A = 5 mA');await page.getByLabel('Spannung in Volt').fill('12');await expect(page.getByLabel('Modellergebnis')).toContainText('12 mA');await expect(page.getByLabel('Modellergebnis')).toContainText('0,144 W');
+  await page.getByLabel('Widerstand in Ohm').fill('0');await expect(page.getByRole('alert')).toContainText('1–1.000.000');await expect(page.getByLabel('Modellergebnis')).toHaveCount(0);await page.getByLabel('Widerstand in Ohm').fill('1000');
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-electrical-${width}.png`,animations:'disabled'});}
+  await page.getByRole('button',{name:'Physik-Grundlagen',exact:true}).click();await page.getByText('Bewegungs-Labor: Strecke und Zeit',{exact:true}).click();await expect(page.getByLabel('Modellergebnis')).toContainText('5 m/s');await expect(page.getByLabel('Modellergebnis')).toContainText('18 km/h');await page.getByLabel('Zeit in Sekunden').fill('0');await expect(page.getByRole('alert')).toContainText('Zeit muss positiv sein');
+  await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Windows-Befehle',exact:true}).click();await expect(page.getByRole('heading',{name:'PowerShell und cmd unterscheiden.',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([]);await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);
+});
+
+test('science exercise answers agree with the stated arithmetic and units',async()=>{
+  const {scienceLessons}=await import('../src/scienceLessons.js');
+  const answer=id=>{const item=scienceLessons.find(item=>item.id===id);return item.options[item.answer];};
+  expect(answer('physics-prefix')).toBe(`${(2.5*1000).toLocaleString('de-DE')} m`);
+  expect(answer('physics-speed')).toBe(`${60/12} m/s`);expect(answer('physics-acceleration')).toBe(`${12/3} m/s²`);
+  expect(answer('physics-force')).toBe(`${4*2} N`);expect(answer('physics-work')).toBe(`${5*3} J`);expect(answer('physics-power')).toBe(`${60/3} W`);
+  expect(answer('physics-frequency')).toBe(`${1/0.1} Hz`);expect(answer('physics-temperature')).toBe(`${(20+273.15).toLocaleString('de-DE')} K`);
+  expect(answer('electrical-ohm')).toBe(`${5/1000*1000} mA`);expect(answer('electrical-power')).toBe(`${(5*0.02).toLocaleString('de-DE')} W`);
+  expect(answer('electrical-series')).toBe(`${100+200} Ω`);expect(answer('electrical-parallel')).toBe(`${1/(1/100+1/100)} Ω`);
+  expect(answer('electrical-nodes')).toBe(`${10-4} mA`);expect(answer('electrical-loop')).toBe(`${5-2} V`);
 });

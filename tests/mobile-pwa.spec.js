@@ -437,3 +437,14 @@ test('expanded computer teaching opens step explanations and quizzes on its firs
   await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await expect(page.getByText(lesson.guide[1][2],{exact:true})).toBeVisible();
   await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText(lesson.explanation,{exact:true})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('all five new courses and both science labs work on their first offline visit',async({page,context})=>{
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  for(const name of ['Linux-Befehle','macOS-Befehle','Windows-Befehle','Physik-Grundlagen','Elektrotechnik']){
+    await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name,exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);
+    await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio').first().click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();
+    if(name==='Physik-Grundlagen'){await page.getByText('Bewegungs-Labor: Strecke und Zeit',{exact:true}).click();await expect(page.getByLabel('Modellergebnis')).toContainText('18 km/h');}
+    if(name==='Elektrotechnik'){await page.getByText('Ohm-Labor: Spannung, Widerstand und Strom',{exact:true}).click();await expect(page.getByLabel('Modellergebnis')).toContainText('5 mA');}
+  }
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

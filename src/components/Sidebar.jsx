@@ -1,5 +1,8 @@
 import {
   Cpu,
+  Terminal,
+  Atom,
+  Zap,
   BookOpen,
   Rocket,
   ClipboardList,
@@ -29,6 +32,11 @@ export const navigation = [
 ];
 const courseIcons = {
   computer: Cpu,
+  linux: Terminal,
+  macos: Terminal,
+  windows: Terminal,
+  physics: Atom,
+  electrical: Zap,
   js: SiJavascript,
   java: FaJava,
   python: SiPython,

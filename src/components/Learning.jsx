@@ -28,6 +28,7 @@ function Quiz({ lesson, record }) {
   const correct = selected === lesson.answer;
   return (
     <div className="quiz">
+      {lesson.difficulty && <span className="tool-badge">Praxis · {lesson.difficulty}</span>}
       <p>{lesson.question}</p>
       <div
         className="quiz-options"
@@ -104,7 +105,7 @@ function LessonPanel({
               Gelöst
             </>
           ) : (
-            lesson.challenge ? lesson.challenge.level : lesson.debugging ? "Fehlerlabor" : lesson.category === "Projektbausteine" ? "Praxis" : "Einfach"
+            lesson.challenge ? lesson.challenge.level : lesson.difficulty ? lesson.difficulty : lesson.debugging ? "Fehlerlabor" : lesson.category === "Projektbausteine" ? "Praxis" : "Einfach"
           )}
         </span>
       </div>

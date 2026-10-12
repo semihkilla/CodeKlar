@@ -1778,7 +1778,7 @@ test('computer reading starts small and experiment switches preserve work on mob
   await expect(page.getByLabel('CPU-Zeitverlauf').locator('strong')).toHaveText(['A']);
   await page.getByLabel('Verarbeitungs-Experiment',{exact:true}).selectOption('cache');
   await expect(page.getByLabel('Cache-Auswertung')).toContainText('Treffer 2');
-  await expect(page.getByText('0 von 73 Aufgaben gelöst',{exact:true})).toBeVisible();
+  await expect(page.getByText(`0 von ${computerLessons.length} Aufgaben gelöst`,{exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });
@@ -1895,4 +1895,30 @@ test('challenge timer analysis filters and unguided projects work on mobile and 
   await page.getByRole('button',{name:'Projekte',exact:true}).click();await page.getByLabel('Projekt suchen').fill('Lernkarten-Trainer');await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').click();await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();await page.getByLabel('Projektstufe').selectOption('independent');
   const build=page.getByRole('region',{name:'Selbst bauen',exact:true});await expect(build.getByRole('checkbox')).toHaveCount(5);await expect(build.getByRole('button',{name:/Hinweis:/})).toHaveCount(0);await page.getByLabel('Projektstufe').selectOption('guided');await expect(build.getByRole('button',{name:/Hinweis:/})).toHaveCount(5);
   expect(errors).toEqual([]);expect(await page.locator('vite-error-overlay').count()).toBe(0);
+});
+
+test('computer practice calculations agree with native byte and scheduling models', async () => {
+  const {computerPracticeLessons}=await import('../src/computerPracticeLessons.js');
+  const {initialCache,accessCache,initialSchedule,stepSchedule}=await import('../src/processingModels.js');
+  const answer=id=>{const item=computerPracticeLessons.find(item=>item.id==='computer-practice-'+id);return item.options[item.answer];};
+  expect(answer('switches')).toBe(String(2**5));expect(answer('flags')).toBe(String(parseInt('1010',2)));
+  expect(answer('counter')).toBe(String(Uint8Array.of(256)[0]));expect(answer('pixels')).toBe(String(10*8*3));
+  expect(answer('units')).toBe((9*1024).toLocaleString('de-DE'));expect(answer('utf8')).toBe(String(new TextEncoder().encode('Hiä').length));
+  expect(answer('signed').replace('−','-')).toBe(String(new Int8Array(Uint8Array.of(254).buffer)[0]));
+  expect(answer('endian')).toBe(String(new DataView(Uint8Array.of(1,2).buffer).getUint16(0,true)));
+  const a={profil:{punkte:7}},b={...a};b.profil.punkte=13;expect(answer('alias')).toBe(String(a.profil.punkte));
+  let cache=initialCache(2);for(const key of ['A','B','A','C'])cache=accessCache(cache,key);expect(answer('cache')).toBe(cache.history.at(-1).evicted);
+  let schedule=initialSchedule(1);while(schedule.queue.length)schedule=stepSchedule(schedule);expect(answer('schedule')).toBe(schedule.trace.map(index=>['A','B','C'][index]).join(', '));
+  expect(answer('download')).toBe(`${8*8/16} Sekunden`);expect(new Set(computerPracticeLessons.map(item=>item.id)).size).toBe(16);
+});
+
+test('computer practice scenarios stay clear on mobile and wrong answers allow a retry',async({page})=>{
+  const {computerPracticeLessons}=await import('../src/computerPracticeLessons.js');const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('computer');await page.getByLabel('Aufgaben suchen …').fill('Praxisaufgabe');await expect(page.getByRole('row')).toHaveCount(17);
+  const lesson=computerPracticeLessons.find(item=>item.id==='computer-practice-utf8');await page.getByRole('row').filter({hasText:lesson.title}).click();
+  await page.getByRole('radio',{name:lesson.options[0],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Noch nicht ganz.',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Einen Hinweis zeigen',exact:true}).click();await expect(page.locator('.hint')).toContainText(lesson.hints[0]);
+  await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText(lesson.explanation,{exact:true})).toBeVisible();
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-computer-practice-${width}.png`,animations:'disabled'});}
+  expect(errors).toEqual([]);await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);
 });

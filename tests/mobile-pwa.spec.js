@@ -422,3 +422,10 @@ test('algorithm challenges grade offline with complexity guidance and optional t
   await page.getByRole('button',{name:'Code bearbeiten',exact:true}).click();await page.getByLabel('JavaScript-Code').fill(challengeLessons[0].solution);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${challengeLessons[0].tests.length} / ${challengeLessons[0].tests.length} bestanden`);
   await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Algorithmus-Challenges',exact:true}).click();await expect(page.getByRole('region',{name:'Algorithmus-Challenges',exact:true})).toContainText('1 von 12 Challenges gelöst');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('computer practice scenarios work on their first offline visit',async({page,context})=>{
+  const {computerPracticeLessons}=await import('../src/computerPracticeLessons.js');const lesson=computerPracticeLessons.find(item=>item.id==='computer-practice-cache');
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('computer');await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();
+  await expect(page.getByText('Praxis · Mittel',{exact:true})).toBeVisible();await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText(lesson.explanation,{exact:true})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

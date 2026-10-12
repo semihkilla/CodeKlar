@@ -7,6 +7,7 @@ import {
   Download,
   ArrowRight,
 } from "lucide-react";
+import { ChallengeList } from "./ChallengeList";
 import { MethodComparison } from "./MethodComparison";
 import { ErrorGuide } from "./ErrorGuide";
 import { ReviewPractice } from "./ReviewPractice";
@@ -28,6 +29,7 @@ function SearchField({ value, onChange, placeholder }) {
 }
 
 export function Exercises({ progress, openLesson, openProjects }) {
+  const [mode, setMode] = useState("all");
   const [query, setQuery] = useState("");
   const [course, setCourse] = useState("all");
   const [status, setStatus] = useState("all");
@@ -50,6 +52,8 @@ export function Exercises({ progress, openLesson, openProjects }) {
         <p>Kleine Aufgaben. Klare Rückmeldung. Dein nächster Schritt.</p>
       <button className="text-button" onClick={openProjects}>Projektideen für alle Lernbereiche →</button>
       </div>
+      <nav className="reference-modes" aria-label="Übungsbereiche"><button className={`button ${mode === "all" ? "primary" : "secondary"}`} aria-pressed={mode === "all"} onClick={()=>setMode("all")}>Alle Aufgaben</button><button className={`button ${mode === "challenges" ? "primary" : "secondary"}`} aria-pressed={mode === "challenges"} onClick={()=>setMode("challenges")}>Algorithmus-Challenges</button></nav>
+      {mode === "challenges" ? <ChallengeList progress={progress} openLesson={openLesson} /> : <>
       <div className="library-toolbar">
         <SearchField
           value={query}
@@ -116,7 +120,7 @@ export function Exercises({ progress, openLesson, openProjects }) {
               {courses.find((course) => course.id === item.course).name}
             </span>
             <span role="cell" className="exercise-type">
-              {item.course === "js" ? "Codeaufgabe" : "Wissensfrage"}
+              {item.challenge ? `Challenge · ${item.challenge.level}` : item.course === "js" ? "Codeaufgabe" : "Wissensfrage"}
             </span>
             <ArrowUpRight size={18} />
           </button>
@@ -127,6 +131,7 @@ export function Exercises({ progress, openLesson, openProjects }) {
           Keine Aufgaben gefunden. Ändere deine Suche oder den Filter.
         </div>
       )}
+      </>}
     </>
   );
 }

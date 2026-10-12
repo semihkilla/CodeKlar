@@ -1861,3 +1861,38 @@ test('error guide runs every failure and correction searches and opens a repair 
   await tool.getByRole('button',{name:'Dazu selbst eine Aufgabe lösen →'}).click();await expect(page.getByRole('heading',{name:'Fehlersuche: map liefert leere Werte',exact:true})).toBeVisible();await expect(page.getByRole('tab',{name:'Aufgabe',exact:true})).toHaveAttribute('aria-selected','true');
   expect(errors).toEqual([]);expect(await page.locator('vite-error-overlay').count()).toBe(0);
 });
+
+test('algorithm challenges grade all references reject wrong answers and preserve inputs', async ({page}) => {
+  test.setTimeout(90000);const {challengeLessons}=await import('../src/challengeLessons.js');
+  await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Algorithmus-Challenges',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Algorithmus-Challenges',exact:true})).toContainText('0 von 12 Challenges gelöst');
+  for(const item of challengeLessons) {
+    await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Alle Aufgaben',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill(item.title);await page.getByRole('row').filter({hasText:item.title}).click();
+    await page.getByLabel('JavaScript-Code').fill(`function ${item.functionName}(){ return null; }`);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(/\d+ \/ \d+ bestanden/);await expect(page.getByLabel('Code-Ausgabe')).not.toContainText(`${item.tests.length} / ${item.tests.length} bestanden`);
+    await page.getByLabel('JavaScript-Code').fill(item.solution);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${item.tests.length} / ${item.tests.length} bestanden`);
+  }
+  await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill('Challenge: Summe ohne Umwege');await page.getByRole('row').filter({hasText:'Challenge: Summe ohne Umwege'}).click();await page.getByLabel('JavaScript-Code').fill('function sumChallenge(zahlen){let summe=0;while(zahlen.length)summe+=zahlen.pop();return summe;}');await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText('1 / 5 bestanden');await expect(page.getByLabel('Code-Ausgabe')).toContainText('Die Eingabe wurde verändert.');
+  await page.reload();await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Algorithmus-Challenges',exact:true}).click();await expect(page.getByRole('region',{name:'Algorithmus-Challenges',exact:true})).toContainText('12 von 12 Challenges gelöst');
+  await page.getByLabel('Challenge-Status').selectOption('open');await expect(page.getByRole('status')).toContainText('Keine Challenges');
+});
+
+test('challenge timer analysis filters and unguided projects work on mobile and desktop', async ({page}) => {
+  await page.clock.install();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Algorithmus-Challenges',exact:true}).click();
+  const list=page.getByRole('region',{name:'Algorithmus-Challenges',exact:true});await page.getByLabel('Challenge-Schwierigkeit').selectOption('Schwer');await expect(list.getByRole('article')).toHaveCount(4);
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-challenges-${width}.png`,animations:'disabled'});}
+  await page.getByLabel('Challenge-Schwierigkeit').selectOption('all');
+  await list.getByRole('button',{name:'Nächste offene Challenge starten',exact:true}).click();await expect(page.getByRole('heading',{name:'Challenge: Summe ohne Umwege',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Zeit starten',exact:true}).click();await page.clock.runFor(5000);await expect(page.getByLabel('Verstrichene Lösungszeit')).toHaveText('00:05');
+  await page.reload();await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill('Challenge: Summe ohne Umwege');await page.getByRole('row').filter({hasText:'Challenge: Summe ohne Umwege'}).click();
+  await expect(page.getByLabel('Verstrichene Lösungszeit')).not.toHaveText('00:00');await page.getByRole('button',{name:'Zeit pausieren',exact:true}).click();const paused=await page.getByLabel('Verstrichene Lösungszeit').textContent();await page.clock.runFor(3000);await expect(page.getByLabel('Verstrichene Lösungszeit')).toHaveText(paused);
+  await page.getByText('Effizienzcheck: Laufzeit und Speicher',{exact:true}).click();await page.getByLabel('Laufzeit des beschriebenen Ansatzes').selectOption('O(n²)');await page.getByLabel('Zusätzlicher Speicher des Ansatzes').selectOption('O(n)');await page.getByRole('button',{name:'Komplexität prüfen'}).click();await expect(page.getByRole('status').filter({hasText:'Noch nicht passend.'})).toBeVisible();
+  await page.getByLabel('Laufzeit des beschriebenen Ansatzes').selectOption('O(n)');await page.getByLabel('Zusätzlicher Speicher des Ansatzes').selectOption('O(1)');await page.getByRole('button',{name:'Komplexität prüfen'}).click();await expect(page.getByRole('status').filter({hasText:'Passend eingeschätzt.'})).toBeVisible();
+  const progress=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));expect(progress.solved['js-challenge-sum']).toBeUndefined();
+  await page.getByRole('button',{name:'Zeit zurücksetzen',exact:true}).click();await expect(page.getByLabel('Verstrichene Lösungszeit')).toHaveText('00:00');
+  await page.getByRole('button',{name:'Zeit starten',exact:true}).click();await page.clock.fastForward(480000);await expect(page.getByRole('status').filter({hasText:'Zeitziel erreicht.'})).toBeVisible();await page.getByRole('button',{name:'Zeit pausieren',exact:true}).click();
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-challenge-task-${width}.png`,animations:'disabled'});}
+  await page.getByRole('button',{name:'Projekte',exact:true}).click();await page.getByLabel('Projekt suchen').fill('Lernkarten-Trainer');await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').click();await page.getByRole('button',{name:'Selbst bauen',exact:true}).click();await page.getByLabel('Projektstufe').selectOption('independent');
+  const build=page.getByRole('region',{name:'Selbst bauen',exact:true});await expect(build.getByRole('checkbox')).toHaveCount(5);await expect(build.getByRole('button',{name:/Hinweis:/})).toHaveCount(0);await page.getByLabel('Projektstufe').selectOption('guided');await expect(build.getByRole('button',{name:/Hinweis:/})).toHaveCount(5);
+  expect(errors).toEqual([]);expect(await page.locator('vite-error-overlay').count()).toBe(0);
+});

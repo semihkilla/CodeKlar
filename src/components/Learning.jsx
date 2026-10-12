@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { groupTopics } from "../topicGroups";
+import { ChallengeClock, ComplexityCheck } from "./ChallengeTools";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
 import { ComputerWorkshop } from "./ComputerWorkshop";
@@ -88,6 +89,7 @@ function LessonPanel({
   openPlayground,
 }) {
   const [hintCount, setHintCount] = useState(0);
+  const sample = lesson.challenge?.sample || lesson.tests?.[0];
   return (
     <section className="lesson-panel">
       <div className="lesson-title">
@@ -102,7 +104,7 @@ function LessonPanel({
               Gelöst
             </>
           ) : (
-            lesson.debugging ? "Fehlerlabor" : lesson.category === "Projektbausteine" ? "Praxis" : "Einfach"
+            lesson.challenge ? lesson.challenge.level : lesson.debugging ? "Fehlerlabor" : lesson.category === "Projektbausteine" ? "Praxis" : "Einfach"
           )}
         </span>
       </div>
@@ -197,7 +199,7 @@ function LessonPanel({
                 </button>
                 <div className="task-example">
                   <span>{lesson.testWorkshop ? "Prüfvariante" : "Beispieleingabe"}</span>
-                  <code>{JSON.stringify(lesson.tests[0].input)}</code>
+                  <code>{JSON.stringify(sample.input)}</code>
                   {lesson.browser && !!lesson.tests[0].actions?.length && <>
                     <span>Bedienung im Beispieltest</span>
                     <ol aria-label="Bedienung im Beispieltest">{lesson.tests[0].actions.map((action, i) => <li key={i}>
@@ -205,12 +207,13 @@ function LessonPanel({
                     </li>)}</ol>
                   </>}
                   <span>{lesson.testWorkshop ? "Erwartung an deine Tests" : "Erwartete Rückgabe"}</span>
-                  <code>{lesson.testWorkshop ? "Alle Assertions bestehen" : JSON.stringify(lesson.tests[0].expected)}</code>
+                  <code>{lesson.testWorkshop ? "Alle Assertions bestehen" : JSON.stringify(sample.expected)}</code>
                 </div>
               </>
             ) : (
               <Quiz lesson={lesson} record={record} />
             )}
+            {lesson.challenge && <ComplexityCheck lesson={lesson} />}
             <div className="hints">
               {lesson.hints.slice(0, hintCount).map((hint, i) => (
                 <div className="hint" key={i}>
@@ -411,6 +414,7 @@ export function Learning({
           </button>
         </div>
       )}
+      {lesson.challenge && <ChallengeClock key={lesson.id} lesson={lesson} />}
       <div
         className={`learning-workspace ${course === "computer" ? "computer-workspace" : ""} ${course === "js" ? `mobile-pane-${mobilePane}` : ""}`}
       >

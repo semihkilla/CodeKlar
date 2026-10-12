@@ -3,7 +3,7 @@ const groups = {
   js: [
     ["start", "Einstieg", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Funktionen"]],
     ["data", "Daten bearbeiten", ["Arrays", "Strings", "String-Werkzeuge", "Objekte", "Objektzugriffe", "Zahlen & Math", "Reguläre Ausdrücke", "Datum & Uhrzeit", "Intl & Anzeige"]],
-    ["algorithms", "Datenstrukturen & Algorithmen", ["Datenstrukturen", "Stack & Queue", "Verkettete Listen", "Rekursion", "Bäume", "Binäre Suchbäume", "Graphen", "Sortieren & Suchen"]],
+    ["algorithms", "Datenstrukturen & Algorithmen", ["Datenstrukturen", "Stack & Queue", "Verkettete Listen", "Rekursion", "Bäume", "Binäre Suchbäume", "Graphen", "Sortieren & Suchen", "Algorithmus-Challenges"]],
     ["web", "Browser & Web", ["DOM", "Events & Formulare", "Browser-Speicherung", "HTTP & fetch", "URL & Web-Daten", "Timer & Animation", "Dateien & Bilder", "Canvas & Spiele"]],
     ["async", "Asynchroner Code", ["Asynchroner Code", "Asynchrone Abläufe", "Iteratoren & Generatoren", "Streams & Pipelines", "Parallele Arbeit", "Worker & Nachrichten"]],
     ["practice", "Projekte & Werkzeuge", ["Ein-/Ausgabe & Dateien", "Imports & Module", "Eigene Tests", "Fehlersuche", "Projektbausteine", "Fehlerbehandlung", "Node.js & Terminal", "APIs & SQL", "Projektarchitektur", "Projekte & Tests", "Browser-Projekte", "Praxisaufgaben", "Projekte"]],

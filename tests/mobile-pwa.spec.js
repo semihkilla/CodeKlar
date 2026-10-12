@@ -414,3 +414,11 @@ test('method comparison and error guide work on their first offline visit', asyn
   await guide.getByRole('button',{name:'Dazu selbst eine Aufgabe lösen →'}).click();await expect(page.getByRole('heading',{name:jsLessons.find(lesson=>lesson.id==='js-error-json').title,exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([]);
 });
+
+test('algorithm challenges grade offline with complexity guidance and optional timing',async({page,context})=>{
+  const {challengeLessons}=await import('../src/challengeLessons.js');await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Algorithmus-Challenges',exact:true}).click();await page.getByRole('button',{name:'Nächste offene Challenge starten',exact:true}).click();
+  await page.getByRole('button',{name:'Zeit starten',exact:true}).click();await page.getByRole('button',{name:'Zeit pausieren',exact:true}).click();
+  await page.getByRole('button',{name:'Code bearbeiten',exact:true}).click();await page.getByLabel('JavaScript-Code').fill(challengeLessons[0].solution);await page.getByRole('button',{name:'Lösung prüfen',exact:true}).click();await expect(page.getByLabel('Code-Ausgabe')).toContainText(`${challengeLessons[0].tests.length} / ${challengeLessons[0].tests.length} bestanden`);
+  await page.getByLabel('Schnellnavigation').getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Algorithmus-Challenges',exact:true}).click();await expect(page.getByRole('region',{name:'Algorithmus-Challenges',exact:true})).toContainText('1 von 12 Challenges gelöst');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

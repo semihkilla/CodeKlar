@@ -2188,3 +2188,24 @@ test('mobile lesson list wraps long names and scrolls within all course themes',
 test('selected lesson switcher design renders in open and closed mobile states',async({page})=>{
  await page.addInitScript(()=>localStorage.setItem('codeklar-accent-v1','green'));await page.setViewportSize({width:390,height:844});await page.goto('/');await page.locator('.lesson-navigator').evaluate(el=>window.scrollTo(0,el.getBoundingClientRect().top+scrollY-140));await page.screenshot({path:'/tmp/codeklar-lesson-switcher-closed-390.png',animations:'disabled'});await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();await page.screenshot({path:'/tmp/codeklar-lesson-switcher-open-390.png',animations:'disabled'});await expect(page.getByRole('dialog',{name:'Lektion wählen',exact:true})).toBeVisible();await page.keyboard.press('Escape');await page.setViewportSize({width:320,height:844});await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'/tmp/codeklar-lesson-switcher-open-320.png',animations:'disabled'});
 });
+
+test('computer lesson sheet reserves visible list space on mobile and short screens',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('codeklar-accent-v1','green'));
+ await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();
+ const trigger=page.getByRole('button',{name:'Lektion wählen',exact:true}),dialog=page.getByRole('dialog',{name:'Lektion wählen',exact:true});
+ for(const viewport of [{width:390,height:844},{width:320,height:568},{width:667,height:375}]){
+  await page.setViewportSize(viewport);await trigger.click();
+  const list=dialog.locator('.lesson-sheet-list');
+  expect(await list.evaluate(el=>el.clientHeight)).toBeGreaterThan(110);
+  await expect(dialog.getByRole('heading',{name:'Lektion wählen',exact:true})).toBeInViewport();
+  await expect(dialog.locator('.lesson-sheet-row').first()).toBeInViewport({ratio:1});
+  expect(await dialog.evaluate(el=>el.scrollTop)).toBe(0);
+  const last=dialog.locator('.lesson-sheet-row').last();await list.evaluate(el=>{el.scrollTop=el.scrollHeight;});await last.click();
+  await trigger.click();await expect(dialog.locator('[aria-current="step"]')).toBeInViewport({ratio:1});
+  expect(await dialog.evaluate(el=>el.scrollTop)).toBe(0);
+  await expect(dialog.getByRole('heading',{name:'Lektion wählen',exact:true})).toBeInViewport();
+  if(viewport.width===390)await page.screenshot({path:'/tmp/codeklar-computer-list-fixed.png',animations:'disabled'});
+  await list.evaluate(el=>{el.scrollTop=0;});await dialog.locator('.lesson-sheet-row').first().click();
+ }
+});

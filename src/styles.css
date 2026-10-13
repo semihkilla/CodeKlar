@@ -2302,7 +2302,7 @@ body {
 .lesson-current-name svg { flex-shrink:0; }
 .lesson-current-position { font-size:14px; line-height:1.5; color:var(--muted); }
 .lesson-switcher button:focus-visible,.lesson-sheet button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
-.lesson-sheet { position:fixed; top:auto; left:0; right:0; bottom:calc(64px + env(safe-area-inset-bottom)); margin:0; width:100%; max-width:none; max-height:calc(44dvh - env(safe-area-inset-bottom)); padding:0 20px 16px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-bottom:0; border-radius:20px 20px 0 0; font-family:inherit; overflow:hidden; }
+.lesson-sheet { position:fixed; top:auto; left:0; right:0; bottom:calc(64px + env(safe-area-inset-bottom)); margin:0; width:100%; max-width:none; height:min(560px, 60vh); height:min(560px, 60dvh); max-height:calc(100dvh - 100px - env(safe-area-inset-bottom)); padding:0 20px 16px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-bottom:0; border-radius:20px 20px 0 0; font-family:inherit; overflow:hidden; }
 .lesson-sheet::backdrop { background:rgb(3 7 17 / .48); }
 .lesson-sheet-grip { display:flex; align-items:center; justify-content:center; height:28px; color:var(--muted); }
 .lesson-sheet-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:8px 0 18px; border-bottom:1px solid var(--border); }
@@ -2323,6 +2323,6 @@ body {
 }
 .lesson-sheet[open] { display:flex; flex-direction:column; }
 .lesson-sheet-grip,.lesson-sheet-heading { flex-shrink:0; }
-.lesson-sheet-list { flex:1; min-height:0; max-height:none; }
-@media (max-height:550px) { .lesson-sheet { max-height:calc(100dvh - 100px - env(safe-area-inset-bottom)); } }
+.lesson-sheet-list { flex:1 1 0; min-height:0; max-height:none; -webkit-overflow-scrolling:touch; }
+@media (max-height:550px) { .lesson-sheet { height:calc(100vh - 100px - env(safe-area-inset-bottom)); height:calc(100dvh - 100px - env(safe-area-inset-bottom)); } }
 .lesson-sheet-grip,.lesson-sheet-heading { touch-action:none; }

@@ -2,13 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Check, X, Minus } from 'lucide-react';
 const mobileQuery='(max-width: 720px), (max-width: 1000px) and (pointer: coarse)';
 export function LessonNavigator({ lesson,siblings,progress,onSelect }){
- const [open,setOpen]=useState(false),dialogRef=useRef(null),currentRef=useRef(null),dragRef=useRef(null);
+ const [open,setOpen]=useState(false),dialogRef=useRef(null),listRef=useRef(null),currentRef=useRef(null),dragRef=useRef(null);
  const index=siblings.findIndex(item=>item.id===lesson.id);
  useEffect(()=>{
   if(!open)return;
   const dialog=dialogRef.current,overflow=document.body.style.overflow;
   dialog.showModal();document.body.style.overflow='hidden';
-  currentRef.current?.scrollIntoView({block:'nearest'});
+  // Scroll only the list: scrollIntoView can also move the dialog's clipped viewport.
+  const list=listRef.current,current=currentRef.current;
+  if(list&&current){
+   const row=current.getBoundingClientRect(),box=list.getBoundingClientRect();
+   if(row.bottom>box.bottom)list.scrollTop+=row.bottom-box.bottom+3;
+   else if(row.top<box.top)list.scrollTop+=row.top-box.top-3;
+  }
   currentRef.current?.focus({preventScroll:true});
   const media=window.matchMedia(mobileQuery),closeOnDesktop=()=>{if(!media.matches)setOpen(false);};
   media.addEventListener('change',closeOnDesktop);
@@ -32,7 +38,7 @@ export function LessonNavigator({ lesson,siblings,progress,onSelect }){
   <dialog className="lesson-sheet" ref={dialogRef} aria-labelledby="lesson-sheet-title" aria-describedby="lesson-sheet-description" onCancel={event=>{event.preventDefault();setOpen(false);}} onClose={()=>setOpen(false)} onClick={event=>{if(event.target===event.currentTarget){const box=event.currentTarget.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)setOpen(false);}}}>
    <div className="lesson-sheet-grip" aria-hidden="true" onPointerDown={startDrag} onPointerUp={endDrag} onPointerCancel={()=>{dragRef.current=null;}}><Minus size={36}/></div>
    <div className="lesson-sheet-heading" onPointerDown={startDrag} onPointerUp={endDrag} onPointerCancel={()=>{dragRef.current=null;}}><div><h2 id="lesson-sheet-title">Lektion wählen</h2><p id="lesson-sheet-description">{lesson.category} · {siblings.length} Lektionen</p></div><button type="button" className="icon-button" aria-label="Lektionsliste schließen" onClick={()=>setOpen(false)}><X size={22}/></button></div>
-   <div className="lesson-sheet-list" aria-label="Lektionen im Thema">{siblings.map((item,i)=><button type="button" key={item.id} ref={item.id===lesson.id?currentRef:null} className={`lesson-sheet-row ${item.id===lesson.id?'selected':''}`} aria-current={item.id===lesson.id?'step':undefined} onClick={()=>choose(item.id)}><span className="lesson-sheet-name">{item.name}{progress.solved[item.id]&&<small>Gelöst</small>}</span><span className="lesson-sheet-position">{i+1} von {siblings.length}</span>{item.id===lesson.id?<Check size={20} aria-label="Aktuelle Lektion"/>:<span className="lesson-sheet-status"/>}</button>)}</div>
+   <div className="lesson-sheet-list" ref={listRef} aria-label="Lektionen im Thema">{siblings.map((item,i)=><button type="button" key={item.id} ref={item.id===lesson.id?currentRef:null} className={`lesson-sheet-row ${item.id===lesson.id?'selected':''}`} aria-current={item.id===lesson.id?'step':undefined} onClick={()=>choose(item.id)}><span className="lesson-sheet-name">{item.name}{progress.solved[item.id]&&<small>Gelöst</small>}</span><span className="lesson-sheet-position">{i+1} von {siblings.length}</span>{item.id===lesson.id?<Check size={20} aria-label="Aktuelle Lektion"/>:<span className="lesson-sheet-status"/>}</button>)}</div>
   </dialog>
  </div>;
 }

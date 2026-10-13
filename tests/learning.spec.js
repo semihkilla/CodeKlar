@@ -124,37 +124,27 @@ test("object answers accept any property order and reject missing fields or wron
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("0 / 3 bestanden");
 });
 
-test("mobile topic scroll remains at the selected area across category and lesson changes", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  const row = page.locator(".topic-tabs");
-  const isSelectedVisible = () => row.evaluate((element) => {
-    const active = element.querySelector('[aria-pressed="true"]').getBoundingClientRect();
-    const bounds = element.getBoundingClientRect();
-    return active.left >= bounds.left - 1 && active.right <= bounds.right + 1;
-  });
-  expect(await isSelectedVisible()).toBe(true);
+test("mobile topic selection stays visible across category and lesson changes", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });await page.goto("/");
+  const trigger=page.getByRole('button',{name:'Thema wählen',exact:true}),topics=page.getByRole('dialog',{name:'Thema wählen',exact:true});
+  await expect(trigger).toContainText('Arrays');
   await page.getByLabel("Hauptbereich", { exact: true }).selectOption("practice");
-  await row.getByRole("button", { name: "Projekte", exact: true }).click();
+  await trigger.click();await topics.getByRole('button',{name:'Projekte',exact:true}).click();
   await expect(page.getByRole("heading", { name: "Miniprojekt: Deinen Budget-Rechner bauen" })).toBeVisible();
   await expect(page.getByLabel("Hauptbereich", { exact: true })).toHaveValue("practice");
-  expect(await isSelectedVisible()).toBe(true);
+  await expect(trigger).toContainText('Projekte');
   await page.getByLabel("Hauptbereich", { exact: true }).selectOption("data");
-  await row.getByRole("button", { name: "Arrays", exact: true }).click();
-  const arraysPosition = await row.evaluate((element) => element.scrollLeft);
+  await trigger.click();await topics.getByRole('button',{name:'Arrays',exact:true}).click();
   await page.getByRole("button",{name:"Lektion wählen",exact:true}).click();
   await page.getByRole("dialog",{name:"Lektion wählen",exact:true}).getByRole("button",{name:/^\.filter\(\)/}).click();
   await expect(page.getByRole("heading", { name: "Elemente auswählen mit .filter()" })).toBeVisible();
-  expect(Math.abs(await row.evaluate((element) => element.scrollLeft) - arraysPosition)).toBeLessThanOrEqual(2);
-  expect(await isSelectedVisible()).toBe(true);
+  await expect(trigger).toContainText('Arrays');
   await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();
   await page.getByRole("button",{name:"Lektion wählen",exact:true}).click();
   await page.getByRole("dialog",{name:"Lektion wählen",exact:true}).getByRole("button",{name:/^\.map\(\)/}).click();
   await expect(page.getByRole("tab", { name: "Erklärung", exact: true })).toHaveAttribute("aria-selected", "true");
-  await page.reload();
-  expect(await isSelectedVisible()).toBe(true);
+  await page.reload();await expect(trigger).toContainText('Arrays');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: "/tmp/codeklar-mobile-topic-scroll.png", fullPage: false });
 });
 
 test("logic tasks expose precedence, operand values and unsafe property access", async ({ page }) => {
@@ -227,9 +217,9 @@ test("loop tasks distinguish break from continue and include the while boundary"
   await expect(loops.getByRole("heading")).toContainText("1 / 5 gelöst");
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  for (const selector of [".topic-tabs", ".lesson-switcher"]) {
+  for (const selector of [".topic-selector", ".lesson-switcher"]) {
     await expect.poll(() => page.locator(selector).evaluate((row) => {
-      const selected = (row.querySelector('[aria-pressed="true"]') || row.querySelector(".lesson-current")).getBoundingClientRect();
+      const selected = (row.querySelector(".topic-selector-trigger span") || row.querySelector(".lesson-current")).getBoundingClientRect();
       const bounds = row.getBoundingClientRect();
       return selected.left >= bounds.left - 1 && selected.right <= bounds.right + 1;
     })).toBe(true);
@@ -2208,4 +2198,27 @@ test('computer lesson sheet reserves visible list space on mobile and short scre
   if(viewport.width===390)await page.screenshot({path:'/tmp/codeklar-computer-list-fixed.png',animations:'disabled'});
   await list.evaluate(el=>{el.scrollTop=0;});await dialog.locator('.lesson-sheet-row').first().click();
  }
+});
+
+
+test('mobile topic field opens the selected bottom-sheet design and keeps lessons separate',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});
+ await page.addInitScript(()=>localStorage.setItem('codeklar-accent-v1','green'));
+ await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Computer verstehen',exact:true}).click();
+ const trigger=page.getByRole('button',{name:'Thema wählen',exact:true}),dialog=page.getByRole('dialog',{name:'Thema wählen',exact:true});
+ await expect(page.locator('.topic-tabs')).not.toBeVisible();await expect(trigger).toContainText('Bits & Bytes');
+ await trigger.focus();await page.keyboard.press('Enter');await expect(dialog).toBeVisible();await expect(dialog.getByRole('button',{name:'Bits & Bytes',exact:true})).toBeFocused();await expect(dialog.getByRole('button',{name:'Bits & Bytes',exact:true})).toHaveAttribute('aria-pressed','true');
+ await expect(dialog.locator('.topic-selector-row')).toHaveCount(5);await page.keyboard.press('Escape');await expect(trigger).toBeFocused();expect(await page.evaluate(()=>document.body.style.overflow)).not.toBe('hidden');
+ await page.locator('.topic-group-select').evaluate(el=>scrollTo(0,el.getBoundingClientRect().top+scrollY-170));await page.screenshot({path:'/tmp/codeklar-topic-field-closed-390.png',animations:'disabled'});
+ await trigger.click();await page.screenshot({path:'/tmp/codeklar-topic-sheet-open-390.png',animations:'disabled'});await dialog.getByRole('button',{name:'Zahlensysteme',exact:true}).click();await expect(dialog).not.toBeVisible();await expect(trigger).toContainText('Zahlensysteme');
+ await page.getByRole('button',{name:'Nächste Lektion im Thema',exact:true}).click();await expect(trigger).toContainText('Zahlensysteme');await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();await expect(page.getByRole('dialog',{name:'Lektion wählen',exact:true})).toBeVisible();await page.keyboard.press('Escape');
+ for(const viewport of [{width:320,height:568},{width:390,height:844},{width:667,height:375}]){
+  await page.setViewportSize(viewport);await trigger.click();const list=dialog.locator('.topic-selector-list');expect(await list.evaluate(el=>el.clientHeight)).toBeGreaterThan(110);expect(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await list.evaluate(el=>{el.scrollTop=el.scrollHeight;});await dialog.locator('.topic-selector-row').last().click();await trigger.click();await expect(dialog.locator('[aria-pressed="true"]')).toBeInViewport({ratio:1});await expect(dialog.getByRole('heading',{name:'Thema wählen',exact:true})).toBeInViewport();expect(await dialog.evaluate(el=>el.scrollTop)).toBe(0);await dialog.getByRole('button',{name:'Themenliste schließen',exact:true}).click();
+ }
+ await page.setViewportSize({width:390,height:844});await trigger.click();await page.mouse.click(8,8);await expect(dialog).not.toBeVisible();
+ await trigger.click();await page.setViewportSize({width:1505,height:1045});await expect(dialog).not.toBeVisible();await expect(trigger).not.toBeVisible();await expect(page.locator('.topic-tabs')).toBeVisible();expect(await page.evaluate(()=>document.body.style.overflow)).not.toBe('hidden');await page.locator('.topic-tabs').getByRole('button',{name:'Text & Dateien',exact:true}).click();
+ await page.setViewportSize({width:390,height:844});await expect(trigger).toContainText('Text & Dateien');await page.getByLabel('Hauptbereich',{exact:true}).selectOption('execution');await trigger.click();await expect(dialog.locator('.topic-selector-row')).toHaveCount(2);await page.keyboard.press('Escape');
+ await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Reverse Engineering',exact:true}).click();await trigger.click();await dialog.locator('.topic-selector-row').last().click();await trigger.click();await expect(dialog.locator('[aria-pressed="true"]')).toHaveCount(1);await page.keyboard.press('Escape');
+ await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
 });

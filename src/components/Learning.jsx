@@ -8,6 +8,7 @@ import { ScienceExample } from "./MathFormula";
 import { FormulaWorkshop } from "./FormulaWorkshop";
 import { ScienceLab } from "./ScienceLab";
 import { LessonNavigator } from "./LessonNavigator";
+import { TopicSelector } from "./TopicSelector";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
 import { ComputerWorkshop } from "./ComputerWorkshop";
@@ -394,6 +395,10 @@ export function Learning({
             </button>
           ))}
         </div>
+        <TopicSelector key={`${course}-${activeGroup.id}`} categories={categories} selected={lesson.category} onSelect={category=>{
+          setLessonId(available.find(item=>item.category===category).id);
+          setTab("explanation");
+        }} />
         <LessonNavigator key={`${course}-${lesson.category}`} lesson={lesson} siblings={siblings} progress={progress} onSelect={id=>{setLessonId(id);setTab("explanation");}} />
         <div className="lesson-picker desktop-lesson-picker" aria-label="Lektionen" ref={pickerRef}>
           {siblings.map((item) => (

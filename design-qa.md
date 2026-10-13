@@ -1,27 +1,29 @@
-# Mobile lesson list — corrective QA
+# Mobile topic selector — design QA
 
-Result: local Chromium checks passed; the reported iPhone Safari issue still needs hardware confirmation.
+final result: passed
 
-## Scope and evidence
+## Selected target and scope
 
-The user reported a clipped lesson list on Computer verstehen / Bits & Bytes: only the sheet heading and a sliver of a row were visible. The previous Chromium-only pass did not establish Safari compatibility. The original selected design remains `/workspace/generated_images/exec-c37b1d07-19c6-4bc3-9eb6-19205342b4fa.png`; this correction deliberately gives the list more space than that mock.
+The user's final image attachment supersedes their earlier numeric selection. It matches the topic-field and bottom-sheet concept `/workspace/generated_images/exec-d5a904b0-7c4f-4452-899c-5c83420c3e00.png`. The inline accordion was replaced before publication. Scope: mobile topics such as Bits & Bytes, Zahlensysteme and Zahlen im Speicher, across courses. Main-area select and individual lesson arrows remain separate controls. Desktop topic tabs remain available.
 
-- Before: `/tmp/codeklar-computer-list-before.png`, actual course, 390 × 844 mobile/touch Chromium. The reported clipping was not reproduced in this browser (list client height 239px).
-- After: `/tmp/codeklar-computer-list-fixed.png`, same viewport/course, last lesson selected and visible. All seven rows remain reachable.
-- Additional rendered states: `/tmp/codeklar-lesson-switcher-open-390.png`, `/tmp/codeklar-lesson-switcher-open-320.png`.
+The selected design uses a labelled Thema field, current topic and chevron, then a bottom modal with Thema wählen, close control, topic icons, selected check, outlined unselected indicators and grouped rows. No new raster assets are needed: existing branding, DM Sans and standard Lucide icons match the app. Real topic lists/counts come from the curriculum.
 
-## Changes
+## Visual comparison evidence
 
-The sheet now has a definite responsive height (60dvh, capped at 560px and available viewport height), instead of only a maximum height. The flex list receives the remaining space and scrolls independently. Short screens use the available height above bottom navigation. The current row is revealed by changing only the list scrollTop; scrollIntoView no longer scrolls ancestor containers. The close button and title remain outside the scrolling list. Existing typography, color themes, row wrapping and desktop controls are preserved.
+Reference and rendered open state were inspected together in `/tmp/codeklar-topic-sheet-comparison.png`, 796 × 874 including labels. The reference is displayed at 390px wide preserving its natural ratio; the rendered app is 390 × 844. Local rendered states: `/tmp/codeklar-topic-sheet-open-390.png` and `/tmp/codeklar-topic-field-closed-390.png`. Both show Computer verstehen / Bits, Zahlen & Dateien / Bits & Bytes, green accent.
 
-The proposed replacement for the horizontal topic row is not implemented: the user requested design alternatives first.
+The field, chevron, sheet title, row hierarchy, topic icons and separate lesson control match the selected structure. Existing text/surface/accent variables retain all color themes. Deliberate accessibility adaptations: topic names stay 16px, tappable rows at least 48px, long labels wrap, the panel uses a definite 48dvh height with internal scrolling instead of a smaller raster-derived panel. This produces more panel height than the reference. Native dialog backdrop dims/inerts background controls; focus remains visibly indicated. These choices preserve readability and prevent the earlier clipped-list failure. No actionable P0/P1/P2 findings remain in the inspected scope.
 
-## Validation
+## Behavior and verification
 
-Five focused Chromium tests passed: arrow/list interaction, topic scroll regression, long names, rendered mobile states, and the new Computer lesson-list regression at 390 × 844, 320 × 568 and 667 × 375. The regression checks at least 110px of list space, a fully visible first row, fully visible selected last row after reopening, no ancestor dialog scrolling, and a visible heading. Existing checks cover keyboard focus, Escape/close/backdrop/swipe logic, body scroll restoration, desktop resizing and console errors.
+Seven focused Chromium/Playwright tests passed, including topic selection across categories and lessons, keyboard opening/Escape/focus return, selected-row focus, close and backdrop dismissal, internal scrolling/reopening the final topic, narrow and short viewports (320 × 568, 390 × 844, 667 × 375), desktop resizing, group/course changes, task reset to explanation, lesson-list regression, chapter navigation and loop-task progress. Browser page identity, console, framework overlay and horizontal overflow checks passed. Topic selection closes the sheet and the field displays the new topic. The current topic remains stable during individual lesson changes.
 
-Production build passed; the existing large-chunk warning remains. The freshly built PWA passed its offline lesson-navigation and solved-progress test.
+Production build passed with the existing large-bundle warning. Two freshly built PWA tests passed offline: topic sheet navigation and existing lesson arrow/list navigation with solved-progress persistence.
+
+## Previous mobile list correction
+
+The previous iPhone screenshot showed an almost completely clipped lesson list. That issue was not reproduced in local Chromium. Lesson sheets retain a definite responsive height, an internally scrolling flex list and selected-row revealing that changes only list scrollTop. The Computer lesson-sheet regression remains green at narrow and short viewport sizes.
 
 ## Limits
 
-Browser plugin not available; local Playwright Chromium used. WebKit browser binary unavailable. Real iPhone Safari and touch gestures on hardware remain untested; the exact Safari root cause is not claimed as confirmed. Screenshots are local QA artifacts outside the repository.
+Browser plugin not available; local Playwright Chromium used. WebKit browser binary unavailable. Real iPhone Safari and touch gestures on hardware remain untested. The exact cause of the originally reported Safari clipping is not claimed as confirmed. Course/lesson selection after reload follows existing app behavior; only progress persistence is asserted. Screenshot artifacts are outside the repository.

@@ -2348,3 +2348,4 @@ body {
  .topic-navigation .topic-tabs { display:none; }
 }
 @media (max-height:550px) { .topic-sheet { height:calc(100vh - 100px - env(safe-area-inset-bottom)); height:calc(100dvh - 100px - env(safe-area-inset-bottom)); } }
+.java-quiz-output { white-space:pre-wrap; font-family:var(--mono); font-size:14px; line-height:1.7; overflow-wrap:anywhere; text-align:left; }

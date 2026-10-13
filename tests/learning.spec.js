@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 import { computerLessons } from "../src/computerLessons.js";
 import { groupTopics } from "../src/topicGroups.js";
 import { lessons, courseGroups } from "../src/data.js";
-import { jsLessons } from "../src/data.js";
+import { jsLessons, javaLessons } from "../src/data.js";
+import { projects } from "../src/projects.js";
 import { readFile } from "node:fs/promises";
 import { parseCsv, writeCsv, MAX_FILE_BYTES } from "../src/fileFormats.js";
 import { prepareModules } from "../src/moduleFiles.js";
@@ -387,7 +388,7 @@ test("quiz answers, reference search and exercise filters update their views", a
   await expect(page.getByText("1 von 1 Aufgaben gelöst")).toBeVisible();
   await page.getByRole("button", { name: "Nachschlagen", exact: true }).click();
   await page.getByRole("textbox").fill("append");
-  await expect(page.locator(".reference-entry")).toHaveCount(2);
+  await expect(page.locator(".reference-entry")).toHaveCount(lessons.filter(item => `${item.name} ${item.title} ${item.description}`.toLowerCase().includes("append")).length);
   await page.getByLabel("Lernbereich filtern").selectOption("python");
   await expect(page.locator(".reference-entry")).toHaveCount(1);
   await expect(page.locator(".reference-entry")).toContainText("None");
@@ -859,7 +860,7 @@ test('project library covers every course, runs its game and downloads complete 
   await page.getByRole('navigation', { name: 'Schnellnavigation' }).getByRole('button', { name: 'Übungen' }).click();
   await page.getByRole('button', { name: 'Projektideen für alle Lernbereiche' }).click();
   await expect(page.getByRole('heading', { name: 'Aus Funktionen werden Projekte.' })).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Projektbeispiele' }).getByRole('button')).toHaveCount(25);
+  await expect(page.getByRole('navigation', { name: 'Projektbeispiele' }).getByRole('button')).toHaveCount(projects.length);
   const game = page.frameLocator('iframe[title="Klick-Challenge ausprobieren"]');
   await game.getByRole('button', { name: 'Neue Runde' }).click();
   await game.getByRole('button', { name: 'Klick!', exact: true }).click();
@@ -2221,4 +2222,41 @@ test('mobile topic field opens the selected bottom-sheet design and keeps lesson
  await page.setViewportSize({width:390,height:844});await expect(trigger).toContainText('Text & Dateien');await page.getByLabel('Hauptbereich',{exact:true}).selectOption('execution');await trigger.click();await expect(dialog.locator('.topic-selector-row')).toHaveCount(2);await page.keyboard.press('Escape');
  await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Reverse Engineering',exact:true}).click();await trigger.click();await dialog.locator('.topic-selector-row').last().click();await trigger.click();await expect(dialog.locator('[aria-pressed="true"]')).toHaveCount(1);await page.keyboard.press('Escape');
  await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});
+
+test('Java curriculum preserves old progress IDs and puts every lesson in a chapter',async()=>{
+ const {javaLessonPack}=await import('../src/javaLessons.js');const {javaProjects}=await import('../src/javaProjects.js');
+ expect(javaLessonPack).toHaveLength(130);expect(javaLessons).toHaveLength(131);expect(lessons.filter(x=>x.id==='java-equals')).toHaveLength(1);expect(javaLessons[0].id).toBe('java-hello');
+ expect(new Set(lessons.map(x=>x.id)).size).toBe(lessons.length);
+ const groups=groupTopics('java',javaLessons);expect(groups).toHaveLength(6);expect(groups.some(x=>x.id==='more')).toBe(false);expect(groups.flatMap(x=>x.lessons.map(l=>l.id)).sort()).toEqual(javaLessons.map(x=>x.id).sort());
+ for(const lesson of javaLessonPack){expect(lesson.guide[1]).toHaveLength(3);expect(lesson.example).toContain('public static void main');expect(lesson.options[lesson.answer]).toBe(lesson.expectedOutput);expect(new Set(lesson.options).size).toBe(3);expect(lesson.explanation.length).toBeGreaterThan(50);}
+ expect(javaProjects).toHaveLength(3);for(const p of javaProjects){for(const id of p.lessonIds)expect(javaLessons.find(x=>x.id===id)).toBeTruthy();expect(p.files[Object.keys(p.files)[0]]).toContain('static void tests()');}
+});
+
+test('all Java lessons render and grade real output questions with persistent progress',async({page})=>{
+ test.setTimeout(300000);const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});await page.goto('/');await page.getByRole('button',{name:'Java',exact:true}).click();let category;
+ for(const [index,lesson] of javaLessons.entries()){
+  if(category!==lesson.category){const group=groupTopics('java',javaLessons).find(g=>g.categories.includes(lesson.category));await page.getByLabel('Hauptbereich',{exact:true}).selectOption(group.id);await page.locator('.topic-tabs').getByRole('button',{name:lesson.category,exact:true}).click();category=lesson.category;}
+  await page.locator('.desktop-lesson-picker').getByRole('button',{name:lesson.name,exact:true}).click();await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();
+  await expect(page.locator('.learning-page')).toHaveAttribute('data-course','java');await expect(page.getByRole('heading',{name:lesson.title,exact:true})).toBeVisible();
+  if(index===0){await page.getByRole('radio').nth((lesson.answer+1)%3).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.locator('.quiz-feedback')).toContainText('Noch nicht ganz');}
+  await page.getByRole('radio').nth(lesson.answer).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.locator('.quiz-feedback')).toContainText('Richtig!');
+  if(lesson.guide){await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await expect(page.locator('.syntax-strip').first()).toContainText('public class Main');}
+ }
+ await expect(page.getByText('131 von 131 Aufgaben gelöst',{exact:true})).toBeVisible();await page.reload();await page.getByRole('button',{name:'Java',exact:true}).click();await expect(page.getByText('131 von 131 Aufgaben gelöst',{exact:true})).toBeVisible();expect(errors).toEqual([]);
+});
+
+test('Java mobile chapters, multiline answers and reference search remain readable',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('codeklar-accent-v1','green'));await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Java',exact:true}).click();await expect(page.getByRole('heading',{name:'Java verstehen und eigene Programme bauen.',exact:true})).toBeVisible();await expect(page.getByLabel('Hauptbereich').locator('option')).toHaveCount(6);
+ await page.getByRole('button',{name:'Nächste Lektion im Thema',exact:true}).click();await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await expect(page.locator('.java-quiz-output').first()).toHaveCSS('white-space','pre-wrap');
+ await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await page.locator('.lesson-panel').scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-java-mobile.png',animations:'disabled'});
+ for(const viewport of [{width:320,height:568},{width:390,height:844},{width:1505,height:1045}]){await page.setViewportSize(viewport);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ await page.setViewportSize({width:390,height:844});await page.getByLabel('Hauptbereich',{exact:true}).selectOption('io');await page.getByRole('button',{name:'Thema wählen',exact:true}).click();await page.getByRole('dialog',{name:'Thema wählen',exact:true}).getByRole('button',{name:'Dateien & Pfade',exact:true}).click();await expect(page.locator('.lesson-current-name')).toContainText('Path.resolve()');
+ await page.getByRole('button',{name:'Nachschlagen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('java');await page.getByRole('textbox').fill('Stream.filter');await expect(page.locator('.reference-entry')).toHaveCount(1);await expect(page.locator('.reference-entry')).toContainText('filter');
+});
+
+test('Java projects download complete source and link back to their own lessons',async({page})=>{
+ const {javaProjects}=await import('../src/javaProjects.js');const {unzipSync,strFromU8}=await import('fflate');await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:/Projektideen für alle Lernbereiche/}).click();await page.getByLabel('Lernbereich',{exact:true}).selectOption('java');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(4);
+ for(const project of javaProjects){await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').filter({hasText:project.title}).click();const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen',exact:true}).click();const download=await pending;const files=unzipSync(await readFile(await download.path()));for(const [name,code] of Object.entries(project.files))expect(strFromU8(files[name])).toBe(code);expect(strFromU8(files['README.md'])).toContain('JDK ab Version 17');}
+ await page.getByRole('region',{name:'Passende Übungen'}).getByRole('button').first().click();await expect(page.locator('.learning-page')).toHaveAttribute('data-course','java');await expect(page.getByRole('tab',{name:'Aufgabe',exact:true})).toHaveAttribute('aria-selected','true');
 });

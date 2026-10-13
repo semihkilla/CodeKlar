@@ -1,0 +1,2862 @@
+[
+  {
+    "id": "hello",
+    "category": "Grundlagen",
+    "name": "main() und println()",
+    "introduction": "Java startet ein klassisches Konsolenprogramm in der main-Methode. println schreibt Text und danach einen Zeilenumbruch.",
+    "steps": [
+      "public macht den Einstieg zugänglich.",
+      "static erlaubt den Aufruf ohne ein Main-Objekt.",
+      "String[] args enthält die übergebenen Startargumente."
+    ],
+    "code": "System.out.println(\"Hallo Java\");",
+    "output": "Hallo Java",
+    "choices": [
+      "Hallo Java",
+      "Keine Ausgabe",
+      "HalloJava"
+    ],
+    "explanation": "Die JVM ruft main auf; println gibt genau den Text zwischen den Anführungszeichen aus.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "print",
+    "category": "Grundlagen",
+    "name": "print() oder println()",
+    "introduction": "print hängt keinen Zeilenumbruch an. println beendet die aktuelle Ausgabezeile.",
+    "steps": [
+      "Die erste Ausgabe bleibt auf derselben Zeile.",
+      "Die zweite Ausgabe schließt diese Zeile ab.",
+      "Erst die dritte Ausgabe beginnt auf einer neuen Zeile."
+    ],
+    "code": "System.out.print(\"A\");\nSystem.out.println(\"B\");\nSystem.out.println(\"C\");",
+    "output": "AB\nC",
+    "choices": [
+      "AB\nC",
+      "A\nB\nC",
+      "ABC"
+    ],
+    "explanation": "print(\"A\") und println(\"B\") ergeben gemeinsam AB. C steht anschließend in einer neuen Zeile.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "variables",
+    "category": "Grundlagen",
+    "name": "Variablen deklarieren",
+    "introduction": "Eine Variable hat einen Namen, einen Typ und einen gespeicherten Wert. Zuweisung ersetzt den bisherigen Wert.",
+    "steps": [
+      "int legt einen ganzzahligen Typ fest.",
+      "= speichert den Wert rechts in der Variable links.",
+      "Eine spätere Zuweisung überschreibt den alten Wert."
+    ],
+    "code": "int punkte = 3;\npunkte = punkte + 2;\nSystem.out.println(punkte);",
+    "output": "5",
+    "choices": [
+      "5",
+      "3",
+      "32"
+    ],
+    "explanation": "Die rechte Seite liest zuerst die bisherige 3. Danach wird 5 in punkte gespeichert.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "final",
+    "category": "Grundlagen",
+    "name": "final und veränderbare Objekte",
+    "introduction": "final verhindert eine neue Zuweisung an die Variable. Es macht das referenzierte Objekt nicht automatisch unveränderlich.",
+    "steps": [
+      "Die Referenz namen bleibt dieselbe.",
+      "add darf die veränderbare Liste erweitern.",
+      "Eine neue Liste an namen zuzuweisen wäre verboten."
+    ],
+    "code": "final var namen = new java.util.ArrayList<String>();\nnamen.add(\"Ada\");\nSystem.out.println(namen);",
+    "output": "[Ada]",
+    "choices": [
+      "[Ada]",
+      "[]",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "final bindet die Referenz. ArrayList bleibt veränderbar, deshalb ist add erlaubt.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "var",
+    "category": "Grundlagen",
+    "name": "var: Typ ableiten",
+    "introduction": "var lässt den Compiler den lokalen Variablentyp aus dem Anfangswert bestimmen. Die Variable bleibt statisch typisiert.",
+    "steps": [
+      "Der Anfangswert 4 hat den Typ int.",
+      "var ist für diese lokale Variable erlaubt.",
+      "Ein String könnte ihr später nicht zugewiesen werden."
+    ],
+    "code": "var zahl = 4;\nzahl += 2;\nSystem.out.println(zahl);",
+    "output": "6",
+    "choices": [
+      "6",
+      "42",
+      "4"
+    ],
+    "explanation": "var bedeutet hier int. Der Typ wird beim Übersetzen bestimmt und ändert sich nicht zur Laufzeit.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "scope",
+    "category": "Grundlagen",
+    "name": "Gültigkeitsbereiche",
+    "introduction": "Lokale Variablen gehören zu einem Block. Außerhalb eines inneren Blocks ist dessen Variable nicht sichtbar.",
+    "steps": [
+      "Die äußere Variable punkte bleibt sichtbar.",
+      "bonus existiert nur zwischen den inneren Klammern.",
+      "Die Änderung an punkte bleibt nach dem Block erhalten."
+    ],
+    "code": "int punkte = 2;\n{ int bonus = 3; punkte += bonus; }\nSystem.out.println(punkte);",
+    "output": "5",
+    "choices": [
+      "5",
+      "2",
+      "3"
+    ],
+    "explanation": "Der innere Block kann punkte ändern. bonus ist danach nicht mehr zugänglich, aber punkte enthält 5.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "primitive",
+    "category": "Datentypen",
+    "name": "Primitive Werte kopieren",
+    "introduction": "Primitive Datentypen wie int speichern Werte. Bei einer Zuweisung wird der Wert kopiert.",
+    "steps": [
+      "a enthält zunächst 3.",
+      "b bekommt eine unabhängige Kopie dieses Werts.",
+      "Eine Änderung an b verändert a nicht."
+    ],
+    "code": "int a = 3;\nint b = a;\nb = 9;\nSystem.out.println(a + \" \" + b);",
+    "output": "3 9",
+    "choices": [
+      "3 9",
+      "9 9",
+      "3 3"
+    ],
+    "explanation": "Die beiden Variablen speichern unabhängige int-Werte, keine gemeinsame Objektreferenz.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "reference",
+    "category": "Datentypen",
+    "name": "Referenzen und Aliase",
+    "introduction": "Eine Objektvariable speichert eine Referenz. Zwei Referenzen können dasselbe veränderbare Objekt erreichen.",
+    "steps": [
+      "a verweist auf ein Array.",
+      "b bekommt dieselbe Referenz.",
+      "Eine Änderung über b wird auch über a sichtbar."
+    ],
+    "code": "int[] a = {3};\nint[] b = a;\nb[0] = 9;\nSystem.out.println(a[0]);",
+    "output": "9",
+    "choices": [
+      "9",
+      "3",
+      "0"
+    ],
+    "explanation": "Es wurde kein Array kopiert. Beide Variablen erreichen dasselbe Array mit dem Wert 9.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "division",
+    "category": "Datentypen",
+    "name": "int oder double bei Division",
+    "introduction": "Die Operandentypen bestimmen die Division. Zwei ganze Zahlen ergeben eine Ganzzahldivision.",
+    "steps": [
+      "5 / 2 verwendet zwei int-Werte.",
+      "Der Rest wird bei dieser Division abgeschnitten.",
+      "5.0 ist double und erzwingt eine Gleitkommadivision."
+    ],
+    "code": "System.out.println(5 / 2);\nSystem.out.println(5.0 / 2);",
+    "output": "2\n2.5",
+    "choices": [
+      "2\n2.5",
+      "2.5\n2.5",
+      "2\n2"
+    ],
+    "explanation": "Eine double-Zielvariable würde eine bereits ausgeführte int-Division nicht nachträglich genauer machen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "cast",
+    "category": "Datentypen",
+    "name": "Explizit umwandeln",
+    "introduction": "Ein Cast kann einen double-Wert in int umwandeln. Der Nachkommateil wird dabei in Richtung null entfernt.",
+    "steps": [
+      "Der double-Wert ist negativ.",
+      "(int) verlangt eine explizite Umwandlung.",
+      "Die Umwandlung rundet nicht zum nächsten Integer."
+    ],
+    "code": "double wert = -3.9;\nSystem.out.println((int) wert);",
+    "output": "-3",
+    "choices": [
+      "-3",
+      "-4",
+      "-3.9"
+    ],
+    "explanation": "Bei diesem Wert schneidet der Cast den Nachkommateil ab; das Ergebnis ist -3, nicht floor(-3.9).",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "overflow",
+    "category": "Datentypen",
+    "name": "Integer-Überlauf erkennen",
+    "introduction": "int besitzt einen begrenzten Wertebereich. Normale Addition meldet einen Überlauf nicht als Ausnahme.",
+    "steps": [
+      "Integer.MAX_VALUE ist der größte int.",
+      "Ein zusätzlicher Schritt passt nicht in den Wertebereich.",
+      "Das Ergebnis läuft zum kleinsten int um."
+    ],
+    "code": "int n = Integer.MAX_VALUE;\nSystem.out.println(n + 1);",
+    "output": "-2147483648",
+    "choices": [
+      "-2147483648",
+      "2147483648",
+      "ArithmeticException"
+    ],
+    "explanation": "int ist eine vorzeichenbehaftete 32-Bit-Ganzzahl. Nutze long oder Math.addExact, wenn dieser Überlauf vermieden oder erkannt werden muss.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "boxing",
+    "category": "Datentypen",
+    "name": "Boxing und Unboxing",
+    "introduction": "Integer verpackt einen int als Objekt. Java kann bei bestimmten Zuweisungen automatisch ein- und auspacken.",
+    "steps": [
+      "Integer n bekommt einen verpackten Wert.",
+      "Die Addition benötigt den ausgepackten int.",
+      "Das Rechenergebnis ist wieder ein primitiver Wert."
+    ],
+    "code": "Integer n = 4;\nint ergebnis = n + 2;\nSystem.out.println(ergebnis);",
+    "output": "6",
+    "choices": [
+      "6",
+      "42",
+      "4"
+    ],
+    "explanation": "Java packt n für die Addition aus. Ein null-Integer würde beim Unboxing eine NullPointerException auslösen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "arithmetic",
+    "category": "Operatoren",
+    "name": "Rechnen und Reihenfolge",
+    "introduction": "Multiplikation hat eine höhere Priorität als Addition. Klammern legen eine andere Auswertungsreihenfolge fest.",
+    "steps": [
+      "Ohne Klammern wird zuerst 3 * 4 berechnet.",
+      "Danach kommt die Addition mit 2.",
+      "Mit Klammern wird zuerst 2 + 3 berechnet."
+    ],
+    "code": "System.out.println(2 + 3 * 4);\nSystem.out.println((2 + 3) * 4);",
+    "output": "14\n20",
+    "choices": [
+      "14\n20",
+      "20\n20",
+      "14\n14"
+    ],
+    "explanation": "Operatorpriorität ist keine Leserichtung: Punktrechnung kommt vor Strichrechnung; Klammern gehen vor.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "remainder",
+    "category": "Operatoren",
+    "name": "Restoperator %",
+    "introduction": "Der Restoperator beschreibt den Rest einer Division. Bei Java hat der Rest das Vorzeichen des linken Operanden oder ist null.",
+    "steps": [
+      "7 geteilt durch 3 ergibt Rest 1.",
+      "Bei -7 bleibt der Rest negativ.",
+      "Für einen nichtnegativen Modulo-Wert kann floorMod sinnvoll sein."
+    ],
+    "code": "System.out.println(7 % 3);\nSystem.out.println(-7 % 3);",
+    "output": "1\n-1",
+    "choices": [
+      "1\n-1",
+      "1\n2",
+      "2\n-2"
+    ],
+    "explanation": "Java % verwendet den Rest der abgeschnittenen Division. Für zyklische Indizes unterscheiden sich % und Math.floorMod bei negativen Zahlen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "increment",
+    "category": "Operatoren",
+    "name": "i++ und ++i",
+    "introduction": "Beide Formen erhöhen die Variable. Als Ausdruck liefern sie unterschiedliche Werte zurück.",
+    "steps": [
+      "i++ liefert zuerst den alten Wert.",
+      "Danach enthält i den erhöhten Wert.",
+      "++i erhöht zuerst und liefert den neuen Wert."
+    ],
+    "code": "int i = 2;\nSystem.out.println(i++);\nSystem.out.println(++i);",
+    "output": "2\n4",
+    "choices": [
+      "2\n4",
+      "3\n4",
+      "2\n3"
+    ],
+    "explanation": "Der erste Aufruf liefert 2 und erhöht auf 3. Der zweite erhöht auf 4 und liefert 4. Verwende solche Effekte sparsam in längeren Ausdrücken.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "comparison",
+    "category": "Operatoren",
+    "name": "Vergleiche und boolean",
+    "introduction": "Vergleichsoperatoren liefern true oder false. >= schließt den Grenzwert ein, > nicht.",
+    "steps": [
+      "alter ist genau 18.",
+      ">= prüft einschließlich des Grenzwerts.",
+      "> verlangt einen echt größeren Wert."
+    ],
+    "code": "int alter = 18;\nSystem.out.println(alter >= 18);\nSystem.out.println(alter > 18);",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "18 liegt auf der Grenze: Der erste Vergleich ist erfüllt, der zweite nicht.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "short-circuit",
+    "category": "Operatoren",
+    "name": "&& und Kurzschluss",
+    "introduction": "&& prüft den rechten Teil nur dann, wenn der linke Teil true ist. Das kann einen unzulässigen Zugriff verhindern.",
+    "steps": [
+      "text ist null.",
+      "text != null ist deshalb false.",
+      "Der zweite Ausdruck mit length wird nicht ausgewertet."
+    ],
+    "code": "String text = null;\nSystem.out.println(text != null && text.length() > 0);",
+    "output": "false",
+    "choices": [
+      "false",
+      "true",
+      "NullPointerException"
+    ],
+    "explanation": "&& spart hier nicht nur Arbeit: Der Kurzschluss verhindert den Methodenaufruf auf null.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "or",
+    "category": "Operatoren",
+    "name": "|| und !",
+    "introduction": "|| verlangt mindestens eine wahre Bedingung. ! kehrt einen boolean um.",
+    "steps": [
+      "admin ist false.",
+      "besitzer ist true, also ist die Oder-Bedingung true.",
+      "!true ergibt false."
+    ],
+    "code": "boolean admin = false, besitzer = true;\nSystem.out.println(admin || besitzer);\nSystem.out.println(!(admin || besitzer));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "false\ntrue",
+      "true\ntrue"
+    ],
+    "explanation": "Das logische Oder prüft Berechtigung über mindestens einen erlaubten Weg. ! negiert das gemeinsame Ergebnis.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "ternary",
+    "category": "Operatoren",
+    "name": "Bedingter Ausdruck ?: ",
+    "introduction": "Der ternäre Operator wählt abhängig von einer Bedingung genau einen von zwei Ausdrücken aus.",
+    "steps": [
+      "Die Bedingung fragt nach einem nichtnegativen Wert.",
+      "Bei false wird der Ausdruck nach : verwendet.",
+      "Nur der gewählte Ausdruck liefert das Ergebnis."
+    ],
+    "code": "int n = -4;\nint betrag = n >= 0 ? n : -n;\nSystem.out.println(betrag);",
+    "output": "4",
+    "choices": [
+      "4",
+      "-4",
+      "0"
+    ],
+    "explanation": "Die Bedingung ist false. Deshalb wird -n ausgewählt und ergibt 4. Integer.MIN_VALUE wäre ein besonderer Überlauffall.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "bitwise",
+    "category": "Operatoren",
+    "name": "Bits mit & und |",
+    "introduction": "Bitoperatoren verknüpfen einzelne Bits von Ganzzahlen. Sie sind nicht dasselbe wie die logischen Kurzschlussoperatoren.",
+    "steps": [
+      "5 hat im Binärsystem die Bits 101.",
+      "3 hat die Bits 011.",
+      "AND behält gemeinsame Einsen, OR jede vorhandene Eins."
+    ],
+    "code": "System.out.println(5 & 3);\nSystem.out.println(5 | 3);",
+    "output": "1\n7",
+    "choices": [
+      "1\n7",
+      "7\n1",
+      "true\ntrue"
+    ],
+    "explanation": "101 AND 011 ist 001, also 1. 101 OR 011 ist 111, also 7.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "if",
+    "category": "Kontrollfluss",
+    "name": "if und else",
+    "introduction": "if führt bei true den ersten Block aus. else wird ausgeführt, wenn die Bedingung false ist.",
+    "steps": [
+      "saldo ist 8.",
+      "Die Bedingung saldo >= 10 ist false.",
+      "Deshalb läuft ausschließlich der else-Block."
+    ],
+    "code": "int saldo = 8;\nif (saldo >= 10) System.out.println(\"Kaufen\");\nelse System.out.println(\"Sparen\");",
+    "output": "Sparen",
+    "choices": [
+      "Sparen",
+      "Kaufen",
+      "Kaufen\nSparen"
+    ],
+    "explanation": "Die Verzweigung entscheidet sich für einen der beiden Wege. Sie führt nicht beide Ausgaben aus.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "switch",
+    "category": "Kontrollfluss",
+    "name": "switch als Ausdruck",
+    "introduction": "Ein switch-Ausdruck kann direkt einen Wert liefern. Pfeilzweige fallen nicht automatisch in den nächsten Zweig weiter.",
+    "steps": [
+      "tag ist 2.",
+      "Der passende case wählt Dienstag aus.",
+      "default würde für andere nicht aufgeführte Werte greifen."
+    ],
+    "code": "int tag = 2;\nString name = switch (tag) {\n    case 1 -> \"Montag\";\n    case 2 -> \"Dienstag\";\n    default -> \"Anderer Tag\";\n};\nSystem.out.println(name);",
+    "output": "Dienstag",
+    "choices": [
+      "Dienstag",
+      "Montag",
+      "Anderer Tag"
+    ],
+    "explanation": "Seit Java 14 sind switch-Ausdrücke regulär verfügbar. Jeder hier verwendete Zweig liefert einen String.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "for",
+    "category": "Schleifen",
+    "name": "for und Schleifengrenzen",
+    "introduction": "Eine for-Schleife besteht aus Start, Fortsetzungsbedingung und Aktualisierung. Die Bedingung wird vor jedem Durchlauf geprüft.",
+    "steps": [
+      "i beginnt bei 0.",
+      "i < 3 erlaubt die Werte 0, 1 und 2.",
+      "Nach dem Durchlauf mit 2 wird i zu 3 und die Schleife endet."
+    ],
+    "code": "int summe = 0;\nfor (int i = 0; i < 3; i++) summe += i;\nSystem.out.println(summe);",
+    "output": "3",
+    "choices": [
+      "3",
+      "6",
+      "2"
+    ],
+    "explanation": "Die Schleife summiert 0 + 1 + 2. Der Grenzwert 3 wird bei < nicht mehr verarbeitet.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "while",
+    "category": "Schleifen",
+    "name": "while vor dem Durchlauf",
+    "introduction": "while prüft die Bedingung vor dem Block. Ein Durchlauf findet nur statt, solange die Bedingung true bleibt.",
+    "steps": [
+      "n startet bei 3.",
+      "Jeder Durchlauf zählt einen Schritt und senkt n.",
+      "Bei n = 0 ist die Fortsetzungsbedingung false."
+    ],
+    "code": "int n = 3, schritte = 0;\nwhile (n > 0) { schritte++; n--; }\nSystem.out.println(schritte);",
+    "output": "3",
+    "choices": [
+      "3",
+      "4",
+      "0"
+    ],
+    "explanation": "Die drei erfolgreichen Prüfungen erfolgen für n = 3, 2 und 1. Für 0 wird kein Block mehr ausgeführt.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "do-while",
+    "category": "Schleifen",
+    "name": "do while: mindestens einmal",
+    "introduction": "do while prüft erst nach dem Block. Der erste Durchlauf passiert auch bei einer zunächst falschen Bedingung.",
+    "steps": [
+      "n startet bereits bei 0.",
+      "Der Block wird trotzdem einmal ausgeführt.",
+      "Danach beendet die falsche Bedingung n < 0 die Schleife."
+    ],
+    "code": "int n = 0;\ndo { n++; } while (n < 0);\nSystem.out.println(n);",
+    "output": "1",
+    "choices": [
+      "1",
+      "0",
+      "Endlosschleife"
+    ],
+    "explanation": "Der Test steht am Ende. Nach dem ersten Durchlauf ist n = 1 und die Bedingung n < 0 bleibt false.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "foreach",
+    "category": "Schleifen",
+    "name": "for each über Werte",
+    "introduction": "Die erweiterte for-Schleife durchläuft die Elemente eines Arrays. Die Schleifenvariable bekommt jeweils einen Wert.",
+    "steps": [
+      "Die Schleife liest 2, 4 und 6.",
+      "Jeder Wert wird zur Summe addiert.",
+      "Ein eigener Index wird nicht benötigt."
+    ],
+    "code": "int summe = 0;\nfor (int n : new int[]{2, 4, 6}) summe += n;\nSystem.out.println(summe);",
+    "output": "12",
+    "choices": [
+      "12",
+      "6",
+      "3"
+    ],
+    "explanation": "Der Doppelpunkt gehört zur erweiterten for-Syntax. Die Summe enthält alle drei Arraywerte.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "break",
+    "category": "Schleifen",
+    "name": "break beendet die Schleife",
+    "introduction": "break beendet die nächstgelegene Schleife unmittelbar. Nachfolgende Schleifendurchläufe finden nicht statt.",
+    "steps": [
+      "i = 1 und i = 2 werden ausgegeben.",
+      "Bei i = 3 wird break ausgeführt.",
+      "Die Ausgabe für 3 und alle späteren Werte entfällt."
+    ],
+    "code": "for (int i = 1; i <= 5; i++) {\n    if (i == 3) break;\n    System.out.println(i);\n}",
+    "output": "1\n2",
+    "choices": [
+      "1\n2",
+      "1\n2\n3",
+      "1\n2\n4\n5"
+    ],
+    "explanation": "break springt aus der Schleife, nicht nur aus dem if-Block. Für einen übersprungenen Einzelwert wäre continue passend.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "continue",
+    "category": "Schleifen",
+    "name": "continue überspringt einen Durchlauf",
+    "introduction": "continue beendet nur den aktuellen Schleifendurchlauf. Die Schleife verarbeitet anschließend weitere Werte.",
+    "steps": [
+      "Bei 2 trifft die Sonderbedingung zu.",
+      "Die Ausgabe von 2 wird übersprungen.",
+      "Der Durchlauf für 3 findet weiterhin statt."
+    ],
+    "code": "for (int i = 1; i <= 3; i++) {\n    if (i == 2) continue;\n    System.out.println(i);\n}",
+    "output": "1\n3",
+    "choices": [
+      "1\n3",
+      "1",
+      "1\n2\n3"
+    ],
+    "explanation": "continue springt bei dieser for-Schleife zur Aktualisierung i++ und dann zur nächsten Bedingungsprüfung.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "method",
+    "category": "Methoden",
+    "name": "Methoden aufrufen und return",
+    "introduction": "Eine Methode bündelt Arbeit und kann ein Ergebnis zurückgeben. return beendet den aktuellen Methodenaufruf.",
+    "steps": [
+      "Die Parameter a und b nehmen die Argumente auf.",
+      "a + b wird berechnet und zurückgegeben.",
+      "println bekommt den zurückgegebenen Wert."
+    ],
+    "code": "System.out.println(addieren(2, 5));",
+    "output": "7",
+    "choices": [
+      "7",
+      "25",
+      "Keine Ausgabe"
+    ],
+    "explanation": "Der Aufruf übergibt 2 und 5. Die Methode berechnet 7; erst println schreibt diesen Wert auf die Konsole.",
+    "declarations": "static int addieren(int a, int b) { return a + b; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "void",
+    "category": "Methoden",
+    "name": "void: kein Rückgabewert",
+    "introduction": "void bedeutet, dass eine Methode keinen Ergebniswert liefert. Sie kann trotzdem sichtbare Arbeit ausführen.",
+    "steps": [
+      "hallo erhält den Namen als Parameter.",
+      "Die Methode schreibt eine Begrüßung.",
+      "Der Aufruf liefert keinen String an den Aufrufer zurück."
+    ],
+    "code": "hallo(\"Ada\");",
+    "output": "Hallo Ada",
+    "choices": [
+      "Hallo Ada",
+      "Ada",
+      "null"
+    ],
+    "explanation": "Die Ausgabe stammt aus hallo selbst. Man kann diesen void-Aufruf nicht wie einen String einer Variablen zuweisen.",
+    "declarations": "static void hallo(String name) { System.out.println(\"Hallo \" + name); }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "overload",
+    "category": "Methoden",
+    "name": "Methoden überladen",
+    "introduction": "Überladene Methoden teilen sich einen Namen, unterscheiden sich aber in ihren Parameterlisten.",
+    "steps": [
+      "3 ist ein int-Literal.",
+      "Der Compiler wählt die passende int-Überladung.",
+      "Ein double-Literal würde die double-Überladung wählen."
+    ],
+    "code": "System.out.println(art(3));\nSystem.out.println(art(3.0));",
+    "output": "int\ndouble",
+    "choices": [
+      "int\ndouble",
+      "double\ndouble",
+      "int\nint"
+    ],
+    "explanation": "Die Überladungswahl erfolgt anhand der Typen der Argumente. Nur der Rückgabetyp reicht nicht als Unterscheidung.",
+    "declarations": "static String art(int n) { return \"int\"; }\nstatic String art(double n) { return \"double\"; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "pass-value",
+    "category": "Methoden",
+    "name": "Java übergibt immer Werte",
+    "introduction": "Java übergibt Argumente als Werte. Bei Objekten ist dieser Wert eine Kopie der Referenz.",
+    "steps": [
+      "Die Methode erhält eine Referenzkopie auf das Array.",
+      "Über diese Kopie kann sie das gemeinsame Array ändern.",
+      "Eine neue Zuweisung an den Parameter würde die Variable beim Aufrufer nicht neu binden."
+    ],
+    "code": "int[] daten = {1};\naendern(daten);\nSystem.out.println(daten[0]);",
+    "output": "8",
+    "choices": [
+      "8",
+      "1",
+      "0"
+    ],
+    "explanation": "Java hat keine Übergabe der Variablen selbst per Referenz. Trotzdem kann eine kopierte Objektreferenz das gleiche Objekt verändern.",
+    "declarations": "static void aendern(int[] werte) { werte[0] = 8; werte = new int[]{99}; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "varargs",
+    "category": "Methoden",
+    "name": "Variable Argumentzahl mit ...",
+    "introduction": "Ein varargs-Parameter nimmt null, einen oder mehrere Werte entgegen. In der Methode steht dafür ein Array bereit.",
+    "steps": [
+      "int... zahlen sammelt die Argumente.",
+      "Die Schleife verarbeitet alle übergebenen Zahlen.",
+      "Ohne Argumente wäre die Summe 0."
+    ],
+    "code": "System.out.println(summe(1, 2, 3));",
+    "output": "6",
+    "choices": [
+      "6",
+      "3",
+      "123"
+    ],
+    "explanation": "Der letzte Parameter kann als varargs deklariert werden. Innerhalb der Methode funktioniert er wie ein int-Array.",
+    "declarations": "static int summe(int... zahlen) { int s = 0; for (int n : zahlen) s += n; return s; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "recursion",
+    "category": "Methoden",
+    "name": "Rekursion und Abbruchfall",
+    "introduction": "Eine rekursive Methode ruft sich selbst mit einem kleineren Problem auf. Ein Abbruchfall verhindert endlose Aufrufe.",
+    "steps": [
+      "Bei n = 0 wird direkt 1 zurückgegeben.",
+      "Andere Aufrufe multiplizieren mit der kleineren Fakultät.",
+      "fakultaet(3) berechnet 3 * 2 * 1."
+    ],
+    "code": "System.out.println(fakultaet(3));",
+    "output": "6",
+    "choices": [
+      "6",
+      "3",
+      "0"
+    ],
+    "explanation": "Die Abbruchbedingung gilt hier für nichtnegative Eingaben. Große Fakultäten passen nicht mehr in int und tiefe Rekursion kann den Stack überlasten.",
+    "declarations": "static int fakultaet(int n) { if (n < 0) throw new IllegalArgumentException(); return n == 0 ? 1 : n * fakultaet(n - 1); }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "array-length",
+    "category": "Arrays",
+    "name": "Array anlegen und length",
+    "introduction": "Ein Array besitzt eine feste Länge. length ist ein Feld, keine Methode.",
+    "steps": [
+      "new int[3] reserviert drei Elemente.",
+      "Primitive int-Elemente starten mit 0.",
+      "Das Feld length liefert die Elementanzahl."
+    ],
+    "code": "int[] werte = new int[3];\nSystem.out.println(werte.length);\nSystem.out.println(werte[0]);",
+    "output": "3\n0",
+    "choices": [
+      "3\n0",
+      "3\nnull",
+      "0\n3"
+    ],
+    "explanation": "Die Arraylänge ändert sich nicht durch neue Werte. Ein Zugriff auf Index 3 wäre außerhalb des Arrays.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "array-index",
+    "category": "Arrays",
+    "name": "Index und letzte Position",
+    "introduction": "Arrayindizes beginnen bei null. Das letzte Element liegt deshalb bei length - 1.",
+    "steps": [
+      "Das Array enthält drei Werte.",
+      "Die gültigen Indizes sind 0, 1 und 2.",
+      "length - 1 ergibt den letzten gültigen Index."
+    ],
+    "code": "int[] werte = {10, 20, 30};\nSystem.out.println(werte[werte.length - 1]);",
+    "output": "30",
+    "choices": [
+      "30",
+      "20",
+      "ArrayIndexOutOfBoundsException"
+    ],
+    "explanation": "length liefert eine Anzahl, nicht den letzten Index. Der Zugriff mit length wäre außerhalb des Arrays.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "array-copy",
+    "category": "Arrays",
+    "name": "Arrays.copyOf()",
+    "introduction": "Arrays.copyOf erstellt ein neues Array. Bei primitiven Werten können Änderungen danach unabhängig erfolgen.",
+    "steps": [
+      "Die Kopie erhält anfangs dieselben Zahlen.",
+      "Eine Änderung an der Kopie betrifft nicht das Original.",
+      "Der dritte Parameter wäre hier nicht erforderlich: Der zweite ist die neue Länge."
+    ],
+    "code": "int[] a = {1, 2};\nint[] b = java.util.Arrays.copyOf(a, a.length);\nb[0] = 9;\nSystem.out.println(a[0] + \" \" + b[0]);",
+    "output": "1 9",
+    "choices": [
+      "1 9",
+      "9 9",
+      "1 1"
+    ],
+    "explanation": "copyOf erzeugt ein anderes Array. Bei Objektarrays werden die Referenzen der Elemente kopiert, nicht automatisch die verschachtelten Objekte.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "array-sort",
+    "category": "Arrays",
+    "name": "Arrays.sort() verändert das Array",
+    "introduction": "Arrays.sort ordnet Arrayelemente an Ort und Stelle. Es liefert keine sortierte Arraykopie zurück.",
+    "steps": [
+      "Das Array startet mit unsortierten Zahlen.",
+      "sort verändert genau dieses Array.",
+      "toString macht die gespeicherte Reihenfolge lesbar."
+    ],
+    "code": "int[] n = {3, 1, 2};\njava.util.Arrays.sort(n);\nSystem.out.println(java.util.Arrays.toString(n));",
+    "output": "[1, 2, 3]",
+    "choices": [
+      "[1, 2, 3]",
+      "[3, 1, 2]",
+      "null"
+    ],
+    "explanation": "Das Original wurde aufsteigend sortiert. Wenn es erhalten bleiben soll, kopiere es vor sort.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "array-equals",
+    "category": "Arrays",
+    "name": "Arrays.equals() statt ==",
+    "introduction": "Bei Arrays vergleicht == die Referenzen. Arrays.equals vergleicht eindimensionale Arrays elementweise.",
+    "steps": [
+      "a und b sind unabhängig erzeugte Arrays.",
+      "== ist deshalb false.",
+      "Gleiche int-Werte in derselben Reihenfolge machen Arrays.equals true."
+    ],
+    "code": "int[] a = {1, 2}, b = {1, 2};\nSystem.out.println(a == b);\nSystem.out.println(java.util.Arrays.equals(a, b));",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Für verschachtelte Objektarrays kann Arrays.deepEquals nötig sein. Hier genügt Arrays.equals für die int-Werte.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "matrix",
+    "category": "Arrays",
+    "name": "Zweidimensionale Arrays",
+    "introduction": "Ein zweidimensionales Java-Array ist ein Array von Arrays. Die einzelnen Zeilen können verschiedene Längen haben.",
+    "steps": [
+      "grid[1] wählt die zweite Zeile.",
+      "[0] wählt deren ersten Wert.",
+      "Zeilen und Spalten beginnen bei Index 0."
+    ],
+    "code": "int[][] grid = {{1, 2}, {7}};\nSystem.out.println(grid[1][0]);\nSystem.out.println(grid[1].length);",
+    "output": "7\n1",
+    "choices": [
+      "7\n1",
+      "1\n2",
+      "7\n2"
+    ],
+    "explanation": "Die zweite Zeile hat nur ein Element. Java erzwingt bei dieser Struktur kein rechteckiges Raster.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "string-length",
+    "category": "Strings",
+    "name": "length() und charAt()",
+    "introduction": "String.length zählt UTF-16-Codeeinheiten. charAt liest eine einzelne solche Einheit an einem nullbasierten Index.",
+    "steps": [
+      "Hallo besteht hier aus fünf einfachen Buchstaben.",
+      "Index 1 bezeichnet den zweiten Buchstaben.",
+      "Strings verwenden length() als Methode."
+    ],
+    "code": "String text = \"Hallo\";\nSystem.out.println(text.length());\nSystem.out.println(text.charAt(1));",
+    "output": "5\na",
+    "choices": [
+      "5\na",
+      "5\nH",
+      "4\na"
+    ],
+    "explanation": "Bei diesen Buchstaben entspricht jede Codeeinheit einem Zeichen. Manche Unicode-Zeichen brauchen zwei Codeeinheiten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "substring",
+    "category": "Strings",
+    "name": "substring(): Ende ausgeschlossen",
+    "introduction": "substring(start, ende) liefert einen neuen String. start ist eingeschlossen, ende ausgeschlossen.",
+    "steps": [
+      "Index 1 beginnt bei a.",
+      "Index 4 wird nicht übernommen.",
+      "Die Indizes 1, 2 und 3 ergeben all."
+    ],
+    "code": "System.out.println(\"Hallo\".substring(1, 4));",
+    "output": "all",
+    "choices": [
+      "all",
+      "allo",
+      "Hal"
+    ],
+    "explanation": "Die ursprüngliche Zeichenfolge bleibt unverändert. Ein ungültiger Indexbereich löst eine Ausnahme aus.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "string-find",
+    "category": "Strings",
+    "name": "contains() und indexOf()",
+    "introduction": "contains prüft, ob ein Teilstring vorkommt. indexOf liefert dessen erste Position oder -1.",
+    "steps": [
+      "Java kommt in Java lernen am Anfang vor.",
+      "Der Anfangsindex ist 0.",
+      "Nicht gefundene Texte werden mit -1 gemeldet."
+    ],
+    "code": "String text = \"Java lernen\";\nSystem.out.println(text.contains(\"Java\"));\nSystem.out.println(text.indexOf(\"Python\"));",
+    "output": "true\n-1",
+    "choices": [
+      "true\n-1",
+      "true\n0",
+      "false\n-1"
+    ],
+    "explanation": "Diese Suche ist groß- und kleinschreibungssensitiv. -1 ist eine Meldung für nicht gefunden und kein gültiger Stringindex.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "string-immutable",
+    "category": "Strings",
+    "name": "Strings bleiben unveränderlich",
+    "introduction": "String-Methoden ändern einen vorhandenen String nicht. Sie liefern gegebenenfalls einen neuen String zurück.",
+    "steps": [
+      "replace liefert eine neue Zeichenfolge.",
+      "Ohne Zuweisung wird sie nicht in text gespeichert.",
+      "Die Variable zeigt weiter auf den ursprünglichen Wert."
+    ],
+    "code": "String text = \"Katze\";\ntext.replace(\"K\", \"T\");\nSystem.out.println(text);",
+    "output": "Katze",
+    "choices": [
+      "Katze",
+      "Tatze",
+      "T"
+    ],
+    "explanation": "Für Tatze müsste text = text.replace(\"K\", \"T\") verwendet werden. String ist unveränderlich, die Variable selbst kann neu zugewiesen werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "strip",
+    "category": "Strings",
+    "name": "strip() und leere Eingaben",
+    "introduction": "strip entfernt führende und abschließende Java-Whitespace-Zeichen. isBlank prüft auf einen leeren oder nur aus Whitespace bestehenden String.",
+    "steps": [
+      "strip entfernt den Rand der ersten Eingabe.",
+      "Die zweite Eingabe enthält nur Leerraum.",
+      "isBlank bewertet diesen Fall als true."
+    ],
+    "code": "System.out.println(\"  Ada  \".strip());\nSystem.out.println(\"   \".isBlank());",
+    "output": "Ada\ntrue",
+    "choices": [
+      "Ada\ntrue",
+      "  Ada  \nfalse",
+      "Ada\nfalse"
+    ],
+    "explanation": "strip und isBlank sind seit Java 11 verfügbar. Leerraum im Inneren einer Zeichenfolge bleibt beim strip erhalten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "split",
+    "category": "Strings",
+    "name": "split() verwendet reguläre Ausdrücke",
+    "introduction": "String.split interpretiert das Trennmuster als regulären Ausdruck. Einige Zeichen müssen deshalb maskiert werden.",
+    "steps": [
+      "Ein Punkt im Regex steht normalerweise für ein beliebiges Zeichen.",
+      "Der Backslash macht daraus einen wörtlichen Punkt.",
+      "Im Java-String wird der Backslash selbst nochmals maskiert."
+    ],
+    "code": "String[] teile = \"a.b.c\".split(\"\\\\.\");\nSystem.out.println(java.util.Arrays.toString(teile));",
+    "output": "[a, b, c]",
+    "choices": [
+      "[a, b, c]",
+      "[]",
+      "[a.b.c]"
+    ],
+    "explanation": "Im Quellcode steht \"\\\\.\" als Java-String für das Regex \\. . Dieses Muster trennt nur an tatsächlichen Punkten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "builder",
+    "category": "Strings",
+    "name": "StringBuilder für Aufbau",
+    "introduction": "StringBuilder ist veränderbar und kann mehrere Textstücke schrittweise sammeln.",
+    "steps": [
+      "append hängt Text an denselben Builder an.",
+      "Die Zahl wird als Text ergänzt.",
+      "toString liefert einen fertigen String."
+    ],
+    "code": "var builder = new StringBuilder(\"Punkte: \");\nbuilder.append(4).append(\"!\");\nSystem.out.println(builder.toString());",
+    "output": "Punkte: 4!",
+    "choices": [
+      "Punkte: 4!",
+      "Punkte: !",
+      "4"
+    ],
+    "explanation": "Die append-Aufrufe verändern den Builder und geben ihn für die Verkettung zurück. Dadurch muss nicht nach jedem Schritt ein neuer String erzeugt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "unicode",
+    "category": "Strings",
+    "name": "Codepoints und Emojis",
+    "introduction": "Ein Unicode-Codepoint und eine UTF-16-Codeeinheit sind verschiedene Dinge. Java-Stringindizes zählen Codeeinheiten.",
+    "steps": [
+      "Das Emoji liegt außerhalb des einfachen UTF-16-Bereichs.",
+      "Es wird als zwei Codeeinheiten gespeichert.",
+      "codePointCount zählt hier einen Codepoint."
+    ],
+    "code": "String text = \"😀\";\nSystem.out.println(text.length());\nSystem.out.println(text.codePointCount(0, text.length()));",
+    "output": "2\n1",
+    "choices": [
+      "2\n1",
+      "1\n1",
+      "2\n2"
+    ],
+    "explanation": "length ist hier 2, obwohl der String genau einen Unicode-Codepoint enthält. Ein sichtbares Zeichen kann bei anderen Beispielen sogar aus mehreren Codepoints bestehen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "constructor",
+    "category": "Klassen & Objekte",
+    "name": "Klasse, Konstruktor und new",
+    "introduction": "Eine Klasse beschreibt Objekte. Ein Konstruktor setzt den Anfangszustand einer neuen Instanz.",
+    "steps": [
+      "new Spieler erzeugt eine Instanz.",
+      "Der Konstruktor bekommt Ada als Argument.",
+      "this.name bezeichnet das Feld der aktuellen Instanz."
+    ],
+    "code": "Spieler s = new Spieler(\"Ada\");\nSystem.out.println(s.name);",
+    "output": "Ada",
+    "choices": [
+      "Ada",
+      "null",
+      "Spieler"
+    ],
+    "explanation": "Das Argument und das Feld heißen beide name. this.name unterscheidet das Feld vom Konstruktorparameter.",
+    "declarations": "static class Spieler { String name; Spieler(String name) { this.name = name; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "instance",
+    "category": "Klassen & Objekte",
+    "name": "Instanzmethoden und Zustand",
+    "introduction": "Eine Instanzmethode arbeitet mit dem Zustand eines konkreten Objekts. Verschiedene Instanzen besitzen eigene Felder.",
+    "steps": [
+      "a und b sind verschiedene Zaehler-Objekte.",
+      "a.plus erhöht nur das Feld von a.",
+      "b bleibt bei seinem Anfangswert 0."
+    ],
+    "code": "Zaehler a = new Zaehler(), b = new Zaehler();\na.plus();\nSystem.out.println(a.wert + \" \" + b.wert);",
+    "output": "1 0",
+    "choices": [
+      "1 0",
+      "1 1",
+      "0 0"
+    ],
+    "explanation": "Instanzfelder gehören hier jeweils zu einem Objekt. Ein static-Feld wäre dagegen der Klasse zugeordnet.",
+    "declarations": "static class Zaehler { int wert; void plus() { wert++; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "static",
+    "category": "Klassen & Objekte",
+    "name": "static gehört zur Klasse",
+    "introduction": "Ein static-Feld gehört zur Klasse und wird von deren Instanzen gemeinsam verwendet.",
+    "steps": [
+      "Jeder Konstruktor erhöht dasselbe static-Feld.",
+      "Zwei erzeugte Objekte bewirken zwei Erhöhungen.",
+      "Die Abfrage über den Klassennamen liest den gemeinsamen Wert."
+    ],
+    "code": "new Spieler();\nnew Spieler();\nSystem.out.println(Spieler.anzahl);",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "0"
+    ],
+    "explanation": "static beschreibt Klassenzustand, nicht eine unabhängige Kopie für jedes Objekt.",
+    "declarations": "static class Spieler { static int anzahl; Spieler() { anzahl++; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "private",
+    "category": "Klassen & Objekte",
+    "name": "Kapselung mit private",
+    "introduction": "Kapselung bündelt Zustand und gültige Änderungen. private schützt vor regulärem Direktzugriff aus anderen Klassen.",
+    "steps": [
+      "Der Kontostand ist ein privates Feld.",
+      "einzahlen akzeptiert nur positive Beträge.",
+      "Die öffentliche Abfrage liefert den Stand."
+    ],
+    "code": "Konto k = new Konto();\nk.einzahlen(20);\nSystem.out.println(k.stand());",
+    "output": "20",
+    "choices": [
+      "20",
+      "0",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "Die Methode hält die Regel für den Kontostand an einer Stelle. Eine sinnvolle API bietet gezielte Operationen statt beliebiger Schreibzugriffe.",
+    "declarations": "static class Konto { private int stand; void einzahlen(int cent) { if (cent <= 0) throw new IllegalArgumentException(); stand += cent; } int stand() { return stand; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "inherit",
+    "category": "Klassen & Objekte",
+    "name": "Vererbung und super",
+    "introduction": "Eine Unterklasse kann Verhalten einer Oberklasse wiederverwenden. super ruft hier ausdrücklich deren Implementierung auf.",
+    "steps": [
+      "Hund erbt von Tier.",
+      "Hund.laut ergänzt den Oberklassenwert.",
+      "super.laut verhindert einen erneuten Aufruf der eigenen Methode."
+    ],
+    "code": "System.out.println(new Hund().laut());",
+    "output": "Tier: Wuff",
+    "choices": [
+      "Tier: Wuff",
+      "Tier",
+      "Wuff"
+    ],
+    "explanation": "super.laut() liefert Tier; die Unterklasse hängt : Wuff an. Vererbung sollte eine sinnvolle Ist-ein-Beziehung ausdrücken.",
+    "declarations": "static class Tier { String laut() { return \"Tier\"; } }\nstatic class Hund extends Tier { @Override String laut() { return super.laut() + \": Wuff\"; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "polymorphism",
+    "category": "Klassen & Objekte",
+    "name": "Polymorphie und Überschreiben",
+    "introduction": "Bei überschriebenen Instanzmethoden entscheidet das tatsächliche Objekt, welche Implementierung ausgeführt wird.",
+    "steps": [
+      "Die Variable hat den Typ Tier.",
+      "Das gespeicherte Objekt ist ein Hund.",
+      "Der Methodenaufruf verwendet Hund.laut."
+    ],
+    "code": "Tier tier = new Hund();\nSystem.out.println(tier.laut());",
+    "output": "Wuff",
+    "choices": [
+      "Wuff",
+      "Tier",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "Der Referenztyp bestimmt, welche Methoden zugänglich sind. Bei diesem Instanzmethodenaufruf bestimmt das Objekt die überschreibende Implementierung.",
+    "declarations": "static class Tier { String laut() { return \"Tier\"; } }\nstatic class Hund extends Tier { @Override String laut() { return \"Wuff\"; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "interface",
+    "category": "Schnittstellen & Typen",
+    "name": "Ein Interface implementieren",
+    "introduction": "Ein Interface beschreibt einen Vertrag. Eine Klasse kann die verlangten Methoden implementieren.",
+    "steps": [
+      "Form verlangt eine Methode flaeche.",
+      "Quadrat speichert seine Seitenlänge.",
+      "Der Zugriff über Form verwendet die Quadrat-Implementierung."
+    ],
+    "code": "Form form = new Quadrat(3);\nSystem.out.println(form.flaeche());",
+    "output": "9",
+    "choices": [
+      "9",
+      "3",
+      "0"
+    ],
+    "explanation": "Der Aufrufer kann mit dem gemeinsamen Vertrag Form arbeiten, ohne jede konkrete Formklasse gesondert zu behandeln.",
+    "declarations": "interface Form { int flaeche(); }\nstatic class Quadrat implements Form { private final int seite; Quadrat(int s) { seite = s; } public int flaeche() { return seite * seite; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "abstract",
+    "category": "Schnittstellen & Typen",
+    "name": "Abstrakte Klassen",
+    "introduction": "Eine abstrakte Klasse kann gemeinsamen Code und noch nicht implementierte Methoden enthalten. Sie kann nicht direkt instanziiert werden.",
+    "steps": [
+      "Aktion legt den Rahmen fest.",
+      "Doppeln ergänzt die abstrakte Methode.",
+      "ausfuehren verwendet die konkrete Implementierung."
+    ],
+    "code": "Aktion a = new Doppeln();\nSystem.out.println(a.ausfuehren(4));",
+    "output": "8",
+    "choices": [
+      "8",
+      "4",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "Aktion selbst kann kein new Aktion() erhalten. Eine konkrete Unterklasse erfüllt die fehlende Implementierung.",
+    "declarations": "abstract static class Aktion { abstract int berechnen(int n); int ausfuehren(int n) { return berechnen(n); } }\nstatic class Doppeln extends Aktion { @Override int berechnen(int n) { return n * 2; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "record",
+    "category": "Schnittstellen & Typen",
+    "name": "Records für Daten",
+    "introduction": "Ein record definiert einen kompakten Datenträger mit Komponenten, Zugriffsmethoden und wertbasiertem equals.",
+    "steps": [
+      "Punkt besitzt die Komponenten x und y.",
+      "Der Compiler erzeugt passende Zugriffsmethoden.",
+      "Zwei Records gleichen Typs mit gleichen Komponenten sind hier gleich."
+    ],
+    "code": "Punkt a = new Punkt(2, 3), b = new Punkt(2, 3);\nSystem.out.println(a.x());\nSystem.out.println(a.equals(b));",
+    "output": "2\ntrue",
+    "choices": [
+      "2\ntrue",
+      "2\nfalse",
+      "3\ntrue"
+    ],
+    "explanation": "Records sind seit Java 16 regulär verfügbar. Ihre Komponentenfelder sind final, referenzierte veränderbare Objekte werden dadurch aber nicht tief unveränderlich.",
+    "declarations": "record Punkt(int x, int y) {}",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "enum",
+    "category": "Schnittstellen & Typen",
+    "name": "enum für feste Zustände",
+    "introduction": "Ein enum beschreibt eine feste Menge benannter Konstanten. Das ist nützlich für Spiel- oder Arbeitszustände.",
+    "steps": [
+      "Status besitzt die erlaubten Konstanten.",
+      "s verweist auf die Konstante PAUSE.",
+      "Enum-Konstanten können mit == verglichen werden."
+    ],
+    "code": "Status s = Status.PAUSE;\nSystem.out.println(s == Status.PAUSE);",
+    "output": "true",
+    "choices": [
+      "true",
+      "false",
+      "PAUSE"
+    ],
+    "explanation": "Ein enum ersetzt fehleranfällige frei geschriebene Zustandsstrings. Die Identität der Enum-Konstanten ist eindeutig.",
+    "declarations": "enum Status { START, SPIELT, PAUSE, ENDE }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "generic",
+    "category": "Schnittstellen & Typen",
+    "name": "Generics und Typsicherheit",
+    "introduction": "Generics machen den enthaltenen Typ zu einem Parameter. So erkennt der Compiler viele falsche Zugriffe bereits vor dem Start.",
+    "steps": [
+      "Box<String> erwartet einen String.",
+      "get liefert deshalb einen String zurück.",
+      "Es ist kein unsicherer Cast auf String erforderlich."
+    ],
+    "code": "Box<String> box = new Box<>(\"Ada\");\nSystem.out.println(box.get().length());",
+    "output": "3",
+    "choices": [
+      "3",
+      "Ada",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "Der Typparameter T verbindet Konstruktor und Rückgabe. Primitive Typen wie int können nicht unmittelbar als Generic-Typargument verwendet werden.",
+    "declarations": "static class Box<T> { private final T wert; Box(T wert) { this.wert = wert; } T get() { return wert; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "list-add",
+    "category": "Collections",
+    "name": "ArrayList: add(), get(), size()",
+    "introduction": "Eine ArrayList verwaltet eine veränderbare Folge von Elementen. Anders als ein Array kann sie wachsen.",
+    "steps": [
+      "add hängt einen Wert an.",
+      "get liest einen Wert über seinen nullbasierten Index.",
+      "size liefert die aktuelle Anzahl."
+    ],
+    "code": "var namen = new java.util.ArrayList<String>();\nnamen.add(\"Ada\");\nnamen.add(\"Linus\");\nSystem.out.println(namen.get(1));\nSystem.out.println(namen.size());",
+    "output": "Linus\n2",
+    "choices": [
+      "Linus\n2",
+      "Ada\n2",
+      "Linus\n1"
+    ],
+    "explanation": "Die Liste speichert zwei Strings. Index 1 bezeichnet den zweiten Eintrag, während size die Anzahl 2 liefert.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "list-remove",
+    "category": "Collections",
+    "name": "remove(): Index oder Wert?",
+    "introduction": "List.remove ist überladen. Bei einer Liste von Integern kann ein int-Argument einen Index statt eines Werts bedeuten.",
+    "steps": [
+      "remove(1) verwendet die Index-Überladung.",
+      "Dadurch wird das Element an Position 1 entfernt.",
+      "Integer.valueOf würde die Wert-Überladung auswählen."
+    ],
+    "code": "var n = new java.util.ArrayList<Integer>(java.util.List.of(10, 20, 30));\nn.remove(1);\nSystem.out.println(n);",
+    "output": "[10, 30]",
+    "choices": [
+      "[10, 30]",
+      "[10, 20, 30]",
+      "[20, 30]"
+    ],
+    "explanation": "Der primitive int 1 ist ein Index. Um die Zahl 1 als Element zu entfernen, verwende remove(Integer.valueOf(1)).",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "list-of",
+    "category": "Collections",
+    "name": "List.of() ist unveränderbar",
+    "introduction": "List.of erzeugt eine unveränderbare Liste. Ihre Struktur kann weder erweitert noch ersetzt werden.",
+    "steps": [
+      "Die Liste enthält anfangs zwei Elemente.",
+      "add versucht die Struktur zu ändern.",
+      "Die Operation wird mit einer Ausnahme abgelehnt."
+    ],
+    "code": "var n = java.util.List.of(1, 2);\ntry { n.add(3); }\ncatch (UnsupportedOperationException e) { System.out.println(\"unveränderbar\"); }",
+    "output": "unveränderbar",
+    "choices": [
+      "unveränderbar",
+      "[1, 2, 3]",
+      "Keine Ausgabe"
+    ],
+    "explanation": "List.of erlaubt außerdem keine null-Elemente. Für eine veränderbare Liste kann new ArrayList<>(List.of(...)) verwendet werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "list-view",
+    "category": "Collections",
+    "name": "subList(): Sicht statt Kopie",
+    "introduction": "subList liefert eine Sicht auf einen Bereich der Ausgangsliste. Änderungen über diese Sicht betreffen die Ausgangsliste.",
+    "steps": [
+      "Der Bereich 1 bis 3 enthält die Indizes 1 und 2.",
+      "clear löscht diesen Bereich.",
+      "Der erste Wert bleibt in der Original-Liste erhalten."
+    ],
+    "code": "var n = new java.util.ArrayList<Integer>(java.util.List.of(1, 2, 3));\nn.subList(1, 3).clear();\nSystem.out.println(n);",
+    "output": "[1]",
+    "choices": [
+      "[1]",
+      "[1, 2, 3]",
+      "[]"
+    ],
+    "explanation": "Das Ende ist ausgeschlossen. Eine unabhängige Kopie würde new ArrayList<>(n.subList(...)) erfordern; strukturelle Änderungen am Original außerhalb der Sicht können sie ungültig machen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "set",
+    "category": "Collections",
+    "name": "Set: doppelte Werte vermeiden",
+    "introduction": "Ein Set enthält jeden gleichen Wert höchstens einmal. add meldet, ob ein neuer Eintrag hinzugekommen ist.",
+    "steps": [
+      "Der erste Wert 4 wird aufgenommen.",
+      "Der zweite gleiche Wert verändert das Set nicht.",
+      "size zählt nur unterschiedliche Einträge."
+    ],
+    "code": "var n = new java.util.HashSet<Integer>();\nSystem.out.println(n.add(4));\nSystem.out.println(n.add(4));\nSystem.out.println(n.size());",
+    "output": "true\nfalse\n1",
+    "choices": [
+      "true\nfalse\n1",
+      "true\ntrue\n2",
+      "false\nfalse\n0"
+    ],
+    "explanation": "HashSet verwendet equals und hashCode für die Gleichheit. Die Iterationsreihenfolge wird nicht garantiert.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "map",
+    "category": "Collections",
+    "name": "Map: put(), get(), Schlüssel",
+    "introduction": "Eine Map ordnet Schlüsseln Werte zu. Ein erneutes put mit demselben Schlüssel ersetzt dessen bisherigen Wert.",
+    "steps": [
+      "Ada wird zuerst dem Wert 2 zugeordnet.",
+      "Das zweite put ersetzt die Zuordnung mit 5.",
+      "Es bleibt genau ein Schlüssel erhalten."
+    ],
+    "code": "var punkte = new java.util.HashMap<String, Integer>();\npunkte.put(\"Ada\", 2);\npunkte.put(\"Ada\", 5);\nSystem.out.println(punkte.get(\"Ada\"));\nSystem.out.println(punkte.size());",
+    "output": "5\n1",
+    "choices": [
+      "5\n1",
+      "2\n2",
+      "5\n2"
+    ],
+    "explanation": "Ein Schlüssel kann hier genau eine aktuelle Zuordnung besitzen. put liefert außerdem den vorherigen Wert zurück, sofern vorhanden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "map-default",
+    "category": "Collections",
+    "name": "getOrDefault() und merge()",
+    "introduction": "getOrDefault liefert bei einem fehlenden Schlüssel einen Ersatzwert. merge kann Zähler ohne manuelle Fallunterscheidung aktualisieren.",
+    "steps": [
+      "Ein fehlendes Wort startet hier bei 0.",
+      "merge legt den ersten Wert an.",
+      "Weitere merge-Aufrufe kombinieren alten und neuen Wert."
+    ],
+    "code": "var counts = new java.util.HashMap<String, Integer>();\nSystem.out.println(counts.getOrDefault(\"Java\", 0));\ncounts.merge(\"Java\", 1, Integer::sum);\ncounts.merge(\"Java\", 1, Integer::sum);\nSystem.out.println(counts.get(\"Java\"));",
+    "output": "0\n2",
+    "choices": [
+      "0\n2",
+      "null\n2",
+      "0\n1"
+    ],
+    "explanation": "Die Methode Integer::sum addiert die beiden Zählwerte. Der Ersatzwert von getOrDefault wird nicht automatisch in die Map geschrieben.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "deque-stack",
+    "category": "Collections",
+    "name": "Deque als Stack",
+    "introduction": "Ein Stack entfernt zuletzt hinzugefügte Elemente zuerst. ArrayDeque unterstützt diese LIFO-Regel mit push und pop.",
+    "steps": [
+      "push legt Werte an den Anfang.",
+      "Der zweite push liegt deshalb über dem ersten.",
+      "pop entfernt den zuletzt abgelegten Wert."
+    ],
+    "code": "var stack = new java.util.ArrayDeque<Integer>();\nstack.push(1); stack.push(2);\nSystem.out.println(stack.pop());\nSystem.out.println(stack.peek());",
+    "output": "2\n1",
+    "choices": [
+      "2\n1",
+      "1\n2",
+      "2\n2"
+    ],
+    "explanation": "ArrayDeque ist häufig eine passende Stack-Implementierung. pop auf einer leeren Deque wirft eine Ausnahme; peek liefert dort null.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "deque-queue",
+    "category": "Collections",
+    "name": "Queue: offer() und poll()",
+    "introduction": "Eine FIFO-Queue verarbeitet zuerst hinzugefügte Elemente zuerst. offer fügt hinten an, poll entfernt vorne.",
+    "steps": [
+      "A wird vor B eingefügt.",
+      "poll liefert zuerst A.",
+      "peek liest anschließend B, ohne es zu entfernen."
+    ],
+    "code": "var q = new java.util.ArrayDeque<String>();\nq.offer(\"A\"); q.offer(\"B\");\nSystem.out.println(q.poll());\nSystem.out.println(q.peek());",
+    "output": "A\nB",
+    "choices": [
+      "A\nB",
+      "B\nA",
+      "A\nA"
+    ],
+    "explanation": "Eine Queue passt zu Warteschlangen oder zu einer Breitensuche. poll liefert bei einer leeren ArrayDeque null.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "priority-queue",
+    "category": "Collections",
+    "name": "PriorityQueue: kleinster Wert zuerst",
+    "introduction": "Eine PriorityQueue entfernt nach ihrer Sortierordnung den jeweils kleinsten Wert. Sie ist keine gewöhnliche FIFO-Queue.",
+    "steps": [
+      "Die Einfügefolge ist nicht die Entnahmefolge.",
+      "Die natürlichen Integerwerte werden aufsteigend priorisiert.",
+      "poll entfernt hier den kleinsten Wert 2."
+    ],
+    "code": "var q = new java.util.PriorityQueue<Integer>();\nq.offer(5); q.offer(2); q.offer(4);\nSystem.out.println(q.poll());",
+    "output": "2",
+    "choices": [
+      "2",
+      "5",
+      "4"
+    ],
+    "explanation": "Die kleinste Priorität kommt zuerst. Die Reihenfolge einer direkten Iteration über die Queue ist hingegen nicht vollständig sortiert garantiert.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "comparator",
+    "category": "Collections",
+    "name": "Comparator und Sortierreihenfolge",
+    "introduction": "Ein Comparator definiert eine Vergleichsordnung. comparingInt kann hier nach einer berechneten Zahl sortieren.",
+    "steps": [
+      "Die Textlänge wird als Sortierschlüssel verwendet.",
+      "Kurze Strings kommen vor langen.",
+      "Die veränderbare Liste wird durch sort neu angeordnet."
+    ],
+    "code": "var namen = new java.util.ArrayList<String>(java.util.List.of(\"Linus\", \"Ada\", \"Bo\"));\nnamen.sort(java.util.Comparator.comparingInt(String::length));\nSystem.out.println(namen);",
+    "output": "[Bo, Ada, Linus]",
+    "choices": [
+      "[Bo, Ada, Linus]",
+      "[Ada, Bo, Linus]",
+      "[Linus, Ada, Bo]"
+    ],
+    "explanation": "Die Sortierung richtet sich nach der Länge und nicht nach dem Alphabet. Bei mehreren Kriterien kann thenComparing helfen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "iterator-remove",
+    "category": "Collections",
+    "name": "Iterator.remove() beim Durchlaufen",
+    "introduction": "Ein Iterator kann während seiner eigenen Iteration gezielt Elemente entfernen. Das ist ein anderer Vorgang als remove direkt auf der Liste.",
+    "steps": [
+      "next liefert den nächsten Wert.",
+      "Für gerade Werte wird iterator.remove aufgerufen.",
+      "Ungerade Werte bleiben in der Liste."
+    ],
+    "code": "var n = new java.util.ArrayList<Integer>(java.util.List.of(1, 2, 3, 4));\nvar it = n.iterator();\nwhile (it.hasNext()) { if (it.next() % 2 == 0) it.remove(); }\nSystem.out.println(n);",
+    "output": "[1, 3]",
+    "choices": [
+      "[1, 3]",
+      "[2, 4]",
+      "ConcurrentModificationException"
+    ],
+    "explanation": "Diese Löschung erfolgt über den zugehörigen Iterator. Direkte strukturelle Änderungen an ArrayList während einer for-each-Iteration können eine ConcurrentModificationException auslösen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "lambda",
+    "category": "Lambdas & Streams",
+    "name": "Lambda als Funktion",
+    "introduction": "Ein Lambda liefert die Implementierung eines funktionalen Interfaces mit einer abstrakten Methode.",
+    "steps": [
+      "IntUnaryOperator nimmt einen int und liefert einen int.",
+      "n -> n * 2 beschreibt die Berechnung.",
+      "applyAsInt führt sie mit dem Argument 4 aus."
+    ],
+    "code": "java.util.function.IntUnaryOperator doppeln = n -> n * 2;\nSystem.out.println(doppeln.applyAsInt(4));",
+    "output": "8",
+    "choices": [
+      "8",
+      "4",
+      "n * 2"
+    ],
+    "explanation": "Ein Lambda ist kein isolierter neuer Java-Datentyp. Der erwartete Interface-Typ legt seine Signatur fest.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "predicate",
+    "category": "Lambdas & Streams",
+    "name": "Predicate.test()",
+    "introduction": "Ein Predicate beschreibt eine Ja-Nein-Prüfung. Seine Methode test liefert einen boolean.",
+    "steps": [
+      "Die Lambda-Bedingung prüft die Textlänge.",
+      "Ada hat drei Codeeinheiten.",
+      "3 ist nicht größer als 3."
+    ],
+    "code": "java.util.function.Predicate<String> lang = text -> text.length() > 3;\nSystem.out.println(lang.test(\"Ada\"));",
+    "output": "false",
+    "choices": [
+      "false",
+      "true",
+      "3"
+    ],
+    "explanation": "Predicate ist geeignet für Filter oder Validierung. Ein Grenzvergleich > unterscheidet sich von >=.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "stream-filter",
+    "category": "Lambdas & Streams",
+    "name": "Stream.filter()",
+    "introduction": "filter lässt nur Werte passieren, deren Predicate true ergibt. Der Stream verändert diese Quelle nicht.",
+    "steps": [
+      "stream eröffnet die Verarbeitung.",
+      "filter behält nur gerade Zahlen.",
+      "toList beendet die Verarbeitung und sammelt die Ergebnisse."
+    ],
+    "code": "var n = java.util.List.of(1, 2, 3, 4);\nSystem.out.println(n.stream().filter(x -> x % 2 == 0).toList());",
+    "output": "[2, 4]",
+    "choices": [
+      "[2, 4]",
+      "[1, 3]",
+      "[1, 2, 3, 4]"
+    ],
+    "explanation": "Das Predicate entscheidet für jedes Element. Stream.toList ist seit Java 16 verfügbar und liefert eine unveränderbare Liste.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "stream-map",
+    "category": "Lambdas & Streams",
+    "name": "Stream.map()",
+    "introduction": "map berechnet für jedes vorhandene Element einen neuen Wert. Es filtert keine Elemente heraus.",
+    "steps": [
+      "Der Stream verarbeitet drei Werte.",
+      "Für jeden Wert wird das Quadrat erzeugt.",
+      "Die Ergebnisliste besitzt weiterhin drei Elemente."
+    ],
+    "code": "System.out.println(java.util.List.of(1, 2, 3).stream().map(x -> x * x).toList());",
+    "output": "[1, 4, 9]",
+    "choices": [
+      "[1, 4, 9]",
+      "[1, 2, 3]",
+      "[2, 4, 6]"
+    ],
+    "explanation": "map verändert hier die Werte, nicht die Anzahl. Für eine Einschränkung nach Bedingungen wäre filter passend.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "stream-reduce",
+    "category": "Lambdas & Streams",
+    "name": "reduce() mit Startwert",
+    "introduction": "reduce verbindet Werte zu einem gemeinsamen Ergebnis. Ein Startwert liefert auch für den leeren Stream ein Ergebnis.",
+    "steps": [
+      "Der Startwert ist 0.",
+      "Integer::sum addiert jeden nächsten Wert.",
+      "Die Summe enthält 2, 3 und 4."
+    ],
+    "code": "System.out.println(java.util.List.of(2, 3, 4).stream().reduce(0, Integer::sum));",
+    "output": "9",
+    "choices": [
+      "9",
+      "24",
+      "4"
+    ],
+    "explanation": "0 ist ein neutrales Element für Addition. Bei paralleler Reduktion sind geeignete Identität und assoziative Verknüpfung wichtig.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "stream-flatmap",
+    "category": "Lambdas & Streams",
+    "name": "flatMap(): verschachtelte Listen",
+    "introduction": "flatMap erzeugt aus jedem Element einen Stream und verbindet diese Streams zu einer Ebene.",
+    "steps": [
+      "Jede innere Liste erzeugt einen Stream.",
+      "Die Teilstreams werden nacheinander zusammengefügt.",
+      "toList sammelt die einzelnen Zahlen statt der Listen."
+    ],
+    "code": "var daten = java.util.List.of(java.util.List.of(1, 2), java.util.List.of(3));\nSystem.out.println(daten.stream().flatMap(java.util.List::stream).toList());",
+    "output": "[1, 2, 3]",
+    "choices": [
+      "[1, 2, 3]",
+      "[[1, 2], [3]]",
+      "[3]"
+    ],
+    "explanation": "map(List::stream) würde Streams als Elemente behalten. flatMap verbindet deren Inhalte.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "stream-lazy",
+    "category": "Lambdas & Streams",
+    "name": "Streams arbeiten verzögert",
+    "introduction": "Zwischenoperationen wie map werden bei einem Stream grundsätzlich erst durch eine Endoperation angestoßen.",
+    "steps": [
+      "map definiert hier nur einen Verarbeitungsschritt.",
+      "Es folgt keine Endoperation wie toList oder forEach.",
+      "Deshalb wird die Ausgabe im Lambda nicht ausgeführt."
+    ],
+    "code": "var stream = java.util.List.of(1, 2).stream().map(n -> { System.out.println(\"map \" + n); return n * 2; });\nSystem.out.println(\"bereit\");",
+    "output": "bereit",
+    "choices": [
+      "bereit",
+      "map 1\nmap 2\nbereit",
+      "bereit\nmap 1\nmap 2"
+    ],
+    "explanation": "Ohne Endoperation werden die Elemente dieser Pipeline nicht durchlaufen. Seiteneffekte in Stream-Schritten eignen sich nicht als verlässliche allgemeine Steuerungslogik.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "stream-once",
+    "category": "Lambdas & Streams",
+    "name": "Einen Stream nicht zweimal benutzen",
+    "introduction": "Ein Stream ist eine einmal verwendbare Verarbeitungspipeline. Nach einer Endoperation darf er nicht nochmals verarbeitet werden.",
+    "steps": [
+      "Die erste count-Operation verbraucht den Stream.",
+      "Die zweite count-Operation ist unzulässig.",
+      "Die Ausnahme wird im Beispiel abgefangen."
+    ],
+    "code": "var stream = java.util.List.of(1, 2).stream();\nSystem.out.println(stream.count());\ntry { stream.count(); } catch (IllegalStateException e) { System.out.println(\"verbraucht\"); }",
+    "output": "2\nverbraucht",
+    "choices": [
+      "2\nverbraucht",
+      "2\n2",
+      "0\n0"
+    ],
+    "explanation": "Für eine zweite Verarbeitung muss von der Quelle ein neuer Stream erzeugt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "grouping",
+    "category": "Lambdas & Streams",
+    "name": "Collectors.groupingBy()",
+    "introduction": "groupingBy ordnet Elemente nach einem berechneten Schlüssel in Gruppen ein.",
+    "steps": [
+      "String::length berechnet für jeden Text den Schlüssel.",
+      "Ada und Bo landen in unterschiedlichen Gruppen.",
+      "Die Gruppe mit dem Schlüssel 3 enthält Ada."
+    ],
+    "code": "var gruppen = java.util.List.of(\"Ada\", \"Bo\").stream().collect(java.util.stream.Collectors.groupingBy(String::length));\nSystem.out.println(gruppen.get(3));",
+    "output": "[Ada]",
+    "choices": [
+      "[Ada]",
+      "[Bo]",
+      "null"
+    ],
+    "explanation": "Hier werden Strings nach ihrer Länge gruppiert. Die Reihenfolge der Schlüssel in der erzeugten Map sollte nicht ohne passende Map-Factory vorausgesetzt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "optional",
+    "category": "Lambdas & Streams",
+    "name": "Optional und orElse()",
+    "introduction": "Optional beschreibt einen möglicherweise vorhandenen Wert. Es ist kein Ersatz für jede null-Prüfung und kein automatischer Fehlerfänger.",
+    "steps": [
+      "ofNullable nimmt hier null auf.",
+      "Das Optional ist deshalb leer.",
+      "orElse liefert den angegebenen Ersatztext."
+    ],
+    "code": "String name = null;\nSystem.out.println(java.util.Optional.ofNullable(name).orElse(\"Gast\"));",
+    "output": "Gast",
+    "choices": [
+      "Gast",
+      "null",
+      "NullPointerException"
+    ],
+    "explanation": "Optional.of(null) würde eine Ausnahme auslösen. ofNullable ist ausdrücklich für möglicherweise null gedachte Werte geeignet.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "scanner",
+    "category": "Ein-/Ausgabe",
+    "name": "Scanner: Zeilen und Zahlen",
+    "introduction": "Scanner kann Text in Zeilen oder Tokens zerlegen. Für Konsoleneingaben ist Zeile lesen und anschließend parsen oft gut kontrollierbar.",
+    "steps": [
+      "Der Scanner liest hier aus einem festen Teststring.",
+      "nextLine liefert die erste Zeile vollständig.",
+      "parseInt wandelt die bereinigte Zeile um."
+    ],
+    "code": "try (var input = new java.util.Scanner(\" 42\\n\")) {\n    String zeile = input.nextLine();\n    System.out.println(Integer.parseInt(zeile.strip()));\n}",
+    "output": "42",
+    "choices": [
+      "42",
+      " 42",
+      "NumberFormatException"
+    ],
+    "explanation": "Die Lernprobe benötigt keine reale Benutzereingabe. Bei Scanner(System.in) stammt dieselbe Zeile aus der Konsole; ungültige Zahlen müssen behandelt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "scanner-newline",
+    "category": "Ein-/Ausgabe",
+    "name": "nextInt() lässt den Zeilenrest",
+    "introduction": "nextInt liest ein Zahlen-Token. nextLine liest danach den restlichen Inhalt derselben Zeile, der leer sein kann.",
+    "steps": [
+      "nextInt verbraucht die Zahl 7.",
+      "Der folgende Zeilenumbruch gehört noch zum Zeilenrest.",
+      "nextLine liefert dafür einen leeren String."
+    ],
+    "code": "try (var input = new java.util.Scanner(\"7\\nAda\\n\")) {\n    System.out.println(input.nextInt());\n    System.out.println(\"[\" + input.nextLine() + \"]\");\n    System.out.println(input.nextLine());\n}",
+    "output": "7\n[]\nAda",
+    "choices": [
+      "7\n[]\nAda",
+      "7\n[Ada]",
+      "7\nAda\n[]"
+    ],
+    "explanation": "Das ist eine häufige Scanner-Falle. Entweder bewusst den Zeilenrest konsumieren oder konsequent nextLine verwenden und Zahlen daraus parsen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "parse-int",
+    "category": "Ein-/Ausgabe",
+    "name": "Integer.parseInt() prüfen",
+    "introduction": "parseInt erwartet einen passenden ganzzahligen Text. Er entfernt führende oder abschließende Leerzeichen nicht selbst.",
+    "steps": [
+      "Die rohe Eingabe enthält Rand-Leerzeichen.",
+      "strip entfernt diese vor dem Parsen.",
+      "Ein Buchstabentext würde NumberFormatException auslösen."
+    ],
+    "code": "String roh = \" 18 \";\nSystem.out.println(Integer.parseInt(roh.strip()) + 2);",
+    "output": "20",
+    "choices": [
+      "20",
+      "182",
+      "NumberFormatException"
+    ],
+    "explanation": "Vorverarbeitung und Konvertierung sind getrennte Schritte. Auch der zulässige Wertebereich muss nach dem Parsen geprüft werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "printf",
+    "category": "Ein-/Ausgabe",
+    "name": "printf(): formatierte Ausgabe",
+    "introduction": "printf fügt Werte anhand von Formatplatzhaltern in eine Ausgabe ein. Es erzeugt keinen Zeilenumbruch ohne passenden Platzhalter.",
+    "steps": [
+      "%s steht hier für einen String.",
+      "%d steht für eine dezimale Ganzzahl.",
+      "%n fügt einen plattformgerechten Zeilenumbruch an."
+    ],
+    "code": "System.out.printf(\"%s: %d%n\", \"Ada\", 7);",
+    "output": "Ada: 7",
+    "choices": [
+      "Ada: 7",
+      "Ada: %d",
+      "7: Ada"
+    ],
+    "explanation": "Die Reihenfolge der Argumente muss zu den Platzhaltern passen. Formatfehler können zur Laufzeit Ausnahmen erzeugen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "arguments",
+    "category": "Ein-/Ausgabe",
+    "name": "Startargumente auswerten",
+    "introduction": "Die main-Methode bekommt Startargumente als String-Array. Vor einem Indexzugriff muss geprüft werden, ob ein Argument vorhanden ist.",
+    "steps": [
+      "Dieser Test wird ohne zusätzliche Argumente gestartet.",
+      "args.length ist deshalb 0.",
+      "Die Fallunterscheidung wählt den Ersatzwert."
+    ],
+    "code": "String name = args.length > 0 ? args[0] : \"Gast\";\nSystem.out.println(name);",
+    "output": "Gast",
+    "choices": [
+      "Gast",
+      "null",
+      "ArrayIndexOutOfBoundsException"
+    ],
+    "explanation": "Mit java Main.java Ada würde args[0] den String Ada enthalten. Argumente sind noch nicht automatisch Zahlen oder Optionen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "path",
+    "category": "Dateien & Pfade",
+    "name": "Path.resolve() und normalize()",
+    "introduction": "Path beschreibt einen Dateipfad, ohne die Datei automatisch anzulegen. normalize entfernt syntaktisch unnötige Pfadbestandteile.",
+    "steps": [
+      "resolve ergänzt einen relativen Teil.",
+      ".. bezeichnet einen Schritt zurück.",
+      "normalize vereinfacht den Pfad ohne Dateizugriff."
+    ],
+    "code": "var pfad = java.nio.file.Path.of(\"lernen\").resolve(\"tmp/../notiz.txt\").normalize();\nSystem.out.println(pfad.getFileName());",
+    "output": "notiz.txt",
+    "choices": [
+      "notiz.txt",
+      "tmp",
+      "lernen"
+    ],
+    "explanation": "getFileName liefert hier den letzten Pfadteil. normalize prüft weder die Existenz noch löst es symbolische Links auf.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "file-write",
+    "category": "Dateien & Pfade",
+    "name": "Files.writeString() und readString()",
+    "introduction": "Files kann Text in eine Datei schreiben und wieder lesen. Eine bewusste Textkodierung hält das Format nachvollziehbar.",
+    "steps": [
+      "Die Probe erzeugt eine eigene temporäre Datei.",
+      "writeString speichert den Text mit UTF-8.",
+      "readString liest ihn mit derselben Kodierung zurück."
+    ],
+    "code": "var datei = java.nio.file.Files.createTempFile(\"codeklar-\", \".txt\");\ntry {\n    java.nio.file.Files.writeString(datei, \"Grüße\", java.nio.charset.StandardCharsets.UTF_8);\n    System.out.println(java.nio.file.Files.readString(datei, java.nio.charset.StandardCharsets.UTF_8));\n} finally { java.nio.file.Files.deleteIfExists(datei); }",
+    "output": "Grüße",
+    "choices": [
+      "Grüße",
+      "GrÃ¼ÃŸe",
+      "6"
+    ],
+    "explanation": "Die Datei wird im finally-Block wieder entfernt. writeString überschreibt standardmäßig eine vorhandene Datei; bei größeren Dateien ist gestreamtes Lesen sinnvoll.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "file-append",
+    "category": "Dateien & Pfade",
+    "name": "Text an Dateien anhängen",
+    "introduction": "StandardOpenOption.APPEND fügt Daten am Dateiende hinzu. Ohne diese Option überschreibt writeString den Inhalt standardmäßig.",
+    "steps": [
+      "Die temporäre Datei wird zuerst mit A beschrieben.",
+      "Der zweite Aufruf hängt B an.",
+      "readString liefert beide Teile in der Reihenfolge."
+    ],
+    "code": "var p = java.nio.file.Files.createTempFile(\"codeklar-\", \".txt\");\ntry {\n    java.nio.file.Files.writeString(p, \"A\");\n    java.nio.file.Files.writeString(p, \"B\", java.nio.file.StandardOpenOption.APPEND);\n    System.out.println(java.nio.file.Files.readString(p));\n} finally { java.nio.file.Files.deleteIfExists(p); }",
+    "output": "AB",
+    "choices": [
+      "AB",
+      "B",
+      "A"
+    ],
+    "explanation": "APPEND setzt die Schreibposition ans Ende. Beim Anlegen einer noch nicht vorhandenen Zieldatei kann zusätzlich CREATE nötig sein.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "file-lines",
+    "category": "Dateien & Pfade",
+    "name": "Files.lines() muss geschlossen werden",
+    "introduction": "Files.lines liefert einen lazily gelesenen Stream von Textzeilen. Dieser Stream hält eine Dateiressource offen.",
+    "steps": [
+      "Die Probe schreibt zwei Zeilen.",
+      "try-with-resources verwaltet den offenen Stream.",
+      "count zählt die Zeilen und close wird anschließend automatisch ausgeführt."
+    ],
+    "code": "var p = java.nio.file.Files.createTempFile(\"codeklar-\", \".txt\");\ntry {\n    java.nio.file.Files.writeString(p, \"Ada\\nBo\\n\");\n    try (var zeilen = java.nio.file.Files.lines(p)) { System.out.println(zeilen.count()); }\n} finally { java.nio.file.Files.deleteIfExists(p); }",
+    "output": "2",
+    "choices": [
+      "2",
+      "3",
+      "7"
+    ],
+    "explanation": "Ein abschließender Zeilenumbruch erzeugt in diesem Beispiel keine zusätzliche leere Zeile. Der Stream wird auch nach einer Ausnahme geschlossen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "file-bytes",
+    "category": "Dateien & Pfade",
+    "name": "Bytes sind nicht Zeichen",
+    "introduction": "Eine Textdatei besteht aus kodierten Bytes. UTF-8 kann für einen einzelnen Buchstaben mehrere Bytes benötigen.",
+    "steps": [
+      "ä ist ein Unicode-Codepoint.",
+      "Seine UTF-8-Kodierung braucht zwei Bytes.",
+      "Ein Java-String speichert ihn hier in einer UTF-16-Codeeinheit."
+    ],
+    "code": "byte[] daten = \"ä\".getBytes(java.nio.charset.StandardCharsets.UTF_8);\nSystem.out.println(daten.length);",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "4"
+    ],
+    "explanation": "Die Zahl der Bytes hängt von der Kodierung ab. String.length und Bytearray.length messen unterschiedliche Dinge.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "directories",
+    "category": "Dateien & Pfade",
+    "name": "Verzeichnisse anlegen",
+    "introduction": "createDirectories erzeugt auch fehlende Elternverzeichnisse. Ein Path allein bewirkt noch keine Änderung am Dateisystem.",
+    "steps": [
+      "Die Probe erzeugt einen eigenen temporären Ausgangsordner.",
+      "createDirectories legt die beiden Unterordner an.",
+      "isDirectory prüft den Typ des letzten Pfadteils."
+    ],
+    "code": "var root = java.nio.file.Files.createTempDirectory(\"codeklar-\");\nvar ziel = root.resolve(\"a/b\");\ntry {\n    java.nio.file.Files.createDirectories(ziel);\n    System.out.println(java.nio.file.Files.isDirectory(ziel));\n} finally { java.nio.file.Files.deleteIfExists(ziel); java.nio.file.Files.deleteIfExists(ziel.getParent()); java.nio.file.Files.deleteIfExists(root); }",
+    "output": "true",
+    "choices": [
+      "true",
+      "false",
+      "a/b"
+    ],
+    "explanation": "Der Beispielordner wird nach dem Test entfernt. Die Methode createDirectories darf einen bereits vorhandenen passenden Ordner akzeptieren.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "file-list",
+    "category": "Dateien & Pfade",
+    "name": "Files.list() und close()",
+    "introduction": "Files.list liefert einen Stream über direkte Verzeichniseinträge. Unterordner werden nicht rekursiv durchlaufen.",
+    "steps": [
+      "Der temporäre Ordner enthält eine Datei.",
+      "list liefert die direkten Einträge.",
+      "Der Stream wird mit try-with-resources geschlossen."
+    ],
+    "code": "var root = java.nio.file.Files.createTempDirectory(\"codeklar-\");\nvar p = root.resolve(\"a.txt\");\ntry {\n    java.nio.file.Files.writeString(p, \"A\");\n    try (var eintraege = java.nio.file.Files.list(root)) { System.out.println(eintraege.count()); }\n} finally { java.nio.file.Files.deleteIfExists(p); java.nio.file.Files.deleteIfExists(root); }",
+    "output": "1",
+    "choices": [
+      "1",
+      "0",
+      "2"
+    ],
+    "explanation": "Files.list ist keine rekursive Dateisuche. Für rekursive Traversierung gibt es Files.walk, dessen Stream ebenfalls geschlossen werden muss.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "catch",
+    "category": "Fehlerbehandlung",
+    "name": "try und catch",
+    "introduction": "try markiert einen Bereich, in dem eine Ausnahme auftreten kann. Ein passender catch-Block übernimmt die Fehlerbehandlung.",
+    "steps": [
+      "parseInt bekommt einen nicht numerischen Text.",
+      "NumberFormatException beendet den normalen Weg im try.",
+      "Der passende catch-Block gibt die Meldung aus."
+    ],
+    "code": "try { System.out.println(Integer.parseInt(\"abc\")); }\ncatch (NumberFormatException e) { System.out.println(\"Keine Zahl\"); }",
+    "output": "Keine Zahl",
+    "choices": [
+      "Keine Zahl",
+      "0",
+      "abc"
+    ],
+    "explanation": "Ungültige Eingaben dürfen nicht unbemerkt zu einem Ersatzwert wie 0 werden. Der catch-Block kann den Nutzer gezielt zu einer neuen Eingabe auffordern.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "throw",
+    "category": "Fehlerbehandlung",
+    "name": "throw und Vorbedingungen",
+    "introduction": "throw löst ausdrücklich eine Ausnahme aus. Damit kann eine Methode unzulässige Argumente zurückweisen.",
+    "steps": [
+      "doppeln verlangt einen nichtnegativen Wert.",
+      "Bei -1 wird die Ausnahme vor der Rechnung ausgelöst.",
+      "Der Aufrufer fängt sie ab."
+    ],
+    "code": "try { System.out.println(doppeln(-1)); }\ncatch (IllegalArgumentException e) { System.out.println(e.getMessage()); }",
+    "output": "negativ",
+    "choices": [
+      "negativ",
+      "-2",
+      "0"
+    ],
+    "explanation": "Eine Vorbedingung macht ungültige Eingaben erkennbar. IllegalArgumentException ist eine ungeprüfte Ausnahme.",
+    "declarations": "static int doppeln(int n) { if (n < 0) throw new IllegalArgumentException(\"negativ\"); return n * 2; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "finally",
+    "category": "Fehlerbehandlung",
+    "name": "finally nach Erfolg und Fehler",
+    "introduction": "finally läuft bei normalem Abschluss und bei einer weitergegebenen oder abgefangenen Ausnahme. Es eignet sich für notwendiges Aufräumen.",
+    "steps": [
+      "Der try-Block wirft eine Ausnahme.",
+      "catch verarbeitet den Fehler.",
+      "finally wird danach ebenfalls ausgeführt."
+    ],
+    "code": "try { throw new IllegalStateException(); }\ncatch (IllegalStateException e) { System.out.println(\"Fehler\"); }\nfinally { System.out.println(\"Aufräumen\"); }",
+    "output": "Fehler\nAufräumen",
+    "choices": [
+      "Fehler\nAufräumen",
+      "Fehler",
+      "Aufräumen"
+    ],
+    "explanation": "Für Ressourcen ist try-with-resources meist die bessere strukturierte Lösung. Harte Prozessbeendigung wie System.exit kann finally umgehen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "checked",
+    "category": "Fehlerbehandlung",
+    "name": "Geprüfte Ausnahmen und throws",
+    "introduction": "Geprüfte Ausnahmen wie IOException müssen behandelt oder in der Methodensignatur weitergegeben werden. throws ist keine Ausführung einer Ausnahme.",
+    "steps": [
+      "lesen deklariert einen möglichen IOException-Fehler.",
+      "throw löst ihn im Methodenrumpf tatsächlich aus.",
+      "main fängt ihn mit catch ab."
+    ],
+    "code": "try { lesen(); }\ncatch (java.io.IOException e) { System.out.println(\"IO behandelt\"); }",
+    "output": "IO behandelt",
+    "choices": [
+      "IO behandelt",
+      "Keine Ausgabe",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "Die Signatur informiert den Compiler und den Aufrufer. Eine throws-Deklaration allein würde noch keinen Fehler auslösen.",
+    "declarations": "static void lesen() throws java.io.IOException { throw new java.io.IOException(\"Test\"); }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "resources",
+    "category": "Fehlerbehandlung",
+    "name": "try-with-resources",
+    "introduction": "try-with-resources schließt AutoCloseable-Ressourcen automatisch. Bei mehreren Ressourcen erfolgt das Schließen in umgekehrter Reihenfolge.",
+    "steps": [
+      "Ressource A wird vor B angelegt.",
+      "Im Block wird Arbeit ausgegeben.",
+      "Beim Verlassen wird zuerst B und dann A geschlossen."
+    ],
+    "code": "try (var a = new Ressource(\"A\"); var b = new Ressource(\"B\")) { System.out.println(\"Arbeit\"); }",
+    "output": "Arbeit\nB\nA",
+    "choices": [
+      "Arbeit\nB\nA",
+      "Arbeit\nA\nB",
+      "A\nB\nArbeit"
+    ],
+    "explanation": "Die zuletzt angelegte Ressource wird zuerst geschlossen. Das Schließen geschieht auch, wenn der Block eine Ausnahme auslöst.",
+    "declarations": "static class Ressource implements AutoCloseable { final String name; Ressource(String name) { this.name = name; } public void close() { System.out.println(name); } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "null-safe",
+    "category": "Fehlerbehandlung",
+    "name": "Objects.equals() mit null",
+    "introduction": "Objects.equals vergleicht zwei möglicherweise null enthaltende Referenzen, ohne eine Methode auf null aufzurufen.",
+    "steps": [
+      "Beide Referenzen dürfen null sein.",
+      "Zwei null-Werte werden als gleich behandelt.",
+      "Ein null-Wert ist einem vorhandenen String nicht gleich."
+    ],
+    "code": "System.out.println(java.util.Objects.equals(null, null));\nSystem.out.println(java.util.Objects.equals(null, \"Ada\"));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "false\nfalse",
+      "NullPointerException"
+    ],
+    "explanation": "Bei zwei vorhandenen Objekten ruft Objects.equals die equals-Methode auf. Das ist ein Inhaltsvergleich, sofern die jeweilige Klasse ihn entsprechend implementiert.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "exact",
+    "category": "Zahlen & Zeit",
+    "name": "Math.addExact() erkennt Überlauf",
+    "introduction": "addExact prüft bei Integerarithmetik einen Überlauf und meldet ihn mit ArithmeticException.",
+    "steps": [
+      "MAX_VALUE liegt bereits am int-Limit.",
+      "Die Addition von 1 wäre nicht darstellbar.",
+      "addExact wirft eine Ausnahme statt still umzubrechen."
+    ],
+    "code": "try { System.out.println(Math.addExact(Integer.MAX_VALUE, 1)); }\ncatch (ArithmeticException e) { System.out.println(\"Überlauf\"); }",
+    "output": "Überlauf",
+    "choices": [
+      "Überlauf",
+      "-2147483648",
+      "2147483648"
+    ],
+    "explanation": "Bei gewöhnlicher int-Addition gäbe es keine Ausnahme. Die Exact-Methoden erlauben ausdrücklich geprüfte Rechenoperationen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "decimal",
+    "category": "Zahlen & Zeit",
+    "name": "BigDecimal aus Strings",
+    "introduction": "BigDecimal kann dezimale Werte mit ausdrücklich gewählter Genauigkeit verarbeiten. Konstruktion aus einem String vermeidet den Umweg über double.",
+    "steps": [
+      "0.1 und 0.2 werden als Dezimalstrings eingelesen.",
+      "add rechnet mit diesen exakten Dezimalwerten.",
+      "Die gespeicherte Skala bleibt hier eine Nachkommastelle."
+    ],
+    "code": "var a = new java.math.BigDecimal(\"0.1\");\nvar b = new java.math.BigDecimal(\"0.2\");\nSystem.out.println(a.add(b));",
+    "output": "0.3",
+    "choices": [
+      "0.3",
+      "0.30000000000000004",
+      "0.2"
+    ],
+    "explanation": "new BigDecimal(0.1) übernimmt bereits den binären double-Näherungswert. Bei Divisionen muss gegebenenfalls eine Rundungsregel gewählt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "big-integer",
+    "category": "Zahlen & Zeit",
+    "name": "BigInteger für große Ganzzahlen",
+    "introduction": "BigInteger repräsentiert Ganzzahlen außerhalb des long-Bereichs. Operationen erzeugen neue Werte.",
+    "steps": [
+      "TEN enthält die Ganzzahl 10.",
+      "pow(20) berechnet 10 hoch 20.",
+      "Der Wert passt nicht in einen normalen long."
+    ],
+    "code": "System.out.println(java.math.BigInteger.TEN.pow(20));",
+    "output": "100000000000000000000",
+    "choices": [
+      "100000000000000000000",
+      "20",
+      "Überlauf"
+    ],
+    "explanation": "BigInteger wächst im Rahmen des verfügbaren Speichers. Seine Methoden wie add und multiply verwenden Objektwerte statt der primitiven Rechenoperatoren.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "date",
+    "category": "Zahlen & Zeit",
+    "name": "LocalDate und plusDays()",
+    "introduction": "LocalDate beschreibt ein Kalenderdatum ohne Uhrzeit und Zeitzone. Die Objekte sind unveränderlich.",
+    "steps": [
+      "Der 28. Februar liegt hier im Schaltjahr 2024.",
+      "plusDays liefert einen neuen Datumswert.",
+      "Der ursprüngliche Wert bleibt beim 28. Februar."
+    ],
+    "code": "var datum = java.time.LocalDate.of(2024, 2, 28);\nSystem.out.println(datum.plusDays(1));\nSystem.out.println(datum);",
+    "output": "2024-02-29\n2024-02-28",
+    "choices": [
+      "2024-02-29\n2024-02-28",
+      "2024-03-01\n2024-02-28",
+      "2024-02-29\n2024-02-29"
+    ],
+    "explanation": "Die java.time-API berücksichtigt den Kalender. Für einen globalen Zeitpunkt ist Instant ein anderer, passenderer Typ.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "duration",
+    "category": "Zahlen & Zeit",
+    "name": "Duration und Period unterscheiden",
+    "introduction": "Duration beschreibt eine zeitbasierte Dauer, Period eine kalenderbasierte Menge von Jahren, Monaten und Tagen.",
+    "steps": [
+      "Duration.ofMinutes erzeugt eine Dauer aus Minuten.",
+      "toSeconds rechnet sie in Sekunden um.",
+      "Zwei Minuten entsprechen 120 Sekunden."
+    ],
+    "code": "System.out.println(java.time.Duration.ofMinutes(2).toSeconds());",
+    "output": "120",
+    "choices": [
+      "120",
+      "2",
+      "200"
+    ],
+    "explanation": "Ein Kalendermonat hat keine feste Sekundenzahl. Verwende Period für Kalenderabstände und Duration für zeitbasierte Intervalle.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "imports",
+    "category": "Werkzeuge & Tests",
+    "name": "import macht Typnamen verfügbar",
+    "introduction": "import erlaubt einen kurzen Typnamen im Quelltext. Es lädt keine externe Bibliothek herunter und erzeugt keine Instanz.",
+    "steps": [
+      "java.util.List gehört zur Standardbibliothek.",
+      "Der Import erlaubt anschließend den Namen List.",
+      "List.of erzeugt erst im eigentlichen Code die Liste."
+    ],
+    "code": "System.out.println(List.of(\"Ada\").size());",
+    "output": "1",
+    "choices": [
+      "1",
+      "0",
+      "Ada"
+    ],
+    "explanation": "Ein Import ersetzt hier die voll ausgeschriebene Schreibweise java.util.List. Externe Abhängigkeiten müssen zusätzlich im Build bereitgestellt werden.",
+    "declarations": "",
+    "imports": "import java.util.List;",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "package",
+    "category": "Werkzeuge & Tests",
+    "name": "Pakete und vollqualifizierte Namen",
+    "introduction": "Ein Paket organisiert Typen und verhindert Namenskonflikte. Der vollqualifizierte Name enthält Paket und Typname.",
+    "steps": [
+      "String gehört zum Paket java.lang.",
+      "java.lang wird für gewöhnliche Quellen automatisch importiert.",
+      "getName zeigt den vollqualifizierten Klassennamen."
+    ],
+    "code": "System.out.println(String.class.getName());",
+    "output": "java.lang.String",
+    "choices": [
+      "java.lang.String",
+      "String",
+      "java.util.String"
+    ],
+    "explanation": "Eigene Pakete werden mit package de.codeklar; deklariert. Bei klassischen Projektstrukturen folgen Ordnernamen den Paketbestandteilen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "jvm",
+    "category": "Werkzeuge & Tests",
+    "name": "Quellcode, Bytecode und JVM",
+    "introduction": "Der Java-Compiler übersetzt Quellcode in Bytecode. Die JVM lädt und führt diesen aus; das ist vom Quelltexteditor getrennt.",
+    "steps": [
+      "Main.java ist die Quelltextdatei.",
+      "javac Main.java erzeugt typischerweise Main.class.",
+      "java Main startet den kompilierten Einstieg."
+    ],
+    "code": "System.out.println(Main.class.getSimpleName());",
+    "output": "Main",
+    "choices": [
+      "Main",
+      "Main.java",
+      "Main.class"
+    ],
+    "explanation": "getSimpleName liefert den Namen der Klasse, keinen Dateinamen. Für die Lernproben kann der JDK-Source-Launcher java Main.java den Übersetzungsschritt übernehmen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "assert",
+    "category": "Werkzeuge & Tests",
+    "name": "assert ist standardmäßig aus",
+    "introduction": "Java-assert-Anweisungen sind normalerweise deaktiviert. Mit java -ea werden sie aktiviert; für notwendige Eingabeprüfungen sind sie deshalb ungeeignet.",
+    "steps": [
+      "Diese Probe startet ohne -ea.",
+      "Die Zuweisung innerhalb von assert wird dann nicht ausgeführt.",
+      "Die Ausgabe bleibt false."
+    ],
+    "code": "boolean aktiviert = false;\nassert aktiviert = true;\nSystem.out.println(aktiviert);",
+    "output": "false",
+    "choices": [
+      "false",
+      "true",
+      "AssertionError"
+    ],
+    "explanation": "Mit aktivierten Assertions wäre die Ausgabe true. Verwende bewusste Prüfungen oder ein Testframework für verlässliche fachliche Tests.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "test-boundary",
+    "category": "Werkzeuge & Tests",
+    "name": "Tests für Grenzwerte",
+    "introduction": "Ein guter Test überprüft konkrete Erwartungen. Gerade Werte an einer Grenze decken Fehler in > und >= auf.",
+    "steps": [
+      "volljaehrig verlangt mindestens 18 Jahre.",
+      "Die Tests prüfen unmittelbar unter und auf der Grenze.",
+      "Bei einem falschen Ergebnis wird AssertionError ausgelöst."
+    ],
+    "code": "if (volljaehrig(17)) throw new AssertionError(\"17 darf nicht reichen\");\nif (!volljaehrig(18)) throw new AssertionError(\"18 muss reichen\");\nSystem.out.println(\"2 Tests bestanden\");",
+    "output": "2 Tests bestanden",
+    "choices": [
+      "2 Tests bestanden",
+      "1 Test bestanden",
+      "AssertionError"
+    ],
+    "explanation": "Die manuellen Testbedingungen laufen auch ohne -ea. In JUnit würde man dieselben Erwartungen mit assertFalse und assertTrue formulieren.",
+    "declarations": "static boolean volljaehrig(int alter) { return alter >= 18; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "test-exception",
+    "category": "Werkzeuge & Tests",
+    "name": "Eine Ausnahme gezielt testen",
+    "introduction": "Ein Fehlertest muss prüfen, ob genau die erwartete Ausnahme ausgelöst wird. Ein bloßer catch ohne Prüfung kann einen Fehler verdecken.",
+    "steps": [
+      "Die ungültige Eingabe muss IllegalArgumentException auslösen.",
+      "Wenn keine Ausnahme kommt, löst der Test selbst AssertionError aus.",
+      "Nur der passende Fehler wird als Erfolg gewertet."
+    ],
+    "code": "try { positiv(-1); throw new AssertionError(\"Fehler fehlt\"); }\ncatch (IllegalArgumentException e) { System.out.println(\"Fehlertest bestanden\"); }",
+    "output": "Fehlertest bestanden",
+    "choices": [
+      "Fehlertest bestanden",
+      "Fehler fehlt",
+      "Keine Ausgabe"
+    ],
+    "explanation": "Ein Test sollte auch den Fall erkennen, dass ein erwarteter Fehler ausbleibt. JUnit bietet dafür assertThrows.",
+    "declarations": "static int positiv(int n) { if (n < 0) throw new IllegalArgumentException(); return n; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "mock",
+    "category": "Werkzeuge & Tests",
+    "name": "Abhängigkeiten austauschbar machen",
+    "introduction": "Wenn eine Klasse von einem kleinen Interface abhängt, kann ein Test eine kontrollierte Implementierung einsetzen.",
+    "steps": [
+      "Preise beschreibt nur den benötigten Zugriff.",
+      "Das Lambda liefert im Test immer 125 Cent.",
+      "Der Shop verwendet diese Abhängigkeit statt einer echten Datenbank."
+    ],
+    "code": "Shop shop = new Shop(name -> 125);\nSystem.out.println(shop.kosten(\"Buch\", 2));",
+    "output": "250",
+    "choices": [
+      "250",
+      "125",
+      "0"
+    ],
+    "explanation": "Das Testdouble gibt vorhersehbare Werte zurück. Dadurch ist die Berechnung unabhängig von Netzwerk oder Datenbank prüfbar.",
+    "declarations": "interface Preise { int cent(String name); }\nstatic class Shop { private final Preise preise; Shop(Preise p) { preise = p; } int kosten(String name, int anzahl) { return preise.cent(name) * anzahl; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "search-linear",
+    "category": "Algorithmen & Komplexität",
+    "name": "Linear suchen: O(n)",
+    "introduction": "Eine lineare Suche prüft Werte nacheinander. Im schlechtesten Fall muss sie alle Elemente ansehen.",
+    "steps": [
+      "Der Index läuft von 0 bis length - 1.",
+      "Beim ersten Treffer wird sofort der Index zurückgegeben.",
+      "Ohne Treffer liefert die Methode -1."
+    ],
+    "code": "System.out.println(suchen(new int[]{8, 3, 5}, 3));",
+    "output": "1",
+    "choices": [
+      "1",
+      "3",
+      "-1"
+    ],
+    "explanation": "Der Wert 3 steht an Index 1. Diese Suche benötigt O(n) Zeit und O(1) zusätzlichen Speicher.",
+    "declarations": "static int suchen(int[] n, int ziel) { for (int i = 0; i < n.length; i++) if (n[i] == ziel) return i; return -1; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "search-binary",
+    "category": "Algorithmen & Komplexität",
+    "name": "Binäre Suche: O(log n)",
+    "introduction": "Binäre Suche halbiert einen sortierten Suchbereich. Ohne passende Sortierung liefert sie kein verlässliches Ergebnis.",
+    "steps": [
+      "Das Array ist bereits aufsteigend sortiert.",
+      "binarySearch findet die Position des Zielwerts.",
+      "Bei fehlenden Werten ist die Rückgabe negativ und kodiert die Einfügeposition."
+    ],
+    "code": "int[] n = {1, 3, 5, 7};\nSystem.out.println(java.util.Arrays.binarySearch(n, 5));",
+    "output": "2",
+    "choices": [
+      "2",
+      "5",
+      "-1"
+    ],
+    "explanation": "Die Position des Werts 5 ist 2. Die Suche braucht O(log n) Zeit; ein vorheriges Sortieren wäre zusätzlich zu berücksichtigen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "two-sum",
+    "category": "Algorithmen & Komplexität",
+    "name": "Zwei Summanden mit einer Map",
+    "introduction": "Eine Map kann bereits gesehene Zahlen speichern. Für jede neue Zahl wird geprüft, ob ihre Ergänzung schon vorhanden ist.",
+    "steps": [
+      "Die bisherige Zahl wird ihrem Index zugeordnet.",
+      "ziel - aktuell ergibt die gesuchte Ergänzung.",
+      "Ein Treffer verwendet zwei unterschiedliche Positionen."
+    ],
+    "code": "System.out.println(java.util.Arrays.toString(paar(new int[]{2, 7, 11}, 9)));",
+    "output": "[0, 1]",
+    "choices": [
+      "[0, 1]",
+      "[1, 2]",
+      "[]"
+    ],
+    "explanation": "Bei üblicher HashMap-Annahme ist die Laufzeit erwartbar O(n) bei O(n) Zusatzspeicher. Eine verschachtelte vollständige Paarsuche wäre O(n²).",
+    "declarations": "static int[] paar(int[] n, int ziel) { var gesehen = new java.util.HashMap<Integer,Integer>(); for (int i = 0; i < n.length; i++) { Integer j = gesehen.get(ziel - n[i]); if (j != null) return new int[]{j, i}; gesehen.putIfAbsent(n[i], i); } return new int[0]; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "palindrome",
+    "category": "Algorithmen & Komplexität",
+    "name": "Palindrom mit zwei Zeigern",
+    "introduction": "Zwei Zeiger können einen einfachen Text von außen nach innen vergleichen. Eine vollständige umgekehrte Kopie ist hier unnötig.",
+    "steps": [
+      "links beginnt am ersten Codeunit-Index.",
+      "rechts beginnt am letzten Codeunit-Index.",
+      "Jeder erfolgreiche Vergleich bewegt beide Zeiger nach innen."
+    ],
+    "code": "System.out.println(palindrom(\"anna\"));\nSystem.out.println(palindrom(\"java\"));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Für diese einfachen ASCII-Texte sind O(n) Zeit und O(1) Zusatzspeicher ausreichend. Für allgemeine Unicode-Grapheme braucht man eine bewusst andere Verarbeitung.",
+    "declarations": "static boolean palindrom(String s) { for (int l = 0, r = s.length() - 1; l < r; l++, r--) if (s.charAt(l) != s.charAt(r)) return false; return true; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "brackets",
+    "category": "Algorithmen & Komplexität",
+    "name": "Klammern mit einem Stack prüfen",
+    "introduction": "Ein Stack merkt sich offene Klammern. Die zuletzt geöffnete Klammer muss zuerst geschlossen werden.",
+    "steps": [
+      "Eine öffnende Klammer wird abgelegt.",
+      "Bei einer schließenden Klammer muss ein passendes offenes Element existieren.",
+      "Am Ende darf keine Klammer offen bleiben."
+    ],
+    "code": "System.out.println(klammern(\"(())\"));\nSystem.out.println(klammern(\"(()\"));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\ntrue"
+    ],
+    "explanation": "Diese Methode akzeptiert nur die Zeichen ( und ). Jeder Buchstabe wird als ungültig behandelt. Die Laufzeit ist O(n), der Stack kann O(n) Speicher brauchen.",
+    "declarations": "static boolean klammern(String s) { var stack = new java.util.ArrayDeque<Character>(); for (char c : s.toCharArray()) { if (c == '(') stack.push(c); else if (c == ')') { if (stack.isEmpty()) return false; stack.pop(); } else return false; } return stack.isEmpty(); }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "frequency",
+    "category": "Algorithmen & Komplexität",
+    "name": "Wörter zählen mit merge()",
+    "introduction": "Ein Häufigkeitszähler verbindet jedes Wort mit seiner Anzahl. Eine Map vermeidet eine neue lineare Suche für jedes Wort.",
+    "steps": [
+      "Jedes Wort erhöht seinen eigenen Zähler.",
+      "Gleich geschriebene Wörter benutzen denselben Schlüssel.",
+      "getOrDefault behandelt nicht vorkommende Wörter."
+    ],
+    "code": "var zaehler = new java.util.HashMap<String,Integer>();\nfor (String wort : java.util.List.of(\"Java\", \"SQL\", \"Java\")) zaehler.merge(wort, 1, Integer::sum);\nSystem.out.println(zaehler.get(\"Java\"));",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "3"
+    ],
+    "explanation": "Groß- und Kleinschreibung bleiben hier relevant. Die Zahl verschiedener Wörter bestimmt den Zusatzspeicher; die Gesamtzahl bestimmt die Verarbeitungsschritte.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "bfs",
+    "category": "Algorithmen & Komplexität",
+    "name": "Breitensuche mit Queue",
+    "introduction": "Breitensuche verarbeitet einen Graphen schichtweise. Eine Besuchsmenge verhindert, dass Knoten wiederholt eingeplant werden.",
+    "steps": [
+      "Der Startknoten wird zuerst besucht.",
+      "Direkte Nachbarn werden in eine FIFO-Queue eingefügt.",
+      "Die nächste Ebene folgt erst nach der aktuellen."
+    ],
+    "code": "var graph = java.util.List.of(java.util.List.of(1, 2), java.util.List.of(3), java.util.List.<Integer>of(), java.util.List.<Integer>of());\nSystem.out.println(bfs(graph));",
+    "output": "[0, 1, 2, 3]",
+    "choices": [
+      "[0, 1, 2, 3]",
+      "[0, 1, 3, 2]",
+      "[3, 2, 1, 0]"
+    ],
+    "explanation": "Bei Adjazenzlisten ist die Laufzeit O(V + E), wobei V Knoten und E Kanten zählt. Eine Breitensuche findet bei gleich gewichteten Kanten kürzeste Wege in Kantenanzahl.",
+    "declarations": "static java.util.List<Integer> bfs(java.util.List<java.util.List<Integer>> g) { var q = new java.util.ArrayDeque<Integer>(); var gesehen = new java.util.HashSet<Integer>(); var out = new java.util.ArrayList<Integer>(); q.offer(0); gesehen.add(0); while (!q.isEmpty()) { int n = q.poll(); out.add(n); for (int next : g.get(n)) if (gesehen.add(next)) q.offer(next); } return out; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "complexity",
+    "category": "Algorithmen & Komplexität",
+    "name": "Verschachtelte Schleifen: O(n²)",
+    "introduction": "Bei zwei vollständig verschachtelten Schleifen über dieselbe Länge wächst die Zahl der inneren Schritte quadratisch.",
+    "steps": [
+      "Die äußere Schleife hat drei Durchläufe.",
+      "Zu jedem davon laufen drei innere Durchläufe.",
+      "Die Gesamtzahl ergibt 3 mal 3."
+    ],
+    "code": "int schritte = 0;\nfor (int i = 0; i < 3; i++)\n    for (int j = 0; j < 3; j++) schritte++;\nSystem.out.println(schritte);",
+    "output": "9",
+    "choices": [
+      "9",
+      "6",
+      "3"
+    ],
+    "explanation": "Für eine allgemeine Länge n entstehen n² Schritte. O(n²) beschreibt das Wachstum, nicht eine garantierte Zahl an Millisekunden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "thread",
+    "category": "Nebenläufigkeit",
+    "name": "Thread.start() und join()",
+    "introduction": "start lässt einen Thread seinen Code ausführen. join wartet darauf, dass dieser Thread beendet ist.",
+    "steps": [
+      "Der Thread bekommt seinen Arbeitscode als Lambda.",
+      "start beginnt die Ausführung.",
+      "join sorgt dafür, dass fertig erst nach Arbeit ausgegeben wird."
+    ],
+    "code": "Thread worker = new Thread(() -> System.out.println(\"Arbeit\"));\nworker.start();\nworker.join();\nSystem.out.println(\"fertig\");",
+    "output": "Arbeit\nfertig",
+    "choices": [
+      "Arbeit\nfertig",
+      "fertig\nArbeit",
+      "fertig"
+    ],
+    "explanation": "Ohne join wäre die Reihenfolge der beiden Ausgaben nicht gesichert. Ein direkter run-Aufruf würde keine neue Thread-Ausführung starten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "executor",
+    "category": "Nebenläufigkeit",
+    "name": "ExecutorService und Future",
+    "introduction": "Ein ExecutorService verwaltet die Ausführung eingereichter Aufgaben. Ein Future liefert später das Ergebnis oder einen Fehler.",
+    "steps": [
+      "Ein Pool mit einem Worker wird angelegt.",
+      "submit reicht eine Berechnung ein.",
+      "get wartet auf das Ergebnis; shutdown beendet die Annahme neuer Aufgaben."
+    ],
+    "code": "var pool = java.util.concurrent.Executors.newSingleThreadExecutor();\ntry {\n    var future = pool.submit(() -> 2 + 3);\n    System.out.println(future.get());\n} finally { pool.shutdown(); }",
+    "output": "5",
+    "choices": [
+      "5",
+      "0",
+      "Future"
+    ],
+    "explanation": "Die Ausführung wird vom Pool verwaltet. get kann InterruptedException oder ExecutionException auslösen, und Ressourcen sollten bewusst beendet werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "future",
+    "category": "Nebenläufigkeit",
+    "name": "CompletableFuture.thenApply()",
+    "introduction": "thenApply berechnet aus einem Future-Ergebnis einen neuen Wert. Eine abgeschlossene Ausgangszukunft kann ohne zusätzliche Wartearbeit weiterverarbeitet werden.",
+    "steps": [
+      "completedFuture enthält bereits 3.",
+      "thenApply bildet daraus 6.",
+      "join liefert den Endwert oder wirft einen CompletionException-Fehler."
+    ],
+    "code": "System.out.println(java.util.concurrent.CompletableFuture.completedFuture(3).thenApply(n -> n * 2).join());",
+    "output": "6",
+    "choices": [
+      "6",
+      "3",
+      "0"
+    ],
+    "explanation": "thenApply und thenApplyAsync sind nicht identisch: Die Async-Variante plant die Fortsetzung zur asynchronen Ausführung ein.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "atomic",
+    "category": "Nebenläufigkeit",
+    "name": "AtomicInteger für atomare Änderungen",
+    "introduction": "AtomicInteger bietet atomare Operationen für einen gemeinsamen Integerwert. Das schützt einzelne Aktualisierungen vor verlorenen Updates.",
+    "steps": [
+      "Der Zähler startet bei 0.",
+      "Jeder Thread erhöht ihn einmal.",
+      "Nach join sind beide Erhöhungen abgeschlossen."
+    ],
+    "code": "var counter = new java.util.concurrent.atomic.AtomicInteger();\nThread a = new Thread(() -> counter.incrementAndGet());\nThread b = new Thread(() -> counter.incrementAndGet());\na.start(); b.start(); a.join(); b.join();\nSystem.out.println(counter.get());",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "0"
+    ],
+    "explanation": "Atomar bedeutet hier, dass die einzelne Erhöhung ungeteilt erfolgt. Mehrere fachlich zusammenhängende Operationen werden dadurch nicht automatisch als Ganzes atomar.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "synchronized",
+    "category": "Nebenläufigkeit",
+    "name": "synchronized und gemeinsamer Zustand",
+    "introduction": "synchronized schützt einen kritischen Abschnitt mit einer Sperre. Thread-Zugriffe über dieselbe Sperre können nicht gleichzeitig in den geschützten Block.",
+    "steps": [
+      "Beide Threads verwenden denselben Zaehler.",
+      "plus ist eine synchronisierte Instanzmethode.",
+      "Nach join werden beide Erhöhungen sichtbar."
+    ],
+    "code": "Zaehler z = new Zaehler();\nThread a = new Thread(() -> z.plus()), b = new Thread(() -> z.plus());\na.start(); b.start(); a.join(); b.join();\nSystem.out.println(z.wert);",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "0"
+    ],
+    "explanation": "Eine synchronisierte Instanzmethode sperrt das jeweilige Objekt. Zwei verschiedene Objekte teilen diese Sperre nicht; alle konkurrierenden Zugriffe müssen passend koordiniert werden.",
+    "declarations": "static class Zaehler { int wert; synchronized void plus() { wert++; } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "uri",
+    "category": "HTTP & Daten",
+    "name": "URI: Pfad und Query",
+    "introduction": "URI beschreibt die Struktur einer Ressourcenadresse. Eine Query ist vom Pfad getrennt und kann kodierte Werte enthalten.",
+    "steps": [
+      "Die Adresse wird zunächst nur zerlegt.",
+      "getPath liefert den Ressourcenpfad.",
+      "getRawQuery liefert die noch kodierte Query."
+    ],
+    "code": "var uri = java.net.URI.create(\"https://example.com/api?q=Java%20lernen\");\nSystem.out.println(uri.getPath());\nSystem.out.println(uri.getRawQuery());",
+    "output": "/api\nq=Java%20lernen",
+    "choices": [
+      "/api\nq=Java%20lernen",
+      "/api?q=Java lernen\nnull",
+      "example.com\n/api"
+    ],
+    "explanation": "Diese Probe stellt keine Netzwerkverbindung her. Kodierung und Zerlegung einer Adresse sind getrennte Aufgaben von einer HTTP-Anfrage.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "http-request",
+    "category": "HTTP & Daten",
+    "name": "HttpClient und HttpRequest",
+    "introduction": "Ein HttpRequest beschreibt Methode, Zieladresse und Optionen. Erst ein send-Aufruf am Client würde die Anfrage tatsächlich ausführen.",
+    "steps": [
+      "newBuilder erstellt den Request-Aufbau.",
+      "GET wählt die HTTP-Methode.",
+      "build liefert eine Anfrage, die noch nicht gesendet wurde."
+    ],
+    "code": "var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(\"https://example.com/\"))\n    .timeout(java.time.Duration.ofSeconds(5)).GET().build();\nSystem.out.println(request.method());",
+    "output": "GET",
+    "choices": [
+      "GET",
+      "200",
+      "example.com"
+    ],
+    "explanation": "Für reale Anfragen kommen HttpClient.send oder sendAsync, ein BodyHandler und Fehler-/Statusbehandlung hinzu. Ein gebauter Request bedeutet noch keine erfolgreiche Verbindung.",
+    "declarations": "",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "equals-hash",
+    "category": "Klassen & Objekte",
+    "name": "equals() und hashCode() gehören zusammen",
+    "introduction": "Gleiche Objekte müssen denselben hashCode besitzen. Hashbasierte Collections benötigen diesen Vertrag für zuverlässige Inhaltsvergleiche.",
+    "steps": [
+      "Der record definiert wertbasiertes equals und hashCode.",
+      "Zwei Punkte mit gleichen Komponenten zählen als gleich.",
+      "Das Set behält deshalb nur einen Eintrag."
+    ],
+    "code": "var punkte = new java.util.HashSet<Punkt>();\npunkte.add(new Punkt(1, 2));\npunkte.add(new Punkt(1, 2));\nSystem.out.println(punkte.size());",
+    "output": "1",
+    "choices": [
+      "1",
+      "2",
+      "0"
+    ],
+    "explanation": "Bei eigenen Klassen müssen equals und hashCode konsistent implementiert werden. Ungleiche Objekte dürfen trotzdem denselben Hashwert haben.",
+    "declarations": "record Punkt(int x, int y) {}",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "composition",
+    "category": "Klassen & Objekte",
+    "name": "Komposition statt unnötiger Vererbung",
+    "introduction": "Komposition setzt eine Klasse aus anderen Objekten zusammen. Sie kann passende Zusammenarbeit modellieren, ohne eine falsche Ist-ein-Beziehung zu erzeugen.",
+    "steps": [
+      "Auto besitzt einen Motor.",
+      "Das Auto ist kein Motor.",
+      "start delegiert die Arbeit an sein enthaltenes Objekt."
+    ],
+    "code": "System.out.println(new Auto(new Motor()).start());",
+    "output": "Motor läuft",
+    "choices": [
+      "Motor läuft",
+      "Auto läuft",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "Eine Hat-ein-Beziehung passt hier zur Komposition. Kleine austauschbare Komponenten lassen sich häufig leichter getrennt testen.",
+    "declarations": "static class Motor { String start() { return \"Motor läuft\"; } }\nstatic class Auto { final Motor motor; Auto(Motor motor) { this.motor = motor; } String start() { return motor.start(); } }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "test-equality",
+    "category": "Werkzeuge & Tests",
+    "name": "Inhalte in Tests richtig vergleichen",
+    "introduction": "Ein Test muss zum Datentyp passen. Arrays können denselben Inhalt haben, obwohl ihre Referenzen verschieden sind.",
+    "steps": [
+      "Die Funktion liefert ein neues Array.",
+      "Arrays.equals prüft Werte und Reihenfolge.",
+      "Ein falscher Inhalt lässt den Test ausdrücklich scheitern."
+    ],
+    "code": "int[] erwartet = {2, 4};\nint[] ist = doppeln(new int[]{1, 2});\nif (!java.util.Arrays.equals(erwartet, ist)) throw new AssertionError(\"Inhalt falsch\");\nSystem.out.println(\"Arraytest bestanden\");",
+    "output": "Arraytest bestanden",
+    "choices": [
+      "Arraytest bestanden",
+      "AssertionError",
+      "false"
+    ],
+    "explanation": "In JUnit kann assertArrayEquals denselben Zweck übernehmen. Ein Referenzvergleich mit == wäre hier der falsche Test.",
+    "declarations": "static int[] doppeln(int[] daten) { int[] out = new int[daten.length]; for (int i = 0; i < daten.length; i++) out[i] = daten[i] * 2; return out; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  },
+  {
+    "id": "test-empty",
+    "category": "Werkzeuge & Tests",
+    "name": "Leere Eingaben bewusst testen",
+    "introduction": "Leere Eingaben benötigen eine definierte Regel. Ein Test macht diese Regel überprüfbar, statt einen zufälligen Standardwert zu akzeptieren.",
+    "steps": [
+      "summe beginnt mit dem neutralen Wert 0.",
+      "Ein leeres Array führt zu keinem Schleifendurchlauf.",
+      "Das Ergebnis muss deshalb 0 sein."
+    ],
+    "code": "if (summe(new int[0]) != 0) throw new AssertionError(\"Leere Summe\");\nif (summe(new int[]{-2, 3}) != 1) throw new AssertionError(\"Gemischte Werte\");\nSystem.out.println(\"2 Tests bestanden\");",
+    "output": "2 Tests bestanden",
+    "choices": [
+      "2 Tests bestanden",
+      "AssertionError",
+      "0"
+    ],
+    "explanation": "Tests sollten normale, leere und Grenzfälle unterscheiden. Für ein Maximum wäre dagegen ein leerer Eingang möglicherweise ein Fehler statt der Zahl 0.",
+    "declarations": "static int summe(int[] daten) { int s = 0; for (int n : daten) s += n; return s; }",
+    "imports": "",
+    "note": "Die Beispiele verwenden Java 17 oder neuer. Speichere den vollständigen Code als Main.java und starte ihn mit java Main.java. In der App beantwortest du die Wissensfrage; Java wird hier nicht im Browser ausgeführt."
+  }
+]

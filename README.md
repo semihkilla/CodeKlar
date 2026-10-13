@@ -510,3 +510,26 @@ Die genehmigte Kombination ersetzt auf Handybreiten die horizontale Leiste einze
 Die Liste schließt nach Auswahl, über X, Escape, Antippen des Hintergrunds oder einen Abwärts-Pointerzug im Kopfbereich. Native Modalfunktion macht den Hintergrund inert; Fokus und Body-Scrolling werden beim Schließen wiederhergestellt. Lange Listen scrollen intern unter einem festen Titel. Die gewählte Akzentfarbe wird übernommen. Die Auswahl setzt den Lektionstab auf Erklärung; die bisherige Standardauswahl beim vollständigen Neuladen wird nicht geändert. Fortschritt bleibt gespeichert, es gibt keine neuen Lektionen oder Datenformate.
 
 QA: Browser plugin not available; Playwright/Chromium prüft Bedienung, Randpositionen, Fokus/Rückkehr, Escape, Hintergrund-/Gesture-Schließen, Scrollwiederherstellung, Desktopwechsel, Namen/Listen bei 320/390 Pixeln, Themen-Scrollregression sowie die bestehende Schleifenprüfung. Die gebaute PWA prüft Offline-Navigation, JS-Antwortprüfung und gespeicherte Gelöst-Markierungen. Designvergleich mit der ausgewählten Bildreferenz ist in `design-qa.md` dokumentiert; nach Verkleinerung der Liste und interner Flex-Scrollaufteilung bestanden. Build erfolgreich, bestehende Bundle-Größenwarnung bleibt. Screenshotbelege außerhalb des Repos; echtes iPhone-Safari und tatsächliche Hardware-Touchgesten sind nicht geprüft.
+
+## Java: großer Lernpfad und lokale Praxisprojekte
+
+Java enthält jetzt **131 Lektionen**: die bestehende `.equals()`-Lektion bleibt mit ihrer ID und gespeichertem Fortschritt erhalten, dazu kommen **130 neue Lektionen**. Sechs Hauptbereiche bündeln die Themen:
+
+- Einstieg & Sprache: main, Ausgabe, Variablen, Typen, Referenzen, Operatoren, Kontrollfluss, Schleifen, Methoden und Rekursion.
+- Strings, Arrays & Collections: Indexgrenzen, Kopieren, Unicode, StringBuilder, Listen, Sets, Maps, Stack, Queue, Comparator, Iterator, Lambdas und Streams.
+- Objektorientierung: Konstruktoren, Instanz-/Klassenfelder, Kapselung, Vererbung, Polymorphie, equals/hashCode, Komposition, Interfaces, Records, Enums und Generics.
+- Eingaben, Dateien & Fehler: Scanner, Startargumente, parseInt, printf, Paths, UTF-8, Dateien schreiben/lesen/anhängen, Verzeichnisse und Ressourcen, checked/unchecked Exceptions, throw, catch und finally.
+- Werkzeuge, Tests & Zahlen: Imports, Pakete, Compiler/Bytecode/JVM, Assertions, Grenz- und Fehlertests, Testdoubles, Array-/Leertests, BigDecimal, BigInteger und java.time.
+- Algorithmen, Threads & HTTP: lineare/binäre Suche, Two Sum, Palindrom, Stack-Prüfung, Häufigkeiten, BFS, Komplexität, Threads, Executor, Future, AtomicInteger, synchronized, URI und Request-Aufbau.
+
+Neue Lektionen enthalten drei Erklärungsschritte, ein vollständiges `Main.java`-Programm, eine Ausgabe-Frage mit begründeter Antwort und passende Begriffserklärungen. Mehrzeilige Quizausgaben bleiben mehrzeilig. Wissensaufgaben werden in der App geprüft; es gibt keinen Java-Compiler im Browser. Beispiele benötigen ein **JDK ab Version 17** und starten lokal mit `java Main.java`. Die Beispiele verwenden nur die Standardbibliothek und benötigen keine Netzwerkverbindung. Datei-Beispiele arbeiten in eigenen temporären Dateien/Ordnern und entfernen diese danach.
+
+Drei zusätzliche herunterladbare Projekte enthalten vollständige Quellen, Startanleitungen, Erweiterungsaufgaben, verknüpfte Lektionen und explizit ausgeführte Tests (ohne Abhängigkeit von `-ea`):
+
+- `Calculator.java`: Ganzzahl-Rechner mit Operatorprüfung, Überlauf-/Divisionsfehlern und neun Tests.
+- `TicTacToe.java`: lokales Zwei-Personen-Spiel mit gültigen Zügen, Zeilen-/Spalten-/Diagonalgewinnen, Unentschieden und acht Tests.
+- `Notebook.java`: Aufgaben mit IDs und Erledigt-Status, UTF-8-Dateispeicherung, Base64 als Formatkodierung und vier Tests. Ein Prozess schreibt die Datei; parallele Schreibzugriffe sind nicht unterstützt. Das Ersetzen der Datei ist atomar, soweit das Dateisystem dies unterstützt; der Fallback ist nicht atomar.
+
+`npm run test:java` kompiliert die tatsächlichen 130 Lernprogramme, führt sie aus und vergleicht ihre Ausgaben. Danach werden Projektquellen kompiliert, alle 21 eingebauten Projektprüfungen ausgeführt und die Terminal-/Dateiabläufe geprüft. Dafür ist ein JDK mit dem Modul `jdk.compiler` erforderlich. Normalerweise wird mit `--release 17` geprüft. Fehlen die Java-17-API-Signaturen in einer abgespeckten Umgebung, meldet das Skript den Fallback auf `-source 17 -target 17`; dieser prüft Syntax/Bytecode gegen die installierte JDK-Bibliothek, nicht gegen einen vollständigen JDK-17-API-Satz. In dieser Umgebung wurden die Programme mit OpenJDK 21 ausgeführt.
+
+QA für diesen Ausbau: Alle 130 neuen Programme kompiliert und mit ihrer erwarteten Ausgabe abgeglichen; drei Projekte mit 21 eingebauten Prüfungen sowie interaktiven Rechner-/Spiel- und Persistenztests bestanden. Sechs gezielte Browserprüfungen bestanden, darunter jede der 131 Java-Lektionen mit Antwortprüfung und Fortschritt nach Neuladen, Kapitel-/ID-Konsistenz, Handyansichten, mehrzeilige Antworten, Nachschlagen, unveränderte Python-Fragen und vollständige Projekt-ZIPs. Die frisch gebaute PWA öffnet den erweiterten Java-Kurs und seine Projekte offline und erhält den Quizfortschritt. Build erfolgreich; bestehende Bundle-Größenwarnung bleibt. Screenshots liegen außerhalb des Repos, echtes iPhone-Safari ist nicht geprüft.

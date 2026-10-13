@@ -54,7 +54,7 @@ function Quiz({ lesson, record }) {
             }}
           >
             <span className="radio-mark" />
-            {option}
+            {lesson.course === 'java' && lesson.expectedOutput !== undefined ? <span className="java-quiz-output">{option}</span> : option}
           </button>
         ))}
       </div>

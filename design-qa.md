@@ -27,3 +27,7 @@ The previous iPhone screenshot showed an almost completely clipped lesson list. 
 ## Limits
 
 Browser plugin not available; local Playwright Chromium used. WebKit browser binary unavailable. Real iPhone Safari and touch gestures on hardware remain untested. The exact cause of the originally reported Safari clipping is not claimed as confirmed. Course/lesson selection after reload follows existing app behavior; only progress persistence is asserted. Screenshot artifacts are outside the repository.
+
+## Java curriculum expansion verification
+
+The later Java content expansion preserves the selected topic selector and lesson arrows. Java now uses six main groups and the same readable guided lesson layout, with multiline output options in quizzes. Local mobile reading evidence: `/tmp/codeklar-java-reader-current.png` and `/tmp/codeklar-java-mobile.png`; inspected at 390 × 844. Browser checks cover 320/390/1505 widths without page overflow, topic-field use within Java, every Java lesson's question/answer and persisted progress, reference search and project downloads. Six focused browser tests and one built-PWA offline test passed. The 130 new complete programs were separately compiled and executed with OpenJDK 21, source/target 17 fallback, with all expected outputs matching. Three project test suites (21 checks) and interactive/file-persistence checks passed. No claim of an in-browser Java runtime or real iPhone Safari testing is made.

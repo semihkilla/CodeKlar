@@ -529,3 +529,12 @@ test('mobile topic sheet works in the installed offline app',async({page,context
  await page.getByRole('button',{name:'Nächste Lektion im Thema',exact:true}).click();await expect(trigger).toContainText('Zahlensysteme');
  await page.reload();await expect(page.getByRole('button',{name:'Navigation öffnen',exact:true})).toBeVisible();
 });
+
+test('expanded Java course is available offline and keeps quiz progress after reload',async({page,context})=>{
+ const {javaLessons}=await import('../src/data.js');await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+ await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Java',exact:true}).click();await expect(page.getByLabel('Hauptbereich').locator('option')).toHaveCount(6);await expect(page.getByRole('heading',{name:'main() und println()',exact:true})).toBeVisible();
+ await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio').nth(javaLessons[0].answer).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.locator('.quiz-feedback')).toContainText('Richtig!');
+ await page.getByLabel('Hauptbereich',{exact:true}).selectOption('advanced');await page.getByRole('button',{name:'Thema wählen',exact:true}).click();await page.getByRole('dialog',{name:'Thema wählen',exact:true}).getByRole('button',{name:'Nebenläufigkeit',exact:true}).click();await expect(page.getByRole('heading',{name:'Thread.start() und join()',exact:true})).toBeVisible();
+ await page.reload();await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Java',exact:true}).click();await expect(page.getByText('1 von 131 Aufgaben gelöst',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:/Projektideen für alle Lernbereiche/}).click();await page.getByLabel('Lernbereich',{exact:true}).selectOption('java');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(4);
+});

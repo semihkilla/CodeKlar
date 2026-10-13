@@ -142,12 +142,14 @@ test("mobile topic scroll remains at the selected area across category and lesso
   await page.getByLabel("Hauptbereich", { exact: true }).selectOption("data");
   await row.getByRole("button", { name: "Arrays", exact: true }).click();
   const arraysPosition = await row.evaluate((element) => element.scrollLeft);
-  await page.locator(".lesson-picker").getByRole("button", { name: ".filter()", exact: true }).click();
+  await page.getByRole("button",{name:"Lektion wählen",exact:true}).click();
+  await page.getByRole("dialog",{name:"Lektion wählen",exact:true}).getByRole("button",{name:/^\.filter\(\)/}).click();
   await expect(page.getByRole("heading", { name: "Elemente auswählen mit .filter()" })).toBeVisible();
   expect(Math.abs(await row.evaluate((element) => element.scrollLeft) - arraysPosition)).toBeLessThanOrEqual(2);
   expect(await isSelectedVisible()).toBe(true);
   await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();
-  await page.locator(".lesson-picker").getByRole("button", { name: ".map()", exact: true }).click();
+  await page.getByRole("button",{name:"Lektion wählen",exact:true}).click();
+  await page.getByRole("dialog",{name:"Lektion wählen",exact:true}).getByRole("button",{name:/^\.map\(\)/}).click();
   await expect(page.getByRole("tab", { name: "Erklärung", exact: true })).toHaveAttribute("aria-selected", "true");
   await page.reload();
   expect(await isSelectedVisible()).toBe(true);
@@ -225,9 +227,9 @@ test("loop tasks distinguish break from continue and include the while boundary"
   await expect(loops.getByRole("heading")).toContainText("1 / 5 gelöst");
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  for (const selector of [".topic-tabs", ".lesson-picker"]) {
+  for (const selector of [".topic-tabs", ".lesson-switcher"]) {
     await expect.poll(() => page.locator(selector).evaluate((row) => {
-      const selected = row.querySelector('[aria-pressed="true"]').getBoundingClientRect();
+      const selected = (row.querySelector('[aria-pressed="true"]') || row.querySelector(".lesson-current")).getBoundingClientRect();
       const bounds = row.getBoundingClientRect();
       return selected.left >= bounds.left - 1 && selected.right <= bounds.right + 1;
     })).toBe(true);
@@ -2160,4 +2162,29 @@ test('technology case arithmetic and existing lesson identities stay valid',asyn
  const answer=id=>{const lesson=all.find(x=>x.id===id);return lesson.options[lesson.answer];};expect(answer('networking-round-trip')).toBe(`${4*50} ms`);expect(answer('networking-subnet-23')).toBe(String(2**(32-23)));expect(answer('reverse-count-buffer')).toBe(String(5*4-(20-4)));expect(answer('reverse-header-offset')).toBe(String(0x03+0x00*256));expect(answer('reverse-rva-mapping')).toBe(`0x${(0x400+0x1020-0x1000).toString(16)}`);expect(answer('reverse-flags-value')).toBe(String(0xa3>>4));
  const {comparePrefix}=await import('../src/technologyModels.js');expect(comparePrefix('198.51.100.70','198.51.101.255',23)).toMatchObject({start:'198.51.100.0',end:'198.51.101.255',count:512,same:true});
  const baseModules=[['networkingLessons','networkingLessons'],['cloudLessons','cloudLessons'],['cybersecurityLessons','cybersecurityLessons'],['reverseEngineeringLessons','reverseEngineeringLessons']];for(const [file,key] of baseModules){const items=(await import(`../src/${file}.js`))[key];expect(items).toHaveLength(47);expect(new Set(items.map(x=>x.id)).size).toBe(47);for(const lesson of all.filter(x=>x.course===items[0].course))expect(items.find(x=>x.id===lesson.id)).toBeTruthy();}
+});
+
+test('mobile lesson switcher combines arrows with an accessible modal lesson list',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});
+ await page.addInitScript(()=>localStorage.setItem('codeklar-accent-v1','green'));await page.setViewportSize({width:390,height:844});await page.goto('/');
+ const switcher=page.getByLabel('Lektionswechsel',{exact:true}),trigger=page.getByRole('button',{name:'Lektion wählen',exact:true});await expect(switcher).toContainText('.map()');await expect(switcher).toContainText(`2 von ${lessons.filter(x=>x.course==='js'&&x.category==='Arrays').length}`);await expect(page.locator('.desktop-lesson-picker')).not.toBeVisible();
+ await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await switcher.getByRole('button',{name:'Nächste Lektion im Thema',exact:true}).click();await expect(page.getByRole('heading',{name:'Elemente auswählen mit .filter()',exact:true})).toBeVisible();await expect(page.getByRole('tab',{name:'Erklärung',exact:true})).toHaveAttribute('aria-selected','true');await expect(switcher.getByRole('button',{name:'Nächste Lektion im Thema',exact:true})).toBeEnabled();
+ await switcher.getByRole('button',{name:'Vorherige Lektion im Thema',exact:true}).click();await expect(switcher).toContainText('.map()');await trigger.scrollIntoViewIfNeeded();const position=await page.evaluate(()=>scrollY);
+ await trigger.click();const dialog=page.getByRole('dialog',{name:'Lektion wählen',exact:true});await expect(dialog).toBeVisible();await expect(dialog.locator('.lesson-sheet-row[aria-current="step"]')).toContainText('.map()');await expect(dialog.locator('.lesson-sheet-row')).toHaveCount(lessons.filter(x=>x.course==='js'&&x.category==='Arrays').length);await expect(dialog.locator('[aria-current="step"]')).toBeFocused();expect(await page.evaluate(()=>document.body.style.overflow)).toBe('hidden');
+ await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(trigger).toBeFocused();expect(Math.abs(await page.evaluate(()=>scrollY)-position)).toBeLessThanOrEqual(2);expect(await page.evaluate(()=>document.body.style.overflow)).not.toBe('hidden');
+ await trigger.click();await dialog.getByRole('button',{name:/^\.push\(\)/}).click();await expect(dialog).not.toBeVisible();await expect(switcher).toContainText(`1 von ${lessons.filter(x=>x.course==='js'&&x.category==='Arrays').length}`);await expect(switcher.getByRole('button',{name:'Vorherige Lektion im Thema',exact:true})).toBeDisabled();
+ await trigger.click();await dialog.getByRole('button',{name:'Lektionsliste schließen',exact:true}).click();await expect(trigger).toBeFocused();await trigger.click();await page.mouse.click(8,8);await expect(dialog).not.toBeVisible();await trigger.click();const grip=await dialog.locator('.lesson-sheet-grip').boundingBox();await page.mouse.move(grip.x+grip.width/2,grip.y+grip.height/2);await page.mouse.down();await page.mouse.move(grip.x+grip.width/2,grip.y+grip.height/2+80);await page.mouse.up();await expect(dialog).not.toBeVisible();
+ await page.reload();await expect(switcher).toContainText('.map()');expect(await page.locator('html').getAttribute('data-accent')).toBe('green');
+ await page.setViewportSize({width:1505,height:1045});await expect(switcher).not.toBeVisible();await expect(page.locator('.desktop-lesson-picker')).toBeVisible();await page.locator('.desktop-lesson-picker').getByRole('button',{name:'.map()',exact:true}).click();await expect(page.getByRole('heading',{name:'Arrays verändern mit .map()',exact:true})).toBeVisible();
+ await page.setViewportSize({width:390,height:844});await trigger.click();await page.setViewportSize({width:1505,height:1045});await expect(dialog).not.toBeVisible();expect(await page.evaluate(()=>document.body.style.overflow)).not.toBe('hidden');await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});
+
+test('mobile lesson list wraps long names and scrolls within all course themes',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Reverse Engineering',exact:true}).click();await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Lektion wählen',exact:true});const active=dialog.locator('[aria-current="step"]');await expect(active).toContainText('Reverse Engineering: Verhalten aus vorhandenen Artefakten verstehen');
+ for(const width of [320,390,768]){await page.setViewportSize({width,height:844});if(width===768){await expect(dialog).not.toBeVisible();continue;}expect(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(await active.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);}
+ await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();const list=dialog.locator('.lesson-sheet-list');expect(await list.evaluate(el=>el.scrollHeight>el.clientHeight)).toBe(true);const last=dialog.locator('.lesson-sheet-row').last();const lastName=await last.locator('.lesson-sheet-name').innerText();await last.scrollIntoViewIfNeeded();await expect(dialog.getByRole('heading',{name:'Lektion wählen',exact:true})).toBeInViewport();await last.click();await expect(dialog).not.toBeVisible();await expect(page.locator('.lesson-current-name')).toContainText(lastName);await expect(page.getByRole('button',{name:'Nächste Lektion im Thema',exact:true})).toBeDisabled();await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();await expect(dialog.locator('[aria-current="step"]')).toBeInViewport();await page.keyboard.press('Escape');
+});
+
+test('selected lesson switcher design renders in open and closed mobile states',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('codeklar-accent-v1','green'));await page.setViewportSize({width:390,height:844});await page.goto('/');await page.locator('.lesson-navigator').evaluate(el=>window.scrollTo(0,el.getBoundingClientRect().top+scrollY-140));await page.screenshot({path:'/tmp/codeklar-lesson-switcher-closed-390.png',animations:'disabled'});await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();await page.screenshot({path:'/tmp/codeklar-lesson-switcher-open-390.png',animations:'disabled'});await expect(page.getByRole('dialog',{name:'Lektion wählen',exact:true})).toBeVisible();await page.keyboard.press('Escape');await page.setViewportSize({width:320,height:844});await page.getByRole('button',{name:'Lektion wählen',exact:true}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'/tmp/codeklar-lesson-switcher-open-320.png',animations:'disabled'});
 });

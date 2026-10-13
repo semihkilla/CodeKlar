@@ -7,6 +7,7 @@ import { KnowledgeExample, isTechnologyCourse } from "./KnowledgeExample";
 import { ScienceExample } from "./MathFormula";
 import { FormulaWorkshop } from "./FormulaWorkshop";
 import { ScienceLab } from "./ScienceLab";
+import { LessonNavigator } from "./LessonNavigator";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
 import { ComputerWorkshop } from "./ComputerWorkshop";
@@ -393,7 +394,8 @@ export function Learning({
             </button>
           ))}
         </div>
-        <div className="lesson-picker" aria-label="Lektionen" ref={pickerRef}>
+        <LessonNavigator key={`${course}-${lesson.category}`} lesson={lesson} siblings={siblings} progress={progress} onSelect={id=>{setLessonId(id);setTab("explanation");}} />
+        <div className="lesson-picker desktop-lesson-picker" aria-label="Lektionen" ref={pickerRef}>
           {siblings.map((item) => (
             <button
               key={item.id}

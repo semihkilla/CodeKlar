@@ -2001,3 +2001,39 @@ test('expanded basics provide contextual vocabulary and checked numeric answers'
   await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('linux');await page.getByLabel('Aufgaben suchen …').fill('Absolute und relative Pfade erkennen');await page.getByRole('row').filter({hasText:'Absolute und relative Pfade erkennen'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.getByText('Im Alltag',{exact:true})).toBeVisible();await page.getByText('Begriffe einfach erklärt',{exact:true}).click();
   for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width===390){await page.locator('.lesson-panel').scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-basics-390.png',animations:'disabled'});}}
 });
+
+for(const course of ['linux','macos','windows','physics','electrical']){
+  test(`next-stage ${course} lessons explain examples grade answers and preserve progress`,async({page})=>{
+    test.setTimeout(90000);
+    const {terminalNextLessons}=await import('../src/terminalNextLessons.js');const {scienceNextLessons}=await import('../src/scienceNextLessons.js');
+    const items=[...terminalNextLessons,...scienceNextLessons].filter(x=>x.course===course);
+    const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await page.setViewportSize({width:390,height:960});
+    for(const [i,lesson] of items.entries()){
+      await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+      await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await page.getByText('Begriffe einfach erklärt',{exact:true}).click();await expect(page.locator('.learning-vocabulary dd')).toHaveCount(lesson.terms.length);await expect(page.locator('.learning-vocabulary dd').first()).toBeVisible();
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      if(i===0){await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio',{name:lesson.options[(lesson.answer+1)%3],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toHaveCount(0);}
+      await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();
+    }
+    await page.reload();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));for(const lesson of items)expect(saved.solved[lesson.id]).toBeTruthy();expect(errors).toEqual([]);
+  });
+}
+
+test('next-stage physical examples agree with independent calculations and model limits',async()=>{
+  const {scienceNextLessons}=await import('../src/scienceNextLessons.js');const {terminalLessons}=await import('../src/terminalLessons.js');const {scienceLessons}=await import('../src/scienceLessons.js');const {scienceMath}=await import('../src/scienceMath.js');
+  const all=[...terminalLessons,...scienceLessons];expect(new Set(all.map(x=>x.id)).size).toBe(all.length);
+  const answer=id=>{const lesson=scienceNextLessons.find(x=>x.id===id);return lesson.options[lesson.answer];};const de=value=>value.toLocaleString('de-DE',{maximumFractionDigits:6});
+  expect(answer('physics-accelerated-distance')).toBe(`${0.5*2*3**2} m`);expect(answer('physics-spring')).toBe(`${100*0.02} N`);expect(answer('physics-torque')).toBe(`${10*0.2} N·m`);expect(answer('physics-lever-balance')).toBe(`${20*0.1/0.2} N`);
+  expect(answer('physics-buoyancy')).toBe(`${1000*0.001} kg`);expect(answer('physics-ideal-gas')).toBe(`${100*600/300} kPa`);expect(answer('physics-thermal-expansion')).toBe(`${de(0.00001*1*20*1000)} mm`);expect(answer('physics-latent-heat')).toBe(`${de(0.1*334000)} J`);
+  expect(answer('electrical-mixed-resistors')).toBe(`${100+1/(1/200+1/200)} Ω`);expect(answer('electrical-capacitors-parallel')).toBe(`${100+200} µF`);expect(answer('electrical-capacitors-series')).toBe(`${1/(1/100+1/100)} µF`);
+  expect(answer('electrical-rc-discharge')).toBe(`${de(Math.round(5*Math.exp(-1)*100)/100)} V`);expect(answer('electrical-inductor-energy')).toBe(`${de(0.5*0.1*2**2)} J`);expect(answer('electrical-pullup')).toBe(`${de(3.3/10000*1000)} mA`);
+  expect(Math.round(1/(2*Math.PI*50*100e-6)*100)/100).toBe(31.83);expect(scienceMath['electrical-capacitive-reactance'].example.flat(Infinity)).toContain('31,83');
+  expect(scienceNextLessons.find(x=>x.id==='electrical-pwm').example).toContain(`${de(0.25*5)} V`);expect(answer('electrical-pwm')).toContain('eingeschaltete Spannung bleibt 5 V');
+  expect(scienceNextLessons.find(x=>x.id==='physics-ideal-gas').guide[1].join(' ')).toContain('Kelvin');expect(scienceNextLessons.find(x=>x.id==='electrical-rc-discharge').detail).toContain('kein Nachweis');
+});
+
+test('next-stage exponential formulas stay readable at phone and desktop widths',async({page})=>{
+  await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('electrical');await page.getByLabel('Aufgaben suchen …').fill('RC-Entladung: der Rest wird immer kleiner');await page.getByRole('row').filter({hasText:'RC-Entladung: der Rest wird immer kleiner'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+  const example=page.locator('.lesson-panel .science-example').first();await expect(example.locator('msup').first()).toBeVisible();await expect(example.locator('mfrac').first()).toBeVisible();await expect(example.locator('math').first()).toHaveAttribute('aria-label',/hoch minus t geteilt durch τ/);
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await example.scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width===390)await page.screenshot({path:'/tmp/codeklar-next-390.png',animations:'disabled'});}
+});

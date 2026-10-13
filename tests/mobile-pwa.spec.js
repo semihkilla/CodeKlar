@@ -463,3 +463,14 @@ test('expanded lessons vocabulary and square roots are available offline',async(
   }
   await expect(page.locator('msqrt').first()).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('next-stage examples quizzes and exponentials work on first offline visit',async({page,context})=>{
+  const {terminalNextLessons}=await import('../src/terminalNextLessons.js');const {scienceNextLessons}=await import('../src/scienceNextLessons.js');
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  for(const id of ['linux-awk-sum','macos-plutil','windows-format-last','physics-free-fall','electrical-rc-discharge']){
+    const lesson=[...terminalNextLessons,...scienceNextLessons].find(x=>x.id===id);await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await page.getByText('Begriffe einfach erklärt',{exact:true}).click();await expect(page.locator('.learning-vocabulary dd').first()).toBeVisible();
+    if(id==='electrical-rc-discharge')await expect(page.locator('.science-example msup').first()).toBeVisible();
+    await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();
+  }
+  await page.reload();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));expect(saved.solved['electrical-rc-discharge']).toBeTruthy();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

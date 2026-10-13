@@ -8,6 +8,7 @@ function MathNode({ expression }) {
   return <Tag>{children.map((child,index)=><MathNode key={index} expression={child}/>)}</Tag>;
 }
 function spoken([type,...children]) {
+  if (type === 'msqrt') return `Quadratwurzel aus ${spoken(children[0])}`;
   if (type === 'mfrac') return `${spoken(children[0])} geteilt durch ${spoken(children[1])}`;
   if (type === 'msup') return `${spoken(children[0])} hoch ${spoken(children[1])}`;
   if (type === 'msub') return `${spoken(children[0])} mit Index ${spoken(children[1])}`;

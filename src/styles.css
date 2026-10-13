@@ -2223,3 +2223,12 @@ body {
 .math-legend { margin: 16px 0 0; padding-left: 20px; font-family: inherit; font-size: 14px; line-height: 1.8; }
 .science-example p { font: inherit; line-height: 1.8; margin-bottom: 12px; }
 @media (max-width:600px) { .science-example { padding: 14px; } .math-expression math { font-size: 1.15rem; } }
+
+.learning-analogy, .learning-pitfall { line-height:1.7; margin:20px 0; padding:16px; border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:0 12px 12px 0; }
+.learning-analogy strong, .learning-pitfall strong { display:block; margin-bottom:6px; color:var(--text); }
+.learning-pitfall p { margin:0; }
+.learning-vocabulary dl { margin:12px 0 0; }
+.learning-vocabulary dl > div { padding:12px 0; border-bottom:1px solid var(--border); }
+.learning-vocabulary dl > div:last-child { border-bottom:0; }
+.learning-vocabulary dt { color:var(--text); font-weight:700; margin-bottom:5px; }
+.learning-vocabulary dd { margin:0; line-height:1.7; overflow-wrap:anywhere; }

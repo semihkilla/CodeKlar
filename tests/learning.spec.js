@@ -1938,7 +1938,7 @@ test('new computer teaching lessons present three steps before optional technica
 });
 
 test('new terminal and science courses grade every quiz and keep progress across reload',async({page})=>{
-  test.setTimeout(120000);const {terminalLessons}=await import('../src/terminalLessons.js');const {scienceLessons}=await import('../src/scienceLessons.js');
+  test.setTimeout(240000);const {terminalLessons}=await import('../src/terminalLessons.js');const {scienceLessons}=await import('../src/scienceLessons.js');
   await page.goto('/');
   for(const lesson of [...terminalLessons,...scienceLessons]){
     await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();
@@ -1973,7 +1973,7 @@ test('science exercise answers agree with the stated arithmetic and units',async
 });
 
 test('science formulas use mathematical notation in lessons reference and interactive labs',async({page})=>{
-  test.setTimeout(90000);const {scienceLessons}=await import('../src/scienceLessons.js');const {scienceMath}=await import('../src/scienceMath.js');const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});await page.goto('/');
+  test.setTimeout(150000);const {scienceLessons}=await import('../src/scienceLessons.js');const {scienceMath}=await import('../src/scienceMath.js');const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text());});await page.goto('/');
   for(const lesson of scienceLessons){
     await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
     const panel=page.locator('.lesson-panel');await expect(panel.locator('pre')).toHaveCount(0);await expect(panel.locator('.science-example').first()).toBeVisible();
@@ -1984,4 +1984,20 @@ test('science formulas use mathematical notation in lessons reference and intera
   await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Aufgaben suchen …').fill('Mit dem Ohmschen Gesetz rechnen');await page.getByRole('row').filter({hasText:'Mit dem Ohmschen Gesetz rechnen'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
   for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await page.locator('.lesson-panel').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if([390,1505].includes(width))await page.screenshot({path:`/tmp/codeklar-math-${width}.png`,animations:'disabled'});}
   await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');expect(await page.locator('vite-error-overlay').count()).toBe(0);expect(errors).toEqual([]);
+});
+
+test('expanded basics provide contextual vocabulary and checked numeric answers',async({page})=>{
+  const {terminalExtraLessons}=await import('../src/terminalExtraLessons.js');const {scienceExtraLessons}=await import('../src/scienceExtraLessons.js');
+  const all=[...terminalExtraLessons,...scienceExtraLessons];expect(all).toHaveLength(75);expect(new Set(all.map(x=>x.id)).size).toBe(75);
+  for(const lesson of all){expect(lesson.guide[1]).toHaveLength(3);expect(lesson.terms.length).toBeGreaterThan(0);expect(new Set(lesson.options).size).toBe(3);}
+  const answer=id=>{const item=all.find(x=>x.id===id);return item.options[item.answer];};
+  expect(answer('physics-uniform-motion')).toBe(`${3*4} m`);expect(answer('physics-friction')).toBe(`${0.2*10} N`);expect(answer('physics-momentum')).toBe(`${2*3} kg·m/s`);
+  expect(answer('physics-specific-heat')).toBe(`${(4180*2).toLocaleString('de-DE')} J`);expect(answer('physics-waves')).toBe(`${2*3} m/s`);
+  expect(answer('electrical-divider')).toBe(`${6*1000/2000} V`);expect(answer('electrical-internal-resistance')).toBe(`${(6-0.1*2).toLocaleString('de-DE')} V`);
+  expect(answer('electrical-energy')).toBe(`${2*3} Wh`);expect(answer('electrical-resistor-power')).toBe(`${(5**2/100).toLocaleString('de-DE')} W`);
+  expect(answer('electrical-rc')).toBe(`${(1000*0.0001).toLocaleString('de-DE')} s`);
+  await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('electrical');await page.getByLabel('Aufgaben suchen …').fill('Effektivwert und Spitzenwert');await page.getByRole('row').filter({hasText:'Effektivwert und Spitzenwert'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('msqrt').first()).toBeVisible();await expect(page.locator('math').first()).toHaveAttribute('aria-label',/Quadratwurzel aus 2/);
+  await page.getByText('Begriffe einfach erklärt',{exact:true}).click();await expect(page.locator('.learning-vocabulary dd').first()).toBeVisible();
+  await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('linux');await page.getByLabel('Aufgaben suchen …').fill('Absolute und relative Pfade erkennen');await page.getByRole('row').filter({hasText:'Absolute und relative Pfade erkennen'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.getByText('Im Alltag',{exact:true})).toBeVisible();await page.getByText('Begriffe einfach erklärt',{exact:true}).click();
+  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width===390){await page.locator('.lesson-panel').scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-basics-390.png',animations:'disabled'});}}
 });

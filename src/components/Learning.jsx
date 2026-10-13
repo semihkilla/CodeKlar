@@ -143,8 +143,11 @@ function LessonPanel({
             {(lesson.course === "computer" || lesson.guide) ? <>
               <p className="lesson-description">{guide?.[0] ?? lesson.description}</p>
               {guide && <><h3 className="reading-label">Schritt für Schritt</h3><ol className="computer-reading-steps">{guide[1].map(text => <li key={text}>{text}</li>)}</ol></>}
+              {lesson.everyday && <p className="learning-analogy"><strong>Im Alltag</strong>{lesson.everyday}</p>}
               <h3 className="reading-label">Ein kleines Beispiel</h3>
               {science ? <ScienceExample lesson={lesson} /> : <pre className="syntax-strip">{lesson.example}</pre>}
+              {lesson.pitfall && <div className="learning-pitfall"><strong>Typischer Stolperstein</strong><p>{lesson.pitfall}</p></div>}
+              {lesson.terms?.length > 0 && <details className="reading-more learning-vocabulary"><summary>Begriffe einfach erklärt</summary><dl>{lesson.terms.map(([name,meaning]) => <div key={name}><dt>{name}</dt><dd>{meaning}</dd></div>)}</dl></details>}
               <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>
                 <p>{lesson.description}</p>
                 {science ? <ScienceExample lesson={lesson} compact /> : <pre className="syntax-strip">{lesson.syntax}</pre>}

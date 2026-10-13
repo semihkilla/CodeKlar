@@ -1,3 +1,4 @@
+import { terminalExtraLessons } from './terminalExtraLessons.js';
 import { makeKnowledge } from './learningFactory.js';
 const files = 'Navigation & Dateien', text = 'Text & Pipelines', system = 'Shell & System';
 const common = () => [
@@ -43,4 +44,4 @@ const windowsRows = [
  ['cmd',system,'cmd-Befehle ausdrücklich einordnen','cmd und PowerShell haben unterschiedliche eingebaute Befehle und Syntax.', ['cmd /c startet cmd für den folgenden Befehl.','dir ist in cmd ein eingebauter Verzeichnisbefehl.','In PowerShell ist dir dagegen normalerweise ein Alias für Get-ChildItem.'], 'cmd /c dir', 'Welche Shell verarbeitet dir in diesem Beispiel?', ['cmd','Automatisch Bash','Ausschließlich zsh'], 'cmd /c führt den angegebenen Befehl in cmd aus und beendet diese cmd-Sitzung danach. Optionen und Variablensyntax aus cmd sind nicht einfach PowerShell-Syntax.'],
 ];
 const note='Die Befehle sind Lernbeispiele und werden hier nicht auf deinem Gerät ausgeführt. Prüfe Pfade, Rechte und die verwendete Shell, bevor du sie später selbst ausprobierst.';
-export const terminalLessons = [...makeKnowledge('linux',linuxRows,note),...makeKnowledge('macos',macRows,note),...makeKnowledge('windows',windowsRows,note)];
+export const terminalLessons = [...makeKnowledge('linux',linuxRows,note),...makeKnowledge('macos',macRows,note),...makeKnowledge('windows',windowsRows,note),...terminalExtraLessons];

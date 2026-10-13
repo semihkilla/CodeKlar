@@ -455,3 +455,11 @@ test('native math formulas and substituted lab values render on first offline vi
   await page.getByText('Bewegungs-Labor: Strecke und Zeit',{exact:true}).click();await expect(page.getByRole('region',{name:'Bewegungs-Labor',exact:true}).locator('mfrac')).toHaveCount(2);
   await page.getByLabel('Zeit in Sekunden').fill('10');await expect(page.getByLabel('Modellergebnis')).toContainText('10 m/s');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('expanded lessons vocabulary and square roots are available offline',async({page,context})=>{
+  await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+  for(const [course,title] of [['linux','Variablen und Anführungszeichen'],['macos','Dateien mit Spotlight im Terminal finden'],['windows','Objekte mit Get-Member kennenlernen'],['physics','Wärme und Temperatur unterscheiden'],['electrical','Effektivwert und Spitzenwert sind verschieden']]){
+    await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(course);await page.getByLabel('Aufgaben suchen …').fill(title);await page.getByRole('row').filter({hasText:title}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await page.getByText('Begriffe einfach erklärt',{exact:true}).click();await expect(page.locator('.learning-vocabulary dd').first()).toBeVisible();
+  }
+  await expect(page.locator('msqrt').first()).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

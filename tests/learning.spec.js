@@ -2141,3 +2141,23 @@ test('further technology examples keep arithmetic and lesson identities correct'
  const answer=id=>{const lesson=all.find(x=>x.id===id);return lesson.options[lesson.answer];};expect(answer('reverse-varint')).toBe(String((0xac&0x7f)+2*128));expect(answer('reverse-array-stride')).toBe(String(16+3*8));expect(answer('reverse-trace-table')).toBe(String((2+3)*2));expect(answer('reverse-integer-overflow')).toBe(String((255+1)%256));
  expect(answer('networking-private-addresses')).toContain('172.31.255.255');expect(answer('networking-route-metric')).toBe('/24');expect(answer('cybersecurity-model-vs-enforcement')).toBe('Nein');
 });
+
+for(const [course,key] of [['networking','networkingCaseLessons'],['cloud','cloudCaseLessons'],['cybersecurity','cybersecurityCaseLessons'],['reverse','reverseEngineeringCaseLessons']]){
+ test(`technology case studies ${course} keep reading layout and save every answer`,async({page})=>{
+  test.setTimeout(90000);const items=(await import('../src/technologyCaseLessons.js'))[key];const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await page.setViewportSize({width:390,height:960});
+  for(const [index,lesson] of items.entries()){
+   await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await expect(page.locator('.knowledge-example')).toContainText(lesson.example);expect(await page.locator('.knowledge-example p').first().evaluate(el=>getComputedStyle(el).fontSize)).toBe('16px');await page.getByText('Begriffe einfach erklärt',{exact:true}).click();await expect(page.locator('.learning-vocabulary dd')).toHaveCount(lesson.terms.length);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await expect(page.locator('.quiz .tool-badge')).toContainText('Vertiefung');
+   if(index===0){await page.getByRole('radio',{name:lesson.options[(lesson.answer+1)%3],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toHaveCount(0);}
+   await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();
+  }
+  await page.reload();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));for(const lesson of items)expect(saved.solved[lesson.id]).toBeTruthy();expect(errors).toEqual([]);
+ });
+}
+
+test('technology case arithmetic and existing lesson identities stay valid',async()=>{
+ const data=await import('../src/technologyCaseLessons.js');const all=[...data.networkingCaseLessons,...data.cloudCaseLessons,...data.cybersecurityCaseLessons,...data.reverseEngineeringCaseLessons];expect(all).toHaveLength(40);expect(new Set(all.map(x=>x.id)).size).toBe(40);
+ const answer=id=>{const lesson=all.find(x=>x.id===id);return lesson.options[lesson.answer];};expect(answer('networking-round-trip')).toBe(`${4*50} ms`);expect(answer('networking-subnet-23')).toBe(String(2**(32-23)));expect(answer('reverse-count-buffer')).toBe(String(5*4-(20-4)));expect(answer('reverse-header-offset')).toBe(String(0x03+0x00*256));expect(answer('reverse-rva-mapping')).toBe(`0x${(0x400+0x1020-0x1000).toString(16)}`);expect(answer('reverse-flags-value')).toBe(String(0xa3>>4));
+ const {comparePrefix}=await import('../src/technologyModels.js');expect(comparePrefix('198.51.100.70','198.51.101.255',23)).toMatchObject({start:'198.51.100.0',end:'198.51.101.255',count:512,same:true});
+ const baseModules=[['networkingLessons','networkingLessons'],['cloudLessons','cloudLessons'],['cybersecurityLessons','cybersecurityLessons'],['reverseEngineeringLessons','reverseEngineeringLessons']];for(const [file,key] of baseModules){const items=(await import(`../src/${file}.js`))[key];expect(items).toHaveLength(47);expect(new Set(items.map(x=>x.id)).size).toBe(47);for(const lesson of all.filter(x=>x.course===items[0].course))expect(items.find(x=>x.id===lesson.id)).toBeTruthy();}
+});

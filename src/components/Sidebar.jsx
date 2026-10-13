@@ -1,5 +1,9 @@
 import {
   Cpu,
+  Network,
+  Cloud,
+  Shield,
+  ScanSearch,
   Terminal,
   Atom,
   Zap,
@@ -31,6 +35,10 @@ export const navigation = [
   { id: "progress", label: "Fortschritt", icon: ChartNoAxesColumnIncreasing },
 ];
 const courseIcons = {
+  networking: Network,
+  cloud: Cloud,
+  cybersecurity: Shield,
+  reverse: ScanSearch,
   computer: Cpu,
   linux: Terminal,
   macos: Terminal,

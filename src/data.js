@@ -1,3 +1,7 @@
+import { networkingLessons } from "./networkingLessons";
+import { cloudLessons } from "./cloudLessons";
+import { cybersecurityLessons } from "./cybersecurityLessons";
+import { reverseEngineeringLessons } from "./reverseEngineeringLessons";
 import { terminalLessons } from "./terminalLessons";
 import { scienceLessons } from "./scienceLessons";
 import { challengeLessons } from "./challengeLessons";
@@ -30,6 +34,8 @@ import { buildLessons } from "./buildLessons";
 import { webLessons } from "./webLessons";
 
 export const courseGroups = [
+  { name: "Netzwerke & Cloud", ids: ["networking", "cloud"] },
+  { name: "Sicherheit & Analyse", ids: ["cybersecurity", "reverse"] },
   { name: "Computergrundlagen", ids: ["computer"] },
   { name: "Programmiersprachen", ids: ["js", "java", "python", "c"] },
   { name: "Webgestaltung", ids: ["css"] },
@@ -41,6 +47,10 @@ export const courseGroups = [
 ];
 
 export const courses = [
+  {id:"networking",name:"Networking",mark:"NET",guided:true,headline:"Netzwerke Schritt für Schritt verstehen.",description:"Pakete, Adressen, Protokolle und Verbindungsfehler anhand kleiner Beispiele lernen."},
+  {id:"cloud",name:"Cloud",mark:"CL",guided:true,headline:"Cloud-Dienste und ihren Betrieb verstehen.",description:"Rechenmodelle, Speicher, Berechtigungen, Skalierung und Kosten verständlich einordnen."},
+  {id:"cybersecurity",name:"Cybersecurity",mark:"SEC",guided:true,headline:"Systeme und Anwendungen schützen.",description:"Schutzziele, Zugriffsrechte, sichere Verarbeitung und Reaktion auf Vorfälle lernen."},
+  {id:"reverse",name:"Reverse Engineering",mark:"RE",guided:true,headline:"Bytes und Programme nachvollziehbar lesen.",description:"Darstellungen, Dateiformate und kompilierten Code mit kleinen Lernbeispielen verstehen."},
   {id:"linux",name:"Linux-Befehle",mark:"LX",guided:true,headline:"Linux im Terminal verstehen.",description:"Bash und Unix-Befehle mit Beispielen und Wissensfragen. Die App führt keine Systembefehle auf deinem Gerät aus."},
   {id:"macos",name:"macOS-Befehle",mark:"Mac",guided:true,headline:"macOS im Terminal verstehen.",description:"zsh, Unix-Werkzeuge und macOS-Befehle mit Beispielen und Wissensfragen. Die App führt keine Systembefehle auf deinem Gerät aus."},
   {id:"windows",name:"Windows-Befehle",mark:"Win",guided:true,headline:"PowerShell und cmd unterscheiden.",description:"PowerShell-7-Grundlagen, Dateien, Objekt-Pipelines und cmd. Die App führt keine Systembefehle auf deinem Gerät aus."},
@@ -621,6 +631,10 @@ export const lessons = [
   ...computerLessons,
   ...terminalLessons,
   ...scienceLessons,
+  ...networkingLessons,
+  ...cloudLessons,
+  ...cybersecurityLessons,
+  ...reverseEngineeringLessons,
 ];
 export const lessonById = Object.fromEntries(
   lessons.map((lesson) => [lesson.id, lesson]),

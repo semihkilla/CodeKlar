@@ -480,3 +480,12 @@ test('formula rearrangement and self-check work offline on their first visit',as
  await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Elektrotechnik',exact:true}).click();await page.getByText('Formeln umstellen & üben',{exact:true}).click();const workshop=page.getByRole('region',{name:'Formelwerkstatt',exact:true});
  await workshop.getByLabel('Gesuchte Größe').selectOption('1');await workshop.getByLabel('Gegeben: Stromstärke I (A)').fill('0,01');await workshop.getByLabel('Gegeben: Widerstand R (Ω)').fill('500');await workshop.getByRole('button',{name:'Selbst lösen',exact:true}).click();await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toHaveCount(0);await workshop.getByLabel('Dein Ergebnis in V',{exact:true}).fill('5');await workshop.getByRole('button',{name:'Umform-Ergebnis prüfen',exact:true}).click();await expect(workshop.getByRole('status')).toContainText('Richtig');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('four technology courses and local byte and network experiments work offline',async({page,context})=>{
+ await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+ for(const name of ['Networking','Cloud','Cybersecurity','Reverse Engineering']){await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name,exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio').first().click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();
+  if(name==='Networking'){await page.getByText('Netzwerk-Labor: IPv4-Präfixe vergleichen',{exact:true}).click();await page.getByLabel('Zieladresse').fill('192.0.3.10');await expect(page.getByLabel('Präfix-Ergebnis')).toContainText('Anderes Präfix');}
+  if(name==='Reverse Engineering'){await page.getByText('Byte-Labor: Reihenfolge und Text vergleichen',{exact:true}).click();await page.getByLabel('Bytes in Hex').fill('41 42 43');await expect(page.getByLabel('Byte-Ergebnis')).toContainText('ABC');}
+ }
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

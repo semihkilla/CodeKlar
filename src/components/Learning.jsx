@@ -10,6 +10,7 @@ import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
 import { ComputerWorkshop } from "./ComputerWorkshop";
 import { computerGuides } from "../computerGuides";
+import { TechnologyWorkshop } from "./TechnologyWorkshop";
 import { FileLab } from "./FileLab";
 
 export function ProgressStrip({ solved, total }) {
@@ -472,6 +473,7 @@ export function Learning({
         )}
       </div>
       {course === "computer" && <ComputerWorkshop />}
+      <TechnologyWorkshop key={`technology-${course}`} course={course}/>
       {["physics","electrical"].includes(course) && <><ScienceLab key={course} course={course} /><FormulaWorkshop key={`formulas-${course}`} course={course}/></>}
       {lesson.category === "Ein-/Ausgabe & Dateien" && <FileLab />}
       <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">

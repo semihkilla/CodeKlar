@@ -489,3 +489,15 @@ test('four technology courses and local byte and network experiments work offlin
  }
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('expanded technology lessons and all new lab views work on first offline visit',async({page,context})=>{
+ const {networkingExtraLessons}=await import('../src/networkingExtraLessons.js');const {cloudExtraLessons}=await import('../src/cloudExtraLessons.js');const {cybersecurityExtraLessons}=await import('../src/cybersecurityExtraLessons.js');const {reverseEngineeringExtraLessons}=await import('../src/reverseEngineeringExtraLessons.js');
+ const examples=[networkingExtraLessons.find(x=>x.id==='networking-mtu'),cloudExtraLessons.find(x=>x.id==='cloud-queues'),cybersecurityExtraLessons.find(x=>x.id==='cybersecurity-cors'),reverseEngineeringExtraLessons.find(x=>x.id==='reverse-signed')];
+ await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+ for(const lesson of examples){await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();
+  if(lesson.course==='cloud'){await page.getByText('Cloud-Labor: Instanzen, Kosten und Verbindungen',{exact:true}).click();await expect(page.getByLabel('Cloud-Ergebnis')).toContainText('8,00');}
+  if(lesson.course==='cybersecurity'){await page.getByText('Rechte-Labor: Anmeldung ist nicht Berechtigung',{exact:true}).click();await page.getByLabel('Rolle im Modell').selectOption('owner');await expect(page.getByLabel('Rechte-Ergebnis')).toContainText('Erlaubt');}
+  if(lesson.course==='reverse'){await page.getByText('Byte-Labor: Reihenfolge und Text vergleichen',{exact:true}).click();await page.getByLabel('Bytes in Hex').fill('FF');await page.getByText('Dieselben Bytes mit Vorzeichen deuten',{exact:true}).click();await expect(page.getByLabel('Vorzeichen-Ergebnis')).toContainText('-1');}
+ }
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

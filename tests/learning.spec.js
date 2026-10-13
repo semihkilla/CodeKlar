@@ -2037,3 +2037,37 @@ test('next-stage exponential formulas stay readable at phone and desktop widths'
   const example=page.locator('.lesson-panel .science-example').first();await expect(example.locator('msup').first()).toBeVisible();await expect(example.locator('mfrac').first()).toBeVisible();await expect(example.locator('math').first()).toHaveAttribute('aria-label',/hoch minus t geteilt durch τ/);
   for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await example.scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width===390)await page.screenshot({path:'/tmp/codeklar-next-390.png',animations:'disabled'});}
 });
+
+test('formula models solve every direction and reject undefined divisions',async()=>{
+ const {formulaModels,solveFormula,answerMatches,parseQuantity}=await import('../src/formulaModels.js');
+ expect(formulaModels).toHaveLength(22);
+ for(const model of formulaModels){for(let target=0;target<3;target++){
+  const raw=model.quantities.map(q=>String(q.value));raw[target]='';const solution=solveFormula(model,target,raw);
+  expect(solution.error,`${model.id} direction ${target}`).toBeUndefined();expect(solution.result).toBeCloseTo(model.quantities[target].value,8);
+ }}
+ const speed=formulaModels.find(x=>x.id==='physics-speed'),ohm=formulaModels.find(x=>x.id==='electrical-ohm'),energy=formulaModels.find(x=>x.id==='physics-kinetic');
+ expect(solveFormula(speed,0,['','12','0']).error).toContain('null');expect(solveFormula(speed,2,['0','0','']).error).toContain('nicht eindeutig');expect(solveFormula(speed,2,['4','0','']).error).toContain('positiven Nenner');
+ expect(solveFormula(ohm,1,['0,01','','500']).result).toBe(5);expect(solveFormula(energy,2,['16','2','']).result).toBe(4);
+ expect(solveFormula(energy,2,['-1','2','']).error).toBeTruthy();expect(solveFormula(energy,2,['16','0','']).error).toBeTruthy();expect(solveFormula(speed,0,['','1e13','2']).error).toBeTruthy();
+ for(const bad of ['',' ','Infinity','NaN','0x10','1,2,3','1.000,5'])expect(Number.isFinite(parseQuantity(bad))).toBe(false);
+ expect(parseQuantity('0,0001')).toBe(0.0001);expect(parseQuantity('1e-4')).toBe(0.0001);expect(answerMatches(31.83,31.8309886)).toBe(true);expect(answerMatches(30,31.8309886)).toBe(false);
+});
+
+test('formula workshop changes numerator denominator and square targets without stale answers',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:'Physik-Grundlagen',exact:true}).click();await page.getByText('Formeln umstellen & üben',{exact:true}).click();const workshop=page.getByRole('region',{name:'Formelwerkstatt',exact:true});
+ await workshop.getByLabel('Gesuchte Größe').selectOption('1');await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toContainText('s = 100 m');await expect(workshop.locator('.formula-steps li')).toHaveCount(3);
+ await workshop.getByLabel('Gegeben: Geschwindigkeit v (m/s)').fill('4');await workshop.getByLabel('Gegeben: Zeit t (s)').fill('3');await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toContainText('s = 12 m');
+ await workshop.getByRole('button',{name:'Selbst lösen',exact:true}).click();await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toHaveCount(0);await workshop.getByLabel('Dein Ergebnis in m',{exact:true}).fill('11');await workshop.getByRole('button',{name:'Umform-Ergebnis prüfen',exact:true}).click();await expect(workshop.getByRole('status')).toContainText('passt noch nicht');
+ await workshop.getByLabel('Dein Ergebnis in m',{exact:true}).fill('12');await workshop.getByRole('button',{name:'Umform-Ergebnis prüfen',exact:true}).click();await expect(workshop.getByRole('status')).toContainText('Richtig');
+ await workshop.getByLabel('Gegeben: Zeit t (s)').fill('4');await expect(workshop.getByRole('status')).toBeEmpty();await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toHaveCount(0);
+ await workshop.getByLabel('Gesuchte Größe').selectOption('2');await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toContainText('t = 20 s');await workshop.getByLabel('Gegeben: Geschwindigkeit v (m/s)').fill('0');await expect(workshop.getByRole('alert')).toContainText('null');await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toHaveCount(0);
+ await workshop.getByLabel('Formel wählen').selectOption('physics-kinetic');await workshop.getByLabel('Gesuchte Größe').selectOption('2');await expect(workshop.locator('msqrt').first()).toBeVisible();await workshop.getByLabel('Gegeben: Bewegungsenergie E (J)').fill('16');await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toContainText('v = 4 m/s');
+ for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:960});await workshop.scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width===390)await page.screenshot({path:'/tmp/codeklar-umformen-390.png',animations:'disabled'});}
+});
+
+test('algebra lessons grade all exercises and open the matching lesson workshop',async({page})=>{
+ test.setTimeout(90000);const {algebraLessons}=await import('../src/algebraLessons.js');await page.goto('/');
+ for(const lesson of algebraLessons){await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();}
+ await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('electrical');await page.getByLabel('Aufgaben suchen …').fill('Ohmsches Gesetz nach Spannung umstellen');await page.getByRole('row').filter({hasText:'Ohmsches Gesetz nach Spannung umstellen'}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await page.getByText('Diese Formel umstellen & üben',{exact:true}).click();const workshop=page.locator('.lesson-panel').getByRole('region',{name:'Formelwerkstatt',exact:true});await expect(workshop.getByLabel('Gesuchte Größe')).toHaveValue('1');await workshop.getByLabel('Gegeben: Stromstärke I (A)').fill('0,01');await workshop.getByLabel('Gegeben: Widerstand R (Ω)').fill('500');await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toContainText('U = 5 V');
+ await page.reload();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));for(const lesson of algebraLessons)expect(saved.solved[lesson.id]).toBeTruthy();
+});

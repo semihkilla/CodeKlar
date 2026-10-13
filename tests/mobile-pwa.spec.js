@@ -474,3 +474,9 @@ test('next-stage examples quizzes and exponentials work on first offline visit',
   }
   await page.reload();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-progress-v1')));expect(saved.solved['electrical-rc-discharge']).toBeTruthy();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('formula rearrangement and self-check work offline on their first visit',async({page,context})=>{
+ await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+ await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Elektrotechnik',exact:true}).click();await page.getByText('Formeln umstellen & üben',{exact:true}).click();const workshop=page.getByRole('region',{name:'Formelwerkstatt',exact:true});
+ await workshop.getByLabel('Gesuchte Größe').selectOption('1');await workshop.getByLabel('Gegeben: Stromstärke I (A)').fill('0,01');await workshop.getByLabel('Gegeben: Widerstand R (Ω)').fill('500');await workshop.getByRole('button',{name:'Selbst lösen',exact:true}).click();await expect(workshop.getByLabel('Umform-Ergebnis',{exact:true})).toHaveCount(0);await workshop.getByLabel('Dein Ergebnis in V',{exact:true}).fill('5');await workshop.getByRole('button',{name:'Umform-Ergebnis prüfen',exact:true}).click();await expect(workshop.getByRole('status')).toContainText('Richtig');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

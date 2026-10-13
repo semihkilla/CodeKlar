@@ -2232,3 +2232,19 @@ body {
 .learning-vocabulary dl > div:last-child { border-bottom:0; }
 .learning-vocabulary dt { color:var(--text); font-weight:700; margin-bottom:5px; }
 .learning-vocabulary dd { margin:0; line-height:1.7; overflow-wrap:anywhere; }
+
+.formula-select { display:flex; flex-direction:column; gap:8px; margin:20px 0; font-weight:600; }
+.formula-select select { width:100%; min-width:0; padding:12px; color:var(--text); background:var(--surface); border:1px solid var(--border); border-radius:8px; font:inherit; }
+.formula-modes { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.formula-modes button,.formula-actions button { padding:10px 14px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font:inherit; cursor:pointer; }
+.formula-modes button[aria-pressed="true"] { background:var(--accent-soft); border-color:var(--accent); }
+.formula-steps { padding-left:24px; }
+.formula-steps li { padding:8px 0 14px; }
+.formula-steps li::marker { color:var(--accent); font-weight:700; }
+.formula-steps p { margin:0 0 12px; line-height:1.7; }
+.formula-workshop .math-expression { padding:14px; border:1px solid var(--border); border-radius:8px; background:var(--accent-soft); }
+.formula-unit-note { font-size:14px; line-height:1.7; color:var(--muted); }
+.formula-answer label { display:flex; flex-direction:column; gap:8px; }
+.formula-answer input { padding:12px; width:100%; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font:inherit; }
+.formula-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+.formula-workshop section { min-width:0; }

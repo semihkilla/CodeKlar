@@ -15,6 +15,18 @@ const val=(value,symbol)=>r(n(value),u(symbol));
 const records=(formula,example,legend=[])=>({formula,example,legend});
 const e=index(v('E'),'kin'),potential=index(v('E'),'pot');
 export const scienceMath = {
+ 'physics-algebra-balance':records(eq(r(v('x'),o('+'),n(3)),n(8)),eq(v('x'),r(n(8),o('−'),n(3),o('='),n(5)))),
+ 'physics-algebra-numerator':records(eq(v('s'),mul(v('v'),v('t'))),eq(mul(val(4,'m/s'),val(3,'s')),val(12,'m')),['s: Strecke','v: mittlere Weggeschwindigkeit','t: Dauer']),
+ 'physics-algebra-denominator':records(eq(v('t'),f(v('s'),v('v'))),eq(f(val(12,'m'),val(4,'m/s')),val(3,'s')),['t: Dauer','s: Strecke','v: hier positive Weggeschwindigkeit']),
+ 'physics-algebra-factor':records(eq(v('m'),f(v('F'),v('a'))),eq(f(val(12,'N'),val(3,'m/s²')),val(4,'kg')),['m: Masse','F: resultierende Kraft','a: positive Beschleunigung im Beispiel']),
+ 'physics-algebra-square':records(eq(v('v'),root(f(mul(n(2),v('E')),v('m')))),eq(root(f(mul(n(2),val(16,'J')),val(2,'kg'))),val(4,'m/s')),['v: nichtnegativer Geschwindigkeitsbetrag','E: kinetische Energie','m: positive Masse']),
+ 'physics-algebra-units':records(eq(v('t'),f(v('s'),v('v'))),eq(f(val(100,'m'),val(10,'m/s')),val(10,'s')),['t: Dauer','s: Strecke','v: mittlere Weggeschwindigkeit','36 km/h = 10 m/s']),
+ 'electrical-algebra-numerator':records(eq(v('U'),mul(v('I'),v('R'))),eq(mul(val('0,01','A'),val(500,'Ω')),val(5,'V')),['U: Spannung','I: Strom','R: idealer ohmscher Widerstand']),
+ 'electrical-algebra-denominator':records(eq(v('R'),f(v('U'),v('I'))),eq(f(val(6,'V'),val('0,02','A')),val(300,'Ω')),['R: Widerstand','U: Spannung','I: hier positiver Strom']),
+ 'electrical-algebra-factor':records(eq(v('I'),f(v('P'),v('U'))),eq(f(val('0,6','W'),val(3,'V')),val('0,2','A')),['I: Strom','P: konstante Gleichstromleistung','U: positive Gleichspannung']),
+ 'electrical-algebra-square':records(eq(v('U'),root(f(mul(n(2),v('E')),v('C')))),eq(root(f(mul(n(2),val('0,00125','J')),val('0,0001','F'))),val(5,'V')),['U: Spannungsbetrag','E: Kondensatorenergie','C: positive konstante ideale Kapazität']),
+ 'electrical-algebra-zero':records(eq(v('P'),mul(v('U'),v('I'))),eq(val(0,'W'),mul(val(0,'V'),v('I'))),['I: hier nicht eindeutig aus P und U bestimmbar','0/0 ist nicht definiert']),
+ 'electrical-algebra-difference':records(eq(s(v('U'),'0'),r(s(v('U'),'K'),o('+'),mul(v('I'),s(v('R'),'i')))),eq(r(val('5,8','V'),o('+'),mul(val('0,1','A'),val(2,'Ω'))),val(6,'V')),['U₀: Leerlaufspannung','U K: Klemmenspannung','I: Laststrom','R i: Quelleninnenwiderstand im Modell']),
  'physics-accelerated-distance':records(eq(v('s'),mul(f(n(1),n(2)),v('a'),p(v('t'),2))),eq(mul(f(n(1),n(2)),val(2,'m/s²'),p(r(o('('),val(3,'s'),o(')')),2)),val(9,'m')),['s: Ortsänderung ab dem Start','a: konstante Beschleunigung','t: Dauer','Startgeschwindigkeit null; eine Dimension']),
  'physics-free-fall':records(eq(v('s'),mul(f(n(1),n(2)),v('g'),p(v('t'),2))),r(mul(f(n(1),n(2)),val('9,81','m/s²'),p(r(o('('),val(1,'s'),o(')')),2)),o('≈'),val('4,905','m')),['s: Fallweg aus der Ruhe vor dem Aufprall','g: konstante Fallbeschleunigung','t: Falldauer','Ohne Luftwiderstand, nahe der Erdoberfläche']),
  'physics-spring':records(eq(v('F'),mul(v('k'),v('x'))),eq(mul(val(100,'N/m'),val('0,02','m')),val(2,'N')),['F: Betrag der Federkraft','k: Federkonstante','x: Betrag der Auslenkung','Richtung der Rückstellkraft entgegen der Auslenkung']),

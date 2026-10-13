@@ -4,6 +4,7 @@ import { courses, lessons } from "../data";
 import { groupTopics } from "../topicGroups";
 import { ChallengeClock, ComplexityCheck } from "./ChallengeTools";
 import { ScienceExample } from "./MathFormula";
+import { FormulaWorkshop } from "./FormulaWorkshop";
 import { ScienceLab } from "./ScienceLab";
 import { Playground } from "./Playground";
 import { CodeEditor } from "./CodeEditor";
@@ -146,6 +147,7 @@ function LessonPanel({
               {lesson.everyday && <p className="learning-analogy"><strong>Im Alltag</strong>{lesson.everyday}</p>}
               <h3 className="reading-label">Ein kleines Beispiel</h3>
               {science ? <ScienceExample lesson={lesson} /> : <pre className="syntax-strip">{lesson.example}</pre>}
+              {science && <FormulaWorkshop key={lesson.id} course={lesson.course} lessonId={lesson.id} />}
               {lesson.pitfall && <div className="learning-pitfall"><strong>Typischer Stolperstein</strong><p>{lesson.pitfall}</p></div>}
               {lesson.terms?.length > 0 && <details className="reading-more learning-vocabulary"><summary>Begriffe einfach erklärt</summary><dl>{lesson.terms.map(([name,meaning]) => <div key={name}><dt>{name}</dt><dd>{meaning}</dd></div>)}</dl></details>}
               <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>
@@ -470,7 +472,7 @@ export function Learning({
         )}
       </div>
       {course === "computer" && <ComputerWorkshop />}
-      {["physics","electrical"].includes(course) && <ScienceLab key={course} course={course} />}
+      {["physics","electrical"].includes(course) && <><ScienceLab key={course} course={course} /><FormulaWorkshop key={`formulas-${course}`} course={course}/></>}
       {lesson.category === "Ein-/Ausgabe & Dateien" && <FileLab />}
       <nav className="lesson-pagination" aria-label="Lernpfad-Navigation">
         <button className="button secondary" disabled={lessonIndex === 0} onClick={() => goTo(available[lessonIndex - 1].id)}>Vorherige Lektion</button>

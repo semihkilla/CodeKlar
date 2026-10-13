@@ -1,3 +1,4 @@
+import { KnowledgeExample, isTechnologyCourse } from "./KnowledgeExample";
 import { useState } from "react";
 import {
   ArrowUpRight,
@@ -185,7 +186,7 @@ export function Reference({ openLesson }) {
       </div>
       <div className="reference-list">
         {filtered.map((item) => (
-          <article key={item.id} className="reference-entry">
+          <article key={item.id} className={`reference-entry ${isTechnologyCourse(item.course) ? "technology-reference" : ""}`}>
             <div className="reference-label">
               <code>{item.name}</code>
               <span>
@@ -197,7 +198,7 @@ export function Reference({ openLesson }) {
             <div>
               <h2>{item.title}</h2>
               <p>{item.description}</p>
-              {["physics","electrical"].includes(item.course) ? <ScienceExample lesson={item} compact /> : <pre>{item.syntax}</pre>}
+              {["physics","electrical"].includes(item.course) ? <ScienceExample lesson={item} compact /> : isTechnologyCourse(item.course) ? <KnowledgeExample lesson={item} compact /> : <pre>{item.syntax}</pre>}
               <small>{item.note}</small>
             </div>
             <button

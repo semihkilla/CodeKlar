@@ -501,3 +501,10 @@ test('expanded technology lessons and all new lab views work on first offline vi
  }
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('further technology lessons keep the uniform reading layout offline',async({page,context})=>{
+ const data=await import('../src/technologyFurtherLessons.js');const examples=[data.networkingFurtherLessons[0],data.cloudFurtherLessons[0],data.cybersecurityFurtherLessons[0],data.reverseEngineeringFurtherLessons[0]];
+ await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);
+ for(const lesson of examples){await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption(lesson.course);await page.getByLabel('Aufgaben suchen …').fill(lesson.title);await page.getByRole('row').filter({hasText:lesson.title}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.knowledge-example')).toBeVisible();expect(await page.locator('.knowledge-example p').first().evaluate(el=>getComputedStyle(el).fontSize)).toBe('16px');await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio',{name:lesson.options[lesson.answer],exact:true}).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.getByText('Richtig! Gut verstanden.',{exact:true})).toBeVisible();}
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

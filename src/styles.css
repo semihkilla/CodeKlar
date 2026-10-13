@@ -2248,3 +2248,45 @@ body {
 .formula-answer input { padding:12px; width:100%; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font:inherit; }
 .formula-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
 .formula-workshop section { min-width:0; }
+
+/* One reading rhythm for Networking, Cloud, Cybersecurity and Reverse Engineering. */
+.technology-learning { --reading-size:16px; --reading-line:1.75; }
+.technology-learning .lesson-content,
+.technology-learning .lesson-description,
+.technology-learning .computer-reading-steps li,
+.technology-learning .lesson-content .reading-label,
+.technology-learning .lesson-content .detail-text,
+.technology-learning .learning-vocabulary dt,
+.technology-learning .learning-vocabulary dd,
+.technology-learning .lesson-note,
+.technology-learning .reading-more > summary,
+.technology-learning .technology-workshop { font-size:var(--reading-size); line-height:var(--reading-line); }
+.technology-learning .lesson-description { margin-bottom:20px; }
+.technology-learning .lesson-content .reading-label { letter-spacing:0; color:var(--text); font-weight:650; margin:0 0 12px; }
+.technology-learning .computer-reading-steps { gap:12px; margin:0 0 24px; }
+.technology-learning .knowledge-example { margin:0 0 20px; padding:16px; background:var(--code); border:1px solid var(--border); border-radius:10px; min-width:0; }
+.technology-learning .knowledge-example p { margin:0; font:inherit; overflow-wrap:anywhere; }
+.technology-learning .knowledge-example p + p { margin-top:10px; }
+.technology-learning .reading-more { margin:16px 0; }
+.technology-learning .reading-more > summary { padding:12px 0; }
+.technology-learning .learning-vocabulary dl > div { padding:12px 0; }
+.technology-learning .lesson-note { margin:0; }
+.technology-learning .technology-workshop { margin-top:20px; }
+.technology-learning .technology-workshop p { font:inherit; margin:0 0 16px; }
+.technology-learning .tool-controls { gap:16px; margin:20px 0; }
+.technology-learning .tool-controls label { font:inherit; }
+.technology-learning .tool-controls input,
+.technology-learning .tool-controls select { font:inherit; }
+.technology-learning .computer-results { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:0 0 20px; padding:0; }
+.technology-learning .computer-results > span { padding:14px; border:1px solid var(--border); border-radius:10px; background:var(--code); min-width:0; overflow-wrap:anywhere; }
+.technology-learning .computer-results strong { font:inherit; font-weight:700; }
+.technology-learning .computer-results small { font-size:14px; line-height:1.75; color:var(--muted); }
+.technology-learning .computer-results > p { grid-column:1/-1; margin:0; }
+.technology-learning .quiz { font-size:var(--reading-size); line-height:var(--reading-line); }
+.technology-learning .quiz-option { font-size:var(--reading-size); line-height:1.6; }
+@media (max-width:600px) { .technology-learning .computer-results { grid-template-columns:minmax(0,1fr); } }
+.technology-reference { font-size:16px; line-height:1.75; }
+.technology-reference p,.technology-reference small { font-size:16px; line-height:1.75; }
+.technology-reference .reference-label code { font-family:inherit; font-size:16px; line-height:1.75; }
+.technology-reference .knowledge-example { padding:14px; margin:16px 0; background:var(--code); border:1px solid var(--border); border-radius:10px; }
+.technology-reference .knowledge-example p { margin:0; overflow-wrap:anywhere; }

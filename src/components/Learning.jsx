@@ -3,6 +3,7 @@ import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
 import { groupTopics } from "../topicGroups";
 import { ChallengeClock, ComplexityCheck } from "./ChallengeTools";
+import { KnowledgeExample, isTechnologyCourse } from "./KnowledgeExample";
 import { ScienceExample } from "./MathFormula";
 import { FormulaWorkshop } from "./FormulaWorkshop";
 import { ScienceLab } from "./ScienceLab";
@@ -97,6 +98,7 @@ function LessonPanel({
   const sample = lesson.challenge?.sample || lesson.tests?.[0];
   const guide = lesson.guide || computerGuides[lesson.id];
   const science = ["physics","electrical"].includes(lesson.course);
+  const technology = isTechnologyCourse(lesson.course);
   return (
     <section className="lesson-panel">
       <div className="lesson-title">
@@ -147,14 +149,14 @@ function LessonPanel({
               {guide && <><h3 className="reading-label">Schritt für Schritt</h3><ol className="computer-reading-steps">{guide[1].map(text => <li key={text}>{text}</li>)}</ol></>}
               {lesson.everyday && <p className="learning-analogy"><strong>Im Alltag</strong>{lesson.everyday}</p>}
               <h3 className="reading-label">Ein kleines Beispiel</h3>
-              {science ? <ScienceExample lesson={lesson} /> : <pre className="syntax-strip">{lesson.example}</pre>}
+              {science ? <ScienceExample lesson={lesson} /> : technology ? <KnowledgeExample lesson={lesson} /> : <pre className="syntax-strip">{lesson.example}</pre>}
               {science && <FormulaWorkshop key={lesson.id} course={lesson.course} lessonId={lesson.id} />}
               {lesson.pitfall && <div className="learning-pitfall"><strong>Typischer Stolperstein</strong><p>{lesson.pitfall}</p></div>}
               {lesson.terms?.length > 0 && <details className="reading-more learning-vocabulary"><summary>Begriffe einfach erklärt</summary><dl>{lesson.terms.map(([name,meaning]) => <div key={name}><dt>{name}</dt><dd>{meaning}</dd></div>)}</dl></details>}
               <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>
-                <p>{lesson.description}</p>
+                {!technology && <><p>{lesson.description}</p>
                 {science ? <ScienceExample lesson={lesson} compact /> : <pre className="syntax-strip">{lesson.syntax}</pre>}
-                <dl className="syntax-parts">{lesson.parts.filter(([, text]) => text !== lesson.description).map(([name, text]) => <div key={name}><dt><code>{name}</code></dt><dd>{text}</dd></div>)}</dl>
+                <dl className="syntax-parts">{lesson.parts.filter(([, text]) => text !== lesson.description).map(([name, text]) => <div key={name}><dt><code>{name}</code></dt><dd>{text}</dd></div>)}</dl></>}
                 <p className="detail-text">{lesson.detail}</p>
                 <div className="lesson-note"><Info size={20} /><span>{lesson.note}</span></div>
               </details>
@@ -324,7 +326,7 @@ export function Learning({
   const courseName = activeCourse.name;
   const guided = course === "computer" || activeCourse.guided;
   return (
-    <div className="learning-page" data-mobile-pane={mobilePane}>
+    <div className={`learning-page ${isTechnologyCourse(course) ? "technology-learning" : ""}`} data-mobile-pane={mobilePane} data-course={course}>
       <div className="page-intro">
         <h1>{activeCourse.headline || (course === "computer" ? "Verstehe, wie dein Computer arbeitet." : "Verstehe, was dein Code tut.")}</h1>
         <p>{activeCourse.headline ? activeCourse.description : course === "computer" ? "Von einzelnen Bits bis zu CPU, Speicher und laufenden Programmen." : "Lerne Methoden, probiere sie aus und wende sie direkt an."}</p>

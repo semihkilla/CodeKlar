@@ -3,7 +3,7 @@ import { courses } from '../data';
 import { sessionLessons as lessons, sessionById as lessonById } from '../sessionBank';
 import { groupTopics } from '../topicGroups';
 import { reviewQueue } from '../review';
-import { eligibleLessons, selectSessionLessons, createSession, chooseAnswer, checkAnswer, finishSession, cleanSession, sessionSummary } from '../studySession';
+import { eligibleLessons, selectSessionLessons, createSession, chooseAnswer, checkAnswer, finishSession, cleanSession, sessionSummary, chapterResults } from '../studySession';
 import './StudySession.css';
 const key = 'codeklar-study-session-v1';
 const names = { learn: 'Lernrunde', review: 'Wiederholung', exam: 'Übungsprüfung' };
@@ -51,6 +51,8 @@ export default function StudySession({ course: initialCourse, progress, recordSe
   function changeSession(update) { setStore(s => ({ ...s, session: update(s.session) })); }
   const item = session?.items[session.index], lesson = item && lessonById[item.id];
   const remaining = session?.mode === 'exam' ? Math.max(0, Math.ceil((session.deadline-now)/1000)) : null;
+  const resultGroups = session?.status === "finished" ? groupTopics(session.course, lessons.filter(l=>l.course===session.course)) : [];
+  const diagnostics = session?.status === "finished" ? chapterResults(session,resultGroups) : [];
   const summary = session?.status === 'finished' ? sessionSummary(session) : null;
   return <section className="study-page">
     <div className="page-intro"><h1>Lernen mit einem klaren Ablauf.</h1><p>Eine Sprache, eine kurze Runde. Wiederhole fälligen Stoff, kläre Fehler und prüfe deinen Stand.</p></div>
@@ -93,6 +95,16 @@ export default function StudySession({ course: initialCourse, progress, recordSe
       <h2 ref={questionHeading} tabIndex={-1}>{session.mode==='exam'?'Prüfung ausgewertet':'Runde abgeschlossen'}</h2><p className="study-score">{summary.correct} von {summary.total} auf Anhieb richtig ({Math.round(summary.correct/summary.total*100)} %)</p>
       {session.mode!=='exam' && <p>{summary.mastered} am Ende richtig · {summary.retries} zusätzliche Wiederholungsversuche.</p>}
       <p>Die Ergebnisse aktualisieren deine Wiederholungen. Das ist ein Übungsstand und kein Nachweis, dass du die Sprache vollständig beherrschst.</p>
+      <section aria-label="Kapitel-Auswertung"><h3>Dein Stand in dieser Runde</h3><p className="study-note">Die Zahlen beziehen sich nur auf die Fragen dieser Runde. Nicht geprüfte Kapitel werden nicht bewertet.</p><div className="study-chapters">{diagnostics.map(row=><article key={row.id}><h4>{row.name}</h4><p>{row.correct}/{row.total} auf Anhieb richtig · {row.finalCorrect}/{row.total} am Ende richtig</p><button className="button secondary" onClick={()=>{
+        const group = resultGroups.find(g=>g.id===row.id);
+        const chosen = row.failedIds.length ? row.failedIds.map(id=>lessonById[id]) : selectSessionLessons(eligibleLessons(lessons,session.course,new Set(group.lessons.map(l=>l.id))),progress,'learn',count,[group]);
+        setCourse(session.course);setStore(s=>({...s,session:createSession(chosen,row.failedIds.length?'review':'learn')}));
+      }}>{row.failedIds.length?'Fehler aus diesem Kapitel üben':'Weiteres aus diesem Kapitel lernen'}</button></article>)}</div></section>
+      {summary.results.some(x=>!x.passed) && <button className="button primary" onClick={()=>setStore(s=>({...s,session:createSession(summary.results.filter(x=>!x.passed).map(x=>lessonById[x.id]),'review')}))}>Alle offenen Fehler gezielt üben</button>}
+      <button className="button secondary" onClick={()=>{
+        const text = `# Meine ${names[session.mode]}\n\nLernbereich: ${courses.find(c=>c.id===session.course).name}\nDatum: ${new Date(session.finishedAt).toISOString()}\n\nAuf Anhieb: ${summary.correct}/${summary.total}\nAm Ende: ${summary.mastered}/${summary.total}\n\n## Kapitel\n${diagnostics.map(r=>`- ${r.name}: ${r.correct}/${r.total} auf Anhieb, ${r.finalCorrect}/${r.total} am Ende`).join('\n')}\n\n## Antworten\n${session.items.filter((x,i,a)=>a.findIndex(y=>y.id===x.id)===i).map(x=>{const l=lessonById[x.id];return `### ${l.title}\nDeine Antwort: ${x.answer===null?'Nicht beantwortet':l.options[x.order[x.answer]]}\nRichtig: ${l.options[l.answer]}\n${l.explanation}\n`;}).join('\n')}`;
+        const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download='codeklar-rundenauswertung.md';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      }}>Auswertung herunterladen</button>
       <h3>Antworten verstehen</h3>{session.items.filter((x,i,items)=>items.findIndex(y=>y.id===x.id)===i).map((x,i)=>{const l=lessonById[x.id];return <details key={x.id}><summary>{i+1}. {l.title} · {x.passed?'Richtig':'Wiederholen'}</summary><p>Deine Antwort: <span className="study-answer">{x.answer===null?'Nicht beantwortet':l.options[x.order[x.answer]]}</span></p><p>Richtige Antwort: <span className="study-answer">{l.options[l.answer]}</span></p><p>{l.explanation}</p><button className="text-button" onClick={()=>openLesson(l.id,'explanation')}>Lektion und eigene Übung öffnen →</button></details>;})}
       <button className="button primary" onClick={()=>{setCourse(session.course);setStore(s=>({...s,session:null}));}}>Neue Runde planen</button>
     </section>}

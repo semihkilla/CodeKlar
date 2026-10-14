@@ -158,5 +158,125 @@
     "output": "fehlt",
     "declarations": "",
     "imports": "import java.util.List;"
+  },
+  "array-sort": {
+    "task": "Ermittle die drei höchsten Werte aus {5,9,1,7}, ohne das Original zu verändern. Eine leere Eingabe soll leer bleiben.",
+    "hint": "Sortiere zuerst eine Kopie. Lies danach höchstens so viele Werte rückwärts, wie tatsächlich vorhanden sind.",
+    "code": "int[] input = {5,9,1,7};\nSystem.out.println(Arrays.toString(top(input, 3)));\nSystem.out.println(Arrays.toString(input));\nSystem.out.println(Arrays.toString(top(new int[]{}, 3)));",
+    "output": "[9, 7, 5]\n[5, 9, 1, 7]\n[]",
+    "declarations": "static int[] top(int[] input, int count) {\n    if (count < 0) throw new IllegalArgumentException(\"Anzahl negativ\");\n    int[] copy = input.clone();\n    Arrays.sort(copy);\n    int[] out = new int[Math.min(count, copy.length)];\n    for (int i=0; i<out.length; i++) out[i]=copy[copy.length-1-i];\n    return out;\n}",
+    "imports": "import java.util.Arrays;"
+  },
+  "array-equals": {
+    "task": "Vergleiche zwei getrennt erzeugte Matrizen {{1,2}} einmal flach und einmal tief. Erkläre die unterschiedlichen Ergebnisse.",
+    "hint": "Die äußeren Arrays enthalten Arrayreferenzen. Für deren Inhalte brauchst du den tiefen Vergleich.",
+    "code": "int[][] a = {{1,2}}, b = {{1,2}};\nSystem.out.println(Arrays.equals(a,b));\nSystem.out.println(Arrays.deepEquals(a,b));",
+    "output": "false\ntrue",
+    "declarations": "",
+    "imports": "import java.util.Arrays;"
+  },
+  "brackets": {
+    "task": "Prüfe korrekt verschachtelte Klammern (), [] und {}. Teste ([{}]), ([)] und den leeren Text. Andere Zeichen gelten hier als ungültig.",
+    "hint": "Speichere offene Klammern auf einem Stapel. Eine schließende Klammer muss zum zuletzt geöffneten Paar passen.",
+    "code": "System.out.println(valid(\"([{}])\"));\nSystem.out.println(valid(\"([)]\"));\nSystem.out.println(valid(\"\"));",
+    "output": "true\nfalse\ntrue",
+    "declarations": "static boolean valid(String text) {\n    var stack = new ArrayDeque<Character>();\n    for (char c : text.toCharArray()) {\n        if (c == '(' || c == '[' || c == '{') stack.push(c);\n        else {\n            char open = switch (c) { case ')' -> '('; case ']' -> '['; case '}' -> '{'; default -> 0; };\n            if (open == 0 || stack.isEmpty() || stack.pop() != open) return false;\n        }\n    }\n    return stack.isEmpty();\n}",
+    "imports": "import java.util.ArrayDeque;"
+  },
+  "two-sum": {
+    "task": "Finde zwei unterschiedliche Indizes, deren Zahlen die Zielsumme ergeben. Teste {3,3} mit Ziel 6 und {1,2} mit Ziel 9.",
+    "hint": "Prüfe den Ergänzungswert vor dem Eintragen des aktuellen Index. Nutze long für die Differenz, damit int-Grenzen nicht überlaufen.",
+    "code": "System.out.println(pair(new int[]{3,3},6).map(Arrays::toString).orElse(\"kein Paar\"));\nSystem.out.println(pair(new int[]{1,2},9).map(Arrays::toString).orElse(\"kein Paar\"));",
+    "output": "[0, 1]\nkein Paar",
+    "declarations": "static Optional<int[]> pair(int[] values, int target) {\n    var seen = new HashMap<Long,Integer>();\n    for (int i=0; i<values.length; i++) {\n        Integer old = seen.get((long)target-values[i]);\n        if (old != null) return Optional.of(new int[]{old,i});\n        seen.putIfAbsent((long)values[i],i);\n    }\n    return Optional.empty();\n}",
+    "imports": "import java.util.Arrays;\nimport java.util.HashMap;\nimport java.util.Optional;"
+  },
+  "file-lines": {
+    "task": "Zähle nichtleere Zeilen in einer temporären UTF-8-Datei mit A, einer Leerzeile und B. Schließe den Dateistream und räume deine eigene Datei auf.",
+    "hint": "Files.lines muss geschlossen werden. Die Länge des Texts ist nicht die Anzahl seiner nichtleeren Zeilen.",
+    "code": "var file = Files.createTempFile(\"codeklar-lines-\", \".txt\");\ntry {\n    Files.writeString(file,\"A\\n\\nB\\n\",StandardCharsets.UTF_8);\n    try (var lines = Files.lines(file,StandardCharsets.UTF_8)) {\n        System.out.println(lines.filter(s -> !s.isBlank()).count());\n    }\n} finally { Files.deleteIfExists(file); }",
+    "output": "2",
+    "declarations": "",
+    "imports": "import java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;"
+  },
+  "file-write": {
+    "task": "Speichere eine neue Notiz, ergänze eine zweite Zeile und lies beide aus einer eigenen temporären Datei zurück. Räume die Datei danach auf.",
+    "hint": "Der erste Schreibaufruf setzt den Inhalt. APPEND ergänzt später, statt den Inhalt erneut zu ersetzen.",
+    "code": "var file = Files.createTempFile(\"codeklar-notes-\", \".txt\");\ntry {\n    Files.writeString(file,\"Java\\n\",StandardCharsets.UTF_8);\n    Files.writeString(file,\"SQL\\n\",StandardCharsets.UTF_8,StandardOpenOption.APPEND);\n    System.out.print(Files.readString(file,StandardCharsets.UTF_8));\n} finally { Files.deleteIfExists(file); }",
+    "output": "Java\nSQL",
+    "declarations": "",
+    "imports": "import java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.StandardOpenOption;"
+  },
+  "catch": {
+    "task": "Verarbeite die Ausdrücke 10/2, 10/0 und x/2 als int-Divisionen. Melde Zahlenfehler und Division durch null getrennt und fahre mit den nächsten Eingaben fort.",
+    "hint": "Lege try/catch in die Schleife. NumberFormatException und ArithmeticException beschreiben unterschiedliche Fehler.",
+    "code": "for (String input : List.of(\"10/2\",\"10/0\",\"x/2\")) {\n    try {\n        String[] parts = input.split(\"/\",-1);\n        int a = Integer.parseInt(parts[0]), b = Integer.parseInt(parts[1]);\n        System.out.println(a/b);\n    } catch (NumberFormatException e) { System.out.println(\"Zahlenfehler\"); }\n    catch (ArithmeticException e) { System.out.println(\"Division durch null\"); }\n}",
+    "output": "5\nDivision durch null\nZahlenfehler",
+    "declarations": "",
+    "imports": "import java.util.List;"
+  },
+  "throw": {
+    "task": "Validiere Alterswerte von 0 bis 130 einschließlich. Teste beide Grenzen und weise -1 und 131 mit einer Ausnahme zurück.",
+    "hint": "Die Randwerte gehören zum erlaubten Bereich. Ungültige Werte werden nicht stillschweigend gekürzt.",
+    "code": "for (int n : new int[]{0,130,-1,131}) {\n    try { System.out.println(age(n)); }\n    catch (IllegalArgumentException e) { System.out.println(\"ungültig\"); }\n}",
+    "output": "0\n130\nungültig\nungültig",
+    "declarations": "static int age(int n) {\n    if (n<0 || n>130) throw new IllegalArgumentException(\"Alter außerhalb\");\n    return n;\n}",
+    "imports": ""
+  },
+  "record": {
+    "task": "Definiere einen Schüler-record mit bereinigtem Pflichtnamen und nichtnegativen Punkten. Erzeuge Ada mit 7 Punkten und teste einen leeren Namen.",
+    "hint": "Ein kompakter record-Konstruktor prüft und normalisiert die Komponenten vor der Speicherung.",
+    "code": "var s = new Schueler(\" Ada \",7);\nSystem.out.println(s.name()+\": \"+s.punkte());\ntry { new Schueler(\" \",0); } catch (IllegalArgumentException e) { System.out.println(\"Name ungültig\"); }",
+    "output": "Ada: 7\nName ungültig",
+    "declarations": "record Schueler(String name,int punkte) {\n    Schueler {\n        name = Objects.requireNonNull(name).strip();\n        if (name.isEmpty()) throw new IllegalArgumentException(\"Name fehlt\");\n        if (punkte<0) throw new IllegalArgumentException(\"Punkte negativ\");\n    }\n}",
+    "imports": "import java.util.Objects;"
+  },
+  "enum": {
+    "task": "Modelliere eine Aufgabe mit OFFEN, IN_ARBEIT und FERTIG. Zwei Fortschritte sollen FERTIG erreichen; weiterer Fortschritt hält den Endzustand.",
+    "hint": "Ein switch beschreibt erlaubte Übergänge. Der Endzustand muss eine bewusst festgelegte Regel haben.",
+    "code": "Status status = Status.OFFEN;\nstatus = next(status); status = next(status);\nSystem.out.println(status);\nSystem.out.println(next(status));",
+    "output": "FERTIG\nFERTIG",
+    "declarations": "enum Status { OFFEN, IN_ARBEIT, FERTIG }\nstatic Status next(Status s) {\n    return switch(s) {\n        case OFFEN -> Status.IN_ARBEIT;\n        case IN_ARBEIT, FERTIG -> Status.FERTIG;\n    };\n}",
+    "imports": ""
+  },
+  "generic": {
+    "task": "Schreibe eine generische Suche nach dem ersten nicht-null-Element. Teste eine Stringliste mit null und eine leere Integerliste.",
+    "hint": "Die Rückgabe Optional<T> bewahrt den Elementtyp und stellt fehlende Treffer ausdrücklich dar.",
+    "code": "System.out.println(nonNull(Arrays.asList(null,\"Ada\",\"Bo\")).orElse(\"fehlt\"));\nSystem.out.println(nonNull(List.<Integer>of()).isEmpty());",
+    "output": "Ada\ntrue",
+    "declarations": "static <T> Optional<T> nonNull(List<T> values) {\n    for (T value : values) if (value != null) return Optional.of(value);\n    return Optional.empty();\n}",
+    "imports": "import java.util.Arrays;\nimport java.util.List;\nimport java.util.Optional;"
+  },
+  "list-add": {
+    "task": "Führe Aufgaben nach ihrer ID zusammen: Ein neuer Text für ID 1 ersetzt den alten, ID 2 wird ergänzt. Erhalte die Reihenfolge des ersten Auftretens.",
+    "hint": "Eine LinkedHashMap kann nach Kennung aktualisieren und zugleich die ursprüngliche Schlüsselreihenfolge erhalten.",
+    "code": "record Aufgabe(int id,String text) {}\nvar existing = List.of(new Aufgabe(1,\"Alt\"));\nvar incoming = List.of(new Aufgabe(1,\"Java\"),new Aufgabe(2,\"SQL\"));\nvar merged = new LinkedHashMap<Integer,Aufgabe>();\nfor (var a : existing) merged.put(a.id(),a);\nfor (var a : incoming) merged.put(a.id(),a);\nfor (var a : merged.values()) System.out.println(a.id()+\": \"+a.text());",
+    "output": "1: Java\n2: SQL",
+    "declarations": "",
+    "imports": "import java.util.LinkedHashMap;\nimport java.util.List;"
+  },
+  "comparator": {
+    "task": "Sortiere Spieler zuerst nach Punkten absteigend und bei gleicher Punktzahl nach Namen aufsteigend. Teste Bo/Ada mit 9 und Cy mit 7 Punkten.",
+    "hint": "reversed gilt hier nur für den Punktevergleich. thenComparing ergänzt die zweite Regel.",
+    "code": "record Spieler(String name,int punkte) {}\nvar list = new ArrayList<>(List.of(new Spieler(\"Bo\",9),new Spieler(\"Ada\",9),new Spieler(\"Cy\",7)));\nlist.sort(Comparator.comparingInt(Spieler::punkte).reversed().thenComparing(Spieler::name));\nfor (var s : list) System.out.println(s.name()+\": \"+s.punkte());",
+    "output": "Ada: 9\nBo: 9\nCy: 7",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;"
+  },
+  "grouping": {
+    "task": "Fasse Dezimalausgaben nach Kategorie zusammen: Essen 3.00 und 2.00, Fahrt 1.00. Zeige die Kategorien in geordneter Reihenfolge.",
+    "hint": "Ein Datensatz beschreibt eine Ausgabe. merge mit BigDecimal::add verbindet die Beträge ohne double-Konvertierung.",
+    "code": "record Ausgabe(String kategorie,BigDecimal betrag) {}\nvar values = List.of(new Ausgabe(\"Essen\",new BigDecimal(\"3.00\")),new Ausgabe(\"Fahrt\",new BigDecimal(\"1.00\")),new Ausgabe(\"Essen\",new BigDecimal(\"2.00\")));\nvar totals = new TreeMap<String,BigDecimal>();\nfor (var value : values) totals.merge(value.kategorie(),value.betrag(),BigDecimal::add);\nSystem.out.println(totals);",
+    "output": "{Essen=5.00, Fahrt=1.00}",
+    "declarations": "",
+    "imports": "import java.math.BigDecimal;\nimport java.util.List;\nimport java.util.TreeMap;"
+  },
+  "bfs": {
+    "task": "Berechne die kürzeste Anzahl von Kanten von 0 nach 3 im ungewichteten Graphen {{1,2},{3},{3},{}}. Ein nicht erreichbares Ziel soll -1 liefern.",
+    "hint": "BFS verarbeitet per Warteschlange. Speichere die Distanz beim ersten Besuch, damit Zyklen keinen erneuten Besuch auslösen.",
+    "code": "int[][] graph = {{1,2},{3},{3},{}};\nSystem.out.println(distance(graph,0,3));\nSystem.out.println(distance(graph,3,0));",
+    "output": "2\n-1",
+    "declarations": "static int distance(int[][] graph,int start,int target) {\n    Objects.checkIndex(start,graph.length);\n    Objects.checkIndex(target,graph.length);\n    int[] distances = new int[graph.length];\n    Arrays.fill(distances,-1);\n    var queue = new ArrayDeque<Integer>();\n    queue.add(start); distances[start]=0;\n    while (!queue.isEmpty()) {\n        int node=queue.remove();\n        if (node==target) return distances[node];\n        for (int neighbor : graph[node]) {\n            Objects.checkIndex(neighbor,graph.length);\n            if (distances[neighbor]<0) { distances[neighbor]=distances[node]+1;queue.add(neighbor); }\n        }\n    }\n    return -1;\n}",
+    "imports": "import java.util.ArrayDeque;\nimport java.util.Arrays;\nimport java.util.Objects;"
   }
 }

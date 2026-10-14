@@ -83,9 +83,23 @@ export function applySessionResults(previous, session, known) {
   for (const { id, passed, hadError } of sessionSummary(session).results) {
     if (!known[id]) continue;
     next.attempted[id] = new Date(session.finishedAt).toISOString();
-    next.reviews[id] = nextReview(hadError ? { ...previous.reviews?.[id], streak: 0 } : previous.reviews?.[id], passed, session.finishedAt);
+    const prior = previous.reviews?.[id];
+    // An early successful practice must not push an existing due date away.
+    next.reviews[id] = passed && !hadError && prior?.lastResult === true && Date.parse(prior.due) > session.finishedAt
+      ? { ...prior, attempts: Math.min(prior.attempts + 1, 1000000) }
+      : nextReview(hadError ? { ...prior, streak: 0 } : prior, passed, session.finishedAt);
     // JavaScript lessons require actual code tests; recognising an answer cannot solve them.
     if (passed && known[id].course !== 'js') next.solved[id] ||= next.attempted[id];
   }
   return next;
+}
+
+export function chapterResults(session, groups) {
+  const first = new Map(), last = new Map();
+  for (const item of session.items) { if (!first.has(item.id)) first.set(item.id,item); last.set(item.id,item); }
+  return groups.flatMap(group => {
+    const ids = group.lessons.map(l=>l.id).filter(id=>first.has(id));
+    if (!ids.length) return [];
+    return [{ id:group.id, name:group.name, total:ids.length, correct:ids.filter(id=>first.get(id).passed).length, finalCorrect:ids.filter(id=>last.get(id).passed).length, failedIds:ids.filter(id=>!last.get(id).passed) }];
+  });
 }

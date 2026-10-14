@@ -1,0 +1,1119 @@
+[
+  {
+    "id": "byte-unsigned",
+    "category": "Datenformate & Protokolle",
+    "name": "byte: vorzeichenbehaftet oder unsigned",
+    "introduction": "Java-byte ist vorzeichenbehaftet und hat den Bereich -128 bis 127. Ein Bytewert kann zusätzlich als Zahl von 0 bis 255 interpretiert werden.",
+    "steps": [
+      "0xFF besitzt alle acht gesetzten Bits.",
+      "Als byte ist dieser Wert -1.",
+      "toUnsignedInt interpretiert dieselben acht Bits als 255."
+    ],
+    "code": "byte b = (byte) 0xFF;\nSystem.out.println(b);\nSystem.out.println(Byte.toUnsignedInt(b));",
+    "output": "-1\n255",
+    "choices": [
+      "-1\n255",
+      "255\n255",
+      "-1\n127"
+    ],
+    "explanation": "Die Bits ändern sich dabei nicht. Nur die Interpretation als größere nichtnegative Ganzzahl ist eine andere.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Byte.toUnsignedInt(byteWert)",
+      "parameters": [
+        [
+          "byteWert",
+          "Ein Java-byte mit acht Bits."
+        ]
+      ],
+      "returns": "int zwischen 0 und 255.",
+      "effect": "Ändert den Eingabewert nicht."
+    },
+    "useCase": "Binärdateien oder Netzwerkfelder mit unsigned Bytewerten lesen.",
+    "pitfall": "Ein direkter Cast von byte zu int erweitert das Vorzeichen und ergibt hier weiterhin -1.",
+    "practice": {
+      "task": "Lies den Bytewert 0x80 als vorzeichenlose Zahl.",
+      "hint": "Byte.toUnsignedInt behält die acht Bits als Wert zwischen 0 und 255.",
+      "code": "byte b = (byte)0x80;\nSystem.out.println(Byte.toUnsignedInt(b));",
+      "output": "128"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "bytebuffer-position",
+    "category": "Datenformate & Protokolle",
+    "name": "ByteBuffer und Leseposition",
+    "introduction": "Ein ByteBuffer verwaltet Inhalt und eine aktuelle Position. Relative get-Aufrufe lesen den nächsten Wert und bewegen diese Position.",
+    "steps": [
+      "Die Position beginnt bei 0.",
+      "get liest den ersten Bytewert.",
+      "Danach steht die Position bei 1."
+    ],
+    "code": "var b = ByteBuffer.wrap(new byte[]{10, 20});\nSystem.out.println(b.get());\nSystem.out.println(b.position());",
+    "output": "10\n1",
+    "choices": [
+      "10\n1",
+      "10\n0",
+      "20\n1"
+    ],
+    "explanation": "get(index) ist dagegen ein absoluter Zugriff und verschiebt die Position nicht. Das Limit begrenzt den lesbaren Bereich.",
+    "declarations": "",
+    "imports": "import java.nio.ByteBuffer;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "buffer.get(); buffer.position()",
+      "parameters": [],
+      "returns": "get liefert byte; position liefert int.",
+      "effect": "Relative Leseoperationen verändern die Position."
+    },
+    "useCase": "Eine binäre Nachricht Feld für Feld lesen.",
+    "pitfall": "Ein leer gelesener Bereich löst BufferUnderflowException aus, keinen automatischen Nullwert.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "bytebuffer-order",
+    "category": "Datenformate & Protokolle",
+    "name": "ByteOrder für Mehrbytewerte",
+    "introduction": "Die Byteordnung bestimmt, welches Byte als höherwertiger Anteil einer Zahl interpretiert wird. Sie ist Teil des Datenformats.",
+    "steps": [
+      "Die Bytes lauten 0x34 und 0x12.",
+      "LITTLE_ENDIAN deutet das erste Byte als niederwertig.",
+      "Das Ergebnis ist 0x1234, also 4660."
+    ],
+    "code": "var b = ByteBuffer.wrap(new byte[]{0x34, 0x12}).order(ByteOrder.LITTLE_ENDIAN);\nSystem.out.println(b.getShort());",
+    "output": "4660",
+    "choices": [
+      "4660",
+      "13330",
+      "52"
+    ],
+    "explanation": "Der voreingestellte ByteBuffer verwendet BIG_ENDIAN. Die Ordnung muss zum konkreten Dateiformat oder Protokoll passen.",
+    "declarations": "",
+    "imports": "import java.nio.ByteBuffer;\nimport java.nio.ByteOrder;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "buffer.order(byteOrder).getShort()",
+      "parameters": [
+        [
+          "byteOrder",
+          "Gewählte Reihenfolge eines Mehrbytewerts."
+        ]
+      ],
+      "returns": "getShort liefert short und liest zwei Bytes.",
+      "effect": "Ändert die Position beim Lesen."
+    },
+    "useCase": "Ein festgelegtes Binärformat mit 16-Bit-Feldern verstehen.",
+    "pitfall": "Die Byteordnung ist unabhängig davon, ob der Datentyp selbst vorzeichenbehaftet ist.",
+    "practice": {
+      "task": "Lies {0x01,0x02} als Big-Endian-short.",
+      "hint": "Setze die Byte-Reihenfolge ausdrücklich auf BIG_ENDIAN.",
+      "code": "var b = ByteBuffer.wrap(new byte[]{1, 2});\nb.order(ByteOrder.BIG_ENDIAN);\nSystem.out.println(b.getShort());",
+      "output": "258"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "bytebuffer-remaining",
+    "category": "Datenformate & Protokolle",
+    "name": "remaining(): erst die Länge prüfen",
+    "introduction": "remaining liefert die Anzahl von Bytes zwischen aktueller Position und Limit. Eine Längenprüfung kann einen unzulässigen Feldzugriff verhindern.",
+    "steps": [
+      "Die Nachricht besitzt nur ein Byte.",
+      "Ein short benötigt zwei Bytes.",
+      "Die Bedingung lehnt das Lesen deshalb ab."
+    ],
+    "code": "var b = ByteBuffer.wrap(new byte[]{1});\nSystem.out.println(b.remaining() >= Short.BYTES ? \"lesbar\" : \"zu kurz\");",
+    "output": "zu kurz",
+    "choices": [
+      "zu kurz",
+      "lesbar",
+      "BufferUnderflowException"
+    ],
+    "explanation": "Ein robuster Parser prüft Feldgrenzen, bevor er getShort oder getInt aufruft. Die Länge allein bestätigt noch keine gültigen Inhalte.",
+    "declarations": "",
+    "imports": "import java.nio.ByteBuffer;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "buffer.remaining()",
+      "parameters": [],
+      "returns": "int: noch lesbare Anzahl bis zum Limit.",
+      "effect": "Keine Positionsänderung."
+    },
+    "useCase": "Abgeschnittene Nachrichten vor einem Feldzugriff erkennen.",
+    "pitfall": "Eine Prüfung gegen die Arraylänge statt gegen die aktuelle Restmenge kann falsch sein.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "data-stream-int",
+    "category": "Datenformate & Protokolle",
+    "name": "DataOutputStream und DataInputStream",
+    "introduction": "Diese Klassen schreiben und lesen primitive Javawerte in einem festgelegten binären Format. int wird mit vier Bytes in Big-Endian-Reihenfolge gespeichert.",
+    "steps": [
+      "writeInt schreibt den Wert 42.",
+      "Die Bytefolge wird als Eingabe wieder bereitgestellt.",
+      "readInt liest dieselben vier Bytes als int."
+    ],
+    "code": "var bytes = new ByteArrayOutputStream();\ntry (var out = new DataOutputStream(bytes)) { out.writeInt(42); }\ntry (var in = new DataInputStream(new ByteArrayInputStream(bytes.toByteArray()))) { System.out.println(in.readInt()); }",
+    "output": "42",
+    "choices": [
+      "42",
+      "4",
+      "0"
+    ],
+    "explanation": "Die Schreib- und Lesereihenfolge muss übereinstimmen. readInt benötigt vier vorhandene Bytes und meldet vorzeitiges Ende mit EOFException.",
+    "declarations": "",
+    "imports": "import java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.DataInputStream;\nimport java.io.DataOutputStream;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "out.writeInt(wert); in.readInt()",
+      "parameters": [
+        [
+          "wert",
+          "Zu schreibender int-Wert."
+        ]
+      ],
+      "returns": "writeInt: void; readInt: int.",
+      "effect": "Schreibt Bytes beziehungsweise verschiebt die Eingabeposition."
+    },
+    "useCase": "Eigene kleine Binärdateien mit eindeutig festgelegten Feldern erzeugen.",
+    "pitfall": "Textausgabe der Ziffern 42 ist nicht dasselbe wie binäre Speicherung eines int.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "data-stream-eof",
+    "category": "Datenformate & Protokolle",
+    "name": "EOFException bei unvollständigen Feldern",
+    "introduction": "Ein Datenleser kann für ein mehrbyteiges Feld nicht einfach fehlende Bytes durch null ersetzen. Vorzeitiges Ende ist ein Fehler.",
+    "steps": [
+      "Die Eingabe besteht aus einem Byte.",
+      "readInt braucht vier.",
+      "Der Fehler wird als EOFException behandelt."
+    ],
+    "code": "try (var in = new DataInputStream(new ByteArrayInputStream(new byte[]{1}))) {\n    try { in.readInt(); } catch (EOFException e) { System.out.println(\"unvollständig\"); }\n}",
+    "output": "unvollständig",
+    "choices": [
+      "unvollständig",
+      "1",
+      "0"
+    ],
+    "explanation": "Ein korrektes Protokoll legt fest, wie mit unvollständigen Eingaben umgegangen wird. EOFException ist eine geprüfte IOException-Unterart.",
+    "declarations": "",
+    "imports": "import java.io.ByteArrayInputStream;\nimport java.io.DataInputStream;\nimport java.io.EOFException;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "in.readInt()",
+      "parameters": [],
+      "returns": "int bei erfolgreichem Lesen, sonst Ausnahme.",
+      "effect": "Kann einen Teil der Eingabe bereits konsumiert haben."
+    },
+    "useCase": "Abgeschnittene Datei- oder Nachrichtenfelder diagnostizieren.",
+    "pitfall": "Nach einem fehlgeschlagenen Feldzugriff ist ein Parser nicht automatisch wieder am ursprünglichen Anfang.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "byte-input-eof",
+    "category": "Datenformate & Protokolle",
+    "name": "InputStream.read(): -1 bedeutet Ende",
+    "introduction": "read liefert einen gelesenen Bytewert als int von 0 bis 255. Der zusätzliche Wert -1 signalisiert das Eingabeende.",
+    "steps": [
+      "0xFF wird beim Lesen als 255 geliefert.",
+      "Ein weiterer Aufruf findet keinen Wert mehr.",
+      "Dann liefert read -1."
+    ],
+    "code": "try (var in = new ByteArrayInputStream(new byte[]{(byte)0xFF})) {\n    System.out.println(in.read());\n    System.out.println(in.read());\n}",
+    "output": "255\n-1",
+    "choices": [
+      "255\n-1",
+      "-1\n-1",
+      "255\n0"
+    ],
+    "explanation": "Der Rückgabewert muss vor der Umwandlung in byte auf -1 geprüft werden. Sonst könnte das Ende mit dem gültigen Byte 0xFF verwechselt werden.",
+    "declarations": "",
+    "imports": "import java.io.ByteArrayInputStream;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "in.read()",
+      "parameters": [],
+      "returns": "int von 0 bis 255 oder -1.",
+      "effect": "Verändert die Leseposition."
+    },
+    "useCase": "Bytefolgen bis zum tatsächlichen Ende verarbeiten.",
+    "pitfall": "read() liefert int, obwohl es jeweils ein Byte liest.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "utf8-strict",
+    "category": "Datenformate & Protokolle",
+    "name": "Ungültiges UTF-8 ausdrücklich erkennen",
+    "introduction": "Ein CharsetDecoder kann fehlerhafte Bytefolgen melden statt sie durch Ersatzzeichen zu ersetzen. Diese Regel wird ausdrücklich gewählt.",
+    "steps": [
+      "Die Bytefolge enthält einen unvollständigen UTF-8-Anfang.",
+      "REPORT verlangt eine Fehlermeldung.",
+      "Die CharacterCodingException wird behandelt."
+    ],
+    "code": "var decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT);\ntry { decoder.decode(ByteBuffer.wrap(new byte[]{(byte)0xC3})); }\ncatch (CharacterCodingException e) { System.out.println(\"UTF-8 ungültig\"); }",
+    "output": "UTF-8 ungültig",
+    "choices": [
+      "UTF-8 ungültig",
+      "�",
+      "Ã"
+    ],
+    "explanation": "Ein Stringkonstruktor mit Kodierung ist nicht automatisch eine strenge Datenvalidierung. Für einen Import sollte die gewünschte Fehlerregel feststehen.",
+    "declarations": "",
+    "imports": "import java.nio.ByteBuffer;\nimport java.nio.charset.CharacterCodingException;\nimport java.nio.charset.CodingErrorAction;\nimport java.nio.charset.StandardCharsets;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "charset.newDecoder().onMalformedInput(REPORT)",
+      "parameters": [
+        [
+          "REPORT",
+          "Fehler melden statt stillem Ersatz."
+        ]
+      ],
+      "returns": "CharsetDecoder; decode liefert CharBuffer oder Fehler.",
+      "effect": "Der Decoder verarbeitet seine Eingabe."
+    },
+    "useCase": "Beschädigte Textimporte erkennen.",
+    "pitfall": "Ersatzzeichen können ursprüngliche Fehler verschleiern; die passende Regel hängt vom Anwendungsfall ab.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "unicode-normalize",
+    "category": "Strings",
+    "name": "Normalizer: gleiche Textformen",
+    "introduction": "Ein sichtbarer Text kann durch unterschiedliche Unicode-Codepointfolgen dargestellt werden. Normalisierung kann bestimmte äquivalente Formen vereinheitlichen.",
+    "steps": [
+      "Der erste Text verwendet e und einen kombinierenden Akzent.",
+      "Der zweite enthält den vorgefertigten Buchstaben é.",
+      "NFC führt diese Fälle in eine passende gemeinsame Form."
+    ],
+    "code": "String a = \"e\\u0301\", b = \"é\";\nSystem.out.println(a.equals(b));\nSystem.out.println(Normalizer.normalize(a, Normalizer.Form.NFC).equals(b));",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Normalisierung ist keine allgemeine Sprachgleichheit und keine sichere Prüfung beliebiger ähnlich aussehender Zeichen.",
+    "declarations": "",
+    "imports": "import java.text.Normalizer;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Normalizer.normalize(text, form)",
+      "parameters": [
+        [
+          "text",
+          "Zu vereinheitlichender Unicode-Text."
+        ],
+        [
+          "form",
+          "Gewählte Normalisierungsregel."
+        ]
+      ],
+      "returns": "Normalisierter String.",
+      "effect": "Verändert den Originalstring nicht."
+    },
+    "useCase": "Äquivalente Textformen vor einer passenden Vergleichsoperation vereinheitlichen.",
+    "pitfall": "Normalisierung ersetzt keine bewusste Regel zu Großschreibung, Leerraum oder ähnlich aussehenden Zeichen."
+  },
+  {
+    "id": "base64-roundtrip",
+    "category": "Datenformate & Protokolle",
+    "name": "Base64 kodieren und dekodieren",
+    "introduction": "Base64 stellt Bytes als begrenzte Textzeichenfolge dar. Es ist eine Kodierung, keine Verschlüsselung.",
+    "steps": [
+      "UTF-8 liefert die Bytes von Hi.",
+      "Der Encoder erzeugt SGk=.",
+      "Der Decoder stellt die ursprünglichen Bytes wieder her."
+    ],
+    "code": "byte[] bytes = \"Hi\".getBytes(StandardCharsets.UTF_8);\nString text = Base64.getEncoder().encodeToString(bytes);\nSystem.out.println(text);\nSystem.out.println(new String(Base64.getDecoder().decode(text), StandardCharsets.UTF_8));",
+    "output": "SGk=\nHi",
+    "choices": [
+      "SGk=\nHi",
+      "Hi\nSGk=",
+      "SGk=\nSGk="
+    ],
+    "explanation": "Binärdaten können so in ein Textformat eingebettet werden. Die konkrete Base64-Variante und mögliche Padding-Regeln müssen zum Format passen.",
+    "declarations": "",
+    "imports": "import java.nio.charset.StandardCharsets;\nimport java.util.Base64;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Base64.getEncoder(); Base64.getDecoder()",
+      "parameters": [],
+      "returns": "Encoder beziehungsweise Decoder für die gewählte Variante.",
+      "effect": "Erzeugt kodierte Texte beziehungsweise neue Bytefolgen."
+    },
+    "useCase": "Bytes in ein ausdrücklich definiertes Textformat übernehmen.",
+    "pitfall": "Base64 versteckt keine vertraulichen Daten vor jemandem, der die Kodierung kennt.",
+    "practice": {
+      "task": "Kodiere OK in UTF-8 als Base64 und dekodiere es wieder.",
+      "hint": "Zum Rückweg brauchst du die Bytes aus dem Decoder und dieselbe Textkodierung.",
+      "code": "String s = Base64.getEncoder().encodeToString(\"OK\".getBytes(StandardCharsets.UTF_8));\nSystem.out.println(s);\nSystem.out.println(new String(Base64.getDecoder().decode(s), StandardCharsets.UTF_8));",
+      "output": "T0s=\nOK"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "hex-format",
+    "category": "Datenformate & Protokolle",
+    "name": "HexFormat: Bytes als Hextext",
+    "introduction": "HexFormat schreibt jedes Byte als zwei Hexziffern. Die Darstellung bewahrt hier auch führende Nullen.",
+    "steps": [
+      "Die drei Werte sind 0, 15 und 255.",
+      "Jedes Byte erhält zwei Ziffern.",
+      "Die Standardausgabe verwendet Kleinbuchstaben."
+    ],
+    "code": "System.out.println(HexFormat.of().formatHex(new byte[]{0, 15, (byte)255}));",
+    "output": "000fff",
+    "choices": [
+      "000fff",
+      "0fff",
+      "0 15 255"
+    ],
+    "explanation": "HexFormat ist seit Java 17 vorhanden. Hextext ist eine Darstellung von Bytes, kein neuer Inhalt und keine Verschlüsselung.",
+    "declarations": "",
+    "imports": "import java.util.HexFormat;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "HexFormat.of().formatHex(bytes)",
+      "parameters": [
+        [
+          "bytes",
+          "Darzustellende Bytefolge."
+        ]
+      ],
+      "returns": "String mit Hexziffern.",
+      "effect": "Verändert die Bytes nicht."
+    },
+    "useCase": "Prüfsummen oder Dateiköpfe lesbar anzeigen.",
+    "pitfall": "Ein byte mit negativem Java-Wert wird trotzdem nach seinen acht Bits dargestellt.",
+    "practice": {
+      "task": "Lies 0a10 als Hexbytes und gib beide unsigned Werte aus.",
+      "hint": "parseHex wandelt je zwei Hexzeichen in ein Byte.",
+      "code": "byte[] b = HexFormat.of().parseHex(\"0a10\");\nSystem.out.println(Byte.toUnsignedInt(b[0]));\nSystem.out.println(Byte.toUnsignedInt(b[1]));",
+      "output": "10\n16"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "sha256",
+    "category": "Datenformate & Protokolle",
+    "name": "SHA-256: Inhalt per Hash vergleichen",
+    "introduction": "Ein kryptografischer Hash berechnet einen festen Fingerabdruck aus Bytes. Gleicher Inhalt ergibt denselben Hash; er ist keine Entschlüsselungsanleitung.",
+    "steps": [
+      "abc wird als UTF-8-Bytes bereitgestellt.",
+      "SHA-256 erzeugt 32 Ergebnisbytes.",
+      "HexFormat zeigt sie als 64 Hexziffern."
+    ],
+    "code": "byte[] hash = MessageDigest.getInstance(\"SHA-256\").digest(\"abc\".getBytes(StandardCharsets.UTF_8));\nSystem.out.println(HexFormat.of().formatHex(hash));",
+    "output": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+    "choices": [
+      "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+      "abc",
+      "32"
+    ],
+    "explanation": "Ein Hash ist nicht gleichbedeutend mit garantiert einzigartigem Inhalt. Für Passwortspeicherung werden geeignete langsame Passwort-Hashverfahren benötigt, nicht einfach dieses Beispiel.",
+    "declarations": "",
+    "imports": "import java.nio.charset.StandardCharsets;\nimport java.security.MessageDigest;\nimport java.util.HexFormat;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "MessageDigest.getInstance(algorithmus).digest(bytes)",
+      "parameters": [
+        [
+          "algorithmus",
+          "Gewähltes Hashverfahren."
+        ],
+        [
+          "bytes",
+          "Zu verarbeitende Inhalte."
+        ]
+      ],
+      "returns": "Bytefolge des Hashwerts.",
+      "effect": "Der MessageDigest verarbeitet die Bytes und liefert den Digest."
+    },
+    "useCase": "Eine bekannte Dateiprüfsumme berechnen.",
+    "pitfall": "String.hashCode ist kein Ersatz für einen kryptografischen Inhaltsfingerabdruck.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "properties-reader",
+    "category": "Datenformate & Protokolle",
+    "name": "Properties.load(Reader)",
+    "introduction": "Properties kann ein einfaches Schlüssel-Wert-Textformat lesen. Mit einem Reader wird die Textkodierung außerhalb der Properties-Klasse festgelegt.",
+    "steps": [
+      "Der Text enthält zwei Zuweisungen.",
+      "load liest sie in das Properties-Objekt.",
+      "getProperty liefert den Stringwert des Schlüssels titel."
+    ],
+    "code": "var p = new Properties();\ntry (var reader = new StringReader(\"titel=Lernen\\nanzahl=3\\n\")) { p.load(reader); }\nSystem.out.println(p.getProperty(\"titel\"));",
+    "output": "Lernen",
+    "choices": [
+      "Lernen",
+      "titel",
+      "null"
+    ],
+    "explanation": "Properties besitzt eigene Escape-, Fortsetzungs- und Kommentarregeln. Zahlen werden nicht automatisch in numerische Javawerte konvertiert.",
+    "declarations": "",
+    "imports": "import java.io.StringReader;\nimport java.util.Properties;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "properties.load(reader)",
+      "parameters": [
+        [
+          "reader",
+          "Leser für Text nach den Properties-Formatregeln."
+        ]
+      ],
+      "returns": "void; getProperty liefert String oder null.",
+      "effect": "Ergänzt beziehungsweise ersetzt Zuordnungen im Properties-Objekt."
+    },
+    "useCase": "Eine kleine lokale Anwendung konfigurieren.",
+    "pitfall": "load(InputStream) hat andere Kodierungsregeln als load(Reader); die Variante muss bewusst gewählt werden.",
+    "practice": {
+      "task": "Lies die Einstellung limit=12 als Ganzzahl.",
+      "hint": "getProperty liefert Text; die Zahlenumwandlung ist ein eigener Schritt.",
+      "code": "var p = new Properties();\np.load(new StringReader(\"limit=12\"));\nSystem.out.println(Integer.parseInt(p.getProperty(\"limit\")));",
+      "output": "12"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "properties-defaults",
+    "category": "Datenformate & Protokolle",
+    "name": "Properties: Standardwerte sind nicht eigene Einträge",
+    "introduction": "Properties kann auf ein weiteres Properties-Objekt als Standardquelle zurückgreifen. getProperty und direkte Mapprüfungen fragen deshalb nicht dasselbe ab.",
+    "steps": [
+      "Die Standards enthalten modus=lernen.",
+      "Das neue Objekt besitzt keinen eigenen modus-Eintrag.",
+      "getProperty findet trotzdem den Standardwert."
+    ],
+    "code": "var defaults = new Properties();\ndefaults.setProperty(\"modus\", \"lernen\");\nvar p = new Properties(defaults);\nSystem.out.println(p.getProperty(\"modus\"));\nSystem.out.println(p.containsKey(\"modus\"));",
+    "output": "lernen\nfalse",
+    "choices": [
+      "lernen\nfalse",
+      "lernen\ntrue",
+      "null\nfalse"
+    ],
+    "explanation": "getProperty berücksichtigt die Standardkette. containsKey prüft nur die unmittelbar gespeicherten Schlüssel.",
+    "declarations": "",
+    "imports": "import java.util.Properties;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new Properties(defaults)",
+      "parameters": [
+        [
+          "defaults",
+          "Standardquelle für fehlende Stringwerte."
+        ]
+      ],
+      "returns": "Properties mit zusätzlicher Standardauflösung.",
+      "effect": "Legt nicht automatisch eigene Einträge für jeden Standard an."
+    },
+    "useCase": "Konfiguration mit klaren optionalen Standardwerten bereitstellen.",
+    "pitfall": "Ein gefundener Standardwert ist nicht gleich einem ausdrücklich gespeicherten Benutzerwert.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "strict-config-boolean",
+    "category": "Datenformate & Protokolle",
+    "name": "Konfiguration streng validieren",
+    "introduction": "Ein boolescher Konfigurationswert kann auf genau true und false beschränkt werden. Ein Tippfehler muss dann ausdrücklich zurückgewiesen werden.",
+    "steps": [
+      "strip bereinigt Rand-Leerraum.",
+      "Die erlaubten Werte werden ausdrücklich geprüft.",
+      "treu ist ein Tippfehler und deshalb kein gültiges false."
+    ],
+    "code": "try { System.out.println(bool(\"treu\")); }\ncatch (IllegalArgumentException e) { System.out.println(\"Konfiguration ungültig\"); }",
+    "output": "Konfiguration ungültig",
+    "choices": [
+      "Konfiguration ungültig",
+      "false",
+      "true"
+    ],
+    "explanation": "Boolean.parseBoolean allein würde für diesen Tippfehler false liefern. Eine strenge Importregel meldet ihn stattdessen als Fehler.",
+    "declarations": "static boolean bool(String input) {\n    String s = Objects.requireNonNull(input).strip();\n    if (s.equals(\"true\")) return true;\n    if (s.equals(\"false\")) return false;\n    throw new IllegalArgumentException(\"true oder false erwartet\");\n}",
+    "imports": "import java.util.Objects;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "bool(text)",
+      "parameters": [
+        [
+          "text",
+          "Nicht-null-Eingabe mit genau true oder false nach Bereinigung."
+        ]
+      ],
+      "returns": "boolean oder Fehler für andere Eingaben.",
+      "effect": "Ändert den Originaltext nicht."
+    },
+    "useCase": "Konfigurationsfehler vor dem Start erkennen.",
+    "pitfall": "Ein stiller Ersatzwert kann einen falsch geschriebenen Pflichtwert verdecken.",
+    "practice": {
+      "task": "Prüfe die bereinigten Eingaben true und false mit bool.",
+      "hint": "Die Hilfsmethode erlaubt genau die beiden gültigen Schreibweisen.",
+      "code": "System.out.println(bool(\" true \"));\nSystem.out.println(bool(\"false\"));",
+      "output": "true\nfalse"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "system-properties",
+    "category": "Werkzeuge & Tests",
+    "name": "System.getProperty() ist nicht getenv()",
+    "introduction": "System-Properties sind benannte Werte innerhalb der JVM. Betriebssystem-Umgebungsvariablen werden über eine andere API gelesen.",
+    "steps": [
+      "Die Probe setzt einen eigenen Demo-Schlüssel.",
+      "getProperty liest genau diesen Wert.",
+      "Danach wird der vorherige Zustand wiederhergestellt."
+    ],
+    "code": "String key = \"codeklar.demo.modus\";\nString alt = System.getProperty(key);\ntry {\n    System.setProperty(key, \"lernen\");\n    System.out.println(System.getProperty(key));\n} finally { if (alt == null) System.clearProperty(key); else System.setProperty(key, alt); }",
+    "output": "lernen",
+    "choices": [
+      "lernen",
+      "null",
+      "codeklar.demo.modus"
+    ],
+    "explanation": "Java-Startoptionen wie -Dname=wert setzen JVM-Properties. getenv liest dagegen die Umgebung des Prozesses und hat andere Regeln.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "System.getProperty(key)",
+      "parameters": [
+        [
+          "key",
+          "Name einer JVM-Property."
+        ]
+      ],
+      "returns": "String oder null, wenn nicht gesetzt.",
+      "effect": "Die Abfrage liest; setProperty verändert JVM-Zustand."
+    },
+    "useCase": "Einen eigenen kleinen Laufzeitparameter nachvollziehen.",
+    "pitfall": "Globale Änderungen sollten in Tests begrenzt und aufgeräumt werden."
+  },
+  {
+    "id": "xml-dom",
+    "category": "Datenformate & Protokolle",
+    "name": "XML-Dokument als DOM lesen",
+    "introduction": "Ein DOM-Parser bildet ein XML-Dokument als Baum ab. Für ein lokales einfaches Lernformat werden externe Dokumentzugriffe ausdrücklich deaktiviert.",
+    "steps": [
+      "Das XML enthält einen person-Knoten.",
+      "Der Textinhalt ist Ada.",
+      "Der Parser erhält Text aus einem StringReader statt einer Datei."
+    ],
+    "code": "var f = DocumentBuilderFactory.newInstance();\nf.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true);\nf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, \"\");\nf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, \"\");\nvar doc = f.newDocumentBuilder().parse(new InputSource(new StringReader(\"<person>Ada</person>\")));\nSystem.out.println(doc.getDocumentElement().getTextContent());",
+    "output": "Ada",
+    "choices": [
+      "Ada",
+      "person",
+      "<person>Ada</person>"
+    ],
+    "explanation": "Das Beispiel definiert ein einfaches lokales Format ohne DOCTYPE. Größere oder namensraumbezogene Dokumente verlangen passende weitere Regeln.",
+    "declarations": "",
+    "imports": "import java.io.StringReader;\nimport javax.xml.XMLConstants;\nimport javax.xml.parsers.DocumentBuilderFactory;\nimport org.xml.sax.InputSource;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "builder.parse(inputSource)",
+      "parameters": [
+        [
+          "inputSource",
+          "XML-Eingabe für den konfigurierten Parser."
+        ]
+      ],
+      "returns": "Document als Baumstruktur oder Parsefehler.",
+      "effect": "Erzeugt einen Dokumentbaum; kein äußerer Netzwerkzugriff ist für dieses Format vorgesehen."
+    },
+    "useCase": "Eine ausdrücklich definierte lokale XML-Datei einlesen.",
+    "pitfall": "Ein Parser sollte nicht ohne bewusst gewählte Regeln externe DTDs oder Schemas aus fremden Dokumenten laden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "xml-attribute",
+    "category": "Datenformate & Protokolle",
+    "name": "XML-Attribute von Text unterscheiden",
+    "introduction": "Ein Element kann Attribute und Textinhalt besitzen. Die beiden Zugriffe lesen unterschiedliche Bestandteile des XML-Baums.",
+    "steps": [
+      "id liegt als Attribut vor.",
+      "Ada liegt als Textinhalt vor.",
+      "getAttribute und getTextContent liefern daher verschiedene Werte."
+    ],
+    "code": "var f = DocumentBuilderFactory.newInstance();\nf.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true);\nf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, \"\");\nf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, \"\");\nvar doc = f.newDocumentBuilder().parse(new InputSource(new StringReader(\"<person id=\\\"7\\\">Ada</person>\")));\nvar e = doc.getDocumentElement();\nSystem.out.println(e.getAttribute(\"id\"));\nSystem.out.println(e.getTextContent());",
+    "output": "7\nAda",
+    "choices": [
+      "7\nAda",
+      "Ada\n7",
+      "person\n7"
+    ],
+    "explanation": "Ein fehlendes getAttribute liefert hier einen leeren String. Für die Existenzfrage gibt es hasAttribute.",
+    "declarations": "",
+    "imports": "import java.io.StringReader;\nimport javax.xml.XMLConstants;\nimport javax.xml.parsers.DocumentBuilderFactory;\nimport org.xml.sax.InputSource;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "element.getAttribute(name); element.getTextContent()",
+      "parameters": [
+        [
+          "name",
+          "Attributname in diesem einfachen Format."
+        ]
+      ],
+      "returns": "String für Attributwert oder Textinhalt.",
+      "effect": "Liest den Dokumentbaum."
+    },
+    "useCase": "Felder eines kleinen XML-Datenmodells unterscheiden.",
+    "pitfall": "getTextContent kann auch Text aus Nachfahren enthalten; es ist keine ausschließliche Abfrage direkt eigener Textknoten.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "url-form-encoding",
+    "category": "HTTP & Daten",
+    "name": "URLEncoder: Formularwerte kodieren",
+    "introduction": "URLEncoder kodiert Text für die Formular-Konvention application/x-www-form-urlencoded. Pluszeichen und Leerzeichen werden unterschiedlich behandelt.",
+    "steps": [
+      "Das Pluszeichen muss als Datenzeichen erhalten bleiben.",
+      "Es wird deshalb zu %2B.",
+      "Ein Leerzeichen wird in dieser Konvention zu +."
+    ],
+    "code": "System.out.println(URLEncoder.encode(\"C++ lernen\", StandardCharsets.UTF_8));",
+    "output": "C%2B%2B+lernen",
+    "choices": [
+      "C%2B%2B+lernen",
+      "C+++lernen",
+      "C%2B%2B%20lernen"
+    ],
+    "explanation": "Diese Konvention passt zu geeigneten Formular- oder Querywerten. Sie ist nicht automatisch die richtige Kodierung eines gesamten URL-Pfads.",
+    "declarations": "",
+    "imports": "import java.net.URLEncoder;\nimport java.nio.charset.StandardCharsets;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "URLEncoder.encode(text, charset)",
+      "parameters": [
+        [
+          "text",
+          "Einzelner Formularwert."
+        ],
+        [
+          "charset",
+          "Bewusste Zeichenkodierung, hier UTF-8."
+        ]
+      ],
+      "returns": "Kodierter String.",
+      "effect": "Ändert den Ausgangstext nicht."
+    },
+    "useCase": "Einen Suchwert wie C++ als Queryparameter erhalten.",
+    "pitfall": "Eine ganze URL mit encode zu behandeln zerstört häufig die gewollte Struktur."
+  },
+  {
+    "id": "uri-path-constructor",
+    "category": "HTTP & Daten",
+    "name": "URI-Komponenten statt Stringverkettung",
+    "introduction": "Ein URI-Konstruktor kann einzelne Adressbestandteile getrennt erhalten und nötige Zeichen in einem Pfad passend darstellen.",
+    "steps": [
+      "Der Pfad enthält ein Leerzeichen.",
+      "Der Konstruktor kennt die Rolle dieses Texts als Pfad.",
+      "Die ASCII-Darstellung schreibt das Leerzeichen als %20."
+    ],
+    "code": "var uri = new URI(\"https\", null, \"example.com\", -1, \"/a b\", null, null);\nSystem.out.println(uri.toASCIIString());",
+    "output": "https://example.com/a%20b",
+    "choices": [
+      "https://example.com/a%20b",
+      "https://example.com/a+b",
+      "https://example.com/a b"
+    ],
+    "explanation": "Pfad und Query haben unterschiedliche Regeln. Schon kodierte Texte dürfen nicht unbedacht ein zweites Mal durch eine Komponentenkodierung geschickt werden.",
+    "declarations": "",
+    "imports": "import java.net.URI;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new URI(scheme, userInfo, host, port, path, query, fragment)",
+      "parameters": [
+        [
+          "path",
+          "Unkodierter Pfadbestandteil."
+        ],
+        [
+          "query",
+          "Separate Query oder null."
+        ]
+      ],
+      "returns": "URI aus den getrennten Bestandteilen.",
+      "effect": "Keine Netzwerkverbindung allein durch die Erzeugung."
+    },
+    "useCase": "Adressen aus bekannten strukturellen Teilen bauen.",
+    "pitfall": "Doppelte Kodierung kann aus %20 den Datenwert %2520 machen."
+  },
+  {
+    "id": "split-trailing-fields",
+    "category": "Datenformate & Protokolle",
+    "name": "split(): leere letzte Felder behalten",
+    "introduction": "Beim Aufteilen eines einfachen, unmaskierten Datensatzes können leere Felder am Ende wichtig sein. Ein negativer Grenzwert erhält sie.",
+    "steps": [
+      "Der Datensatz endet mit einem Trennzeichen.",
+      "Ohne Grenzwert verschwinden letzte leere Teile.",
+      "Mit -1 bleibt das dritte Feld erhalten."
+    ],
+    "code": "String s = \"Ada;7;\";\nSystem.out.println(s.split(\";\").length);\nSystem.out.println(s.split(\";\", -1).length);",
+    "output": "2\n3",
+    "choices": [
+      "2\n3",
+      "3\n3",
+      "2\n2"
+    ],
+    "explanation": "split verwendet einen regulären Ausdruck als Trenner. Für echte CSV mit Anführungszeichen ist eine zusätzliche Parserlogik erforderlich.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.split(regex, limit)",
+      "parameters": [
+        [
+          "regex",
+          "Regulärer Ausdruck für den Trenner."
+        ],
+        [
+          "limit",
+          "Negativ erhält leere letzte Felder."
+        ]
+      ],
+      "returns": "Stringarray der Teile.",
+      "effect": "Der Ausgangstext bleibt unverändert."
+    },
+    "useCase": "Ein fest definiertes einfaches Importformat mit optionalem letzten Feld lesen.",
+    "pitfall": "split ist kein allgemeiner CSV-Parser.",
+    "practice": {
+      "task": "Zähle die Felder in a;; und erhalte die beiden leeren Schlussfelder.",
+      "hint": "Verwende split mit einem negativen Grenzwert.",
+      "code": "System.out.println(\"a;;\".split(\";\", -1).length);",
+      "output": "3"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "csv-escape",
+    "category": "Datenformate & Protokolle",
+    "name": "CSV: Anführungszeichen maskieren",
+    "introduction": "Ein CSV-Feld mit Kommas oder Anführungszeichen muss passend eingerahmt werden. Innere Anführungszeichen werden verdoppelt.",
+    "steps": [
+      "Ein inneres Anführungszeichen wird zu zwei Zeichen.",
+      "Das ganze Feld erhält äußere Anführungszeichen.",
+      "So bleibt das Komma Teil des Feldwerts."
+    ],
+    "code": "System.out.println(csv(\"Ada, Team\"));",
+    "output": "\"Ada, Team\"",
+    "choices": [
+      "\"Ada, Team\"",
+      "Ada, Team",
+      "Ada; Team"
+    ],
+    "explanation": "Das Beispiel gibt ein einzelnes Feld aus und umschließt es immer mit Anführungszeichen. Ein vollständiger Import muss auch Zeilen- und Feldgrenzen korrekt behandeln.",
+    "declarations": "static String csv(String s) {\n    return \"\\\"\" + s.replace(\"\\\"\", \"\\\"\\\"\") + \"\\\"\";\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "csv(text)",
+      "parameters": [
+        [
+          "text",
+          "Nicht-null-Text eines einzelnen Felds."
+        ]
+      ],
+      "returns": "Maskierter CSV-Feldtext.",
+      "effect": "Keine Veränderung des Eingabestrings."
+    },
+    "useCase": "Ein Textfeld für einen CSV-Export vorbereiten.",
+    "pitfall": "Nur Kommas durch Semikolons zu ersetzen verändert Daten statt sie zu maskieren.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "decimal-import",
+    "category": "Datenformate & Protokolle",
+    "name": "Dezimalwerte nach Formatregel lesen",
+    "introduction": "Ein Importformat kann genau einen Punkt als Dezimaltrenner erlauben. Die Formatprüfung und die Zahlenumwandlung sind dann getrennte Schritte.",
+    "steps": [
+      "Die Regel erlaubt Ziffern und optional Nachkommastellen.",
+      "Ein Komma passt nicht zu dieser Regel.",
+      "Der ungültige Wert wird vor der Umwandlung erkannt."
+    ],
+    "code": "String input = \"12,50\";\nSystem.out.println(input.matches(\"[0-9]+([.][0-9]+)?\"));",
+    "output": "false",
+    "choices": [
+      "false",
+      "true",
+      "12.50"
+    ],
+    "explanation": "Das ist eine bewusst enge Regel für nichtnegative Dezimalbeträge. Für andere Anforderungen müssen Vorzeichen, Exponenten und Größenlimits ausdrücklich festgelegt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.matches(regex); new BigDecimal(text)",
+      "parameters": [
+        [
+          "text",
+          "Text gemäß vereinbarter Dezimalregel."
+        ]
+      ],
+      "returns": "boolean für die Regelprüfung; BigDecimal für einen gültigen Wert.",
+      "effect": "Keine Änderung der Eingabe."
+    },
+    "useCase": "Preise aus einem definierten Dateiformat einlesen.",
+    "pitfall": "Ein stiller Austausch aller Kommata ist bei Tausendertrennzeichen oder CSV-Spalten mehrdeutig.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "set-copy",
+    "category": "Collections",
+    "name": "Set.copyOf(): unveränderlicher Schnappschuss",
+    "introduction": "Set.copyOf erstellt eine unveränderliche Menge aus vorhandenen Elementen. Doppelte Einträge erscheinen nur einmal.",
+    "steps": [
+      "Die Eingabeliste enthält Java zweimal.",
+      "Die Menge enthält zwei verschiedene Werte.",
+      "Eine spätere Listenänderung ergänzt die Menge nicht."
+    ],
+    "code": "var list = new ArrayList<>(List.of(\"Java\", \"SQL\", \"Java\"));\nvar set = Set.copyOf(list);\nlist.add(\"Python\");\nSystem.out.println(set.size());\nSystem.out.println(set.contains(\"Python\"));",
+    "output": "2\nfalse",
+    "choices": [
+      "2\nfalse",
+      "3\ntrue",
+      "2\ntrue"
+    ],
+    "explanation": "Die Menge ist strukturell unveränderlich, aber enthaltene veränderliche Objekte werden nicht tief kopiert. Eine Iterationsreihenfolge ist nicht garantiert.",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Set;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Set.copyOf(collection)",
+      "parameters": [
+        [
+          "collection",
+          "Sammlung ohne null-Elemente."
+        ]
+      ],
+      "returns": "Unveränderliches Set der unterschiedlichen Elemente.",
+      "effect": "Kopiert die Mitgliedschaft statt Änderungen der ursprünglichen Sammlung zu beobachten."
+    },
+    "useCase": "Erlaubte Namen nach einer Initialisierung festhalten.",
+    "pitfall": "Die Reihenfolge einer solchen Menge sollte nicht als stabile Ausgabe vorausgesetzt werden.",
+    "practice": {
+      "task": "Kopiere die Werte A,A,B in ein Set und prüfe seine Größe.",
+      "hint": "Gleiche Werte haben in einer Menge nur einen Eintrag.",
+      "code": "var set = Set.copyOf(List.of(\"A\", \"A\", \"B\"));\nSystem.out.println(set.size());",
+      "output": "2"
+    }
+  },
+  {
+    "id": "stream-tolist-readonly",
+    "category": "Lambdas & Streams",
+    "name": "Stream.toList(): keine veränderbare ArrayList",
+    "introduction": "toList sammelt Streamwerte in einer unveränderlichen Liste. Die vorhandene Reihenfolge wird bei einem geordneten Stream erhalten.",
+    "steps": [
+      "Die Streamwerte werden als Liste gesammelt.",
+      "add ist für diese Liste nicht erlaubt.",
+      "Die abgefangene Ausnahme macht die Grenze sichtbar."
+    ],
+    "code": "var list = Stream.of(1, 2).toList();\ntry { list.add(3); }\ncatch (UnsupportedOperationException e) { System.out.println(\"unveränderlich\"); }",
+    "output": "unveränderlich",
+    "choices": [
+      "unveränderlich",
+      "[1, 2, 3]",
+      "3"
+    ],
+    "explanation": "Wer weitere Elemente hinzufügen möchte, kann ausdrücklich new ArrayList<>(stream.toList()) verwenden. Die Unveränderlichkeit betrifft die Listenstruktur.",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.stream.Stream;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.toList()",
+      "parameters": [],
+      "returns": "Unveränderliche Liste der Streamwerte.",
+      "effect": "Konsumiert den Stream; ändert enthaltene Objekte nicht."
+    },
+    "useCase": "Ein fertiges Verarbeitungsergebnis ohne nachträgliche Listenänderungen zurückgeben.",
+    "pitfall": "Aus der Rückgabe darf nicht auf eine bestimmte konkrete Listenklasse geschlossen werden.",
+    "practice": {
+      "task": "Erzeuge aus einem Stream eine Liste, zu der du anschließend 3 hinzufügen kannst.",
+      "hint": "Umschließe das unveränderliche Ergebnis mit einer neuen ArrayList.",
+      "code": "var list = new ArrayList<>(Stream.of(1, 2).toList());\nlist.add(3);\nSystem.out.println(list);",
+      "output": "[1, 2, 3]"
+    }
+  },
+  {
+    "id": "optional-stream",
+    "category": "Lambdas & Streams",
+    "name": "Optional.stream(): null oder ein Element",
+    "introduction": "Optional.stream verwandelt ein Optional in einen Stream mit null oder einem Element. Dadurch lassen sich fehlende Werte in einer Pipeline auslassen.",
+    "steps": [
+      "Das erste Optional enthält Ada.",
+      "Das zweite Optional ist leer.",
+      "flatMap übernimmt nur den vorhandenen Wert."
+    ],
+    "code": "var items = List.of(Optional.of(\"Ada\"), Optional.<String>empty());\nSystem.out.println(items.stream().flatMap(Optional::stream).toList());",
+    "output": "[Ada]",
+    "choices": [
+      "[Ada]",
+      "[Ada, null]",
+      "[]"
+    ],
+    "explanation": "Optional.empty bedeutet keinen Wert, nicht einen enthaltenen null-Wert. Optional.stream ist seit Java 9 verfügbar.",
+    "declarations": "",
+    "imports": "import java.util.List;\nimport java.util.Optional;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "optional.stream()",
+      "parameters": [],
+      "returns": "Stream mit einem Wert oder ohne Elemente.",
+      "effect": "Ändert das Optional nicht."
+    },
+    "useCase": "Optionale Suchergebnisse zu einer Liste vorhandener Treffer bündeln.",
+    "pitfall": "map(Optional::stream) erzeugt Streams als Elemente; flatMap führt deren Elemente zusammen."
+  },
+  {
+    "id": "future-timeout",
+    "category": "Nebenläufigkeit",
+    "name": "Future.get(): begrenzt warten",
+    "introduction": "Eine begrenzte get-Variante verhindert unbegrenztes Warten auf ein Ergebnis. Ein Timeout beendet die zugrunde liegende Arbeit nicht automatisch.",
+    "steps": [
+      "Das Future wurde noch nicht abgeschlossen.",
+      "Die Wartefrist beträgt hier null Millisekunden.",
+      "get meldet sofort den fehlenden rechtzeitigen Abschluss."
+    ],
+    "code": "var future = new CompletableFuture<String>();\ntry { future.get(0, TimeUnit.MILLISECONDS); }\ncatch (TimeoutException e) { System.out.println(\"Zeit abgelaufen\"); }\nSystem.out.println(future.isDone());",
+    "output": "Zeit abgelaufen\nfalse",
+    "choices": [
+      "Zeit abgelaufen\nfalse",
+      "Zeit abgelaufen\ntrue",
+      "null\ntrue"
+    ],
+    "explanation": "Das Beispiel startet keine Hintergrundarbeit und ist deshalb deterministisch. In einer echten Anwendung muss eine Wartefrist passend zur Aufgabe gewählt werden.",
+    "declarations": "",
+    "imports": "import java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.TimeUnit;\nimport java.util.concurrent.TimeoutException;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "future.get(dauer, einheit)",
+      "parameters": [
+        [
+          "dauer",
+          "Maximale Wartezeit."
+        ],
+        [
+          "einheit",
+          "TimeUnit für die Dauer."
+        ]
+      ],
+      "returns": "Ergebnis oder unter anderem TimeoutException.",
+      "effect": "Wartet höchstens bis zur Frist; bricht die Aufgabe nicht von selbst ab."
+    },
+    "useCase": "Eine begrenzte Wartezeit in einer Anwendung umsetzen.",
+    "pitfall": "Ein Timeout ist nicht gleich erfolgreicher Abbruch.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "future-cancel",
+    "category": "Nebenläufigkeit",
+    "name": "CompletableFuture.cancel(): Zustand verstehen",
+    "introduction": "Ein abgebrochenes CompletableFuture besitzt einen abgeschlossenen Fehlerzustand. cancel garantiert bei diesem Typ keine Unterbrechung einer laufenden Berechnung.",
+    "steps": [
+      "Das Future ist zunächst offen.",
+      "cancel markiert es als abgebrochen.",
+      "join wirft anschließend CancellationException."
+    ],
+    "code": "var f = new CompletableFuture<String>();\nSystem.out.println(f.cancel(true));\ntry { f.join(); }\ncatch (CancellationException e) { System.out.println(\"abgebrochen\"); }",
+    "output": "true\nabgebrochen",
+    "choices": [
+      "true\nabgebrochen",
+      "false\nabgebrochen",
+      "true\nnull"
+    ],
+    "explanation": "Bei CompletableFuture hat mayInterruptIfRunning keine Wirkung auf Threads. Für kooperativen Abbruch müssen die Arbeit und ihre Abbruchregeln ausdrücklich zusammenpassen.",
+    "declarations": "",
+    "imports": "import java.util.concurrent.CancellationException;\nimport java.util.concurrent.CompletableFuture;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "future.cancel(mayInterruptIfRunning)",
+      "parameters": [
+        [
+          "mayInterruptIfRunning",
+          "Bei CompletableFuture keine Steuerung einer Threadunterbrechung."
+        ]
+      ],
+      "returns": "boolean: ob das Future nun abgebrochen ist.",
+      "effect": "Setzt den Abbruchzustand des Futures."
+    },
+    "useCase": "Ein nicht mehr benötigtes Ergebnis als abgebrochen markieren.",
+    "pitfall": "Das Ende des Future-Zustands beweist nicht das Ende beliebiger Hintergrundarbeit.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "thread-interrupted-clear",
+    "category": "Nebenläufigkeit",
+    "name": "Thread.interrupted(): prüfen und zurücksetzen",
+    "introduction": "Thread.interrupted liest den Interruptstatus des aktuellen Threads und löscht ihn. isInterrupted liest dagegen ohne dieses Löschen.",
+    "steps": [
+      "Der aktuelle Thread setzt seinen Status.",
+      "Die erste interrupted-Abfrage sieht true und löscht ihn.",
+      "Die zweite Abfrage liefert false."
+    ],
+    "code": "Thread.currentThread().interrupt();\nSystem.out.println(Thread.interrupted());\nSystem.out.println(Thread.interrupted());",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Das Beispiel läuft in einem eigenen kurzen Programm. In längeren Anwendungen muss ein Interrupt gemäß dem Abbruchvertrag behandelt oder gegebenenfalls wiederhergestellt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Thread.interrupted()",
+      "parameters": [],
+      "returns": "boolean für den zuvor gesetzten Status des aktuellen Threads.",
+      "effect": "Löscht den Interruptstatus des aktuellen Threads."
+    },
+    "useCase": "Die Wirkung einer Interruptprüfung gezielt verstehen.",
+    "pitfall": "Eine solche Prüfung ist nicht nebenwirkungsfrei und sollte nicht unbewusst wiederholt werden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "bounded-config-int",
+    "category": "Datenformate & Protokolle",
+    "name": "Konfiguration: Zahl und Wertebereich prüfen",
+    "introduction": "Eine gültige Ganzzahl kann für eine Einstellung trotzdem zu groß oder zu klein sein. Die syntaktische Prüfung ersetzt deshalb keine fachliche Grenze.",
+    "steps": [
+      "parseInt liest die Zahl.",
+      "Die Einstellung darf nur zwischen 1 und 100 liegen.",
+      "101 wird als Bereichsfehler zurückgewiesen."
+    ],
+    "code": "try { System.out.println(limit(\"101\")); }\ncatch (IllegalArgumentException e) { System.out.println(\"Limit ungültig\"); }",
+    "output": "Limit ungültig",
+    "choices": [
+      "Limit ungültig",
+      "101",
+      "100"
+    ],
+    "explanation": "Überlauf und ungültige Zahlentexte lösen NumberFormatException aus, die ebenfalls IllegalArgumentException ist. Ein erlaubter Bereich muss danach separat geprüft werden.",
+    "declarations": "static int limit(String text) {\n    int n = Integer.parseInt(text.strip());\n    if (n < 1 || n > 100) throw new IllegalArgumentException(\"1 bis 100 erwartet\");\n    return n;\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "limit(text)",
+      "parameters": [
+        [
+          "text",
+          "Ganzzahltext, hier nach strip bereinigt."
+        ]
+      ],
+      "returns": "int im Bereich 1 bis 100 oder Fehler.",
+      "effect": "Keine Änderung am Text."
+    },
+    "useCase": "Eine maximale Anzahl von Importzeilen validieren.",
+    "pitfall": "Ein stilles Abschneiden auf 100 verdeckt eine falsch konfigurierte Einstellung.",
+    "practice": {
+      "task": "Teste die erlaubten Randwerte 1 und 100 mit limit.",
+      "hint": "Die Vergleiche in limit schließen beide Randwerte mit ein.",
+      "code": "System.out.println(limit(\"1\"));\nSystem.out.println(limit(\"100\"));",
+      "output": "1\n100"
+    },
+    "difficulty": "Vertiefung"
+  }
+]

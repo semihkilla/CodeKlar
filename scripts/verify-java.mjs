@@ -84,5 +84,21 @@ try {
   require(route.stdout.includes('Kosten: 3') && route.stdout.includes('Route: [0, 2, 1, 3]'), 'Route reconstruction failed');
   const unreachable = await run(['-cp', projectClasses, 'RoutePlanner', '4']);
   require(unreachable.stdout.trim() === 'Kein Weg', 'Unreachable route output failed');
+  const csvDir = join(root, 'java-csv-report');
+  const csv = await run(['-cp', projectClasses, 'CsvReport', 'einkauf.csv'], { cwd: csvDir });
+  require(csv.stdout.trim() === 'Einträge: 3\nSumme: 6.00', 'CSV file/UTF-8 integration failed');
+  await writeFile(join(csvDir, 'invalid.csv'), 'name,betrag\nAda,-2.00\n');
+  let csvRejected = false;
+  try { await run(['-cp', projectClasses, 'CsvReport', 'invalid.csv'], { cwd: csvDir }); }
+  catch (error) { csvRejected = error.code === 1 && error.stderr.includes('Zeile 2'); }
+  require(csvRejected, 'CSV invalid amount was accepted');
+  const configDir = join(root, 'java-config-check');
+  const config = await run(['-cp', projectClasses, 'ConfigCheck', 'lernen.properties'], { cwd: configDir });
+  require(config.stdout.trim() === 'Titel: Java üben\nAktiv: true\nLimit: 20', 'UTF-8 config integration failed');
+  await writeFile(join(configDir, 'invalid.properties'), 'titel=Java\naktiv=treu\n');
+  let configRejected = false;
+  try { await run(['-cp', projectClasses, 'ConfigCheck', 'invalid.properties'], { cwd: configDir }); }
+  catch (error) { configRejected = error.code === 1 && error.stderr.includes('aktiv: true oder false nötig'); }
+  require(configRejected, 'Invalid boolean config was accepted');
   console.log('All project tests and interactive/persistence checks passed.');
 } finally { await rm(root, { recursive: true, force: true }); }

@@ -1,3 +1,4 @@
+import { javaDataProjects } from './javaDataProjects.js';
 import { javaFurtherProjects } from './javaFurtherProjects.js';
 import { javaNextProjects } from './javaNextProjects.js';
 const originalJavaProjects = [
@@ -132,4 +133,4 @@ const originalJavaProjects = [
   }
 ];
 
-export const javaProjects = [...originalJavaProjects, ...javaFurtherProjects, ...javaNextProjects];
+export const javaProjects = [...originalJavaProjects, ...javaFurtherProjects, ...javaNextProjects, ...javaDataProjects];

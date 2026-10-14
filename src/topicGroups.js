@@ -4,7 +4,7 @@ const groups = {
     ["start", "Einstieg & Sprache", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Methoden"]],
     ["data", "Strings, Arrays & Collections", ["Arrays", "Strings", "Collections", "Lambdas & Streams", "Reguläre Ausdrücke"]],
     ["objects", "Objektorientierung", ["Klassen & Objekte", "Schnittstellen & Typen"]],
-    ["io", "Eingaben, Dateien & Fehler", ["Ein-/Ausgabe", "Dateien & Pfade", "Fehlerbehandlung"]],
+    ["io", "Eingaben, Dateien & Fehler", ["Ein-/Ausgabe", "Dateien & Pfade", "Fehlerbehandlung", "Datenformate & Protokolle"]],
     ["tools", "Werkzeuge, Tests & Zahlen", ["Werkzeuge & Tests", "Zahlen & Zeit"]],
     ["advanced", "Algorithmen, Threads & HTTP", ["Algorithmen & Komplexität", "Nebenläufigkeit", "HTTP & Daten"]],
   ],

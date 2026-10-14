@@ -1,3 +1,4 @@
+import conceptCurriculum from './javaConceptCurriculum.json' with { type: 'json' };
 import curriculum from './javaCurriculum.json' with { type: 'json' };
 import furtherCurriculum from './javaFurtherCurriculum.json' with { type: 'json' };
 import dataCurriculum from './javaDataCurriculum.json' with { type: 'json' };
@@ -33,7 +34,7 @@ export function buildJavaSource(code, declarations = '', imports = '') {
   return `${imports ? imports + '\n\n' : ''}public class Main {\n${declarations ? declarations.split('\n').map(line => '    ' + line).join('\n') + '\n\n' : ''}    public static void main(String[] args) throws Exception {\n${code.split('\n').map(line => '        ' + line).join('\n')}\n    }\n}`;
 }
 
-export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum, ...dataCurriculum].map((definition, index) => {
+export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum, ...dataCurriculum, ...conceptCurriculum].map((definition, index) => {
   const row = { ...javaMethodProfiles[definition.id], ...definition };
   const answer = index % row.choices.length;
   const options = row.choices.slice(1);

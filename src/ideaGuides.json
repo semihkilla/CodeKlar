@@ -419,5 +419,434 @@
         "Die terminale Operation führt die Pipeline aus und sammelt die Treffer als unveränderliche Liste. Sie verändert die Ursprungsliste nicht."
       ]
     ]
+  },
+  {
+    "id": "calculator",
+    "title": "Einen Taschenrechner bauen",
+    "goal": "Ich möchte zwei Eingaben verrechnen und das Ergebnis sehen.",
+    "small": "Beginne mit Addition von zwei gültigen Dezimaltexten. Operatorwahl, Tastatur und grafische Anzeige kommen danach.",
+    "fields": [
+      [
+        "eingabeA und eingabeB",
+        "String",
+        "Benutzereingaben sind zunächst Text, noch keine Rechenwerte."
+      ],
+      [
+        "a und b",
+        "BigDecimal",
+        "Eine ausdrücklich gewählte Dezimaldarstellung."
+      ],
+      [
+        "ergebnis",
+        "BigDecimal",
+        "Wird aus den geprüften Eingaben berechnet."
+      ]
+    ],
+    "logic": [
+      [
+        "Eingaben bereinigen und lesen",
+        "strip entfernt Rand-Leerraum; BigDecimal liest einen Dezimaltext mit Punkt. Definiere für eine echte Oberfläche zusätzlich die erlaubte Eingabegrammatik."
+      ],
+      [
+        "Rechenregel wählen",
+        "add ist hier die Addition. Subtraktion, Multiplikation und Division brauchen eigene Regeln, insbesondere für Rundung und Division durch null."
+      ],
+      [
+        "Ergebnis oder Fehler anzeigen",
+        "toPlainString erzeugt normalen Zahlentext. Ungültiger Eingabetext wird gezielt mit NumberFormatException abgefangen."
+      ]
+    ],
+    "pseudocode": "lies zwei Texte\nversuche beide als Dezimalzahlen zu lesen\naddiere die Zahlen\nzeige Ergebnis\nbei ungültigem Text: zeige Eingabefehler",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        String eingabeA = \"1.25\", eingabeB = \"4.25\";\n        try {\n            var a = new java.math.BigDecimal(eingabeA.strip());\n            var b = new java.math.BigDecimal(eingabeB.strip());\n            System.out.println(a.add(b).toPlainString());\n        } catch (NumberFormatException e) {\n            System.out.println(\"Ungültige Zahl\");\n        }\n    }\n}\n",
+    "output": "5.50",
+    "checks": [
+      "1.25 und 4.25 ergeben 5.50.",
+      "abc muss eine Eingabefehlermeldung liefern.",
+      "Lege fest, ob die Eingabe Exponenten und Vorzeichen erlauben soll; BigDecimal allein ist keine enge Formularregel."
+    ],
+    "task": "Ergänze eine Auswahl für Addition und Subtraktion.",
+    "hint": "Ein switch über den gewünschten Operator kann die beiden Berechnungsregeln auswählen.",
+    "solution": "Für + verwendest du a.add(b), für - a.subtract(b). Ein unbekannter Operator ist ein eigener Eingabefehler.",
+    "projectId": "java-calculator",
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Dieses Main.java beginnt mit Dezimaladdition. Das verknüpfte bestehende Rechnerprojekt verwendet einen anderen, ausdrücklich dokumentierten Long-Ganzzahlvertrag. Übertrage zuerst seine Struktur; Dezimalregeln musst du bewusst ergänzen.",
+    "connections": [
+      [
+        "Text in Zahlen übersetzen",
+        "new java.math.BigDecimal(eingabeA.strip())",
+        "Die Konstruktion liest den bereinigten Zahlentext. Ungültige Darstellung ist ein Fehler, kein Rechenergebnis."
+      ],
+      [
+        "Addition als Regel",
+        "a.add(b)",
+        "add liefert ein neues BigDecimal; es verändert weder a noch b."
+      ],
+      [
+        "Darstellung erzeugen",
+        "toPlainString()",
+        "Der Zahlenwert wird für eine Textausgabe formatiert. Formatierung und Berechnung sind getrennte Schritte."
+      ]
+    ]
+  },
+  {
+    "id": "basket",
+    "title": "Einen Warenkorb berechnen",
+    "goal": "Ich möchte Artikel, Mengen und Rabatt zu einem Gesamtpreis verbinden.",
+    "small": "Starte mit einer Position und zehn Prozent Rabatt. Die Summe wird berechnet, nicht parallel als unabhängig veränderbarer Wert gespeichert.",
+    "fields": [
+      [
+        "preis",
+        "BigDecimal",
+        "Dezimalpreis direkt aus Text, nicht zuerst aus double."
+      ],
+      [
+        "menge",
+        "int",
+        "Wie oft diese Position gekauft wird."
+      ],
+      [
+        "faktor",
+        "BigDecimal",
+        "0.90 bedeutet: 90 Prozent des Grundbetrags bleiben."
+      ],
+      [
+        "gesamt",
+        "BigDecimal",
+        "Abgeleiteter Betrag nach Multiplikation und Rundungsregel."
+      ]
+    ],
+    "logic": [
+      [
+        "Position berechnen",
+        "Stückpreis mal Menge ergibt den Grundbetrag. Eine echte Anwendung prüft Mengen und Preise vor der Berechnung."
+      ],
+      [
+        "Rabatt anwenden",
+        "Zehn Prozent Rabatt bedeutet Multiplikation mit 0.90, nicht Abzug von 0.10 Euro."
+      ],
+      [
+        "Geldformat festlegen",
+        "setScale mit HALF_UP macht die gewählte Cent-Rundung explizit. Zeitpunkt und Rundungsregel müssen zum Geschäftsvertrag passen."
+      ]
+    ],
+    "pseudocode": "Grundbetrag = Stückpreis × Menge\nRabattbetrag = Grundbetrag × 0.90\nrunde nach vereinbarter Centregel\nzeige Gesamtbetrag",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        var preis = new java.math.BigDecimal(\"2.50\");\n        int menge = 3;\n        var grundbetrag = preis.multiply(java.math.BigDecimal.valueOf(menge));\n        var gesamt = grundbetrag.multiply(new java.math.BigDecimal(\"0.90\"))\n            .setScale(2, java.math.RoundingMode.HALF_UP);\n        System.out.println(gesamt.toPlainString());\n    }\n}\n",
+    "output": "6.75",
+    "checks": [
+      "Drei Stück zu 2.50 ergeben vor Rabatt 7.50.",
+      "Nach zehn Prozent Rabatt bleiben 6.75.",
+      "Negative Mengen und nicht vereinbarte Rundungsregeln müssen vor einer echten Bestellung geklärt werden."
+    ],
+    "task": "Ergänze eine zweite Position und wende den Rabatt auf die vereinbarte Gesamtsumme an.",
+    "hint": "Berechne beide Positionsbeträge, addiere sie und entscheide dann, wann gerundet wird.",
+    "solution": "Die Gesamtsumme entsteht aus den Positionsbeträgen. Runde nach deiner ausdrücklich vereinbarten Regel; Rundung pro Position kann von Rundung am Gesamtbetrag abweichen.",
+    "projectId": "java-mini-shop",
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das erste Beispiel läuft in der Konsole. Die App zeigt Code und Ausgabe; du führst Java auf deinem Rechner aus.",
+    "connections": [
+      [
+        "Menge berücksichtigen",
+        "preis.multiply(java.math.BigDecimal.valueOf(menge))",
+        "Die Menge wird zum Dezimalwert und mit dem Stückpreis multipliziert."
+      ],
+      [
+        "Rabatt darstellen",
+        "grundbetrag.multiply(new java.math.BigDecimal(\"0.90\"))",
+        "Der verbleibende Anteil ist 90 Prozent; ein Prozentwert ist kein fester Euro-Abzug."
+      ],
+      [
+        "Centregel festlegen",
+        "setScale(2, java.math.RoundingMode.HALF_UP)",
+        "Die neue Rückgabe verwendet die ausdrücklich gewählte Rundungsregel."
+      ]
+    ]
+  },
+  {
+    "id": "chat",
+    "title": "Eine Nachricht als Datenpaket vorbereiten",
+    "goal": "Ich möchte eine Nachricht senden und auf einem anderen Bildschirm sehen.",
+    "small": "Beginne mit einem Datensatz und einem vereinbarten Formularformat. Das vollständige Chatprojekt ergänzt danach echte HTTP-Übertragung und Empfang in zwei Tabs.",
+    "fields": [
+      [
+        "id",
+        "long",
+        "Die Serverfassung vergibt eine eindeutige laufende Kennung."
+      ],
+      [
+        "sender",
+        "String",
+        "Name des Absenders im lokalen Lernmodell."
+      ],
+      [
+        "text",
+        "String",
+        "Der Inhalt der Nachricht."
+      ],
+      [
+        "paket",
+        "String",
+        "Die ausdrücklich kodierte Darstellung für die Übertragung."
+      ]
+    ],
+    "logic": [
+      [
+        "Nachricht modellieren",
+        "Ein record fasst Kennung, Absender und Text zusammen. Die Oberfläche zeigt eine Ableitung aus diesen Daten."
+      ],
+      [
+        "Format vereinbaren",
+        "sender und text werden einzeln URL-kodiert und als Formularfelder verbunden. Die Kodierung ist noch keine Übertragung."
+      ],
+      [
+        "Sender und Empfänger verbinden",
+        "Im vollständigen Projekt sendet POST /messages die Felder an Java. Der Server speichert im RAM. GET /messages liefert JSON für die Anzeige; der Browser ruft es alle zwei Sekunden ab."
+      ]
+    ],
+    "pseudocode": "erstelle Nachricht aus Absender und Text\nkodiere jedes Formularfeld getrennt\nClient sendet POST an Server\nServer prüft und speichert\nEmpfänger liest mit GET\nzeige Nachricht als Text",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        record Nachricht(long id, String sender, String text) {}\n        var m = new Nachricht(1, \"Ada\", \"Hallo\");\n        String paket = \"sender=\" + java.net.URLEncoder.encode(m.sender(), java.nio.charset.StandardCharsets.UTF_8)\n            + \"&text=\" + java.net.URLEncoder.encode(m.text(), java.nio.charset.StandardCharsets.UTF_8);\n        System.out.println(m.sender() + \": \" + m.text());\n        System.out.println(paket);\n    }\n}\n",
+    "output": "Ada: Hallo\nsender=Ada&text=Hallo",
+    "checks": [
+      "Der Datensatz bewahrt Absender und Nachricht getrennt.",
+      "C++ oder ein & im Text muss als Feldwert kodiert werden und darf kein neues Feld erzeugen.",
+      "Im vollständigen Projekt: zwei Tabs öffnen, senden, Empfang prüfen und Verhalten nach Serverneustart verstehen."
+    ],
+    "task": "Ändere den Nachrichtentext zu C++ & Java und untersuche das Datenpaket.",
+    "hint": "Pluszeichen und & sind Datenzeichen; URLEncoder muss sie erhalten und maskieren.",
+    "solution": "Der text-Feldwert wird C%2B%2B+%26+Java. Nur die von dir gesetzten Feldtrenner bleiben echte &-Trenner.",
+    "projectId": "java-mini-chat",
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Main.java zeigt Datenmodell und Kodierung, es sendet selbst noch keine Nachricht. Öffne danach das vollständige lokale Mini-Chat-Projekt: Es enthält echten Java-Server und Browserclient. Nachrichten liegen nur bis zum Serverneustart im RAM; es gibt keine Benutzerkonten oder Synchronisation mit fremden Geräten.",
+    "connections": [
+      [
+        "Daten gruppieren",
+        "record Nachricht(long id, String sender, String text) {}",
+        "Eine Nachricht besitzt zusammengehörige Felder statt einer unstrukturierten Textzeile."
+      ],
+      [
+        "Feldwert kodieren",
+        "java.net.URLEncoder.encode(m.text(), java.nio.charset.StandardCharsets.UTF_8)",
+        "Sonderzeichen bleiben Teil des Werts und werden nicht versehentlich zu Formulartrennern."
+      ],
+      [
+        "Anzeige ableiten",
+        "m.sender() + \": \" + m.text()",
+        "Die sichtbare Zeile wird aus den Daten erzeugt. Diese Verkettung überträgt oder speichert selbst nichts."
+      ]
+    ]
+  },
+  {
+    "id": "undo",
+    "title": "Eine Rückgängig-Funktion bauen",
+    "goal": "Ich möchte eine Textänderung zurücknehmen können.",
+    "small": "Speichere vor jeder Änderung den alten Zustand auf einem Stapel. Ein Undo holt genau den zuletzt gespeicherten Zustand zurück.",
+    "fields": [
+      [
+        "text",
+        "String",
+        "Der aktuelle Zustand."
+      ],
+      [
+        "history",
+        "Deque von String",
+        "Vorherige Zustände in umgekehrter Änderungsreihenfolge."
+      ]
+    ],
+    "logic": [
+      [
+        "Alten Zustand sichern",
+        "Vor dem Ersetzen wird der bisherige Text mit push auf die Historie gelegt."
+      ],
+      [
+        "Änderung ausführen",
+        "Der neue Text ersetzt den aktuellen Zustand. Die Historie bleibt getrennt."
+      ],
+      [
+        "Letzten Zustand zurückholen",
+        "pop entfernt und liefert den letzten gesicherten Zustand. isEmpty verhindert einen Zugriff auf einen leeren Stapel."
+      ]
+    ],
+    "pseudocode": "vor jeder Änderung:\n    lege alten Text auf Historie\n    setze neuen Text\nbei Rückgängig:\n    falls Historie nicht leer:\n        ersetze Text durch obersten alten Zustand",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        String text = \"Hallo\";\n        var history = new java.util.ArrayDeque<String>();\n        history.push(text); text = \"Hallo Java\";\n        history.push(text); text = \"Hallo Java!\";\n        if (!history.isEmpty()) text = history.pop();\n        System.out.println(text);\n        if (!history.isEmpty()) text = history.pop();\n        System.out.println(text);\n    }\n}\n",
+    "output": "Hallo Java\nHallo",
+    "checks": [
+      "Eine Undo-Aktion nimmt genau eine Änderung zurück.",
+      "Zwei Undo-Aktionen stellen den Anfangszustand wieder her.",
+      "Eine leere Historie darf keine Ausnahme beim Abholen auslösen. Begrenze große Historien bewusst."
+    ],
+    "task": "Ergänze Wiederholen mit einer zweiten Deque.",
+    "hint": "Beim Undo legst du den aktuellen Zustand zuerst auf den Redo-Stapel.",
+    "solution": "Undo verschiebt den aktuellen Zustand nach redo und holt aus history. Redo macht die Gegenrichtung. Eine neue normale Änderung leert redo, weil der alte Zukunftspfad nicht mehr passt.",
+    "projectId": null,
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das erste Beispiel läuft in der Konsole. Die App zeigt Code und Ausgabe; du führst Java auf deinem Rechner aus.",
+    "connections": [
+      [
+        "Alten Zustand merken",
+        "history.push(text)",
+        "Der bisherige Text landet oben auf dem Stapel, bevor du ihn ersetzt."
+      ],
+      [
+        "Leerfall prüfen",
+        "!history.isEmpty()",
+        "Nur bei einem vorhandenen Zustand kann ein Undo ihn zurückholen."
+      ],
+      [
+        "Änderung zurücknehmen",
+        "text = history.pop()",
+        "pop entfernt den letzten gesicherten Zustand; die Zuweisung macht ihn zum aktuellen Text."
+      ]
+    ]
+  },
+  {
+    "id": "cache",
+    "title": "Wiederverwendbare Ergebnisse im Cache halten",
+    "goal": "Ich möchte ein bereits bekanntes Ergebnis schnell wiederfinden und den Speicher trotzdem begrenzen.",
+    "small": "Starte mit Platz für zwei Schlüssel. Bei einem dritten Eintrag entfernst du den am längsten nicht verwendeten.",
+    "fields": [
+      [
+        "schluessel",
+        "String",
+        "Welche Anfrage oder welchen Namen das Ergebnis beschreibt."
+      ],
+      [
+        "wert",
+        "Integer",
+        "Das hier gespeicherte Ergebnis."
+      ],
+      [
+        "reihenfolge",
+        "Zugriffsgeordnete LinkedHashMap",
+        "Der erste Eintrag ist der am längsten nicht verwendete."
+      ],
+      [
+        "kapazitaet",
+        "int",
+        "Maximal zwei Einträge in dieser ersten Version."
+      ]
+    ],
+    "logic": [
+      [
+        "Treffer suchen",
+        "get liefert einen vorhandenen Wert und aktualisiert die Zugriffsreihenfolge. Das vollständige Projekt modelliert einen Fehlschlag mit Optional."
+      ],
+      [
+        "Neue Werte ablegen",
+        "put speichert das Ergebnis. Prüfe vorher, ob Schlüssel und Wert dem Vertrag entsprechen."
+      ],
+      [
+        "Überfüllung behandeln",
+        "removeEldestEntry entfernt nach Einfügen den ältesten Eintrag, sobald size größer als zwei wird. Das ist LRU und noch keine zeitbasierte Gültigkeit."
+      ]
+    ],
+    "pseudocode": "halte A und B im Cache\nverwende A\nfüge C hinzu\nwenn zu viele Einträge:\n    entferne den am längsten nicht verwendeten\nzeige verbleibende Schlüssel",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        class Cache extends java.util.LinkedHashMap<String,Integer> {\n            Cache() { super(16, 0.75f, true); }\n            protected boolean removeEldestEntry(java.util.Map.Entry<String,Integer> entry) { return size() > 2; }\n        }\n        var cache = new Cache();\n        cache.put(\"A\", 10); cache.put(\"B\", 20);\n        cache.get(\"A\");\n        cache.put(\"C\", 30);\n        System.out.println(cache.keySet());\n    }\n}\n",
+    "output": "[A, C]",
+    "checks": [
+      "Nach A und B sind beide vorhanden.",
+      "Ein get auf A macht B zum ältesten Eintrag.",
+      "Nach Einfügen von C bleibt A,C; ohne Zugriff auf A bliebe B,C."
+    ],
+    "task": "Ändere die Kapazität auf drei und prüfe, wann erst verdrängt wird.",
+    "hint": "Die Grenze liegt in size() > kapazitaet, nicht bereits bei Gleichheit.",
+    "solution": "Bei Kapazität drei darf der dritte Eintrag bleiben. Erst der vierte verdrängt den ältesten. Das Beispiel ist für einen Thread gedacht; ein gemeinsamer Cache braucht weitere Regeln.",
+    "projectId": "java-lru-cache",
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Dieses kurze Main.java zeigt die LRU-Regel. Das vollständige Projekt kapselt sie mit Generics, positiver Kapazität, null-Prüfungen und Tests. LRU begrenzt Mitgliedschaft, macht Werte aber nicht automatisch aktuell oder dauerhaft.",
+    "connections": [
+      [
+        "Ordnung nach Nutzung",
+        "super(16, 0.75f, true)",
+        "true schaltet die LinkedHashMap auf Zugriffsreihenfolge um."
+      ],
+      [
+        "Treffer verwenden",
+        "cache.get(\"A\")",
+        "Der vorhandene Schlüssel wird ans Ende der Reihenfolge verschoben."
+      ],
+      [
+        "Speicher begrenzen",
+        "return size() > 2;",
+        "Die Überschreitung löst die Verdrängung des ältesten Eintrags aus. Bei genau zwei bleibt alles erhalten."
+      ]
+    ]
+  },
+  {
+    "id": "statistics",
+    "title": "Messwerte zu einer Statistik zusammenfassen",
+    "goal": "Ich möchte aus vielen Messwerten Anzahl, Summe und Durchschnitt berechnen.",
+    "small": "Beginne mit drei ganzen Messwerten. Die Anzeige einer Statistik und die Speicherung der Rohdaten sind getrennte Entscheidungen.",
+    "fields": [
+      [
+        "werte",
+        "int-Folge",
+        "Die Rohmessungen, hier 10, 20 und 30."
+      ],
+      [
+        "anzahl",
+        "long",
+        "Wie viele Werte ausgewertet wurden."
+      ],
+      [
+        "summe",
+        "long",
+        "Summe als Teil der Statistik."
+      ],
+      [
+        "durchschnitt",
+        "double",
+        "Summe geteilt durch Anzahl mit Gleitkommadarstellung."
+      ]
+    ],
+    "logic": [
+      [
+        "Messwerte sammeln",
+        "Die Eingaben müssen zur fachlichen Messregel passen. Eine Zahl ist nicht automatisch eine plausible Messung."
+      ],
+      [
+        "Statistik bilden",
+        "summaryStatistics verarbeitet den IntStream und sammelt Anzahl, Summe, Minimum, Maximum und Durchschnitt."
+      ],
+      [
+        "Werte interpretieren",
+        "Zeige die Kennzahlen getrennt und beachte den Leerfall. Ein Mittelwert beschreibt nicht automatisch die Verteilung oder einzelne Ausreißer."
+      ]
+    ],
+    "pseudocode": "lies alle gültigen Messwerte\nzähle und summiere sie\nberechne Durchschnitt, wenn Werte vorhanden sind\nzeige Kennzahlen\nbeachte den Fall ohne Messwerte",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        var stats = java.util.stream.IntStream.of(10, 20, 30).summaryStatistics();\n        System.out.println(\"Anzahl: \" + stats.getCount());\n        System.out.println(\"Summe: \" + stats.getSum());\n        System.out.println(\"Durchschnitt: \" + stats.getAverage());\n    }\n}\n",
+    "output": "Anzahl: 3\nSumme: 60\nDurchschnitt: 20.0",
+    "checks": [
+      "Die drei Werte ergeben Summe 60 und Durchschnitt 20.0.",
+      "Ein leerer Stream liefert count=0; getAverage liefert dann 0.0, was keine gemessene Null bedeutet.",
+      "Bei leeren Statistiken sind min/max Sonderwerte und keine echten Messungen."
+    ],
+    "task": "Zeige bei count=0 „Keine Messwerte“ statt Durchschnitt 0.0.",
+    "hint": "Die Anzahl entscheidet, ob eine Durchschnittsanzeige fachlich sinnvoll ist.",
+    "solution": "Prüfe stats.getCount() == 0 vor der Ausgabe. Für eine leere Folge gibt es keinen gemessenen Durchschnitt; die API-Rückgabe 0.0 ist ein vereinbarter Leerwert.",
+    "projectId": null,
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das erste Beispiel läuft in der Konsole. Die App zeigt Code und Ausgabe; du führst Java auf deinem Rechner aus.",
+    "connections": [
+      [
+        "Kennzahlen sammeln",
+        "IntStream.of(10, 20, 30).summaryStatistics()",
+        "Die terminale Operation verarbeitet die Messwerte und erstellt ihre gemeinsame Statistik."
+      ],
+      [
+        "Anzahl von Summe trennen",
+        "stats.getCount(); stats.getSum();",
+        "Getrennte Kennzahlen erlauben den Leerfall und unterschiedliche Anzeigen."
+      ],
+      [
+        "Durchschnitt interpretieren",
+        "stats.getAverage()",
+        "Die API liefert double; bei count=0 ist ihre 0.0 ein Leerwert und keine echte Messung."
+      ]
+    ]
   }
 ]

@@ -57,7 +57,7 @@ try {
   const stopped = once(server, 'exit'); server.kill('SIGTERM'); await stopped;
   const missing = await run(['-cp', classes, 'idea' + index + '.Main', base]);
   if (missing.stdout.trim() !== 'Verbindung fehlgeschlagen') throw new Error('Connection failure not handled');
-  console.log('Six idea-to-code Java programs and real HTTP/connection-failure behavior verified.');
+  console.log(`${guides.length} idea-to-code Java programs and real HTTP/connection-failure behavior verified.`);
 } finally {
   if (server && server.exitCode === null) server.kill('SIGTERM');
   await rm(root, { recursive: true, force: true });

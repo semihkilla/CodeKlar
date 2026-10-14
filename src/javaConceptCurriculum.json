@@ -1,0 +1,1588 @@
+[
+  {
+    "id": "builder-delete",
+    "category": "Strings",
+    "name": "StringBuilder.delete(): Bereich entfernen",
+    "introduction": "delete entfernt einen zusammenhängenden Bereich aus einem veränderbaren StringBuilder. Der Endindex gehört nicht mehr zum Bereich.",
+    "steps": [
+      "Die Zeichen stehen bei Index 0 bis 4.",
+      "Der Bereich 1 bis vor 4 umfasst bcd.",
+      "Nach dem Entfernen bleiben a und e."
+    ],
+    "code": "var b = new StringBuilder(\"abcde\");\nb.delete(1, 4);\nSystem.out.println(b);",
+    "output": "ae",
+    "choices": [
+      "ae",
+      "ade",
+      "a"
+    ],
+    "explanation": "Wie bei substring ist start inklusive und end exklusiv. delete verändert denselben Builder; andere Referenzen auf ihn sehen dieselbe Änderung.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "builder.delete(start, end)",
+      "parameters": [
+        [
+          "start",
+          "Inklusiver Anfang."
+        ],
+        [
+          "end",
+          "Exklusives Ende."
+        ]
+      ],
+      "returns": "Derselbe StringBuilder für weitere Aufrufe.",
+      "effect": "Entfernt Zeichen aus dem bestehenden Builder."
+    },
+    "useCase": "Eine Textbearbeitung mit einem markierten Bereich umsetzen.",
+    "pitfall": "Indizes beziehen sich auf UTF-16-Codeeinheiten, nicht zwingend auf sichtbare Zeichen.",
+    "practice": {
+      "task": "Entferne aus abcXYZdef die Zeichen XYZ.",
+      "hint": "Suche den Start bei Index 3; das exklusive Ende ist 6.",
+      "code": "var b = new StringBuilder(\"abcXYZdef\");\nb.delete(3, 6);\nSystem.out.println(b);",
+      "output": "abcdef"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "builder-insert",
+    "category": "Strings",
+    "name": "StringBuilder.insert(): an einer Position ergänzen",
+    "introduction": "insert fügt Text vor dem Zeichen am angegebenen Index ein. Die folgenden Zeichen werden nach hinten verschoben.",
+    "steps": [
+      "Index 1 liegt zwischen A und C.",
+      "B wird an dieser Position eingefügt.",
+      "Die ursprünglichen Zeichen bleiben erhalten."
+    ],
+    "code": "var b = new StringBuilder(\"AC\");\nb.insert(1, \"B\");\nSystem.out.println(b);",
+    "output": "ABC",
+    "choices": [
+      "ABC",
+      "BAC",
+      "ACB"
+    ],
+    "explanation": "Der zulässige Einfügeindex kann auch direkt hinter dem letzten Zeichen liegen. insert ersetzt keine vorhandenen Zeichen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "builder.insert(index, text)",
+      "parameters": [
+        [
+          "index",
+          "Position zwischen 0 und length einschließlich."
+        ],
+        [
+          "text",
+          "Einzufügender Text."
+        ]
+      ],
+      "returns": "Derselbe StringBuilder.",
+      "effect": "Ändert Inhalt und gegebenenfalls Kapazität des Builders."
+    },
+    "useCase": "Eine Einfügeoperation in einem einfachen Texteditor verstehen.",
+    "pitfall": "Einfügen und Ersetzen sind unterschiedliche Aktionen mit unterschiedlichen Indexregeln.",
+    "practice": {
+      "task": "Füge in HalloWelt an Position 5 ein Leerzeichen ein.",
+      "hint": "insert erhält einen Index zwischen zwei vorhandenen Zeichen.",
+      "code": "var b = new StringBuilder(\"HalloWelt\");\nb.insert(5, \" \");\nSystem.out.println(b);",
+      "output": "Hallo Welt"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "string-find-offset",
+    "category": "Strings",
+    "name": "indexOf(): ab einer Position weitersuchen",
+    "introduction": "Eine indexOf-Variante beginnt die Suche an einer angegebenen Position. Damit kannst du mehrere Treffer nacheinander finden.",
+    "steps": [
+      "Der erste Treffer von ana beginnt bei 1.",
+      "Die zweite Suche startet bei 2.",
+      "Sie findet das nächste Vorkommen bei 3."
+    ],
+    "code": "String s = \"banana\";\nint first = s.indexOf(\"ana\");\nSystem.out.println(first);\nSystem.out.println(s.indexOf(\"ana\", first + 1));",
+    "output": "1\n3",
+    "choices": [
+      "1\n3",
+      "1\n1",
+      "1\n-1"
+    ],
+    "explanation": "Startet man bei first+1, können überlappende Treffer erkannt werden. Für nichtüberlappende Treffer wäre first plus Suchtextlänge eine andere Regel.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.indexOf(suche, abIndex)",
+      "parameters": [
+        [
+          "suche",
+          "Gesuchter Teilstring."
+        ],
+        [
+          "abIndex",
+          "Früheste Startposition der Suche."
+        ]
+      ],
+      "returns": "Index des Treffers oder -1.",
+      "effect": "Verändert den Text nicht."
+    },
+    "useCase": "Treffer markieren oder mehrere Suchstellen durchlaufen.",
+    "pitfall": "Ein -1-Ergebnis muss vor der Verwendung als Textindex geprüft werden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "codepoint-offset",
+    "category": "Strings",
+    "name": "offsetByCodePoints(): nicht mitten im Zeichen schneiden",
+    "introduction": "Ein Unicode-Codepoint kann zwei UTF-16-Codeeinheiten belegen. offsetByCodePoints berechnet einen Index anhand von Codepoints.",
+    "steps": [
+      "Das Emoji am Anfang belegt zwei Codeeinheiten.",
+      "Ein Codepoint ab Index 0 führt daher zu Index 2.",
+      "substring ab dort liefert das folgende A."
+    ],
+    "code": "String s = \"😀A\";\nint index = s.offsetByCodePoints(0, 1);\nSystem.out.println(index);\nSystem.out.println(s.substring(index));",
+    "output": "2\nA",
+    "choices": [
+      "2\nA",
+      "1\nA",
+      "2\n😀"
+    ],
+    "explanation": "Codepoints sind immer noch nicht dasselbe wie sichtbare zusammengesetzte Zeichen. Akzente oder Emoji-Sequenzen können aus mehreren Codepoints bestehen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.offsetByCodePoints(index, anzahl)",
+      "parameters": [
+        [
+          "index",
+          "Ausgangspunkt als UTF-16-Index."
+        ],
+        [
+          "anzahl",
+          "Schritte in Codepoints."
+        ]
+      ],
+      "returns": "Ein UTF-16-Index für weitere Stringzugriffe.",
+      "effect": "Keine Änderung am Text."
+    },
+    "useCase": "Text schneiden, ohne ein Surrogatpaar absichtlich zu halbieren.",
+    "pitfall": "Diese Methode allein trennt keine vollständigen Graphemcluster wie alle zusammengesetzten Emojis.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "random-seed",
+    "category": "Zahlen & Zeit",
+    "name": "Random: reproduzierbare Folgen",
+    "introduction": "Ein fester Seed erzeugt bei java.util.Random dieselbe Folge, wenn dieselben Methoden in derselben Reihenfolge aufgerufen werden.",
+    "steps": [
+      "Beide Generatoren starten mit Seed 42.",
+      "Beide erhalten als ersten Aufruf nextInt(100).",
+      "Sie liefern deshalb denselben ersten Wert."
+    ],
+    "code": "var a = new Random(42);\nvar b = new Random(42);\nSystem.out.println(a.nextInt(100));\nSystem.out.println(b.nextInt(100));",
+    "output": "30\n30",
+    "choices": [
+      "30\n30",
+      "42\n42",
+      "30\n63"
+    ],
+    "explanation": "Ein Seed hilft beim reproduzierbaren Testen von Spielen oder Simulationen. Dieser Generator ist kein geeigneter Baustein für geheim zu haltende Zufallswerte.",
+    "declarations": "",
+    "imports": "import java.util.Random;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new Random(seed); random.nextInt(bound)",
+      "parameters": [
+        [
+          "seed",
+          "Startzustand der Folge."
+        ],
+        [
+          "bound",
+          "Positive, exklusive obere Grenze."
+        ]
+      ],
+      "returns": "int zwischen 0 einschließlich und bound ausschließlich.",
+      "effect": "Verändert bei jedem Zufallsaufruf den Generatorzustand."
+    },
+    "useCase": "Eine Spielrunde oder einen Test reproduzieren.",
+    "pitfall": "Jeder zusätzliche Aufruf verschiebt die Folge; derselbe Seed allein reicht ohne denselben Ablauf nicht.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "generic-method",
+    "category": "Schnittstellen & Typen",
+    "name": "Generische Methoden: Typ beibehalten",
+    "introduction": "Eine generische Methode kann für mehrere Elementtypen dieselbe Regel verwenden. Ihr Typparameter verbindet Eingabe und Rückgabe.",
+    "steps": [
+      "T steht hier für den Elementtyp.",
+      "Die Liste enthält Strings.",
+      "Die Rückgabe kann deshalb als String verwendet werden."
+    ],
+    "code": "String name = first(List.of(\"Ada\", \"Bo\"));\nSystem.out.println(name);",
+    "output": "Ada",
+    "choices": [
+      "Ada",
+      "Bo",
+      "[Ada, Bo]"
+    ],
+    "explanation": "Der Typ wird am Aufruf häufig abgeleitet. Eine leere Liste muss fachlich geprüft werden; Generics ersetzen keine Prüfung von Größen oder null.",
+    "declarations": "static <T> T first(List<T> values) {\n    if (values.isEmpty()) throw new IllegalArgumentException(\"Liste leer\");\n    return values.get(0);\n}",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "<T> T first(List<T> values)",
+      "parameters": [
+        [
+          "values",
+          "Nichtleere Liste von Elementen desselben statischen Typs."
+        ]
+      ],
+      "returns": "Erstes Element mit dem Typ T.",
+      "effect": "Verändert die Liste nicht."
+    },
+    "useCase": "Hilfsmethoden schreiben, ohne jeden Datentyp separat zu implementieren.",
+    "pitfall": "Ein Typparameter garantiert keine nichtleere Liste und verhindert nicht automatisch null.",
+    "practice": {
+      "task": "Verwende first mit einer Liste aus 7 und 9.",
+      "hint": "T wird hier zu Integer; die Regel der Methode bleibt dieselbe.",
+      "code": "Integer n = first(List.of(7, 9));\nSystem.out.println(n);",
+      "output": "7"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "generic-number-bound",
+    "category": "Schnittstellen & Typen",
+    "name": "T extends Number: erlaubte Typen begrenzen",
+    "introduction": "Eine Obergrenze für einen Typparameter erlaubt Methoden des gemeinsamen Basistyps. Hier darf T eine Number-Unterklasse sein.",
+    "steps": [
+      "Integer ist eine Number.",
+      "Die Grenze erlaubt doubleValue im Methodenrumpf.",
+      "Die Rückgabe ist ein double, nicht erneut T."
+    ],
+    "code": "System.out.println(twice(2));\nSystem.out.println(twice(2.5));",
+    "output": "4.0\n5.0",
+    "choices": [
+      "4.0\n5.0",
+      "4\n5",
+      "2.0\n2.5"
+    ],
+    "explanation": "Eine Number-Grenze ermöglicht die gemeinsame Sicht auf Zahlentypen. Die Konvertierung in double kann Präzision verlieren und ist keine exakte Geldrechnung.",
+    "declarations": "static <T extends Number> double twice(T n) { return n.doubleValue() * 2; }",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "<T extends Number> double twice(T number)",
+      "parameters": [
+        [
+          "number",
+          "Nicht-null-Number, zum Beispiel Integer oder Double."
+        ]
+      ],
+      "returns": "double nach Konvertierung und Multiplikation.",
+      "effect": "Ändert das Number-Objekt nicht."
+    },
+    "useCase": "Einen gemeinsamen numerischen Zugriff über verschiedene Wrapper hinweg verstehen.",
+    "pitfall": "Number bedeutet nicht automatisch beliebige Rechenoperatoren auf T oder exakte double-Darstellung.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "wildcard-extends",
+    "category": "Schnittstellen & Typen",
+    "name": "? extends Number: Zahlenquellen lesen",
+    "introduction": "Eine Liste mit ? extends Number kann unterschiedliche konkrete Number-Listen entgegennehmen. Beim Lesen ist jedes Element mindestens als Number bekannt.",
+    "steps": [
+      "List<Integer> passt als Zahlenquelle.",
+      "Jedes Element kann als Number gelesen werden.",
+      "Die Methode addiert dessen doubleValue."
+    ],
+    "code": "System.out.println(sum(List.of(1, 2, 3)));",
+    "output": "6.0",
+    "choices": [
+      "6.0",
+      "3.0",
+      "123"
+    ],
+    "explanation": "Der tatsächliche Elementtyp könnte Integer, Double oder eine andere Number-Unterklasse sein. Deshalb kannst du nicht beliebige Numbers sicher hinzufügen.",
+    "declarations": "static double sum(List<? extends Number> values) {\n    double total = 0;\n    for (Number n : values) total += n.doubleValue();\n    return total;\n}",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "double sum(List<? extends Number> values)",
+      "parameters": [
+        [
+          "values",
+          "Liste eines unbekannten konkreten Number-Untertyps."
+        ]
+      ],
+      "returns": "double-Summe der gelesenen Werte.",
+      "effect": "Liest die Liste; fügt keine Werte hinzu."
+    },
+    "useCase": "APIs für lesende Zahlenverarbeitung formulieren.",
+    "pitfall": "? extends ist eine Typregel und macht die tatsächliche Sammlung nicht unveränderlich.",
+    "practice": {
+      "task": "Summiere mit sum die Doublewerte 1.5 und 2.5.",
+      "hint": "List<Double> passt ebenfalls zu List<? extends Number>.",
+      "code": "System.out.println(sum(List.of(1.5, 2.5)));",
+      "output": "4.0"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "wildcard-super",
+    "category": "Schnittstellen & Typen",
+    "name": "? super Integer: Integerwerte ablegen",
+    "introduction": "Eine Liste mit ? super Integer kann Integerwerte aufnehmen, obwohl ihr tatsächlicher Elementtyp auch Number oder Object sein kann.",
+    "steps": [
+      "Die Methode erhält eine List<Number>.",
+      "Integer ist dort ein zulässiger Wert.",
+      "Beim Lesen aus List<? super Integer> ist nur Object sicher bekannt."
+    ],
+    "code": "var values = new ArrayList<Number>();\naddOne(values);\nSystem.out.println(values);",
+    "output": "[1]",
+    "choices": [
+      "[1]",
+      "[]",
+      "[1.0]"
+    ],
+    "explanation": "Producer extends, consumer super ist eine nützliche Merkhilfe für Typgrenzen. Sie ersetzt nicht die Prüfung, ob die konkrete Liste veränderbar ist.",
+    "declarations": "static void addOne(List<? super Integer> values) { values.add(1); }",
+    "imports": "import java.util.ArrayList;\nimport java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "void addOne(List<? super Integer> values)",
+      "parameters": [
+        [
+          "values",
+          "Eine veränderbare Liste, die Integerwerte aufnehmen darf."
+        ]
+      ],
+      "returns": "void.",
+      "effect": "Fügt den Integerwert 1 hinzu."
+    },
+    "useCase": "Eine Ziel-Sammlung für Integerergebnisse flexibel akzeptieren.",
+    "pitfall": "Aus dem gelesenen Object folgt kein sicherer Integer-Cast; die Liste könnte auch andere Numberwerte enthalten.",
+    "practice": {
+      "task": "Verwende addOne mit einer List<Object>.",
+      "hint": "Object ist ein Obertyp von Integer und kann diesen Wert aufnehmen.",
+      "code": "var values = new ArrayList<Object>();\naddOne(values);\nSystem.out.println(values);",
+      "output": "[1]"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "generic-instanceof",
+    "category": "Schnittstellen & Typen",
+    "name": "instanceof List<?>: was zur Laufzeit sichtbar ist",
+    "introduction": "Zur Laufzeit kann instanceof eine Liste erkennen, aber nicht allgemein ihren generischen Elementtyp überprüfen.",
+    "steps": [
+      "Die Referenz ist statisch Object.",
+      "Das tatsächliche Objekt implementiert List.",
+      "List<?> prüft die Listenform, nicht die Elementtypen."
+    ],
+    "code": "Object value = List.of(1, 2);\nSystem.out.println(value instanceof List<?>);",
+    "output": "true",
+    "choices": [
+      "true",
+      "false",
+      "Integer"
+    ],
+    "explanation": "List<String> ist hier kein zulässiges allgemeines instanceof-Ziel. Nach einem List<?>-Test können enthaltene Elemente dennoch beliebige Typen besitzen.",
+    "declarations": "",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "value instanceof List<?>",
+      "parameters": [
+        [
+          "value",
+          "Objektreferenz, die geprüft wird."
+        ]
+      ],
+      "returns": "boolean; für null wäre das Ergebnis false.",
+      "effect": "Ändert das Objekt nicht."
+    },
+    "useCase": "Die Grenzen von Laufzeit-Typprüfungen bei Generics verstehen.",
+    "pitfall": "Ein List<?>-Treffer beweist weder List<String> noch List<Integer>.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "comparable-record",
+    "category": "Schnittstellen & Typen",
+    "name": "Comparable: eine natürliche Ordnung definieren",
+    "introduction": "Comparable legt fest, wie ein Typ sich mit einem anderen Objekt desselben Typs vergleicht. Ein Comparator kann zusätzlich andere Ordnungen definieren.",
+    "steps": [
+      "Punkt vergleicht nach x.",
+      "Die Liste wird nach dieser natürlichen Ordnung sortiert.",
+      "Die Werte 1 und 3 erscheinen aufsteigend."
+    ],
+    "code": "var values = new ArrayList<>(List.of(new Punkt(3), new Punkt(1)));\nCollections.sort(values);\nSystem.out.println(values);",
+    "output": "[Punkt[x=1], Punkt[x=3]]",
+    "choices": [
+      "[Punkt[x=1], Punkt[x=3]]",
+      "[Punkt[x=3], Punkt[x=1]]",
+      "[1, 3]"
+    ],
+    "explanation": "Integer.compare verhindert den möglichen Überlauf einer selbst geschriebenen Subtraktion. Eine natürliche Ordnung sollte nach Möglichkeit zur Gleichheit passen.",
+    "declarations": "record Punkt(int x) implements Comparable<Punkt> {\n    public int compareTo(Punkt other) { return Integer.compare(x, other.x); }\n}",
+    "imports": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "int compareTo(Punkt other)",
+      "parameters": [
+        [
+          "other",
+          "Nicht-null-Vergleichsobjekt."
+        ]
+      ],
+      "returns": "Negativ, 0 oder positiv für die Ordnung.",
+      "effect": "sort ordnet die Liste um; der Vergleich ändert die Punkte nicht."
+    },
+    "useCase": "Einen kleinen Werttyp für sortierbare Daten definieren.",
+    "pitfall": "x - other.x kann überlaufen; das Vorzeichen des Vergleichs muss trotzdem korrekt bleiben.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "consumer-accept",
+    "category": "Lambdas & Streams",
+    "name": "Consumer.accept(): etwas tun, nichts zurückgeben",
+    "introduction": "Ein Consumer nimmt einen Wert entgegen und führt eine Aktion aus. Anders als eine Function liefert er kein berechnetes Ergebnis zurück.",
+    "steps": [
+      "Die Aktion ist hier eine Konsolenausgabe.",
+      "accept übergibt Ada an diese Aktion.",
+      "Die Methode selbst liefert void."
+    ],
+    "code": "Consumer<String> show = System.out::println;\nshow.accept(\"Ada\");",
+    "output": "Ada",
+    "choices": [
+      "Ada",
+      "null",
+      "Consumer"
+    ],
+    "explanation": "Consumer eignet sich für ausdrücklich gewünschte Seiteneffekte. Eine Ausgabe ist eine Aktion, keine automatische Veränderung des übergebenen Strings.",
+    "declarations": "",
+    "imports": "import java.util.function.Consumer;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "consumer.accept(value)",
+      "parameters": [
+        [
+          "value",
+          "Argument für die Aktion."
+        ]
+      ],
+      "returns": "void.",
+      "effect": "Führt den in der Funktion definierten Effekt aus, hier Ausgabe."
+    },
+    "useCase": "Callbacks für Benachrichtigungen oder Ausgaben unterscheiden.",
+    "pitfall": "Ein Consumer ist kein Ersatz für eine Function, wenn du deren berechneten Rückgabewert benötigst.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "function-compose",
+    "category": "Lambdas & Streams",
+    "name": "Function: andThen() und compose() unterscheiden",
+    "introduction": "Function verbindet einen Eingabewert mit einem Rückgabewert. Bei zusammengesetzten Funktionen entscheidet die Reihenfolge über das Ergebnis.",
+    "steps": [
+      "andThen führt zuerst plus und danach twice aus.",
+      "compose führt zuerst twice und danach plus aus.",
+      "Für 1 ergeben sich deshalb 4 und 3."
+    ],
+    "code": "Function<Integer,Integer> plus = n -> n + 1;\nFunction<Integer,Integer> twice = n -> n * 2;\nSystem.out.println(plus.andThen(twice).apply(1));\nSystem.out.println(plus.compose(twice).apply(1));",
+    "output": "4\n3",
+    "choices": [
+      "4\n3",
+      "3\n4",
+      "4\n4"
+    ],
+    "explanation": "Die Reihenfolge lässt sich zuerst in Alltagssprache notieren: erst eins addieren, dann verdoppeln. Function-Verknüpfungen starten erst bei apply eine konkrete Verarbeitung.",
+    "declarations": "",
+    "imports": "import java.util.function.Function;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "function.andThen(after); function.compose(before)",
+      "parameters": [
+        [
+          "after",
+          "Funktion, die das erste Ergebnis übernimmt."
+        ],
+        [
+          "before",
+          "Funktion, deren Ergebnis zuerst entsteht."
+        ]
+      ],
+      "returns": "Neue zusammengesetzte Function.",
+      "effect": "Verknüpft Funktionen; die Ausführung hängt von apply ab."
+    },
+    "useCase": "Mehrere Umwandlungsschritte als klare Pipeline ausdrücken.",
+    "pitfall": "compose und andThen sind nicht austauschbar, wenn die Operationen verschiedene Ergebnisse erzeugen.",
+    "practice": {
+      "task": "Verknüpfe plus 3 und mal 4 in beiden Reihenfolgen für den Startwert 2.",
+      "hint": "andThen ist zuerst die linke Funktion; compose ist zuerst die übergebene Funktion.",
+      "code": "Function<Integer,Integer> plus = n -> n + 3;\nFunction<Integer,Integer> times = n -> n * 4;\nSystem.out.println(plus.andThen(times).apply(2));\nSystem.out.println(plus.compose(times).apply(2));",
+      "output": "20\n11"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "supplier-fresh",
+    "category": "Lambdas & Streams",
+    "name": "Supplier.get(): neue oder geteilte Objekte?",
+    "introduction": "Ein Supplier liefert einen Wert ohne Eingabeargument. Ob jeder Aufruf ein neues Objekt erzeugt, entscheidet seine Implementierung.",
+    "steps": [
+      "ArrayList::new erzeugt hier jedes Mal eine neue Liste.",
+      "a erhält ein Element.",
+      "b bleibt deshalb leer."
+    ],
+    "code": "Supplier<List<Integer>> factory = ArrayList::new;\nvar a = factory.get();\nvar b = factory.get();\na.add(1);\nSystem.out.println(b.size());",
+    "output": "0",
+    "choices": [
+      "0",
+      "1",
+      "2"
+    ],
+    "explanation": "Eine andere Implementierung könnte immer dieselbe Liste zurückgeben. Der Vertrag Supplier allein verspricht keine unabhängigen Objekte.",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.function.Supplier;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "supplier.get()",
+      "parameters": [],
+      "returns": "Ein Wert des vereinbarten Typs.",
+      "effect": "Hängt von der Implementierung ab; hier entsteht jeweils eine neue Liste."
+    },
+    "useCase": "Fabriken und spätere Wertbereitstellung verstehen.",
+    "pitfall": "get garantiert weder ein neues Objekt noch eine nicht-null-Rückgabe für jeden beliebigen Supplier.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "unary-operator",
+    "category": "Lambdas & Streams",
+    "name": "UnaryOperator: gleicher Ein- und Ausgabetyp",
+    "introduction": "UnaryOperator ist eine Function, bei der Eingabe und Ausgabe denselben statischen Typ besitzen. Das sagt noch nichts über Mutation aus.",
+    "steps": [
+      "String ist der Eingabetyp.",
+      "String ist auch der Rückgabetyp.",
+      "strip liefert den bereinigten String."
+    ],
+    "code": "UnaryOperator<String> clean = String::strip;\nSystem.out.println(clean.apply(\"  Ada  \"));",
+    "output": "Ada",
+    "choices": [
+      "Ada",
+      "  Ada  ",
+      "true"
+    ],
+    "explanation": "UnaryOperator<String> passt beispielsweise zu List.replaceAll. Bei Strings entsteht eine passende Rückgabe; andere veränderliche Typen könnten anders verarbeitet werden.",
+    "declarations": "",
+    "imports": "import java.util.function.UnaryOperator;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "operator.apply(value)",
+      "parameters": [
+        [
+          "value",
+          "Eingabewert des Typs T."
+        ]
+      ],
+      "returns": "Wert desselben statischen Typs T.",
+      "effect": "Vom konkreten Operator abhängig; String::strip ändert keinen String."
+    },
+    "useCase": "Typgleiche Umwandlungen von Namen oder anderen Werten darstellen.",
+    "pitfall": "Gleicher Rückgabetyp heißt nicht automatisch dasselbe Objekt oder eine reine Funktion.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "binary-operator",
+    "category": "Lambdas & Streams",
+    "name": "BinaryOperator: zwei Werte zu einem verbinden",
+    "introduction": "BinaryOperator übernimmt zwei Werte desselben Typs und liefert einen Wert dieses Typs zurück. Er kann eine Reduktionsregel beschreiben.",
+    "steps": [
+      "Die beiden Werte sind Integer.",
+      "Integer::max wählt den größeren Wert.",
+      "Das Ergebnis ist 7."
+    ],
+    "code": "BinaryOperator<Integer> max = Integer::max;\nSystem.out.println(max.apply(2, 7));",
+    "output": "7",
+    "choices": [
+      "7",
+      "9",
+      "2"
+    ],
+    "explanation": "Für eine parallele Reduktion müssen zusätzlich Eigenschaften wie Assoziativität passen. Der Funktionstyp allein beweist diese fachlichen Eigenschaften nicht.",
+    "declarations": "",
+    "imports": "import java.util.function.BinaryOperator;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "operator.apply(left, right)",
+      "parameters": [
+        [
+          "left",
+          "Erster Wert."
+        ],
+        [
+          "right",
+          "Zweiter Wert."
+        ]
+      ],
+      "returns": "Ein Ergebnis desselben statischen Typs.",
+      "effect": "Vom Operator abhängig; max liest die Werte nur."
+    },
+    "useCase": "Eine Zusammenführungsregel für Gruppen von Werten formulieren.",
+    "pitfall": "Ein beliebiger BinaryOperator ist nicht automatisch eine korrekte parallele Reduktionsfunktion.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "predicate-and",
+    "category": "Lambdas & Streams",
+    "name": "Predicate.and(): Prüfungen mit Kurzschluss",
+    "introduction": "and verbindet zwei Prüfungen. Ist die erste false, wird die zweite für diesen Wert nicht ausgeführt.",
+    "steps": [
+      "Die erste Prüfung weist null zurück.",
+      "Die zweite liest nur einen vorhandenen String.",
+      "Die Reihenfolge verhindert den null-Zugriff."
+    ],
+    "code": "Predicate<String> present = Objects::nonNull;\nPredicate<String> filled = s -> !s.isBlank();\nvar valid = present.and(filled);\nSystem.out.println(valid.test(null));\nSystem.out.println(valid.test(\"Ada\"));",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "NullPointerException",
+      "true\ntrue"
+    ],
+    "explanation": "Die Reihenfolge ist wichtig, wenn eine spätere Prüfung einen vorhandenen Wert voraussetzt. Kurze Prüfungsketten können Validierungsregeln lesbar machen.",
+    "declarations": "",
+    "imports": "import java.util.Objects;\nimport java.util.function.Predicate;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "first.and(second).test(value)",
+      "parameters": [
+        [
+          "second",
+          "Weitere Prüfung, wenn die erste true liefert."
+        ]
+      ],
+      "returns": "boolean der verknüpften Prüfung.",
+      "effect": "Die zweite Prüfung wird bei false der ersten ausgelassen."
+    },
+    "useCase": "Null- und Inhaltsprüfung zu einer wiederverwendbaren Regel verbinden.",
+    "pitfall": "filled.and(present) würde den null-Zugriff nicht verhindern, weil filled zuerst läuft.",
+    "practice": {
+      "task": "Akzeptiere nur nicht-null-Strings mit mindestens drei Zeichen.",
+      "hint": "Die null-Prüfung muss vor dem Zugriff auf length stehen.",
+      "code": "Predicate<String> present = Objects::nonNull;\nvar valid = present.and(s -> s.length() >= 3);\nSystem.out.println(valid.test(null));\nSystem.out.println(valid.test(\"Ada\"));",
+      "output": "false\ntrue"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "collect-to-collection",
+    "category": "Lambdas & Streams",
+    "name": "Collectors.toCollection(): Sammlung gezielt wählen",
+    "introduction": "toCollection verwendet eine Fabrik für die Ziel-Sammlung. Du kannst dadurch ausdrücklich eine veränderbare ArrayList erhalten.",
+    "steps": [
+      "Der Stream enthält 1 und 2.",
+      "ArrayList::new erzeugt die Ziel-Liste.",
+      "Anschließend darf 3 hinzugefügt werden."
+    ],
+    "code": "var values = Stream.of(1, 2)\n    .collect(Collectors.toCollection(ArrayList::new));\nvalues.add(3);\nSystem.out.println(values);",
+    "output": "[1, 2, 3]",
+    "choices": [
+      "[1, 2, 3]",
+      "[1, 2]",
+      "UnsupportedOperationException"
+    ],
+    "explanation": "Stream.toList liefert eine unveränderliche Liste. toCollection mit ArrayList::new macht die konkrete Wahl einer veränderbaren Ziel-Sammlung deutlich.",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.stream.Collectors;\nimport java.util.stream.Stream;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.collect(Collectors.toCollection(factory))",
+      "parameters": [
+        [
+          "factory",
+          "Fabrik für eine leere Ziel-Sammlung."
+        ]
+      ],
+      "returns": "Die mit Streamwerten gefüllte Sammlung.",
+      "effect": "Konsumiert den Stream und fügt Werte in die neue Sammlung ein."
+    },
+    "useCase": "Ein Ergebnis sammeln, das anschließend bewusst weiter verändert wird.",
+    "pitfall": "Die Wahl einer Sammlung verändert keine enthaltenen Objekte zu tief kopierten Objekten.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "stream-drop-while",
+    "category": "Lambdas & Streams",
+    "name": "dropWhile(): nur den passenden Anfang auslassen",
+    "introduction": "dropWhile lässt das passende Anfangsstück eines geordneten Streams weg. Nach dem ersten nichtpassenden Element bleiben weitere Elemente erhalten.",
+    "steps": [
+      "1 ist kleiner als 3 und wird ausgelassen.",
+      "3 beendet das passende Anfangsstück.",
+      "Die spätere 2 bleibt trotz derselben Bedingung erhalten."
+    ],
+    "code": "System.out.println(Stream.of(1, 3, 2).dropWhile(n -> n < 3).toList());",
+    "output": "[3, 2]",
+    "choices": [
+      "[3, 2]",
+      "[3]",
+      "[1, 2]"
+    ],
+    "explanation": "Das ist eine Regel für einen zusammenhängenden Anfang. filter prüft dagegen jedes Element unabhängig auf die Auswahlbedingung.",
+    "declarations": "",
+    "imports": "import java.util.stream.Stream;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.dropWhile(predicate)",
+      "parameters": [
+        [
+          "predicate",
+          "Prüfung für das auszulassende Anfangsstück."
+        ]
+      ],
+      "returns": "Stream ohne das passende Präfix.",
+      "effect": "Zwischenoperation; die Verarbeitung startet durch eine terminale Operation."
+    },
+    "useCase": "Einen geordneten Vorspann oder Anfangsbereich auslassen.",
+    "pitfall": "dropWhile ist kein allgemeiner Filter aller passenden Werte; ungeordnete Streams haben andere Auswahlgarantien.",
+    "practice": {
+      "task": "Lasse den passenden Anfang der Werte 0,1,5,2 weg, solange Werte kleiner als 5 sind.",
+      "hint": "Nach dem ersten nichtpassenden Wert wird nicht weiter verworfen.",
+      "code": "System.out.println(Stream.of(0, 1, 5, 2).dropWhile(n -> n < 5).toList());",
+      "output": "[5, 2]"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "stream-take-while",
+    "category": "Lambdas & Streams",
+    "name": "takeWhile(): beim ersten Fehlschlag stoppen",
+    "introduction": "takeWhile übernimmt das passende Anfangsstück eines geordneten Streams. Beim ersten nichtpassenden Element endet diese Auswahl.",
+    "steps": [
+      "1 erfüllt kleiner als 3.",
+      "3 erfüllt die Regel nicht.",
+      "Die spätere 2 liegt außerhalb des ausgewählten Anfangsstücks."
+    ],
+    "code": "System.out.println(Stream.of(1, 3, 2).takeWhile(n -> n < 3).toList());",
+    "output": "[1]",
+    "choices": [
+      "[1]",
+      "[1, 2]",
+      "[3, 2]"
+    ],
+    "explanation": "Eine solche Regel eignet sich für einen geordneten zusammenhängenden Bereich. Für alle passenden Elemente über die gesamte Folge hinweg ist filter die andere Operation.",
+    "declarations": "",
+    "imports": "import java.util.stream.Stream;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.takeWhile(predicate)",
+      "parameters": [
+        [
+          "predicate",
+          "Prüfung für das zu übernehmende Anfangsstück."
+        ]
+      ],
+      "returns": "Stream mit dem passenden Präfix.",
+      "effect": "Zwischenoperation, die nach einer terminalen Operation verarbeitet wird."
+    },
+    "useCase": "Eine geordnete Folge bis zu einer Grenze verarbeiten.",
+    "pitfall": "Bei ungeordneten Streams ist nicht dasselbe konkrete Anfangsstück garantiert.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "map-merge",
+    "category": "Collections",
+    "name": "Map.merge(): Werte zusammenführen",
+    "introduction": "merge setzt bei einem fehlenden oder null-Wert zunächst einen Ausgangswert. Bei einem vorhandenen nicht-null-Wert führt es beide Werte mit einer Funktion zusammen.",
+    "steps": [
+      "A fehlt zuerst und erhält 1.",
+      "Beim zweiten Aufruf werden 1 und 1 addiert.",
+      "A besitzt danach den Wert 2."
+    ],
+    "code": "var counts = new HashMap<String,Integer>();\ncounts.merge(\"A\", 1, Integer::sum);\ncounts.merge(\"A\", 1, Integer::sum);\nSystem.out.println(counts.get(\"A\"));",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "null"
+    ],
+    "explanation": "Für Zählungen ist die Zusammenführungsregel Integer::sum gut sichtbar. Liefert eine Remapping-Funktion null, wird der vorhandene Eintrag entfernt.",
+    "declarations": "",
+    "imports": "import java.util.HashMap;\nimport java.util.List;\nimport java.util.TreeMap;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "map.merge(key, value, remappingFunction)",
+      "parameters": [
+        [
+          "key",
+          "Zu bearbeitender Schlüssel."
+        ],
+        [
+          "value",
+          "Nicht-null-Ausgangswert."
+        ],
+        [
+          "remappingFunction",
+          "Verbindet vorhandenen Wert und neuen Wert."
+        ]
+      ],
+      "returns": "Neuer Wert oder null nach Entfernung.",
+      "effect": "Ändert die Zuordnung im Map-Objekt."
+    },
+    "useCase": "Häufigkeiten oder Gruppensummen schrittweise aufbauen.",
+    "pitfall": "Eine HashMap wird durch merge nicht automatisch sicher für gleichzeitige Änderungen aus mehreren Threads.",
+    "practice": {
+      "task": "Zähle die Werte A,B,A mit merge in einer TreeMap.",
+      "hint": "Jeder Name liefert 1; Integer::sum verbindet vorhandene Werte.",
+      "code": "var counts = new TreeMap<String,Integer>();\nfor (String s : List.of(\"A\", \"B\", \"A\")) counts.merge(s, 1, Integer::sum);\nSystem.out.println(counts);",
+      "output": "{A=2, B=1}"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "navigable-map",
+    "category": "Collections",
+    "name": "NavigableMap: Nachbarn zu einem Schlüssel",
+    "introduction": "Eine geordnete Map kann den nächstkleineren beziehungsweise nächstgrößeren vorhandenen Schlüssel finden. Exakte Gleichheit zählt bei floor und ceiling mit.",
+    "steps": [
+      "10 und 20 sind vorhandene Schlüssel.",
+      "floorKey(15) findet 10.",
+      "ceilingKey(15) findet 20."
+    ],
+    "code": "var m = new TreeMap<Integer,String>();\nm.put(10, \"klein\");\nm.put(20, \"groß\");\nSystem.out.println(m.floorKey(15));\nSystem.out.println(m.ceilingKey(15));",
+    "output": "10\n20",
+    "choices": [
+      "10\n20",
+      "15\n15",
+      "20\n10"
+    ],
+    "explanation": "lowerKey und higherKey suchen dagegen strikt kleinere beziehungsweise größere Schlüssel. Fehlt ein passender Nachbar, kann die Rückgabe null sein.",
+    "declarations": "",
+    "imports": "import java.util.TreeMap;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "map.floorKey(key); map.ceilingKey(key)",
+      "parameters": [
+        [
+          "key",
+          "Schlüssel, zu dem ein geordneter Nachbar gesucht wird."
+        ]
+      ],
+      "returns": "Passender Schlüssel oder null.",
+      "effect": "Liest die geordnete Map, ohne sie zu verändern."
+    },
+    "useCase": "Schwellenwerte oder benachbarte Zeitpunkte nachschlagen.",
+    "pitfall": "Ein null-Ergebnis ist kein gültiger Zahlenwert und muss vor dem Unboxing geprüft werden.",
+    "practice": {
+      "task": "Finde floorKey und lowerKey zur exakt vorhandenen 20.",
+      "hint": "floor darf denselben Schlüssel liefern; lower sucht strikt kleiner.",
+      "code": "var m = new TreeMap<Integer,String>();\nm.put(10, \"A\"); m.put(20, \"B\");\nSystem.out.println(m.floorKey(20));\nSystem.out.println(m.lowerKey(20));",
+      "output": "20\n10"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "linked-map-access",
+    "category": "Collections",
+    "name": "LinkedHashMap: Zugriff statt Einfügezeit ordnen",
+    "introduction": "Eine LinkedHashMap kann ihre Reihenfolge nach Zugriffen verwalten. Ein get auf einen vorhandenen Schlüssel verschiebt ihn ans Ende der Reihenfolge.",
+    "steps": [
+      "A und B werden in dieser Reihenfolge eingefügt.",
+      "Der Zugriff auf A macht A zum zuletzt verwendeten Eintrag.",
+      "Die Schlüsselreihenfolge ist deshalb B, A."
+    ],
+    "code": "var m = new LinkedHashMap<String,Integer>(16, 0.75f, true);\nm.put(\"A\", 1);\nm.put(\"B\", 2);\nm.get(\"A\");\nSystem.out.println(m.keySet());",
+    "output": "[B, A]",
+    "choices": [
+      "[B, A]",
+      "[A, B]",
+      "[A]"
+    ],
+    "explanation": "accessOrder=true ist ein Baustein eines LRU-Caches. Die Map begrenzt ihre Größe dadurch noch nicht von selbst; dafür braucht es eine zusätzliche Verdrängungsregel.",
+    "declarations": "",
+    "imports": "import java.util.LinkedHashMap;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new LinkedHashMap(initialCapacity, loadFactor, accessOrder)",
+      "parameters": [
+        [
+          "accessOrder",
+          "true ordnet nach Zugriff statt normaler Einfügereihenfolge."
+        ]
+      ],
+      "returns": "Map mit definierter Iterationsreihenfolge.",
+      "effect": "Bestimmte Zugriffe ändern bei accessOrder die Reihenfolge."
+    },
+    "useCase": "Die am längsten nicht verwendeten Cache-Einträge erkennen.",
+    "pitfall": "Auch ein vermeintlich nur lesendes get kann hier die Strukturreihenfolge verändern.",
+    "practice": {
+      "task": "Füge A,B,C in eine access-order-Map ein und greife auf B zu.",
+      "hint": "B wird als zuletzt verwendet an das Ende verschoben.",
+      "code": "var m = new LinkedHashMap<String,Integer>(16, 0.75f, true);\nm.put(\"A\", 1); m.put(\"B\", 2); m.put(\"C\", 3);\nm.get(\"B\");\nSystem.out.println(m.keySet());",
+      "output": "[A, C, B]"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "deque-both-ends",
+    "category": "Collections",
+    "name": "Deque: beide Enden verwenden",
+    "introduction": "Deque beschreibt Zugriffe auf den Anfang und das Ende einer Folge. Je nach gewählter Seite entsteht eine Stapel- oder Warteschlangenregel.",
+    "steps": [
+      "A wird vorne abgelegt.",
+      "B wird hinten abgelegt.",
+      "removeLast liefert zuerst B, removeFirst danach A."
+    ],
+    "code": "var d = new ArrayDeque<String>();\nd.addFirst(\"A\");\nd.addLast(\"B\");\nSystem.out.println(d.removeLast());\nSystem.out.println(d.removeFirst());",
+    "output": "B\nA",
+    "choices": [
+      "B\nA",
+      "A\nB",
+      "B\nB"
+    ],
+    "explanation": "remove-Methoden werfen bei leerer Deque eine Ausnahme. poll-Methoden liefern stattdessen null; ArrayDeque erlaubt keine null-Elemente.",
+    "declarations": "",
+    "imports": "import java.util.ArrayDeque;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "deque.addFirst(value); deque.removeLast()",
+      "parameters": [
+        [
+          "value",
+          "Nicht-null-Element für ArrayDeque."
+        ]
+      ],
+      "returns": "remove liefert ein entferntes Element.",
+      "effect": "Fügt an einer Seite ein beziehungsweise entfernt an einer Seite."
+    },
+    "useCase": "Undo-Historien oder bewusst gewählte Warteschlangenabläufe modellieren.",
+    "pitfall": "Mische die Seiten nicht unbewusst: Dadurch verändert sich die fachliche Verarbeitungsreihenfolge.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "collections-disjoint",
+    "category": "Collections",
+    "name": "Collections.disjoint(): keine gemeinsamen Elemente",
+    "introduction": "disjoint prüft, ob zwei Sammlungen keine gemeinsamen Elemente besitzen. Ein true bedeutet hier gerade, dass keine Überschneidung gefunden wurde.",
+    "steps": [
+      "Die ersten beiden Mengen teilen keinen Wert.",
+      "Die zweite Prüfung enthält 2 in beiden Mengen.",
+      "Die Ergebnisse sind daher true und false."
+    ],
+    "code": "var a = Set.of(1, 2);\nSystem.out.println(Collections.disjoint(a, Set.of(3, 4)));\nSystem.out.println(Collections.disjoint(a, Set.of(2, 3)));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "false\ntrue",
+      "true\ntrue"
+    ],
+    "explanation": "Die Sammlungen müssen kompatible Gleichheitsregeln verwenden. Für normale Integer-Sets beschreibt die Prüfung direkt eine fehlende Überschneidung.",
+    "declarations": "",
+    "imports": "import java.util.Collections;\nimport java.util.Set;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Collections.disjoint(first, second)",
+      "parameters": [
+        [
+          "first",
+          "Erste Sammlung."
+        ],
+        [
+          "second",
+          "Zweite Sammlung."
+        ]
+      ],
+      "returns": "boolean: true bei keiner gemeinsamen Mitgliedschaft.",
+      "effect": "Ändert keine der Sammlungen."
+    },
+    "useCase": "Prüfen, ob gewählte Tags oder Ressourcen sich überschneiden.",
+    "pitfall": "true heißt nicht, dass beide Sammlungen dieselben Elemente besitzen; der Name beschreibt das Gegenteil.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "map-entry-readonly",
+    "category": "Collections",
+    "name": "Map.entry(): unveränderliches Schlüssel-Wert-Paar",
+    "introduction": "Map.entry erzeugt ein einzelnes unveränderliches Paar. Es ist nicht automatisch ein veränderbarer Zugriff auf eine vorhandene Map.",
+    "steps": [
+      "Das Paar enthält A und 1.",
+      "setValue darf dieses Paar nicht verändern.",
+      "Die Ausnahme wird gezielt abgefangen."
+    ],
+    "code": "var e = Map.entry(\"A\", 1);\ntry { e.setValue(2); }\ncatch (UnsupportedOperationException ex) { System.out.println(\"Paar unveränderlich\"); }",
+    "output": "Paar unveränderlich",
+    "choices": [
+      "Paar unveränderlich",
+      "2",
+      "A=2"
+    ],
+    "explanation": "Map.Entry ist ein Vertrag mit mehreren möglichen Implementierungen. Ein Entry aus einer anderen Map kann andere Änderungsregeln besitzen.",
+    "declarations": "",
+    "imports": "import java.util.Map;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Map.entry(key, value)",
+      "parameters": [
+        [
+          "key",
+          "Nicht-null-Schlüssel."
+        ],
+        [
+          "value",
+          "Nicht-null-Wert."
+        ]
+      ],
+      "returns": "Unveränderliches Map.Entry.",
+      "effect": "Erzeugt ein Paar, ohne eine Map zu verändern."
+    },
+    "useCase": "Schlüssel-Wert-Daten vor einer Sammeloperation formulieren.",
+    "pitfall": "Aus dem Typ Map.Entry allein folgt nicht, dass setValue unterstützt wird.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "objects-check-index",
+    "category": "Fehlerbehandlung",
+    "name": "Objects.checkIndex(): Bereich ausdrücklich prüfen",
+    "introduction": "checkIndex prüft, ob ein Index innerhalb einer Länge liegt. Bei Erfolg liefert es den unveränderten Index zurück.",
+    "steps": [
+      "Für Länge 3 sind 0, 1 und 2 gültig.",
+      "1 liegt im erlaubten Bereich.",
+      "3 liegt direkt außerhalb und löst einen Fehler aus."
+    ],
+    "code": "System.out.println(Objects.checkIndex(1, 3));\ntry { Objects.checkIndex(3, 3); }\ncatch (IndexOutOfBoundsException e) { System.out.println(\"außerhalb\"); }",
+    "output": "1\naußerhalb",
+    "choices": [
+      "1\naußerhalb",
+      "1\n3",
+      "außerhalb"
+    ],
+    "explanation": "Die Länge selbst ist kein gültiger Elementindex. Solche Bereichsprüfungen machen Regeln an einer API-Grenze sichtbar, bevor weitere Verarbeitung erfolgt.",
+    "declarations": "",
+    "imports": "import java.util.Objects;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Objects.checkIndex(index, length)",
+      "parameters": [
+        [
+          "index",
+          "Gewünschter Elementindex."
+        ],
+        [
+          "length",
+          "Nichtnegative Länge."
+        ]
+      ],
+      "returns": "Index bei Erfolg oder IndexOutOfBoundsException.",
+      "effect": "Ändert keine Daten."
+    },
+    "useCase": "Eigene Array- oder Listenoperationen mit klaren Grenzen versehen.",
+    "pitfall": "Die Prüfung einer Länge beweist nicht, dass sich die zugrunde liegende Sammlung später nicht verändert.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "arrays-mismatch",
+    "category": "Arrays",
+    "name": "Arrays.mismatch(): erste Abweichung finden",
+    "introduction": "mismatch liefert die Position der ersten Abweichung zweier Arrays. Sind sie vollständig gleich, liefert die Methode -1.",
+    "steps": [
+      "Index 0 enthält in beiden Arrays 1.",
+      "Index 1 enthält 2 beziehungsweise 9.",
+      "Die erste Abweichung ist daher bei 1."
+    ],
+    "code": "System.out.println(Arrays.mismatch(new int[]{1, 2, 3}, new int[]{1, 9, 3}));\nSystem.out.println(Arrays.mismatch(new int[]{1}, new int[]{1}));",
+    "output": "1\n-1",
+    "choices": [
+      "1\n-1",
+      "2\n0",
+      "1\n1"
+    ],
+    "explanation": "Ist ein Array ein vollständiges Präfix des anderen, ist der erste Index hinter dem kürzeren Array die Abweichung. -1 ist das besondere Gleichheitsergebnis.",
+    "declarations": "",
+    "imports": "import java.util.Arrays;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Arrays.mismatch(first, second)",
+      "parameters": [
+        [
+          "first",
+          "Erstes Array."
+        ],
+        [
+          "second",
+          "Zweites Array desselben passenden Typs."
+        ]
+      ],
+      "returns": "Erster Abweichungsindex oder -1.",
+      "effect": "Liest die Arrays ohne Änderung."
+    },
+    "useCase": "Tests oder Unterschiede zwischen Datenfolgen verständlich melden.",
+    "pitfall": "Ein Abweichungsindex ist nicht zwingend ein gültiger Elementindex in beiden Arrays.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "nonnull-else-get",
+    "category": "Fehlerbehandlung",
+    "name": "requireNonNullElseGet(): Ersatzwert erst bei Bedarf",
+    "introduction": "requireNonNullElseGet liefert einen vorhandenen Wert direkt. Nur bei null wird die Ersatzfabrik benötigt; deren Ergebnis muss ebenfalls nicht-null sein.",
+    "steps": [
+      "Ada ist bereits vorhanden.",
+      "Die erste Ersatzfunktion wird nicht benötigt.",
+      "Beim fehlenden Wert wird Ersatz geliefert."
+    ],
+    "code": "System.out.println(Objects.requireNonNullElseGet(\"Ada\", () -> \"Ersatz\"));\nString missing = null;\nSystem.out.println(Objects.requireNonNullElseGet(missing, () -> \"Ersatz\"));",
+    "output": "Ada\nErsatz",
+    "choices": [
+      "Ada\nErsatz",
+      "Ersatz\nErsatz",
+      "Ada\nnull"
+    ],
+    "explanation": "Im Unterschied zu einem bereits berechneten Ersatzargument kann eine Fabrik aufwendige Arbeit bis zum tatsächlichen Bedarf verschieben. Das Ergebnis hat eine Nicht-null-Regel.",
+    "declarations": "",
+    "imports": "import java.util.Objects;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Objects.requireNonNullElseGet(value, supplier)",
+      "parameters": [
+        [
+          "value",
+          "Vorhandener Wert oder null."
+        ],
+        [
+          "supplier",
+          "Fabrik für einen nicht-null-Ersatz."
+        ]
+      ],
+      "returns": "Vorhandener Wert oder nicht-null-Ersatz.",
+      "effect": "Führt die Fabrik nur bei fehlendem Wert aus."
+    },
+    "useCase": "Einen Default erst bei Bedarf erzeugen und null nicht weiterreichen.",
+    "pitfall": "Liefert die Fabrik null, löst die Methode NullPointerException aus statt null zurückzugeben.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "reentrant-lock",
+    "category": "Nebenläufigkeit",
+    "name": "ReentrantLock: Freigabe in finally",
+    "introduction": "Ein explizites Lock besitzt eine getrennte Sperr- und Freigabeoperation. finally sorgt dafür, dass die Freigabe auch bei einem Fehler im geschützten Abschnitt erfolgt.",
+    "steps": [
+      "lock erwirbt die Sperre.",
+      "isHeldByCurrentThread prüft den Besitz des aktuellen Threads.",
+      "finally gibt die Sperre wieder frei."
+    ],
+    "code": "var lock = new ReentrantLock();\nlock.lock();\ntry { System.out.println(lock.isHeldByCurrentThread()); }\nfinally { lock.unlock(); }\nSystem.out.println(lock.isLocked());",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Diese kleine Probe zeigt die Lebensdauer der Sperre ohne Wettbewerb. Eine tatsächliche Synchronisation funktioniert nur, wenn alle relevanten Zugriffe dasselbe Lock verwenden.",
+    "declarations": "",
+    "imports": "import java.util.concurrent.locks.ReentrantLock;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "lock.lock(); try { ... } finally { lock.unlock(); }",
+      "parameters": [],
+      "returns": "lock und unlock liefern void.",
+      "effect": "Ändert den Sperrbesitz; lock kann bei Wettbewerb warten."
+    },
+    "useCase": "Einen gemeinsamen kritischen Abschnitt explizit schützen.",
+    "pitfall": "Nur der Besitzer darf unlock aufrufen; eine Prüfung außerhalb des Schutzes ersetzt keine Synchronisation.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "countdown-latch",
+    "category": "Nebenläufigkeit",
+    "name": "CountDownLatch: auf mehrere Abschlüsse warten",
+    "introduction": "Ein CountDownLatch beginnt mit einer Anzahl. Jeder countDown senkt sie; await wartet, bis sie null erreicht.",
+    "steps": [
+      "Zwei Arbeiter erhöhen jeweils den Zähler.",
+      "Beide melden ihren Abschluss mit countDown.",
+      "Nach await ist der Zähler 2."
+    ],
+    "code": "var latch = new CountDownLatch(2);\nvar count = new AtomicInteger();\nRunnable work = () -> { try { count.incrementAndGet(); } finally { latch.countDown(); } };\nvar a = new Thread(work);\nvar b = new Thread(work);\na.start(); b.start();\nlatch.await();\na.join(); b.join();\nSystem.out.println(count.get());",
+    "output": "2",
+    "choices": [
+      "2",
+      "0",
+      "1"
+    ],
+    "explanation": "Ein Latch kann nach null nicht zurückgesetzt werden. Für Aufgaben, die fehlschlagen können, muss countDown trotzdem erfolgen und der Fehler zusätzlich separat erfasst werden.",
+    "declarations": "",
+    "imports": "import java.util.concurrent.CountDownLatch;\nimport java.util.concurrent.atomic.AtomicInteger;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new CountDownLatch(count); latch.countDown(); latch.await()",
+      "parameters": [
+        [
+          "count",
+          "Anzahl der noch erwarteten Signale."
+        ]
+      ],
+      "returns": "await liefert void oder wirft InterruptedException.",
+      "effect": "Senkt einen gemeinsamen Zähler beziehungsweise wartet auf null."
+    },
+    "useCase": "Mehrere einmalige Vorbereitungsaufgaben koordinieren.",
+    "pitfall": "Ein fehlendes countDown kann await dauerhaft blockieren; Abschluss ist nicht dasselbe wie fachlicher Erfolg.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "semaphore-permits",
+    "category": "Nebenläufigkeit",
+    "name": "Semaphore: verfügbare Plätze begrenzen",
+    "introduction": "Eine Semaphore verwaltet eine Anzahl von Erlaubnissen. acquire belegt eine Erlaubnis, release gibt sie wieder frei.",
+    "steps": [
+      "Zwei Erlaubnisse stehen am Anfang bereit.",
+      "acquire belegt eine.",
+      "Nach release sind wieder zwei verfügbar."
+    ],
+    "code": "var s = new Semaphore(2);\ns.acquire();\ntry { System.out.println(s.availablePermits()); }\nfinally { s.release(); }\nSystem.out.println(s.availablePermits());",
+    "output": "1\n2",
+    "choices": [
+      "1\n2",
+      "2\n2",
+      "1\n1"
+    ],
+    "explanation": "Eine Erlaubnis ist keine automatische Zuordnung zu einem Thread. Die Anwendung muss festlegen, welcher erfolgreiche Erwerb durch welches release ausgeglichen wird.",
+    "declarations": "",
+    "imports": "import java.util.concurrent.Semaphore;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "semaphore.acquire(); semaphore.release()",
+      "parameters": [],
+      "returns": "void; acquire kann InterruptedException werfen.",
+      "effect": "Belegt beziehungsweise erhöht die Anzahl der verfügbaren Erlaubnisse."
+    },
+    "useCase": "Gleichzeitig verwendete Plätze oder Ressourcen begrenzen.",
+    "pitfall": "Ein zusätzliches release erhöht die Anzahl; es wird nicht automatisch an ein eigenes vorheriges acquire gebunden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "concurrent-map-compute",
+    "category": "Nebenläufigkeit",
+    "name": "ConcurrentHashMap.compute(): atomare Aktualisierung",
+    "introduction": "Eine ConcurrentHashMap kann einen einzelnen Schlüssel mit compute atomar aktualisieren. Eine getrennte get-plus-put-Folge wäre nicht dieselbe geschützte Operation.",
+    "steps": [
+      "Beide Threads erhöhen denselben Schlüssel je 1000-mal.",
+      "compute verbindet Lesen und Neusetzen pro Schlüssel.",
+      "Nach beiden join-Aufrufen ist der Wert 2000."
+    ],
+    "code": "var m = new ConcurrentHashMap<String,Integer>();\nm.put(\"A\", 0);\nRunnable work = () -> { for (int i = 0; i < 1000; i++) m.compute(\"A\", (k, v) -> v + 1); };\nvar a = new Thread(work);\nvar b = new Thread(work);\na.start(); b.start();\na.join(); b.join();\nSystem.out.println(m.get(\"A\"));",
+    "output": "2000",
+    "choices": [
+      "2000",
+      "1000",
+      "0"
+    ],
+    "explanation": "Die Remapping-Funktion sollte kurz bleiben und keine rekursiven Änderungen derselben Map durchführen. Mehrere Schlüssel werden dadurch nicht zu einer gemeinsamen Transaktion.",
+    "declarations": "",
+    "imports": "import java.util.concurrent.ConcurrentHashMap;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "map.compute(key, function)",
+      "parameters": [
+        [
+          "key",
+          "Atomar zu aktualisierender Schlüssel."
+        ],
+        [
+          "function",
+          "Berechnet den neuen Wert aus Schlüssel und bisherigem Wert."
+        ]
+      ],
+      "returns": "Neuer Wert oder null nach Entfernung.",
+      "effect": "Ändert atomar die Zuordnung dieses Schlüssels."
+    },
+    "useCase": "Einen gemeinsamen Zähler ohne verlorene Aktualisierung betreiben.",
+    "pitfall": "Thread-sichere Einzeloperationen machen mehrere getrennte Operationen nicht automatisch gemeinsam atomar.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "future-recovery",
+    "category": "Nebenläufigkeit",
+    "name": "CompletableFuture.exceptionally(): Fehler in einen Wert übersetzen",
+    "introduction": "exceptionally kann einen fehlgeschlagenen Abschluss in einen Ersatzwert übersetzen. Das ist eine fachliche Entscheidung und sollte den ursprünglichen Fehler nicht unbewusst verstecken.",
+    "steps": [
+      "Das Future ist bereits fehlgeschlagen.",
+      "exceptionally erhält den Fehler.",
+      "Die Rückgabe 0 wird zum erfolgreichen Ergebnis der neuen Stufe."
+    ],
+    "code": "CompletableFuture<Integer> f = CompletableFuture.failedFuture(new IllegalStateException(\"fehlend\"));\nSystem.out.println(f.exceptionally(error -> 0).join());",
+    "output": "0",
+    "choices": [
+      "0",
+      "null",
+      "IllegalStateException"
+    ],
+    "explanation": "Das ursprüngliche Future bleibt fehlgeschlagen; die neue Stufe liefert einen Ersatz. Für einen echten Fehlerbericht sollte die Anwendung entscheiden, ob ein Ersatzwert wirklich zulässig ist.",
+    "declarations": "",
+    "imports": "import java.util.concurrent.CompletableFuture;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "future.exceptionally(recovery)",
+      "parameters": [
+        [
+          "recovery",
+          "Funktion von Throwable zu einem Ersatzwert."
+        ]
+      ],
+      "returns": "Neue CompletableFuture-Stufe.",
+      "effect": "Erzeugt eine Folgestufe mit Fehlerbehandlung."
+    },
+    "useCase": "Eine ausdrücklich erlaubte Fallback-Regel an einer Async-Grenze formulieren.",
+    "pitfall": "0 könnte auch ein gültiges Ergebnis sein; ein Ersatz darf nicht unbemerkt einen wichtigen Fehler verdecken.",
+    "practice": {
+      "task": "Übersetze einen fehlgeschlagenen Futureabschluss ausdrücklich in den Text nicht verfügbar.",
+      "hint": "exceptionally erzeugt eine neue Stufe mit deinem Ersatztext.",
+      "code": "CompletableFuture<String> f = CompletableFuture.failedFuture(new IllegalStateException());\nSystem.out.println(f.exceptionally(e -> \"nicht verfügbar\").join());",
+      "output": "nicht verfügbar"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "decimal-equality",
+    "category": "Zahlen & Zeit",
+    "name": "BigDecimal: equals() und compareTo()",
+    "introduction": "Bei BigDecimal berücksichtigt equals auch die Skala. compareTo prüft die numerische Ordnung und kann unterschiedlich skalierte gleiche Zahlen als gleich behandeln.",
+    "steps": [
+      "1.0 und 1.00 haben verschiedene Skalen.",
+      "equals meldet deshalb false.",
+      "compareTo liefert für numerische Gleichheit 0."
+    ],
+    "code": "var a = new BigDecimal(\"1.0\");\nvar b = new BigDecimal(\"1.00\");\nSystem.out.println(a.equals(b));\nSystem.out.println(a.compareTo(b) == 0);",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Das wirkt sich auch auf hashbasierte gegenüber sortierten Sammlungen aus. Eine Anwendung sollte bewusst festlegen, ob Skala Teil ihrer Gleichheitsregel ist.",
+    "declarations": "",
+    "imports": "import java.math.BigDecimal;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "decimal.equals(other); decimal.compareTo(other)",
+      "parameters": [
+        [
+          "other",
+          "Vergleichswert."
+        ]
+      ],
+      "returns": "boolean für equals beziehungsweise int für compareTo.",
+      "effect": "Ändert die Dezimalwerte nicht."
+    },
+    "useCase": "Geld- oder Messwerte nach einer bewusst vereinbarten Gleichheitsregel prüfen.",
+    "pitfall": "Eine HashSet-Mitgliedschaft folgt equals und hashCode, nicht automatisch einer numerischen compareTo-Gleichheit.",
+    "practice": {
+      "task": "Prüfe equals und compareTo für 2.00 und 2.0.",
+      "hint": "Die unterschiedliche Skala ist nur für eine der beiden Gleichheitsregeln relevant.",
+      "code": "var a = new BigDecimal(\"2.00\");\nvar b = new BigDecimal(\"2.0\");\nSystem.out.println(a.equals(b));\nSystem.out.println(a.compareTo(b));",
+      "output": "false\n0"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "rounding-unnecessary",
+    "category": "Zahlen & Zeit",
+    "name": "RoundingMode.UNNECESSARY: Genauigkeit verlangen",
+    "introduction": "UNNECESSARY erlaubt keine nötige Rundung. Die Operation gelingt nur, wenn der Wert im gewünschten Format exakt dargestellt werden kann.",
+    "steps": [
+      "1.234 besitzt drei Nachkommastellen.",
+      "Zwei Nachkommastellen reichen nicht ohne Rundung.",
+      "setScale löst deshalb ArithmeticException aus."
+    ],
+    "code": "try {\n    System.out.println(new BigDecimal(\"1.234\").setScale(2, RoundingMode.UNNECESSARY));\n} catch (ArithmeticException e) { System.out.println(\"Runden nötig\"); }",
+    "output": "Runden nötig",
+    "choices": [
+      "Runden nötig",
+      "1.23",
+      "1.24"
+    ],
+    "explanation": "Die Regel eignet sich zum Erkennen unzulässiger zusätzlicher Genauigkeit. Sie ist etwas anderes als eine automatische kaufmännische Rundung.",
+    "declarations": "",
+    "imports": "import java.math.BigDecimal;\nimport java.math.RoundingMode;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "decimal.setScale(scale, RoundingMode.UNNECESSARY)",
+      "parameters": [
+        [
+          "scale",
+          "Gewünschte Skala."
+        ]
+      ],
+      "returns": "Neuer BigDecimal oder ArithmeticException.",
+      "effect": "Ändert das ursprüngliche BigDecimal nicht."
+    },
+    "useCase": "Ein Importformat ohne stillen Präzisionsverlust durchsetzen.",
+    "pitfall": "Zusätzliche Nullen wie in 1.230 können ohne Wertverlust entfernt werden; zusätzliche Dezimalstellen sind nicht immer ein Rundungsfehler.",
+    "practice": {
+      "task": "Reduziere 1.230 mit UNNECESSARY auf Skala 2.",
+      "hint": "Eine überzählige Null kann ohne numerischen Wertverlust entfernt werden.",
+      "code": "System.out.println(new BigDecimal(\"1.230\").setScale(2, RoundingMode.UNNECESSARY));",
+      "output": "1.23"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "locale-parse-position",
+    "category": "Zahlen & Zeit",
+    "name": "NumberFormat: wurde der ganze Text gelesen?",
+    "introduction": "Eine sprachabhängige Zahlenanalyse kann ein gültiges Anfangsstück lesen und den Rest stehen lassen. ParsePosition macht die verbrauchte Position sichtbar.",
+    "steps": [
+      "Die deutsche Regel liest 12,5 als 12.5.",
+      "Das folgende x gehört nicht zur Zahl.",
+      "Die verbrauchte Position ist deshalb nicht die gesamte Textlänge."
+    ],
+    "code": "String text = \"12,5x\";\nvar f = NumberFormat.getNumberInstance(Locale.GERMANY);\nvar pos = new ParsePosition(0);\nSystem.out.println(f.parse(text, pos));\nSystem.out.println(pos.getIndex() == text.length());",
+    "output": "12.5\nfalse",
+    "choices": [
+      "12.5\nfalse",
+      "12.5\ntrue",
+      "null\nfalse"
+    ],
+    "explanation": "Für eine strenge Eingabeprüfung sind ein vorhandener Parsewert und der vollständige Verbrauch beide relevant. Das Format selbst muss zur vereinbarten Locale passen.",
+    "declarations": "",
+    "imports": "import java.text.NumberFormat;\nimport java.text.ParsePosition;\nimport java.util.Locale;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "format.parse(text, position)",
+      "parameters": [
+        [
+          "text",
+          "Zu analysierender Text."
+        ],
+        [
+          "position",
+          "Start und verbrauchte Zeichenposition."
+        ]
+      ],
+      "returns": "Number oder null bei fehlgeschlagener Analyse.",
+      "effect": "Ändert die ParsePosition."
+    },
+    "useCase": "Dezimalzahlen einer ausdrücklich gewählten Sprache einlesen.",
+    "pitfall": "Eine erfolgreiche Teilanalyse beweist nicht, dass die vollständige Eingabe gültig ist.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "zip-entry-loop",
+    "category": "Datenformate & Protokolle",
+    "name": "ZIP-Einträge als Folge lesen",
+    "introduction": "Ein ZipInputStream liest Archiveinträge nacheinander. Die Archivstruktur ist eine Folge von Einträgen, nicht einfach der Text einer einzigen Datei.",
+    "steps": [
+      "Das Beispiel erzeugt zwei Einträge im Speicher.",
+      "getNextEntry wechselt jeweils zum nächsten Eintrag.",
+      "Der Zähler erreicht zwei."
+    ],
+    "code": "var bytes = new ByteArrayOutputStream();\ntry (var zip = new ZipOutputStream(bytes)) {\n    for (String name : List.of(\"a.txt\", \"b.txt\")) {\n        zip.putNextEntry(new ZipEntry(name));\n        zip.write(65);\n        zip.closeEntry();\n    }\n}\nint count = 0;\ntry (var zip = new ZipInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {\n    while (zip.getNextEntry() != null) { count++; zip.closeEntry(); }\n}\nSystem.out.println(count);",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "65"
+    ],
+    "explanation": "Das Beispiel zählt Einträge ohne sie auf das Dateisystem zu entpacken. Zum tatsächlichen Entpacken benötigt man zusätzliche Regeln für Zielpfade und Größen.",
+    "declarations": "",
+    "imports": "import java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.util.List;\nimport java.util.zip.ZipEntry;\nimport java.util.zip.ZipInputStream;\nimport java.util.zip.ZipOutputStream;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "zip.getNextEntry(); zip.closeEntry()",
+      "parameters": [],
+      "returns": "Nächster ZipEntry oder null am Archivende.",
+      "effect": "Verändert die Leseposition innerhalb des Archivs."
+    },
+    "useCase": "Die Bestandteile eines Projekt-ZIP oder Importarchivs erkennen.",
+    "pitfall": "Archivnamen und Größen dürfen bei echtem Entpacken nicht ungeprüft als Zielpfade und beliebig große Daten übernommen werden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "union-find",
+    "category": "Algorithmen & Komplexität",
+    "name": "Union-Find: verbundene Gruppen verwalten",
+    "introduction": "Union-Find verwaltet Gruppen, die durch Verbindungen zusammengeführt werden. Zwei Elemente sind verbunden, wenn ihre Wurzeln gleich sind.",
+    "steps": [
+      "0 wird mit 1 verbunden.",
+      "1 wird mit 2 verbunden.",
+      "0 und 2 haben danach dieselbe Wurzel; 3 bleibt separat."
+    ],
+    "code": "var u = new Gruppen(4);\nu.union(0, 1);\nu.union(1, 2);\nSystem.out.println(u.find(0) == u.find(2));\nSystem.out.println(u.find(0) == u.find(3));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "false\nfalse",
+      "true\ntrue"
+    ],
+    "explanation": "Die Probe komprimiert Wege bei find, verbindet Wurzeln aber ohne Rangregel. Sie veranschaulicht Gruppenmitgliedschaft; die üblichen besonders starken Laufzeitgrenzen erfordern passende zusätzliche Vereinigungsregeln.",
+    "declarations": "static class Gruppen {\n    private final int[] parent;\n    Gruppen(int n) {\n        parent = new int[n];\n        for (int i = 0; i < n; i++) parent[i] = i;\n    }\n    int find(int x) {\n        Objects.checkIndex(x, parent.length);\n        while (parent[x] != x) {\n            parent[x] = parent[parent[x]];\n            x = parent[x];\n        }\n        return x;\n    }\n    void union(int a, int b) { parent[find(a)] = find(b); }\n}",
+    "imports": "import java.util.Objects;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "groups.find(index); groups.union(a, b)",
+      "parameters": [
+        [
+          "index",
+          "Gültiger Elementindex."
+        ],
+        [
+          "a,b",
+          "Elemente der zu verbindenden Gruppen."
+        ]
+      ],
+      "returns": "find liefert den Wurzelindex; union liefert void.",
+      "effect": "union ändert Gruppen; find kann Wege komprimieren."
+    },
+    "useCase": "Zusammenhängende Komponenten bei schrittweisen Verbindungen erkennen.",
+    "pitfall": "Union-Find beantwortet Gruppenmitgliedschaft, aber nicht den konkreten Pfad zwischen zwei Elementen.",
+    "practice": {
+      "task": "Verbinde 0 mit 1 und 2 mit 3. Prüfe, ob 1 und 3 verbunden sind.",
+      "hint": "Getrennte Vereinigungen bleiben zunächst zwei verschiedene Gruppen.",
+      "code": "var u = new Gruppen(4);\nu.union(0, 1); u.union(2, 3);\nSystem.out.println(u.find(1) == u.find(3));",
+      "output": "false"
+    },
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "math-range-limit",
+    "category": "Zahlen & Zeit",
+    "name": "Math.min() und max(): einen Wert begrenzen",
+    "introduction": "Für manche Anzeigen soll ein Wert bewusst in einem festen Bereich bleiben. min und max können eine solche Begrenzung zusammensetzen.",
+    "steps": [
+      "min begrenzt zuerst auf höchstens 100.",
+      "max begrenzt danach auf mindestens 0.",
+      "150 wird 100 und -5 wird 0."
+    ],
+    "code": "System.out.println(Math.max(0, Math.min(100, 150)));\nSystem.out.println(Math.max(0, Math.min(100, -5)));",
+    "output": "100\n0",
+    "choices": [
+      "100\n0",
+      "150\n-5",
+      "0\n100"
+    ],
+    "explanation": "Die Begrenzung ist eine bewusste Regel für beispielsweise einen Fortschrittsbalken. Bei Konfiguration oder Geldwerten kann ein Fehler statt stiller Begrenzung die richtige Entscheidung sein.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Math.max(lower, Math.min(upper, value))",
+      "parameters": [
+        [
+          "lower",
+          "Inklusive Untergrenze."
+        ],
+        [
+          "upper",
+          "Inklusive Obergrenze mit lower <= upper."
+        ],
+        [
+          "value",
+          "Zu begrenzender Wert."
+        ]
+      ],
+      "returns": "Begrenzter Wert.",
+      "effect": "Ändert keine Variable ohne anschließende Zuweisung."
+    },
+    "useCase": "Eine Anzeige innerhalb eines erlaubten Bereichs halten.",
+    "pitfall": "Begrenzen und Validieren sind unterschiedliche fachliche Regeln; ein gekürzter Wert ist nicht automatisch eine gültige Eingabe.",
+    "difficulty": "Vertiefung"
+  }
+]

@@ -1,3 +1,4 @@
+import practicePack from './javaPracticePack.json' with { type: 'json' };
 import conceptCurriculum from './javaConceptCurriculum.json' with { type: 'json' };
 import curriculum from './javaCurriculum.json' with { type: 'json' };
 import furtherCurriculum from './javaFurtherCurriculum.json' with { type: 'json' };
@@ -35,7 +36,7 @@ export function buildJavaSource(code, declarations = '', imports = '') {
 }
 
 export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum, ...dataCurriculum, ...conceptCurriculum].map((definition, index) => {
-  const row = { ...javaMethodProfiles[definition.id], ...definition };
+  const row = { ...javaMethodProfiles[definition.id], ...definition, practice: definition.practice ?? (Object.hasOwn(practicePack, definition.id) ? practicePack[definition.id] : undefined) };
   const answer = index % row.choices.length;
   const options = row.choices.slice(1);
   options.splice(answer, 0, row.choices[0]);
@@ -53,6 +54,6 @@ export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurri
     options, answer, explanation: row.explanation, hints: [row.steps[0], row.steps[1]],
     solution: row.explanation, expectedOutput: row.output,
     methodProfile: row.methodProfile, useCase: row.useCase, pitfall: row.pitfall,
-    practice: row.practice ? { ...row.practice, example: buildJavaSource(row.practice.code, row.declarations, row.imports) } : undefined,
+    practice: row.practice ? { ...row.practice, example: buildJavaSource(row.practice.code, row.practice.declarations ?? row.declarations, row.practice.imports ?? row.imports) } : undefined,
   };
 });

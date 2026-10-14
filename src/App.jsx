@@ -8,6 +8,7 @@ import { useProgress } from "./useProgress";
 import { useWebApp } from "./useWebApp";
 import { Appearance } from "./components/Appearance";
 
+const StudySession = lazy(() => import("./components/StudySession"));
 const IdeaToCode = lazy(() => import("./components/IdeaToCode"));
 const Projects = lazy(() => import("./components/Projects"));
 
@@ -18,7 +19,7 @@ export default function App() {
   const [lessonId, setLessonId] = useState("js-map");
   const [initialTab, setInitialTab] = useState("explanation");
   const [menuOpen, setMenuOpen] = useState(false);
-  const { progress, saved, record } = useProgress();
+  const { progress, saved, record, recordSession } = useProgress();
   const webApp = useWebApp();
   const lesson = lessonById[lessonId];
   useEffect(() => {
@@ -120,10 +121,11 @@ export default function App() {
             />
           )}
           {view === "exercises" && (
-            <Exercises progress={progress} openLesson={openLesson} openProjects={() => { setProjectId(null); navigate("projects"); }} openIdeas={() => navigate("ideas")} />
+            <Exercises progress={progress} openLesson={openLesson} openProjects={() => { setProjectId(null); navigate("projects"); }} openIdeas={() => navigate("ideas")} openStudy={() => navigate("sessions")} />
           )}
           {view === "projects" && <Suspense fallback={<p role="status">Projektbeispiele werden geladen …</p>}><Projects key={projectId || "all"} course={course} initialProjectId={projectId} openLesson={openLesson} /></Suspense>}
           {view === "ideas" && <Suspense fallback={<p role="status">Baupläne werden geladen …</p>}><IdeaToCode openProject={id => { setProjectId(id); navigate("projects"); }} /></Suspense>}
+          {view === "sessions" && <Suspense fallback={<p role="status">Lernrunde wird geladen …</p>}><StudySession course={course} progress={progress} recordSession={recordSession} openLesson={openLesson} /></Suspense>}
           {view === "reference" && <Reference openLesson={openLesson} />}
           {view === "progress" && (
             <ProgressView progress={progress} openLesson={openLesson} />
@@ -131,11 +133,11 @@ export default function App() {
         </main>
       </div>
       <nav className="mobile-bottom-nav" aria-label="Schnellnavigation">
-        {navigation.filter(item => item.id !== "projects" && item.id !== "ideas").map(({ id, label, icon: Icon }) => (
+        {navigation.filter(item => item.id !== "projects" && item.id !== "ideas" && item.id !== "sessions").map(({ id, label, icon: Icon }) => (
           <button
             key={id}
-            aria-current={(view === id || ((view === "projects" || view === "ideas") && id === "exercises")) ? "page" : undefined}
-            className={(view === id || ((view === "projects" || view === "ideas") && id === "exercises")) ? "selected" : ""}
+            aria-current={(view === id || ((view === "projects" || view === "ideas" || view === "sessions") && id === "exercises")) ? "page" : undefined}
+            className={(view === id || ((view === "projects" || view === "ideas" || view === "sessions") && id === "exercises")) ? "selected" : ""}
             onClick={() => navigate(id)}
           >
             <Icon size={23} strokeWidth={1.8} />

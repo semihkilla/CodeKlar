@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { applySessionResults } from "./studySession";
+import { useCallback, useEffect, useState } from "react";
 import { lessonById } from "./data";
 import { cleanReviews, nextReview } from "./review";
 
@@ -20,6 +21,7 @@ function read() {
           clean[field][id] = date;
       }
     }
+    clean.sessionReceipts = Array.isArray(value.sessionReceipts) ? [...new Set(value.sessionReceipts.filter(id => typeof id === "string" && /^round-\d+-\d+$/.test(id)))].slice(-200) : [];
     clean.reviews = cleanReviews(value.reviews, lessonById);
     return clean;
   } catch {
@@ -42,6 +44,7 @@ export function useProgress() {
     if (!Object.hasOwn(lessonById, id)) return;
     const now = Date.now();
     setProgress((previous) => ({
+      ...previous,
       reviews: { ...previous.reviews, [id]: nextReview(previous.reviews[id], passed, now) },
       attempted: { ...previous.attempted, [id]: new Date(now).toISOString() },
       solved: passed
@@ -52,5 +55,6 @@ export function useProgress() {
         : previous.solved,
     }));
   }
-  return { progress, saved, record };
+  const recordSession = useCallback(session => setProgress(previous => applySessionResults(previous, session, lessonById)), []);
+  return { progress, saved, record, recordSession };
 }

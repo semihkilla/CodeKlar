@@ -1,0 +1,162 @@
+{
+  "for": {
+    "task": "Berechne die Summe aller geraden Zahlen von 1 bis 10. Teste auch eine obere Grenze von 0.",
+    "hint": "Ein Schleifenzähler durchläuft die Grenzen; nur Werte mit Rest 0 beim Teilen durch 2 werden addiert.",
+    "code": "System.out.println(sumEven(10));\nSystem.out.println(sumEven(0));",
+    "output": "30\n0",
+    "declarations": "static int sumEven(int max) {\n    int sum = 0;\n    for (int i = 1; i <= max; i++) if (i % 2 == 0) sum += i;\n    return sum;\n}",
+    "imports": ""
+  },
+  "while": {
+    "task": "Zähle die Ziffern der nichtnegativen ganzen Zahl 9070. Auch 0 soll eine Ziffer haben.",
+    "hint": "Ganzzahldivision durch 10 entfernt die letzte Ziffer. Der Nullfall ist eine eigene Regel.",
+    "code": "System.out.println(digits(9070));\nSystem.out.println(digits(0));",
+    "output": "4\n1",
+    "declarations": "static int digits(int n) {\n    if (n < 0) throw new IllegalArgumentException(\"Nichtnegativ erwartet\");\n    int count = 1;\n    while (n >= 10) { n /= 10; count++; }\n    return count;\n}",
+    "imports": ""
+  },
+  "method": {
+    "task": "Schreibe eine Methode, die drei ganze Zahlen addiert. Teste positive und negative Werte.",
+    "hint": "Trenne den Rückgabewert der Methode von seiner Anzeige; addExact meldet einen int-Überlauf.",
+    "code": "System.out.println(sumThree(2, 3, 4));\nSystem.out.println(sumThree(-2, 0, 2));",
+    "output": "9\n0",
+    "declarations": "static int sumThree(int a, int b, int c) { return Math.addExact(Math.addExact(a, b), c); }",
+    "imports": ""
+  },
+  "array-length": {
+    "task": "Berechne den Durchschnitt von {2,4,6}. Für ein leeres Array soll eine klare Ausnahme entstehen.",
+    "hint": "Prüfe die Länge vor der Division. Wähle die Division als double und einen ausreichend großen Summenzähler.",
+    "code": "System.out.println(average(new int[]{2, 4, 6}));\ntry { average(new int[]{}); } catch (IllegalArgumentException e) { System.out.println(\"leer\"); }",
+    "output": "4.0\nleer",
+    "declarations": "static double average(int[] values) {\n    if (values.length == 0) throw new IllegalArgumentException(\"Array leer\");\n    long sum = 0;\n    for (int n : values) sum += n;\n    return (double)sum / values.length;\n}",
+    "imports": ""
+  },
+  "array-copy": {
+    "task": "Drehe {1,2,3} in einem neuen Array um. Das Original soll unverändert bleiben.",
+    "hint": "Der neue Index ist Länge minus 1 minus der alte Index.",
+    "code": "int[] original = {1, 2, 3};\nint[] reversed = new int[original.length];\nfor (int i = 0; i < original.length; i++) reversed[original.length - 1 - i] = original[i];\nSystem.out.println(Arrays.toString(reversed));\nSystem.out.println(Arrays.toString(original));",
+    "output": "[3, 2, 1]\n[1, 2, 3]",
+    "declarations": "",
+    "imports": "import java.util.Arrays;"
+  },
+  "matrix": {
+    "task": "Transponiere die rechteckige Matrix {{1,2,3},{4,5,6}}. Tausche Zeilen und Spalten.",
+    "hint": "Das Ergebnis hat drei Zeilen und zwei Spalten. Weise out[column][row] den alten Wert zu.",
+    "code": "int[][] input = {{1,2,3},{4,5,6}};\nint[][] out = new int[3][2];\nfor (int r = 0; r < 2; r++) for (int c = 0; c < 3; c++) out[c][r] = input[r][c];\nSystem.out.println(Arrays.deepToString(out));",
+    "output": "[[1, 4], [2, 5], [3, 6]]",
+    "declarations": "",
+    "imports": "import java.util.Arrays;"
+  },
+  "string-find": {
+    "task": "Zähle nichtüberlappende Vorkommen von aa in aaaa und in x.",
+    "hint": "Nach einem Treffer beginnt die nächste Suche hinter dem ganzen Suchtext. Ein leerer Suchtext wird ausgeschlossen.",
+    "code": "System.out.println(count(\"aaaa\", \"aa\"));\nSystem.out.println(count(\"x\", \"aa\"));",
+    "output": "2\n0",
+    "declarations": "static int count(String text, String needle) {\n    if (needle.isEmpty()) throw new IllegalArgumentException(\"Suchtext leer\");\n    int count = 0, start = 0, index;\n    while ((index = text.indexOf(needle, start)) >= 0) { count++; start = index + needle.length(); }\n    return count;\n}",
+    "imports": ""
+  },
+  "strip": {
+    "task": "Bereinige Namen und lasse leere Namen aus. Aus {\" Ada \",\"  \",\"Bo\"} soll {Ada,Bo} werden.",
+    "hint": "Bereinigen und Filtern sind zwei getrennte Schritte.",
+    "code": "var names = List.of(\" Ada \", \"  \", \"Bo\");\nvar clean = names.stream().map(String::strip).filter(s -> !s.isEmpty()).toList();\nSystem.out.println(clean);",
+    "output": "[Ada, Bo]",
+    "declarations": "",
+    "imports": "import java.util.List;"
+  },
+  "set": {
+    "task": "Entferne doppelte Werte aus {3,1,3,2,1}, erhalte aber die erste Einfügereihenfolge.",
+    "hint": "LinkedHashSet verbindet eindeutige Mitgliedschaft mit Einfügereihenfolge.",
+    "code": "var values = List.of(3, 1, 3, 2, 1);\nvar unique = new LinkedHashSet<>(values);\nSystem.out.println(new ArrayList<>(unique));",
+    "output": "[3, 1, 2]",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.LinkedHashSet;\nimport java.util.List;"
+  },
+  "map": {
+    "task": "Fasse Punkte pro Name zusammen: Ada erhält 4 und 3, Bo erhält 2.",
+    "hint": "merge verbindet einen vorhandenen Wert mit neuen Punkten. Eine TreeMap macht die Ausgabe geordnet.",
+    "code": "var scores = new TreeMap<String,Integer>();\nscores.merge(\"Ada\", 4, Integer::sum);\nscores.merge(\"Bo\", 2, Integer::sum);\nscores.merge(\"Ada\", 3, Integer::sum);\nSystem.out.println(scores);",
+    "output": "{Ada=7, Bo=2}",
+    "declarations": "",
+    "imports": "import java.util.TreeMap;"
+  },
+  "deque-stack": {
+    "task": "Ergänze Undo für zwei Textänderungen. Nach zweimal pop soll der Anfangstext wieder da sein.",
+    "hint": "Speichere vor jeder Änderung den alten Zustand; prüfe vor pop, ob die Historie leer ist.",
+    "code": "String text = \"A\";\nvar history = new ArrayDeque<String>();\nhistory.push(text); text = \"AB\";\nhistory.push(text); text = \"ABC\";\nif (!history.isEmpty()) text = history.pop();\nSystem.out.println(text);\nif (!history.isEmpty()) text = history.pop();\nSystem.out.println(text);",
+    "output": "AB\nA",
+    "declarations": "",
+    "imports": "import java.util.ArrayDeque;"
+  },
+  "stream-filter": {
+    "task": "Wähle positive Zahlen aus {-2,0,3,5}, verdopple sie und sammle das Ergebnis.",
+    "hint": "filter entscheidet über die Mitgliedschaft, map berechnet den neuen Wert.",
+    "code": "var input = List.of(-2, 0, 3, 5);\nSystem.out.println(input.stream().filter(n -> n > 0).map(n -> n * 2).toList());",
+    "output": "[6, 10]",
+    "declarations": "",
+    "imports": "import java.util.List;"
+  },
+  "parse-int": {
+    "task": "Lies die Zahltexte 12, x und 7. Addiere nur gültige int-Werte und zähle Fehler.",
+    "hint": "Fange NumberFormatException pro Eingabe ab; ein Fehler soll die späteren Werte nicht verhindern.",
+    "code": "int sum = 0, errors = 0;\nfor (String text : List.of(\"12\", \"x\", \"7\")) {\n    try { sum += Integer.parseInt(text); }\n    catch (NumberFormatException e) { errors++; }\n}\nSystem.out.println(\"Summe: \" + sum);\nSystem.out.println(\"Fehler: \" + errors);",
+    "output": "Summe: 19\nFehler: 1",
+    "declarations": "",
+    "imports": "import java.util.List;"
+  },
+  "decimal": {
+    "task": "Berechne den Preis für drei Stück zu 1.20 und zwei Stück zu 0.35 exakt als Dezimalbetrag.",
+    "hint": "Erzeuge BigDecimal direkt aus dem Text, multipliziere die Mengen und addiere die Positionen.",
+    "code": "var a = new BigDecimal(\"1.20\").multiply(BigDecimal.valueOf(3));\nvar b = new BigDecimal(\"0.35\").multiply(BigDecimal.valueOf(2));\nSystem.out.println(a.add(b).toPlainString());",
+    "output": "4.30",
+    "declarations": "",
+    "imports": "import java.math.BigDecimal;"
+  },
+  "date": {
+    "task": "Prüfe, ob 2024-02-29 und 2023-02-29 gültige ISO-Datumswerte sind.",
+    "hint": "LocalDate.parse kennt die Kalenderregeln; die ungültige Eingabe wird als Parsefehler behandelt.",
+    "code": "for (String text : List.of(\"2024-02-29\", \"2023-02-29\")) {\n    try { LocalDate.parse(text); System.out.println(\"gültig\"); }\n    catch (DateTimeParseException e) { System.out.println(\"ungültig\"); }\n}",
+    "output": "gültig\nungültig",
+    "declarations": "",
+    "imports": "import java.time.LocalDate;\nimport java.time.format.DateTimeParseException;\nimport java.util.List;"
+  },
+  "test-boundary": {
+    "task": "Schreibe drei selbstlaufende Grenztests für clamp auf 0 bis 100: unterhalb, innerhalb und oberhalb.",
+    "hint": "Vergleiche tatsächliche Ergebnisse mit vorher festgelegten Erwartungen und wirf bei Abweichung AssertionError.",
+    "code": "int[] input = {-1, 42, 101}, expected = {0, 42, 100};\nfor (int i = 0; i < input.length; i++) {\n    int actual = Math.max(0, Math.min(100, input[i]));\n    if (actual != expected[i]) throw new AssertionError(\"Fall \" + i);\n}\nSystem.out.println(\"3 Grenztests bestanden\");",
+    "output": "3 Grenztests bestanden",
+    "declarations": "",
+    "imports": ""
+  },
+  "test-exception": {
+    "task": "Prüfe automatisch, dass das Lesen von Arrayindex 1 bei einem Array mit einem Element eine Ausnahme auslöst.",
+    "hint": "Ein Test muss auch fehlschlagen, wenn die erwartete Ausnahme gar nicht auftritt.",
+    "code": "boolean thrown = false;\ntry { int ignored = (new int[]{7})[1]; }\ncatch (ArrayIndexOutOfBoundsException e) { thrown = true; }\nif (!thrown) throw new AssertionError(\"Ausnahme fehlt\");\nSystem.out.println(\"Ausnahmetest bestanden\");",
+    "output": "Ausnahmetest bestanden",
+    "declarations": "",
+    "imports": ""
+  },
+  "search-linear": {
+    "task": "Suche den ersten Index von 8 in {4,8,8}. Ein fehlender Wert 9 soll -1 liefern.",
+    "hint": "Gehe von links nach rechts und gib den ersten Treffer sofort zurück.",
+    "code": "System.out.println(find(new int[]{4, 8, 8}, 8));\nSystem.out.println(find(new int[]{4, 8, 8}, 9));",
+    "output": "1\n-1",
+    "declarations": "static int find(int[] values, int target) {\n    for (int i = 0; i < values.length; i++) if (values[i] == target) return i;\n    return -1;\n}",
+    "imports": ""
+  },
+  "frequency": {
+    "task": "Zähle die ASCII-Buchstaben im Text banana in einer geordneten Map.",
+    "hint": "Verwende für diesen bewusst begrenzten ASCII-Text einzelne char-Werte und merge mit 1.",
+    "code": "var counts = new TreeMap<Character,Integer>();\nfor (char c : \"banana\".toCharArray()) counts.merge(c, 1, Integer::sum);\nSystem.out.println(counts);",
+    "output": "{a=3, b=1, n=2}",
+    "declarations": "",
+    "imports": "import java.util.TreeMap;"
+  },
+  "optional": {
+    "task": "Eine Suche nach 9 liefert kein Ergebnis. Zeige dafür fehlt, ohne get auf einem leeren Optional aufzurufen.",
+    "hint": "map wandelt einen vorhandenen Wert für die Ausgabe um; orElse behandelt den fehlenden Fall.",
+    "code": "var result = List.of(1, 2).stream().filter(n -> n == 9).findFirst();\nSystem.out.println(result.map(Object::toString).orElse(\"fehlt\"));",
+    "output": "fehlt",
+    "declarations": "",
+    "imports": "import java.util.List;"
+  }
+}

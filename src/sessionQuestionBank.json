@@ -1,0 +1,178 @@
+{
+  "js-map": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(JSON.stringify([1, 2, 3].map(n => n * 2)));",
+    "options": [
+      "[2,4,6]",
+      "[1,2,3]",
+      "[2,3,4]"
+    ],
+    "answer": 0,
+    "explanation": "map berechnet für jedes vorhandene Element einen neuen Wert und sammelt die Ergebnisse in einem neuen Array."
+  },
+  "js-filter": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(JSON.stringify([1, 2, 3].filter(n => n > 1)));",
+    "options": [
+      "[2,3]",
+      "[1]",
+      "[true,true]"
+    ],
+    "answer": 0,
+    "explanation": "filter übernimmt die ursprünglichen Elemente, für die die Bedingung wahr ist; es ersetzt sie nicht durch Wahrheitswerte."
+  },
+  "js-includes": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log([1, 2].includes(\"1\"));",
+    "options": [
+      "false",
+      "true",
+      "1"
+    ],
+    "answer": 0,
+    "explanation": "includes wandelt den gesuchten String hier nicht in eine Zahl um; die Zahl 1 und der String 1 sind unterschiedliche Werte."
+  },
+  "js-slice": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(JSON.stringify([1, 2, 3, 4].slice(1, 3)));",
+    "options": [
+      "[2,3]",
+      "[2,3,4]",
+      "[1,2,3]"
+    ],
+    "answer": 0,
+    "explanation": "slice übernimmt den Startindex inklusive und den Endindex exklusiv. Die ursprüngliche Arraystruktur wird nicht verändert."
+  },
+  "js-equality": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(0 === \"0\");",
+    "options": [
+      "false",
+      "true",
+      "0"
+    ],
+    "answer": 0,
+    "explanation": "Strikte Gleichheit verlangt passende Typen und Werte; sie führt keine Zahlenkonvertierung des Strings durch."
+  },
+  "js-logic": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(true && false || true);",
+    "options": [
+      "true",
+      "false",
+      "undefined"
+    ],
+    "answer": 0,
+    "explanation": "&& bindet stärker als ||. Zuerst ergibt true && false den Wert false; false || true liefert dann true."
+  },
+  "js-variables": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "const value = { n: 1 };\nvalue.n = 2;\nconsole.log(value.n);",
+    "options": [
+      "2",
+      "1",
+      "TypeError"
+    ],
+    "answer": 0,
+    "explanation": "const verhindert die Neuzuweisung der Bindung value. Die Eigenschaft des referenzierten Objekts darf trotzdem geändert werden."
+  },
+  "js-arithmetic": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(7 / 2);",
+    "options": [
+      "3.5",
+      "3",
+      "4"
+    ],
+    "answer": 0,
+    "explanation": "Die gewöhnliche Division von Number-Werten ist keine automatische Ganzzahldivision; 7 geteilt durch 2 ergibt 3.5."
+  },
+  "js-remainder": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(17 % 5);",
+    "options": [
+      "2",
+      "3",
+      "5"
+    ],
+    "answer": 0,
+    "explanation": "Drei vollständige Gruppen mit je fünf ergeben 15. Der Rest von 17 nach dieser Division ist 2."
+  },
+  "js-nullish": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(0 ?? 10);",
+    "options": [
+      "0",
+      "10",
+      "null"
+    ],
+    "answer": 0,
+    "explanation": "?? nimmt den Ersatz nur bei null oder undefined. Die vorhandene Null bleibt ein gültiger Wert."
+  },
+  "js-or-fallback": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(0 || 10);",
+    "options": [
+      "10",
+      "0",
+      "false"
+    ],
+    "answer": 0,
+    "explanation": "|| liefert hier die rechte Alternative, weil 0 falsy ist. Das unterscheidet die Regel von ??."
+  },
+  "js-typeof": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "console.log(typeof null);",
+    "options": [
+      "object",
+      "null",
+      "undefined"
+    ],
+    "answer": 0,
+    "explanation": "typeof null liefert aus historischen Gründen den String object. Das bedeutet nicht, dass null ein nutzbares Objekt ist."
+  },
+  "js-for": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "let sum = 0;\nfor (let i = 1; i <= 3; i++) sum += i;\nconsole.log(sum);",
+    "options": [
+      "6",
+      "3",
+      "4"
+    ],
+    "answer": 0,
+    "explanation": "Die Schleife addiert 1, 2 und 3 zum gespeicherten Wert. Die obere Grenze 3 ist durch <= eingeschlossen."
+  },
+  "js-if": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "const points = 0;\nconsole.log(points > 0 ? \"aktiv\" : \"leer\");",
+    "options": [
+      "leer",
+      "aktiv",
+      "0"
+    ],
+    "answer": 0,
+    "explanation": "Die Bedingung points > 0 ist bei 0 falsch, deshalb wird die zweite Alternative ausgewählt."
+  },
+  "js-return": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "function twice(n) { return n * 2; }\nconsole.log(twice(4));",
+    "options": [
+      "8",
+      "4",
+      "undefined"
+    ],
+    "answer": 0,
+    "explanation": "return übergibt das berechnete Ergebnis an den Aufrufer. console.log zeigt anschließend diesen Rückgabewert."
+  },
+  "js-push": {
+    "question": "Welche Ausgabe erzeugt dieses JavaScript-Beispiel?",
+    "example": "const values = [1];\nconsole.log(values.push(2));\nconsole.log(JSON.stringify(values));",
+    "options": [
+      "2\n[1,2]",
+      "[1,2]\n2",
+      "1\n[1]"
+    ],
+    "answer": 0,
+    "explanation": "push verändert das Array und liefert die neue Länge, nicht das Array selbst."
+  }
+}

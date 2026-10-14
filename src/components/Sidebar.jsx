@@ -30,6 +30,7 @@ import { courses, courseGroups } from "../data";
 export const navigation = [
   { id: "learn", label: "Lernen", icon: BookOpen },
   { id: "exercises", label: "Übungen", icon: ClipboardList },
+  { id: "sessions", label: "Lernrunden", icon: BookOpen },
   { id: "ideas", label: "Idee → Code", icon: CodeXml },
   { id: "projects", label: "Projekte", icon: Rocket },
   { id: "reference", label: "Nachschlagen", icon: Search },

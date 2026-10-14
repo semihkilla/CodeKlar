@@ -2226,11 +2226,11 @@ test('mobile topic field opens the selected bottom-sheet design and keeps lesson
 
 test('Java curriculum preserves old progress IDs and puts every lesson in a chapter',async()=>{
  const {javaLessonPack}=await import('../src/javaLessons.js');const {javaProjects}=await import('../src/javaProjects.js');
- expect(javaLessonPack).toHaveLength(130);expect(javaLessons).toHaveLength(131);expect(lessons.filter(x=>x.id==='java-equals')).toHaveLength(1);expect(javaLessons[0].id).toBe('java-hello');
+ expect(javaLessonPack).toHaveLength(190);expect(javaLessons).toHaveLength(191);expect(lessons.filter(x=>x.id==='java-equals')).toHaveLength(1);expect(javaLessons[0].id).toBe('java-hello');
  expect(new Set(lessons.map(x=>x.id)).size).toBe(lessons.length);
  const groups=groupTopics('java',javaLessons);expect(groups).toHaveLength(6);expect(groups.some(x=>x.id==='more')).toBe(false);expect(groups.flatMap(x=>x.lessons.map(l=>l.id)).sort()).toEqual(javaLessons.map(x=>x.id).sort());
  for(const lesson of javaLessonPack){expect(lesson.guide[1]).toHaveLength(3);expect(lesson.example).toContain('public static void main');expect(lesson.options[lesson.answer]).toBe(lesson.expectedOutput);expect(new Set(lesson.options).size).toBe(3);expect(lesson.explanation.length).toBeGreaterThan(50);}
- expect(javaProjects).toHaveLength(3);for(const p of javaProjects){for(const id of p.lessonIds)expect(javaLessons.find(x=>x.id===id)).toBeTruthy();expect(p.files[Object.keys(p.files)[0]]).toContain('static void tests()');}
+ expect(javaProjects).toHaveLength(5);for(const p of javaProjects){for(const id of p.lessonIds)expect(javaLessons.find(x=>x.id===id)).toBeTruthy();expect(p.files[Object.keys(p.files)[0]]).toContain('static void tests()');}
 });
 
 test('all Java lessons render and grade real output questions with persistent progress',async({page})=>{
@@ -2243,7 +2243,7 @@ test('all Java lessons render and grade real output questions with persistent pr
   await page.getByRole('radio').nth(lesson.answer).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.locator('.quiz-feedback')).toContainText('Richtig!');
   if(lesson.guide){await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await expect(page.locator('.syntax-strip').first()).toContainText('public class Main');}
  }
- await expect(page.getByText('131 von 131 Aufgaben gelöst',{exact:true})).toBeVisible();await page.reload();await page.getByRole('button',{name:'Java',exact:true}).click();await expect(page.getByText('131 von 131 Aufgaben gelöst',{exact:true})).toBeVisible();expect(errors).toEqual([]);
+ await expect(page.getByText(`${javaLessons.length} von ${javaLessons.length} Aufgaben gelöst`,{exact:true})).toBeVisible();await page.reload();await page.getByRole('button',{name:'Java',exact:true}).click();await expect(page.getByText(`${javaLessons.length} von ${javaLessons.length} Aufgaben gelöst`,{exact:true})).toBeVisible();expect(errors).toEqual([]);
 });
 
 test('Java mobile chapters, multiline answers and reference search remain readable',async({page})=>{
@@ -2256,7 +2256,25 @@ test('Java mobile chapters, multiline answers and reference search remain readab
 });
 
 test('Java projects download complete source and link back to their own lessons',async({page})=>{
- const {javaProjects}=await import('../src/javaProjects.js');const {unzipSync,strFromU8}=await import('fflate');await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:/Projektideen für alle Lernbereiche/}).click();await page.getByLabel('Lernbereich',{exact:true}).selectOption('java');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(4);
+ const {javaProjects}=await import('../src/javaProjects.js');const {unzipSync,strFromU8}=await import('fflate');await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:/Projektideen für alle Lernbereiche/}).click();await page.getByLabel('Lernbereich',{exact:true}).selectOption('java');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(6);
  for(const project of javaProjects){await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').filter({hasText:project.title}).click();const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen',exact:true}).click();const download=await pending;const files=unzipSync(await readFile(await download.path()));for(const [name,code] of Object.entries(project.files))expect(strFromU8(files[name])).toBe(code);expect(strFromU8(files['README.md'])).toContain('JDK ab Version 17');}
  await page.getByRole('region',{name:'Passende Übungen'}).getByRole('button').first().click();await expect(page.locator('.learning-page')).toHaveAttribute('data-course','java');await expect(page.getByRole('tab',{name:'Aufgabe',exact:true})).toHaveAttribute('aria-selected','true');
+});
+
+test('Java method contracts and independent exercises stay collapsed and readable on mobile',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('codeklar-accent-v1','green'));await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('java');await page.getByRole('row').filter({has:page.getByText('removeIf(): gezielt löschen',{exact:true})}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+ const api=page.locator('.java-api-help'),practice=page.locator('.java-self-practice');await expect(api).not.toHaveAttribute('open','');await expect(practice).not.toHaveAttribute('open','');await expect(page.getByText('Wofür brauche ich das?',{exact:true})).toBeVisible();
+ await api.locator('summary').click();await expect(api).toContainText('true bedeutet entfernen');await expect(api).toContainText('boolean: ob Elemente entfernt wurden.');await expect(api).toContainText('Verändert die Collection.');
+ await practice.locator('summary').first().click();await expect(practice).toContainText('Entferne negative Werte');await practice.getByText('Hinweis zur Übung',{exact:true}).click();await expect(practice).toContainText('kleiner als null');await practice.getByText('Musterlösung mit erwarteter Ausgabe',{exact:true}).click();await expect(practice.locator('.syntax-strip').first()).toContainText('public class Main');await expect(practice.locator('.syntax-strip').last()).toHaveText('[0, 4]');
+ for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ await page.setViewportSize({width:390,height:844});await api.scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-java-method-help.png',animations:'disabled'});
+ await page.getByRole('button',{name:'Nächste Lektion im Thema',exact:true}).click();await expect(page.locator('.java-api-help')).not.toHaveAttribute('open','');
+ await page.getByRole('button',{name:'Nachschlagen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('java');await page.getByRole('textbox').fill('Pattern.quote');await expect(page.locator('.reference-entry')).toHaveCount(1);const ref=page.locator('.reference-entry');await ref.locator('.java-api-help summary').click();await expect(ref).toContainText('Text, der im Regex wörtlich gesucht werden soll.');await expect(ref.locator('.java-self-practice')).toHaveCount(0);await ref.getByRole('button',{name:'Pattern.quote(): Benutzertext wörtlich lernen',exact:true}).click();await expect(page.getByRole('heading',{name:'Pattern.quote(): Benutzertext wörtlich',exact:true})).toBeVisible();
+});
+
+test('new Java teaching material includes complete contracts, applications and twelve local solutions',async()=>{
+ const {default:rows}=await import('../src/javaFurtherCurriculum.json',{with:{type:'json'}});expect(rows).toHaveLength(60);expect(rows.filter(x=>x.practice)).toHaveLength(12);
+ for(const row of rows){expect(row.steps).toHaveLength(3);expect(row.methodProfile.signature.length).toBeGreaterThan(5);expect(row.methodProfile.returns.length).toBeGreaterThan(10);expect(row.methodProfile.effect.length).toBeGreaterThan(10);expect(row.useCase.length).toBeGreaterThan(20);expect(row.pitfall.length).toBeGreaterThan(30);expect(row.choices[0]).toBe(row.output);expect(new Set(row.choices).size).toBe(3);}
+ const {javaLessonPack}=await import('../src/javaLessons.js');expect(javaLessonPack.filter(x=>x.methodProfile)).toHaveLength(76);for(const lesson of javaLessonPack.filter(x=>x.practice)){expect(lesson.practice.example).toContain('public static void main');expect(lesson.practice.hint.length).toBeGreaterThan(20);}
 });

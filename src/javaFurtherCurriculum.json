@@ -1,0 +1,2180 @@
+[
+  {
+    "id": "string-ignore-case",
+    "category": "Strings",
+    "name": "equalsIgnoreCase(): Schreibweise ignorieren",
+    "introduction": "equalsIgnoreCase vergleicht Stringinhalte ohne Unterscheidung zwischen Groß- und Kleinschreibung. Leerzeichen werden dabei nicht entfernt.",
+    "steps": [
+      "Ja und JA unterscheiden sich nur in der Schreibweise.",
+      "Die Methode liefert einen boolean.",
+      "Zusätzliche Leerzeichen bleiben ein Inhaltsunterschied."
+    ],
+    "code": "System.out.println(\"Ja\".equalsIgnoreCase(\"JA\"));\nSystem.out.println(\"Ja\".equalsIgnoreCase(\" Ja \"));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Die Methode ist kein sprachsensitiver Sortieralgorithmus. Für Eingabeprüfung können strip und equalsIgnoreCase zusammen eingesetzt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.equalsIgnoreCase(andererText)",
+      "parameters": [
+        [
+          "andererText",
+          "String, dessen Inhalt verglichen wird; null führt hier zu false."
+        ]
+      ],
+      "returns": "boolean: true bei einem entsprechenden Vergleich ohne Beachtung der Groß-/Kleinschreibung.",
+      "effect": "Verändert keinen der Strings."
+    },
+    "useCase": "Eine Konsolenantwort wie ja, JA oder Ja akzeptieren.",
+    "pitfall": "Die Methode entfernt keine Rand-Leerzeichen und schützt nicht vor einem null-Empfänger.",
+    "practice": {
+      "task": "Akzeptiere die Eingabe \"  JA  \" als Ja-Antwort.",
+      "hint": "Bereinige zunächst die Ränder, vergleiche dann die Schreibweise.",
+      "code": "String eingabe = \"  JA  \";\nSystem.out.println(eingabe.strip().equalsIgnoreCase(\"ja\"));",
+      "output": "true"
+    }
+  },
+  {
+    "id": "string-compare",
+    "category": "Strings",
+    "name": "compareTo(): Vergleich statt boolean",
+    "introduction": "compareTo vergleicht Strings lexikografisch nach UTF-16-Codeeinheiten. Die Rückgabe zeigt eine Ordnung, nicht nur Gleichheit.",
+    "steps": [
+      "Bei den ersten unterschiedlichen Buchstaben wird entschieden.",
+      "A liegt vor B.",
+      "Ein negatives Ergebnis bedeutet: der linke String kommt vorher."
+    ],
+    "code": "System.out.println(\"Ada\".compareTo(\"Bo\") < 0);\nSystem.out.println(\"Ada\".compareTo(\"Ada\"));",
+    "output": "true\n0",
+    "choices": [
+      "true\n0",
+      "false\n1",
+      "true\n1"
+    ],
+    "explanation": "Nur das Vorzeichen ist für die Ordnung relevant. compareTo garantiert für verschiedene Strings nicht ausschließlich -1 oder 1.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.compareTo(andererText)",
+      "parameters": [
+        [
+          "andererText",
+          "Der Vergleichsstring; null ist unzulässig."
+        ]
+      ],
+      "returns": "int: negativ, 0 oder positiv für kleiner, gleich oder größer.",
+      "effect": "Keine Änderung am String."
+    },
+    "useCase": "Einträge nach einer festgelegten technischen Ordnung sortieren.",
+    "pitfall": "compareTo ist kein deutscher Wörterbuchvergleich; dafür eignet sich gegebenenfalls Collator."
+  },
+  {
+    "id": "string-prefix",
+    "category": "Strings",
+    "name": "startsWith() und endsWith()",
+    "introduction": "Die Methoden prüfen Anfang und Ende eines Strings. Sie durchsuchen nicht beliebige Stellen in der Mitte.",
+    "steps": [
+      "Der Anfang ist Datei_.",
+      "Das Ende ist .txt.",
+      "Ein Teilstring nur in der Mitte reicht als Präfix nicht aus."
+    ],
+    "code": "String datei = \"Datei_notiz.txt\";\nSystem.out.println(datei.startsWith(\"Datei_\"));\nSystem.out.println(datei.endsWith(\".txt\"));",
+    "output": "true\ntrue",
+    "choices": [
+      "true\ntrue",
+      "false\ntrue",
+      "true\nfalse"
+    ],
+    "explanation": "Beide Methoden beachten die Groß-/Kleinschreibung. Eine Dateiendung allein ist kein zuverlässiger Nachweis für den Inhalt einer Datei.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.startsWith(prefix); text.endsWith(suffix)",
+      "parameters": [
+        [
+          "prefix",
+          "Gesuchter Anfang."
+        ],
+        [
+          "suffix",
+          "Gesuchtes Ende."
+        ]
+      ],
+      "returns": "boolean für jede Prüfung.",
+      "effect": "Keine Änderung am Text."
+    },
+    "useCase": "Benannte Dateimuster oder Befehlspräfixe erkennen.",
+    "pitfall": "Ein leerer Präfix oder Suffix trifft bei jedem vorhandenen String zu."
+  },
+  {
+    "id": "string-replace-literal",
+    "category": "Strings",
+    "name": "replace(): wörtlich ersetzen",
+    "introduction": "replace mit Strings behandelt den Suchtext wörtlich. Punkte und Sternchen sind dabei keine Regex-Steuerzeichen.",
+    "steps": [
+      "Der Suchtext ist der wirkliche Punkt.",
+      "Alle Vorkommen werden ersetzt.",
+      "Der Originalstring bleibt unverändert."
+    ],
+    "code": "String text = \"a.b.c\";\nSystem.out.println(text.replace(\".\", \"-\"));\nSystem.out.println(text);",
+    "output": "a-b-c\na.b.c",
+    "choices": [
+      "a-b-c\na.b.c",
+      "-----\na.b.c",
+      "a-b-c\na-b-c"
+    ],
+    "explanation": "Für wörtlichen Text ist replace oft einfacher als replaceAll. Der Rückgabewert muss für eine weitere Nutzung gespeichert werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.replace(ziel, ersatz)",
+      "parameters": [
+        [
+          "ziel",
+          "Wörtliche Zeichenfolge, die gesucht wird."
+        ],
+        [
+          "ersatz",
+          "Text, der jedes Vorkommen ersetzt."
+        ]
+      ],
+      "returns": "String mit den ersetzten Vorkommen.",
+      "effect": "Der ursprüngliche String bleibt unverändert."
+    },
+    "useCase": "Benutzertext bereinigen oder einen festen Trenner austauschen.",
+    "pitfall": "replaceAll verwendet Regex; ein unmaskierter Punkt bedeutet dort etwas anderes.",
+    "practice": {
+      "task": "Ersetze in \"C++ und C++\" beide wörtlichen C++-Vorkommen durch Java.",
+      "hint": "replace interpretiert Pluszeichen wörtlich.",
+      "code": "System.out.println(\"C++ und C++\".replace(\"C++\", \"Java\"));",
+      "output": "Java und Java"
+    }
+  },
+  {
+    "id": "string-join",
+    "category": "Strings",
+    "name": "String.join(): Texte verbinden",
+    "introduction": "String.join verbindet mehrere Textstücke mit einem Trenntext zwischen den Stücken.",
+    "steps": [
+      "Die drei Werte werden in ihrer Reihenfolge verbunden.",
+      "Der Trenner erscheint nur zwischen den Werten.",
+      "Am Ende kommt kein zusätzlicher Trenner hinzu."
+    ],
+    "code": "System.out.println(String.join(\" / \", \"Java\", \"SQL\", \"Linux\"));",
+    "output": "Java / SQL / Linux",
+    "choices": [
+      "Java / SQL / Linux",
+      "Java / SQL / Linux /",
+      "JavaSQLLinux"
+    ],
+    "explanation": "join ist für einen klaren Trenner gedacht. Für CSV mit eingebetteten Trennzeichen braucht man zusätzliche Formatregeln.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "String.join(trenner, elemente)",
+      "parameters": [
+        [
+          "trenner",
+          "Text zwischen zwei Elementen."
+        ],
+        [
+          "elemente",
+          "Strings als variable Argumente oder Iterable."
+        ]
+      ],
+      "returns": "Ein neuer String aus allen Elementen.",
+      "effect": "Die Eingabeelemente werden nicht verändert."
+    },
+    "useCase": "Eine lesbare Zusammenfassung von Tags anzeigen.",
+    "pitfall": "join maskiert keine CSV-Sonderzeichen und führt keine Eingabevalidierung durch."
+  },
+  {
+    "id": "string-format-locale",
+    "category": "Strings",
+    "name": "String.format() und Locale",
+    "introduction": "String.format erzeugt Text anhand von Platzhaltern. Eine explizite Locale macht die Darstellung von Zahlen vorhersehbar.",
+    "steps": [
+      "Locale.ROOT wählt eine sprachunabhängige Formatierung.",
+      "%.2f verlangt zwei Nachkommastellen.",
+      "Die Zahl wird nur für die Ausgabe gerundet."
+    ],
+    "code": "System.out.println(String.format(java.util.Locale.ROOT, \"%.2f\", 3.5));",
+    "output": "3.50",
+    "choices": [
+      "3.50",
+      "3,50",
+      "3.5"
+    ],
+    "explanation": "Die Locale beeinflusst beispielsweise den Dezimaltrenner. Der ursprüngliche double-Wert erhält dadurch keine neue Rechengenauigkeit.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "String.format(locale, format, werte)",
+      "parameters": [
+        [
+          "locale",
+          "Regeln für sprachabhängige Darstellung."
+        ],
+        [
+          "format",
+          "Text mit Platzhaltern."
+        ],
+        [
+          "werte",
+          "Argumente passend zu den Platzhaltern."
+        ]
+      ],
+      "returns": "Ein formatierter String.",
+      "effect": "Keine Veränderung der Zahlenwerte."
+    },
+    "useCase": "Einen Bericht unabhängig von der Gerätesprache ausgeben.",
+    "pitfall": "Formatieren ist keine Methode, um Gleitkommafehler in einer Berechnung zu beheben."
+  },
+  {
+    "id": "string-repeat",
+    "category": "Strings",
+    "name": "repeat(): Text wiederholen",
+    "introduction": "repeat liefert einen String aus mehreren Wiederholungen. Die Anzahl muss nichtnegativ sein.",
+    "steps": [
+      "Der Ausgangstext ist ab.",
+      "Drei Wiederholungen werden direkt aneinandergehängt.",
+      "Bei null Wiederholungen wäre das Ergebnis leer."
+    ],
+    "code": "System.out.println(\"ab\".repeat(3));",
+    "output": "ababab",
+    "choices": [
+      "ababab",
+      "ab3",
+      "ab ab ab"
+    ],
+    "explanation": "repeat ist seit Java 11 verfügbar. Große Wiederholungszahlen können sehr viel Speicher benötigen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.repeat(anzahl)",
+      "parameters": [
+        [
+          "anzahl",
+          "Nichtnegative Anzahl der Wiederholungen."
+        ]
+      ],
+      "returns": "Neuer String mit der angegebenen Wiederholung.",
+      "effect": "Der Originalstring bleibt unverändert."
+    },
+    "useCase": "Eine einfache Textanzeige oder Einrückung bauen.",
+    "pitfall": "Negative Anzahlen lösen IllegalArgumentException aus; große Werte sind kein kostenloser Vorgang."
+  },
+  {
+    "id": "string-lines",
+    "category": "Strings",
+    "name": "String.lines(): Textzeilen lesen",
+    "introduction": "lines erzeugt einen Stream über Textzeilen. Ein abschließender Zeilenumbruch zählt nicht als zusätzliche leere Zeile.",
+    "steps": [
+      "Der Text enthält die Zeilen A und B.",
+      "lines erkennt den Zeilenumbruch.",
+      "count zählt die beiden Zeilen."
+    ],
+    "code": "System.out.println(\"A\\nB\\n\".lines().count());",
+    "output": "2",
+    "choices": [
+      "2",
+      "3",
+      "4"
+    ],
+    "explanation": "String.lines liest einen bereits vorhandenen String. Im Unterschied zu Files.lines wird dadurch keine Dateiressource geöffnet.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.lines()",
+      "parameters": [],
+      "returns": "Stream<String> über die erkannten Zeilen.",
+      "effect": "Keine Veränderung und keine geöffnete Datei."
+    },
+    "useCase": "Mehrzeilige Eingaben eines Formulars verarbeiten.",
+    "pitfall": "String.lines und Files.lines sind ähnliche APIs mit unterschiedlichen Ressourcenanforderungen."
+  },
+  {
+    "id": "array-fill",
+    "category": "Arrays",
+    "name": "Arrays.fill(): Werte einsetzen",
+    "introduction": "fill setzt einen Wert in jedes Arrayelement oder in einen angegebenen Indexbereich. Die Operation verändert das Array.",
+    "steps": [
+      "Das Array ist bereits vorhanden.",
+      "fill schreibt in jedes der drei Elemente die 7.",
+      "Das Ergebnis ist kein neues Array."
+    ],
+    "code": "int[] n = new int[3];\njava.util.Arrays.fill(n, 7);\nSystem.out.println(java.util.Arrays.toString(n));",
+    "output": "[7, 7, 7]",
+    "choices": [
+      "[7, 7, 7]",
+      "[0, 0, 0]",
+      "[7]"
+    ],
+    "explanation": "Die Bereichsvariante verwendet einen eingeschlossenen Start und ein ausgeschlossenes Ende.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Arrays.fill(array, wert)",
+      "parameters": [
+        [
+          "array",
+          "Array, das beschrieben wird."
+        ],
+        [
+          "wert",
+          "Neuer Wert für die betroffenen Elemente."
+        ]
+      ],
+      "returns": "void: kein Ergebniswert.",
+      "effect": "Verändert das übergebene Array."
+    },
+    "useCase": "Ein Spielfeld mit einem einheitlichen Anfangswert vorbereiten.",
+    "pitfall": "Bei Objekten wird dieselbe Referenz in die Elemente geschrieben, nicht für jedes Element ein neues Objekt erzeugt.",
+    "practice": {
+      "task": "Leere ein Punktearray {3,5,9}, indem du alle Werte auf 0 setzt.",
+      "hint": "fill verändert das existierende Array.",
+      "code": "int[] punkte = {3, 5, 9};\njava.util.Arrays.fill(punkte, 0);\nSystem.out.println(java.util.Arrays.toString(punkte));",
+      "output": "[0, 0, 0]"
+    }
+  },
+  {
+    "id": "array-copy-range",
+    "category": "Arrays",
+    "name": "Arrays.copyOfRange(): Teilstück kopieren",
+    "introduction": "copyOfRange erstellt ein neues Array für einen Indexbereich. Das Ende ist ausgeschlossen.",
+    "steps": [
+      "Index 1 beginnt beim zweiten Element.",
+      "Index 3 ist nicht mehr enthalten.",
+      "Die Kopie enthält deshalb die Werte an Index 1 und 2."
+    ],
+    "code": "int[] n = {10, 20, 30, 40};\nSystem.out.println(java.util.Arrays.toString(java.util.Arrays.copyOfRange(n, 1, 3)));",
+    "output": "[20, 30]",
+    "choices": [
+      "[20, 30]",
+      "[20, 30, 40]",
+      "[10, 20, 30]"
+    ],
+    "explanation": "Die neue int-Arraykopie ist unabhängig vom Original. Bei Objektarrays werden die enthaltenen Referenzen kopiert.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Arrays.copyOfRange(array, von, bis)",
+      "parameters": [
+        [
+          "array",
+          "Quelle."
+        ],
+        [
+          "von",
+          "Erster eingeschlossener Index."
+        ],
+        [
+          "bis",
+          "Ausgeschlossener Endindex."
+        ]
+      ],
+      "returns": "Neues Array für den Bereich.",
+      "effect": "Verändert die Quelle nicht."
+    },
+    "useCase": "Einen Ausschnitt aus Messwerten separat weiterverarbeiten.",
+    "pitfall": "Eine Arraykopie ist bei Objektelementen keine tiefe Kopie.",
+    "practice": {
+      "task": "Kopiere die letzten zwei Werte aus {10,20,30,40}.",
+      "hint": "Der erste Index der letzten beiden Werte ist length - 2.",
+      "code": "int[] n = {10, 20, 30, 40};\nSystem.out.println(java.util.Arrays.toString(java.util.Arrays.copyOfRange(n, n.length - 2, n.length)));",
+      "output": "[30, 40]"
+    }
+  },
+  {
+    "id": "array-search-missing",
+    "category": "Arrays",
+    "name": "binarySearch(): fehlender Wert",
+    "introduction": "Bei einem fehlenden Wert kodiert binarySearch dessen Einfügeposition als -(position + 1). Das ist kein gewöhnlicher Index.",
+    "steps": [
+      "Die sortierten Werte sind 1, 3 und 5.",
+      "4 müsste an Position 2 eingefügt werden.",
+      "Die Rückgabe wird deshalb -(2 + 1)."
+    ],
+    "code": "System.out.println(java.util.Arrays.binarySearch(new int[]{1, 3, 5}, 4));",
+    "output": "-3",
+    "choices": [
+      "-3",
+      "-1",
+      "2"
+    ],
+    "explanation": "Zum Dekodieren einer negativen Rückgabe kann -ergebnis - 1 verwendet werden. Die Quelle muss passend sortiert sein.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Arrays.binarySearch(sortiertesArray, ziel)",
+      "parameters": [
+        [
+          "sortiertesArray",
+          "Aufsteigend sortierte Quelle."
+        ],
+        [
+          "ziel",
+          "Gesuchter Wert."
+        ]
+      ],
+      "returns": "Trefferindex oder negativ kodierte Einfügeposition.",
+      "effect": "Ändert das Array nicht."
+    },
+    "useCase": "Eine sortierte Rangliste um einen neuen Wert ergänzen.",
+    "pitfall": "Nicht jede negative Rückgabe ist -1. Eine unsortierte Quelle verletzt die Voraussetzung der Methode."
+  },
+  {
+    "id": "arrays-as-list",
+    "category": "Arrays",
+    "name": "Arrays.asList(): feste Größe",
+    "introduction": "Arrays.asList erzeugt eine Liste mit fester Größe, die auf das Objektarray zurückgreift. Elementersetzung ist erlaubt, Wachstum nicht.",
+    "steps": [
+      "Die Liste und das Array teilen ihre Elemente.",
+      "set ersetzt einen vorhandenen Wert.",
+      "Die Änderung ist anschließend über das Array sichtbar."
+    ],
+    "code": "String[] n = {\"A\", \"B\"};\nvar liste = java.util.Arrays.asList(n);\nliste.set(0, \"X\");\nSystem.out.println(n[0]);",
+    "output": "X",
+    "choices": [
+      "X",
+      "A",
+      "UnsupportedOperationException"
+    ],
+    "explanation": "add oder remove wären auf dieser Liste nicht erlaubt. Für eine unabhängig wachsende Liste braucht man eine ArrayList-Kopie.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Arrays.asList(objektArray)",
+      "parameters": [
+        [
+          "objektArray",
+          "Ein Array von Referenztypen, zum Beispiel String[]."
+        ]
+      ],
+      "returns": "Liste mit fester Größe und Rückgriff auf das Array.",
+      "effect": "set verändert auch den entsprechenden Arrayeintrag."
+    },
+    "useCase": "Ein vorhandenes Objektarray mit List-Operationen lesen und ersetzen.",
+    "pitfall": "Arrays.asList(new int[]{1,2}) wird zu einer Liste mit einem int[] als einzigem Element, nicht zu List<Integer>."
+  },
+  {
+    "id": "int-stream",
+    "category": "Arrays",
+    "name": "Arrays.stream(): primitive Zahlen",
+    "introduction": "Ein int-Array kann als IntStream verarbeitet werden. sum ist eine Endoperation und liefert die Summe.",
+    "steps": [
+      "Arrays.stream erzeugt einen Stream über die int-Werte.",
+      "filter behält Werte größer als 2.",
+      "sum addiert die verbliebenen Werte."
+    ],
+    "code": "System.out.println(java.util.Arrays.stream(new int[]{1, 3, 5}).filter(n -> n > 2).sum());",
+    "output": "8",
+    "choices": [
+      "8",
+      "9",
+      "2"
+    ],
+    "explanation": "IntStream vermeidet an dieser Stelle die Verpackung in Integer-Objekte. sum verwendet dennoch begrenzte int-Arithmetik.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Arrays.stream(intArray).sum()",
+      "parameters": [
+        [
+          "intArray",
+          "Primitive Ganzzahlen als Quelle."
+        ]
+      ],
+      "returns": "sum liefert einen int; stream erzeugt einen IntStream.",
+      "effect": "Die Quelle wird durch diese Pipeline nicht verändert."
+    },
+    "useCase": "Messwerte filtern und zusammenrechnen.",
+    "pitfall": "sum erkennt einen int-Überlauf nicht automatisch."
+  },
+  {
+    "id": "array-shallow",
+    "category": "Arrays",
+    "name": "Verschachtelte Arrays kopieren",
+    "introduction": "Eine Kopie des äußeren Arrays übernimmt zunächst die Referenzen der inneren Arrays. Die inneren Werte sind dann noch gemeinsam.",
+    "steps": [
+      "a besteht aus einem inneren int-Array.",
+      "clone kopiert nur die äußere Ebene.",
+      "Eine Änderung am inneren Array ist durch a und b sichtbar."
+    ],
+    "code": "int[][] a = {{1}};\nint[][] b = a.clone();\nb[0][0] = 9;\nSystem.out.println(a[0][0]);",
+    "output": "9",
+    "choices": [
+      "9",
+      "1",
+      "0"
+    ],
+    "explanation": "Eine unabhängige Matrix braucht zusätzlich Kopien der inneren Arrays. Der Umfang der Kopie hängt von der Struktur und den veränderbaren Elementen ab.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "array.clone()",
+      "parameters": [],
+      "returns": "Ein neues Array der äußeren Ebene.",
+      "effect": "Innere Objektreferenzen bleiben geteilt."
+    },
+    "useCase": "Spielbretter kopieren, ohne den ursprünglichen Zustand versehentlich zu verändern.",
+    "pitfall": "Eine flache Kopie ist keine tiefe Kopie; bei mehr Ebenen ist weiteres Kopieren erforderlich."
+  },
+  {
+    "id": "list-remove-if",
+    "category": "Collections",
+    "name": "removeIf(): gezielt löschen",
+    "introduction": "removeIf entfernt aus einer veränderbaren Collection alle Werte, deren Predicate true liefert.",
+    "steps": [
+      "Das Predicate prüft gerade Werte.",
+      "2 und 4 erfüllen die Bedingung.",
+      "Die verbleibende Liste enthält 1 und 3."
+    ],
+    "code": "var n = new java.util.ArrayList<Integer>(java.util.List.of(1, 2, 3, 4));\nSystem.out.println(n.removeIf(x -> x % 2 == 0));\nSystem.out.println(n);",
+    "output": "true\n[1, 3]",
+    "choices": [
+      "true\n[1, 3]",
+      "false\n[2, 4]",
+      "[2, 4]"
+    ],
+    "explanation": "Die Rückgabe meldet, ob sich die Collection durch eine Entfernung verändert hat. Auf unveränderbaren Listen kann die Operation fehlschlagen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "collection.removeIf(predicate)",
+      "parameters": [
+        [
+          "predicate",
+          "Prüfung; true bedeutet entfernen."
+        ]
+      ],
+      "returns": "boolean: ob Elemente entfernt wurden.",
+      "effect": "Verändert die Collection."
+    },
+    "useCase": "Abgelaufene Aufgaben aus einer veränderbaren Liste entfernen.",
+    "pitfall": "Die Bedingung bezeichnet die zu löschenden, nicht die zu behaltenden Werte.",
+    "practice": {
+      "task": "Entferne negative Werte aus {-3,0,4,-1} und behalte 0.",
+      "hint": "Die Löschbedingung ist kleiner als null, nicht kleiner oder gleich null.",
+      "code": "var n = new java.util.ArrayList<Integer>(java.util.List.of(-3, 0, 4, -1));\nn.removeIf(x -> x < 0);\nSystem.out.println(n);",
+      "output": "[0, 4]"
+    }
+  },
+  {
+    "id": "list-replace-all",
+    "category": "Collections",
+    "name": "List.replaceAll(): jeden Wert ersetzen",
+    "introduction": "replaceAll auf einer List ersetzt jedes Element mithilfe einer Funktion. Das ist nicht die String-Methode replaceAll.",
+    "steps": [
+      "Die Liste ist veränderbar.",
+      "Die Funktion berechnet für jeden Wert das Doppelte.",
+      "Die ursprüngliche Liste enthält danach die neuen Werte."
+    ],
+    "code": "var n = new java.util.ArrayList<Integer>(java.util.List.of(1, 2, 3));\nn.replaceAll(x -> x * 2);\nSystem.out.println(n);",
+    "output": "[2, 4, 6]",
+    "choices": [
+      "[2, 4, 6]",
+      "[1, 2, 3]",
+      "[1, 4, 9]"
+    ],
+    "explanation": "Im Gegensatz zu stream().map(...) verändert List.replaceAll hier die Liste selbst.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "liste.replaceAll(operator)",
+      "parameters": [
+        [
+          "operator",
+          "Funktion vom Elementtyp wieder zum gleichen Elementtyp."
+        ]
+      ],
+      "returns": "void: kein Ergebniswert.",
+      "effect": "Ersetzt die Werte in der Liste."
+    },
+    "useCase": "Alle gespeicherten Punkte eines kleinen Spiels um einen Faktor erhöhen.",
+    "pitfall": "Gleichnamige Methoden verschiedener Klassen können völlig unterschiedliche Aufgaben und Parameter haben."
+  },
+  {
+    "id": "retain-all",
+    "category": "Collections",
+    "name": "retainAll(): Schnittmenge behalten",
+    "introduction": "retainAll behält nur Elemente, die auch in der angegebenen Collection vorkommen.",
+    "steps": [
+      "Die Ausgangsliste enthält 1, 2 und 3.",
+      "Die erlaubten Werte sind 2 und 4.",
+      "Nur 2 ist in beiden enthalten."
+    ],
+    "code": "var n = new java.util.ArrayList<Integer>(java.util.List.of(1, 2, 3));\nn.retainAll(java.util.List.of(2, 4));\nSystem.out.println(n);",
+    "output": "[2]",
+    "choices": [
+      "[2]",
+      "[1, 3]",
+      "[1, 2, 3, 4]"
+    ],
+    "explanation": "Die Methode verändert die Ausgangscollection. Bei Listen werden die eigenen Reihenfolge- und Duplikatregeln dabei beibehalten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "collection.retainAll(erlaubteWerte)",
+      "parameters": [
+        [
+          "erlaubteWerte",
+          "Collection, deren enthaltene Werte behalten werden dürfen."
+        ]
+      ],
+      "returns": "boolean: ob die Ausgangscollection verändert wurde.",
+      "effect": "Entfernt nicht erlaubte Elemente aus der Ausgangscollection."
+    },
+    "useCase": "Die momentan verfügbaren Elemente aus einer Wunschliste behalten.",
+    "pitfall": "retainAll ist nicht dasselbe wie addAll und erzeugt keine neue Ergebniscollection."
+  },
+  {
+    "id": "add-all",
+    "category": "Collections",
+    "name": "addAll(): mehrere Elemente anhängen",
+    "introduction": "addAll übernimmt Elemente aus einer weiteren Collection. Eine ArrayList behält dabei auch doppelte Werte.",
+    "steps": [
+      "Die erste Liste enthält A.",
+      "Die zweite Collection liefert B und A.",
+      "Beide Werte werden in dieser Reihenfolge angehängt."
+    ],
+    "code": "var n = new java.util.ArrayList<String>(java.util.List.of(\"A\"));\nn.addAll(java.util.List.of(\"B\", \"A\"));\nSystem.out.println(n);",
+    "output": "[A, B, A]",
+    "choices": [
+      "[A, B, A]",
+      "[A, B]",
+      "[B, A]"
+    ],
+    "explanation": "Eine Liste ist kein Set: Sie verhindert doppelte Werte nicht. Für unterschiedliche Inhalte kann anschließend ein geeigneter Set-Typ verwendet werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "collection.addAll(quelle)",
+      "parameters": [
+        [
+          "quelle",
+          "Collection mit den zu übernehmenden Elementen."
+        ]
+      ],
+      "returns": "boolean: ob sich die Collection verändert hat.",
+      "effect": "Verändert die Zielcollection, nicht diese Quelle."
+    },
+    "useCase": "Zwei Listen von Aufgaben oder Nachrichten zusammenführen.",
+    "pitfall": "Die Elemente werden nicht tief geklont. Referenzen auf veränderbare Objekte können weiterhin geteilt sein."
+  },
+  {
+    "id": "list-null",
+    "category": "Collections",
+    "name": "ArrayList und null",
+    "introduction": "Eine ArrayList kann null als Element speichern. Manche andere Listenfabriken wie List.of lehnen null ausdrücklich ab.",
+    "steps": [
+      "Die veränderbare Liste wird leer erzeugt.",
+      "add nimmt den null-Wert auf.",
+      "contains prüft, ob dieser Wert enthalten ist."
+    ],
+    "code": "var n = new java.util.ArrayList<String>();\nn.add(null);\nSystem.out.println(n.contains(null));",
+    "output": "true",
+    "choices": [
+      "true",
+      "false",
+      "NullPointerException"
+    ],
+    "explanation": "Die Regeln hängen von der konkreten Collection ab. Ein späterer Methodenaufruf auf einem null-Element ist weiterhin unzulässig.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "liste.add(null); liste.contains(null)",
+      "parameters": [],
+      "returns": "add meldet eine Änderung; contains liefert einen boolean.",
+      "effect": "add verändert die ArrayList."
+    },
+    "useCase": "Eine vorhandene Datenstruktur verstehen, die fehlende Werte als null zulässt.",
+    "pitfall": "Dass eine Collection null speichert, macht Zugriffe auf diese Werte nicht automatisch sicher."
+  },
+  {
+    "id": "map-null",
+    "category": "Collections",
+    "name": "containsKey(): vorhanden oder null?",
+    "introduction": "get kann null sowohl für einen fehlenden Schlüssel als auch für eine gespeicherte null-Zuordnung liefern. containsKey unterscheidet diese Fälle.",
+    "steps": [
+      "Die Map enthält den Schlüssel A mit null als Wert.",
+      "get allein unterscheidet das nicht von einem fehlenden Schlüssel.",
+      "containsKey meldet den tatsächlich vorhandenen Schlüssel."
+    ],
+    "code": "var map = new java.util.HashMap<String,String>();\nmap.put(\"A\", null);\nSystem.out.println(map.get(\"A\"));\nSystem.out.println(map.containsKey(\"A\"));",
+    "output": "null\ntrue",
+    "choices": [
+      "null\ntrue",
+      "null\nfalse",
+      "NullPointerException"
+    ],
+    "explanation": "HashMap erlaubt diese null-Zuordnung. Andere Map-Typen und Map.of besitzen andere Regeln für null.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "map.containsKey(schluessel)",
+      "parameters": [
+        [
+          "schluessel",
+          "Schlüssel, dessen Existenz geprüft wird."
+        ]
+      ],
+      "returns": "boolean unabhängig vom gespeicherten Wert.",
+      "effect": "Keine Änderung an der Map."
+    },
+    "useCase": "In einem Import fehlende Einträge von ausdrücklich leeren Werten unterscheiden.",
+    "pitfall": "get(key) != null ist bei null-fähigen Maps keine vollständige Existenzprüfung."
+  },
+  {
+    "id": "compute-if-absent",
+    "category": "Collections",
+    "name": "computeIfAbsent(): Werte bei Bedarf",
+    "introduction": "computeIfAbsent berechnet einen Wert nur bei einer fehlenden oder null-Zuordnung. Das Ergebnis kann danach wiederverwendet werden.",
+    "steps": [
+      "Bei A fehlt zunächst eine Liste.",
+      "Die Funktion erzeugt eine neue ArrayList.",
+      "Ein zweiter Aufruf liefert die bereits vorhandene Liste."
+    ],
+    "code": "var map = new java.util.HashMap<String,java.util.List<Integer>>();\nmap.computeIfAbsent(\"A\", key -> new java.util.ArrayList<>()).add(1);\nmap.computeIfAbsent(\"A\", key -> new java.util.ArrayList<>()).add(2);\nSystem.out.println(map.get(\"A\"));",
+    "output": "[1, 2]",
+    "choices": [
+      "[1, 2]",
+      "[2]",
+      "[]"
+    ],
+    "explanation": "Ein null-Ergebnis der Berechnungsfunktion wird nicht als neuer Wert gespeichert. Die Funktion sollte nicht nebenbei diese Map verändern.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "map.computeIfAbsent(schluessel, funktion)",
+      "parameters": [
+        [
+          "schluessel",
+          "Gesuchte Zuordnung."
+        ],
+        [
+          "funktion",
+          "Berechnung eines neuen Werts aus dem Schlüssel."
+        ]
+      ],
+      "returns": "Vorhandener oder neu berechneter Wert; gegebenenfalls null.",
+      "effect": "Kann eine neue Zuordnung in die Map eintragen."
+    },
+    "useCase": "Elemente nach einer Kategorie in Listen sammeln.",
+    "pitfall": "Nicht jede Map-Implementierung garantiert eine atomare Berechnung bei konkurrierenden Aufrufen.",
+    "practice": {
+      "task": "Sammle 7 und 9 unter dem Schlüssel Team und gib dessen Liste aus.",
+      "hint": "Erzeuge die Liste nur beim ersten fehlenden Zugriff.",
+      "code": "var map = new java.util.HashMap<String,java.util.List<Integer>>();\nmap.computeIfAbsent(\"Team\", k -> new java.util.ArrayList<>()).add(7);\nmap.computeIfAbsent(\"Team\", k -> new java.util.ArrayList<>()).add(9);\nSystem.out.println(map.get(\"Team\"));",
+      "output": "[7, 9]"
+    }
+  },
+  {
+    "id": "entry-set",
+    "category": "Collections",
+    "name": "entrySet(): Schlüssel und Wert gemeinsam",
+    "introduction": "entrySet liefert eine Sicht auf die Schlüssel-Wert-Einträge einer Map. Jeder Entry erlaubt den gemeinsamen Zugriff.",
+    "steps": [
+      "Die Map wird mit einer Zuordnung gefüllt.",
+      "entrySet liefert einen Eintrag.",
+      "getKey und getValue lesen die beiden Bestandteile."
+    ],
+    "code": "var map = new java.util.LinkedHashMap<String,Integer>();\nmap.put(\"Ada\", 7);\nfor (var entry : map.entrySet()) System.out.println(entry.getKey() + \": \" + entry.getValue());",
+    "output": "Ada: 7",
+    "choices": [
+      "Ada: 7",
+      "7: Ada",
+      "Ada"
+    ],
+    "explanation": "Für viele Map-Verarbeitungen ist entrySet passend, weil keine zusätzliche get-Suche je Schlüssel nötig ist.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "map.entrySet()",
+      "parameters": [],
+      "returns": "Set<Map.Entry<K,V>> als Sicht auf die Einträge.",
+      "effect": "Die Abfrage allein ändert nichts; unterstützte Änderungen über die Sicht können die Map verändern."
+    },
+    "useCase": "Eine Punktetabelle mit Namen und Ergebnissen ausgeben.",
+    "pitfall": "Eine Sicht ist keine unabhängige Kopie der Map."
+  },
+  {
+    "id": "tree-set",
+    "category": "Collections",
+    "name": "TreeSet: sortiert und eindeutig",
+    "introduction": "Ein TreeSet hält Werte nach einer Vergleichsordnung. Zwei Werte mit Vergleichsergebnis 0 gelten für dieses Set als gleicher Eintrag.",
+    "steps": [
+      "Die Werte werden unsortiert eingefügt.",
+      "Doppelte Werte bleiben nur einmal enthalten.",
+      "Die Ausgabe folgt der natürlichen Sortierung."
+    ],
+    "code": "var n = new java.util.TreeSet<Integer>();\nn.add(5); n.add(2); n.add(5); n.add(3);\nSystem.out.println(n);",
+    "output": "[2, 3, 5]",
+    "choices": [
+      "[2, 3, 5]",
+      "[5, 2, 3]",
+      "[2, 3, 5, 5]"
+    ],
+    "explanation": "Der Vergleich sollte zur beabsichtigten Gleichheit passen. Ein Set mit Comparator nach Stringlänge würde verschiedene gleich lange Wörter zusammenfassen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new TreeSet<T>(); set.add(wert)",
+      "parameters": [
+        [
+          "wert",
+          "Ein Wert, der zur Vergleichsordnung des Sets passt."
+        ]
+      ],
+      "returns": "add liefert true für einen neuen Eintrag.",
+      "effect": "add verändert das Set; die Iteration bleibt sortiert."
+    },
+    "useCase": "Eindeutige Messwerte aufsteigend sammeln.",
+    "pitfall": "Für ein TreeSet entscheidet die Ordnung mit Vergleichsergebnis 0; eine schlecht gewählte Ordnung kann unerwünschte Werte zusammenfassen."
+  },
+  {
+    "id": "linked-map",
+    "category": "Collections",
+    "name": "LinkedHashMap: Einfügereihenfolge",
+    "introduction": "Eine normale LinkedHashMap erhält die Einfügereihenfolge ihrer Schlüssel. Das Ersetzen eines Werts verschiebt den Schlüssel dabei nicht.",
+    "steps": [
+      "B wird vor A eingefügt.",
+      "Der neue Wert für B ersetzt nur seine Zuordnung.",
+      "Die Schlüsselfolge bleibt B, A."
+    ],
+    "code": "var map = new java.util.LinkedHashMap<String,Integer>();\nmap.put(\"B\", 1); map.put(\"A\", 2); map.put(\"B\", 3);\nSystem.out.println(map.keySet());",
+    "output": "[B, A]",
+    "choices": [
+      "[B, A]",
+      "[A, B]",
+      "[A, B, B]"
+    ],
+    "explanation": "Die spezielle Konstruktorvariante mit accessOrder kann stattdessen Zugriffsreihenfolge verwalten. Hier wird die Standardvariante verwendet.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new LinkedHashMap<K,V>()",
+      "parameters": [],
+      "returns": "Map mit vorhersehbarer Einfügereihenfolge.",
+      "effect": "put verändert Werte oder fügt Schlüssel ein."
+    },
+    "useCase": "Ein Menü in der Reihenfolge seiner Konfiguration anzeigen.",
+    "pitfall": "HashMap garantiert keine Einfügereihenfolge; TreeMap verwendet dagegen eine Sortierordnung."
+  },
+  {
+    "id": "tree-map",
+    "category": "Collections",
+    "name": "TreeMap: sortierte Schlüssel",
+    "introduction": "Eine TreeMap verwaltet Zuordnungen nach einer Vergleichsordnung der Schlüssel. Sie sortiert nicht automatisch die Werte.",
+    "steps": [
+      "Die Schlüssel B und A werden eingefügt.",
+      "Die natürliche Schlüsselordnung setzt A vor B.",
+      "Die zugehörigen Werte bleiben ihren Schlüsseln zugeordnet."
+    ],
+    "code": "var map = new java.util.TreeMap<String,Integer>();\nmap.put(\"B\", 1); map.put(\"A\", 9);\nSystem.out.println(map);",
+    "output": "{A=9, B=1}",
+    "choices": [
+      "{A=9, B=1}",
+      "{B=1, A=9}",
+      "{B=1, A=1}"
+    ],
+    "explanation": "Die Ordnung richtet sich hier nach Strings als Schlüssel, nicht nach dem Zahlenwert der Zuordnung.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new TreeMap<K,V>()",
+      "parameters": [],
+      "returns": "Map mit sortierter Schlüsselordnung.",
+      "effect": "Änderungen an der Map erhalten diese Ordnung."
+    },
+    "useCase": "Ein Wörterverzeichnis nach Schlüsseln anzeigen.",
+    "pitfall": "Eine TreeMap mit nicht passenden oder veränderlich verglichenen Schlüsseln kann fehlerhafte Erwartungen erzeugen."
+  },
+  {
+    "id": "unmodifiable-view",
+    "category": "Collections",
+    "name": "unmodifiableList(): nur eine Sicht",
+    "introduction": "Collections.unmodifiableList verhindert Änderungen über die erzeugte Sicht. Die zugrunde liegende Liste kann anderswo trotzdem verändert werden.",
+    "steps": [
+      "Die Sicht wird über die Ausgangsliste erstellt.",
+      "Das Original erhält danach einen neuen Wert.",
+      "Die Sicht zeigt diese Änderung ebenfalls."
+    ],
+    "code": "var original = new java.util.ArrayList<String>(java.util.List.of(\"A\"));\nvar sicht = java.util.Collections.unmodifiableList(original);\noriginal.add(\"B\");\nSystem.out.println(sicht);",
+    "output": "[A, B]",
+    "choices": [
+      "[A, B]",
+      "[A]",
+      "UnsupportedOperationException"
+    ],
+    "explanation": "Die Sicht ist keine eingefrorene unabhängige Momentaufnahme. Ein add-Aufruf auf sicht selbst wäre nicht erlaubt.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Collections.unmodifiableList(liste)",
+      "parameters": [
+        [
+          "liste",
+          "Die zugrunde liegende Liste."
+        ]
+      ],
+      "returns": "Nicht veränderbare Sicht auf diese Liste.",
+      "effect": "Die Factory verändert nichts; Änderungen am Original bleiben sichtbar."
+    },
+    "useCase": "Lesezugriff auf eine intern weiterhin verwaltete Liste anbieten.",
+    "pitfall": "Unveränderbare Sicht, Momentaufnahme und tiefe Unveränderlichkeit sind verschiedene Eigenschaften."
+  },
+  {
+    "id": "copy-of-snapshot",
+    "category": "Collections",
+    "name": "List.copyOf(): Momentaufnahme",
+    "introduction": "List.copyOf übernimmt die aktuelle Elementfolge in eine unveränderbare Liste. Spätere strukturelle Änderungen der Quelle werden nicht übernommen.",
+    "steps": [
+      "Die Quelle enthält A.",
+      "copyOf bildet deren aktuellen Inhalt ab.",
+      "Eine spätere Erweiterung der Quelle verändert die Kopie nicht."
+    ],
+    "code": "var original = new java.util.ArrayList<String>(java.util.List.of(\"A\"));\nvar kopie = java.util.List.copyOf(original);\noriginal.add(\"B\");\nSystem.out.println(kopie);",
+    "output": "[A]",
+    "choices": [
+      "[A]",
+      "[A, B]",
+      "[]"
+    ],
+    "explanation": "Die Elemente selbst werden nicht tief kopiert. Eine geeignete bereits unveränderbare Quelle muss auch nicht als neues Listenobjekt dupliziert werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "List.copyOf(quelle)",
+      "parameters": [
+        [
+          "quelle",
+          "Collection ohne null-Elemente."
+        ]
+      ],
+      "returns": "Unveränderbare Liste mit der aktuellen Elementfolge.",
+      "effect": "Verändert die Quelle nicht; übernimmt keine späteren Strukturänderungen."
+    },
+    "useCase": "Eine Konfiguration als feste Elementfolge weitergeben.",
+    "pitfall": "Veränderbare Objekte in der Liste können weiterhin von anderen Referenzen geändert werden.",
+    "practice": {
+      "task": "Erzeuge eine Momentaufnahme von {1,2}, ändere das Original und zeige beide Listen.",
+      "hint": "copyOf übernimmt die Struktur, add arbeitet anschließend nur auf dem Original.",
+      "code": "var original = new java.util.ArrayList<Integer>(java.util.List.of(1, 2));\nvar kopie = java.util.List.copyOf(original);\noriginal.add(3);\nSystem.out.println(original);\nSystem.out.println(kopie);",
+      "output": "[1, 2, 3]\n[1, 2]"
+    }
+  },
+  {
+    "id": "map-of",
+    "category": "Collections",
+    "name": "Map.of(): feste Zuordnungen",
+    "introduction": "Map.of erzeugt eine unveränderbare Map. Schlüssel und Werte dürfen nicht null sein; doppelte Schlüssel werden abgelehnt.",
+    "steps": [
+      "Die Map enthält zwei festgelegte Zuordnungen.",
+      "get liest die Zuordnung von A.",
+      "Die Reihenfolge der Mapausgabe wird nicht vorausgesetzt."
+    ],
+    "code": "var map = java.util.Map.of(\"A\", 1, \"B\", 2);\nSystem.out.println(map.get(\"A\"));",
+    "output": "1",
+    "choices": [
+      "1",
+      "2",
+      "null"
+    ],
+    "explanation": "Für veränderbare Daten kann eine HashMap mit diesen Einträgen erstellt werden. Die Iterationsreihenfolge von Map.of ist keine zugesicherte Sortierung.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Map.of(k1, v1, k2, v2)",
+      "parameters": [
+        [
+          "k1 / k2",
+          "Unterschiedliche nicht-null-Schlüssel."
+        ],
+        [
+          "v1 / v2",
+          "Nicht-null-Werte."
+        ]
+      ],
+      "returns": "Unveränderbare Map mit den Zuordnungen.",
+      "effect": "Erzeugt eine feste Mapstruktur."
+    },
+    "useCase": "Eine kleine feste Befehls- oder Nachschlagetabelle anlegen.",
+    "pitfall": "Die gedruckte Reihenfolge ist nicht garantiert; Lernprogramme sollten sie nicht als feste Ausgabe voraussetzen."
+  },
+  {
+    "id": "stream-any",
+    "category": "Lambdas & Streams",
+    "name": "anyMatch(): mindestens ein Treffer",
+    "introduction": "anyMatch prüft, ob mindestens ein Element die Bedingung erfüllt. Ein leerer Stream liefert false.",
+    "steps": [
+      "Der erste Stream enthält einen Wert größer als 2.",
+      "Sobald ein Treffer genügt, kann die Verarbeitung enden.",
+      "Ohne Elemente gibt es keinen Treffer."
+    ],
+    "code": "System.out.println(java.util.List.of(1, 3).stream().anyMatch(n -> n > 2));\nSystem.out.println(java.util.stream.Stream.<Integer>empty().anyMatch(n -> n > 2));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "anyMatch ist eine kurzschließende Endoperation. Die Predicate-Aufrufe sollten nicht für notwendige Seiteneffekte verwendet werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.anyMatch(predicate)",
+      "parameters": [
+        [
+          "predicate",
+          "Ja-Nein-Prüfung je Element."
+        ]
+      ],
+      "returns": "boolean: mindestens ein passendes Element.",
+      "effect": "Verbraucht den Stream, verändert diese Quelle nicht."
+    },
+    "useCase": "Prüfen, ob im Warenkorb wenigstens ein gesperrter Artikel liegt.",
+    "pitfall": "Ein leerer Stream liefert hier false, bei allMatch dagegen true."
+  },
+  {
+    "id": "stream-all-empty",
+    "category": "Lambdas & Streams",
+    "name": "allMatch(): auch der leere Fall",
+    "introduction": "allMatch liefert true, wenn kein Element die Bedingung verletzt. Deshalb liefert auch der leere Stream true.",
+    "steps": [
+      "Die vorhandenen Werte sind alle positiv.",
+      "Der leere Stream enthält keinen Gegenbeweis.",
+      "Beide Prüfungen sind true."
+    ],
+    "code": "System.out.println(java.util.List.of(1, 2).stream().allMatch(n -> n > 0));\nSystem.out.println(java.util.stream.Stream.<Integer>empty().allMatch(n -> n > 0));",
+    "output": "true\ntrue",
+    "choices": [
+      "true\ntrue",
+      "true\nfalse",
+      "false\nfalse"
+    ],
+    "explanation": "Wenn mindestens ein Wert erforderlich ist, muss die Nichtleere-Regel zusätzlich geprüft werden. allMatch allein bestätigt keine vorhandenen Daten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.allMatch(predicate)",
+      "parameters": [
+        [
+          "predicate",
+          "Bedingung, die für alle Elemente gelten soll."
+        ]
+      ],
+      "returns": "boolean: kein Element verletzt die Bedingung.",
+      "effect": "Verbraucht den Stream; ändert diese Quelle nicht."
+    },
+    "useCase": "Alle vorhandenen Formularwerte auf Gültigkeit prüfen.",
+    "pitfall": "Alle Werte gültig ist nicht dasselbe wie mindestens ein Wert vorhanden und gültig.",
+    "practice": {
+      "task": "Eine Liste soll nichtleer sein und nur positive Zahlen enthalten. Prüfe eine leere Liste und {1,2}.",
+      "hint": "Nichtleere und allMatch sind zwei separate Regeln.",
+      "code": "java.util.List<Integer> leer = java.util.List.of();\nvar werte = java.util.List.of(1, 2);\nSystem.out.println(!leer.isEmpty() && leer.stream().allMatch(n -> n > 0));\nSystem.out.println(!werte.isEmpty() && werte.stream().allMatch(n -> n > 0));",
+      "output": "false\ntrue"
+    }
+  },
+  {
+    "id": "stream-distinct",
+    "category": "Lambdas & Streams",
+    "name": "distinct(): gleiche Werte zusammenfassen",
+    "introduction": "distinct entfernt gleich bewertete Wiederholungen aus einem Stream. Bei einem geordneten Stream bleibt die erste Begegnung erhalten.",
+    "steps": [
+      "Die Eingabe beginnt mit 3 und 1.",
+      "Spätere gleiche Werte werden ausgelassen.",
+      "Die Ergebnisfolge wird nicht zusätzlich sortiert."
+    ],
+    "code": "System.out.println(java.util.List.of(3, 1, 3, 2, 1).stream().distinct().toList());",
+    "output": "[3, 1, 2]",
+    "choices": [
+      "[3, 1, 2]",
+      "[1, 2, 3]",
+      "[3, 1, 3, 2, 1]"
+    ],
+    "explanation": "distinct verwendet equals zur Gleichheit. Eine gewünschte Sortierung braucht einen zusätzlichen sorted-Schritt.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.distinct()",
+      "parameters": [],
+      "returns": "Neuer Streamschritt ohne gleiche Wiederholungen.",
+      "effect": "Verändert die Quelle nicht."
+    },
+    "useCase": "Einmalige Kategorien aus einer Eingabefolge gewinnen.",
+    "pitfall": "distinct ist weder automatisch eine Sortierung noch ein Vergleich nach einer beliebigen einzelnen Objekteigenschaft."
+  },
+  {
+    "id": "stream-limit",
+    "category": "Lambdas & Streams",
+    "name": "sorted(), skip() und limit()",
+    "introduction": "Streamschritte werden in ihrer angegebenen Reihenfolge verarbeitet. Erst sortieren und dann begrenzen kann ein anderes Ergebnis liefern als umgekehrt.",
+    "steps": [
+      "sorted ordnet die Werte zu 1, 2 und 3.",
+      "skip(1) lässt den ersten Wert aus.",
+      "limit(1) behält anschließend genau einen Wert."
+    ],
+    "code": "System.out.println(java.util.List.of(3, 1, 2).stream().sorted().skip(1).limit(1).toList());",
+    "output": "[2]",
+    "choices": [
+      "[2]",
+      "[1]",
+      "[3]"
+    ],
+    "explanation": "Die Pipeline zeigt den mittleren Wert. Für sehr große oder unendliche Quellen muss besonders vor sorted eine Begrenzungsstrategie gewählt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.sorted().skip(anzahl).limit(maximum)",
+      "parameters": [
+        [
+          "anzahl",
+          "Nichtnegative Zahl übersprungener Elemente."
+        ],
+        [
+          "maximum",
+          "Nichtnegative Obergrenze der verbleibenden Elemente."
+        ]
+      ],
+      "returns": "Stream mit den weiterverarbeiteten Werten.",
+      "effect": "Keine Veränderung dieser Quellliste."
+    },
+    "useCase": "Eine Seite aus einer sortierten Ergebnisliste anzeigen.",
+    "pitfall": "Die Reihenfolge der Verarbeitungsschritte ist Teil der Programmlogik.",
+    "practice": {
+      "task": "Gib die zwei kleinsten unterschiedlichen Werte aus {5,1,3,1} aus.",
+      "hint": "Entferne Wiederholungen, sortiere und begrenze danach.",
+      "code": "System.out.println(java.util.List.of(5, 1, 3, 1).stream().distinct().sorted().limit(2).toList());",
+      "output": "[1, 3]"
+    }
+  },
+  {
+    "id": "stream-joining",
+    "category": "Lambdas & Streams",
+    "name": "Collectors.joining(): Ausgabe bauen",
+    "introduction": "joining sammelt Stringelemente mit einem Trenner und optionalem Anfangs- und Endtext in einem String.",
+    "steps": [
+      "Die Streamwerte bleiben in ihrer Reihenfolge.",
+      "Zwischen ihnen steht ein Komma.",
+      "Anfangs- und Endzeichen rahmen das Ergebnis ein."
+    ],
+    "code": "System.out.println(java.util.List.of(\"A\", \"B\").stream().collect(java.util.stream.Collectors.joining(\",\", \"[\", \"]\")));",
+    "output": "[A,B]",
+    "choices": [
+      "[A,B]",
+      "A,B",
+      "[A,B,]"
+    ],
+    "explanation": "collect ist die Endoperation. joining ist ein Collector, der die Sammlung und ihre Verbindung beschreibt.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Collectors.joining(trenner, prefix, suffix)",
+      "parameters": [
+        [
+          "trenner",
+          "Text zwischen Elementen."
+        ],
+        [
+          "prefix / suffix",
+          "Rahmentexte."
+        ]
+      ],
+      "returns": "Collector, dessen Endergebnis ein String ist.",
+      "effect": "Ändert die Quelle nicht."
+    },
+    "useCase": "Einen lesbaren Kurzbericht aus ausgewählten Namen bauen.",
+    "pitfall": "Auch joining ist kein vollständiger CSV- oder JSON-Serializer."
+  },
+  {
+    "id": "optional-map",
+    "category": "Lambdas & Streams",
+    "name": "Optional.map(): vorhandene Werte ändern",
+    "introduction": "Optional.map wendet eine Funktion nur auf einen vorhandenen Wert an. Ein leeres Optional bleibt leer.",
+    "steps": [
+      "Ada ist vorhanden.",
+      "map berechnet die Länge 3.",
+      "Bei einem leeren Optional wird keine Länge berechnet."
+    ],
+    "code": "System.out.println(java.util.Optional.of(\"Ada\").map(String::length).orElse(0));\nSystem.out.println(java.util.Optional.<String>empty().map(String::length).orElse(0));",
+    "output": "3\n0",
+    "choices": [
+      "3\n0",
+      "3\n3",
+      "Ada\n0"
+    ],
+    "explanation": "Ein null-Ergebnis der map-Funktion ergibt ebenfalls ein leeres Optional. Für eine Funktion, die schon Optional liefert, kann flatMap passend sein.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "optional.map(funktion)",
+      "parameters": [
+        [
+          "funktion",
+          "Umwandlung eines vorhandenen Werts."
+        ]
+      ],
+      "returns": "Optional mit dem umgewandelten Wert oder ein leeres Optional.",
+      "effect": "Ändert das vorhandene Optional nicht."
+    },
+    "useCase": "Eine optionale Benutzereingabe weiterverarbeiten.",
+    "pitfall": "get ohne Prüfung kann NoSuchElementException auslösen; ein klarer Ersatz- oder Fehlerfall ist besser."
+  },
+  {
+    "id": "optional-lazy",
+    "category": "Lambdas & Streams",
+    "name": "orElseGet(): Ersatz erst bei Bedarf",
+    "introduction": "orElseGet nimmt eine Funktion für den Ersatzwert entgegen. Diese Funktion läuft nur, wenn das Optional leer ist.",
+    "steps": [
+      "Das Optional enthält bereits Ada.",
+      "Der vorhandene Wert wird direkt verwendet.",
+      "Die Ersatzfunktion gibt daher keinen Text aus."
+    ],
+    "code": "String name = java.util.Optional.of(\"Ada\").orElseGet(() -> { System.out.println(\"Ersatz berechnet\"); return \"Gast\"; });\nSystem.out.println(name);",
+    "output": "Ada",
+    "choices": [
+      "Ada",
+      "Ersatz berechnet\nAda",
+      "Gast"
+    ],
+    "explanation": "orElse(aufwendigeBerechnung()) wertet den Argumentausdruck vorher aus, auch wenn der Ersatz nicht benötigt wird.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "optional.orElseGet(supplier)",
+      "parameters": [
+        [
+          "supplier",
+          "Funktion ohne Argumente, die den Ersatz erzeugt."
+        ]
+      ],
+      "returns": "Vorhandener Wert oder Ergebnis des Supplier-Aufrufs.",
+      "effect": "Ändert das Optional nicht; Supplier läuft gegebenenfalls."
+    },
+    "useCase": "Einen teuren Standardwert nur bei fehlenden Daten erstellen.",
+    "pitfall": "orElse und orElseGet haben unterschiedliche Auswertungszeitpunkte."
+  },
+  {
+    "id": "stream-find-first",
+    "category": "Lambdas & Streams",
+    "name": "findFirst(): möglicherweise kein Treffer",
+    "introduction": "findFirst liefert den ersten Streamwert als Optional. Ein leerer Stream führt nicht zu einem Standardelement.",
+    "steps": [
+      "filter behält nur Zahlen größer als 10.",
+      "Kein Eingabewert erfüllt diese Bedingung.",
+      "findFirst liefert ein leeres Optional und orElse den Ersatz."
+    ],
+    "code": "System.out.println(java.util.List.of(1, 2, 3).stream().filter(n -> n > 10).findFirst().orElse(-1));",
+    "output": "-1",
+    "choices": [
+      "-1",
+      "1",
+      "null"
+    ],
+    "explanation": "findFirst ist kurzschließend und liefert keinen nackten Wert. Ein Ersatz wie -1 sollte nur verwendet werden, wenn er fachlich eindeutig ist.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.findFirst()",
+      "parameters": [],
+      "returns": "Optional<T>, das den ersten Wert enthält oder leer ist.",
+      "effect": "Verbraucht den Stream."
+    },
+    "useCase": "Einen ersten passenden Eintrag aus einer geordneten Suche auswählen.",
+    "pitfall": "Optional.get ohne einen vorhandenen Wert löst eine Ausnahme aus."
+  },
+  {
+    "id": "regex-matches",
+    "category": "Reguläre Ausdrücke",
+    "name": "matches(): der ganze Text muss passen",
+    "introduction": "String.matches verlangt, dass der gesamte String zum Regex passt. Eine passende Teilstelle allein reicht nicht.",
+    "steps": [
+      "Das Muster verlangt mindestens eine Ziffer.",
+      "123 besteht vollständig aus Ziffern.",
+      "A123 enthält zusätzlich einen Buchstaben."
+    ],
+    "code": "System.out.println(\"123\".matches(\"\\\\d+\"));\nSystem.out.println(\"A123\".matches(\"\\\\d+\"));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\ntrue"
+    ],
+    "explanation": "Im Java-String muss der Regex-Backslash selbst maskiert werden. Für die Suche nach einer Teilstelle verwendet man einen Matcher mit find.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.matches(regex)",
+      "parameters": [
+        [
+          "regex",
+          "Regulärer Ausdruck für die vollständige Eingabe."
+        ]
+      ],
+      "returns": "boolean für den gesamten Text.",
+      "effect": "Ändert den String nicht."
+    },
+    "useCase": "Prüfen, ob ein einfacher Eingabewert nur aus Ziffern besteht.",
+    "pitfall": "matches ist keine Teilstringsuche und ist allein keine Prüfung des Zahlenwertebereichs.",
+    "practice": {
+      "task": "Prüfe, ob \"AB123\" genau aus zwei Großbuchstaben und drei Ziffern besteht.",
+      "hint": "Verwende Zeichengruppen und feste Wiederholungszahlen.",
+      "code": "System.out.println(\"AB123\".matches(\"[A-Z]{2}[0-9]{3}\"));",
+      "output": "true"
+    }
+  },
+  {
+    "id": "regex-find",
+    "category": "Reguläre Ausdrücke",
+    "name": "Matcher.find(): Treffer im Text",
+    "introduction": "Ein Matcher sucht mit find nach der nächsten passenden Teilstelle. Mehrere Aufrufe können mehrere Treffer liefern.",
+    "steps": [
+      "Das Pattern beschreibt aufeinanderfolgende Ziffern.",
+      "find sucht ab der aktuellen Position weiter.",
+      "group liefert den gefundenen Teiltext."
+    ],
+    "code": "var matcher = java.util.regex.Pattern.compile(\"[0-9]+\").matcher(\"A12 B34\");\nwhile (matcher.find()) System.out.println(matcher.group());",
+    "output": "12\n34",
+    "choices": [
+      "12\n34",
+      "A12 B34",
+      "12"
+    ],
+    "explanation": "find verändert die Suchposition des Matchers. Das Original bleibt erhalten. Ein group-Aufruf vor einem erfolgreichen Treffer ist unzulässig.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "matcher.find(); matcher.group()",
+      "parameters": [],
+      "returns": "find liefert boolean; group den zuletzt gefundenen String.",
+      "effect": "Matcherzustand wird weitergeführt, Text bleibt unverändert."
+    },
+    "useCase": "Nummern aus einem kurzen Bericht extrahieren.",
+    "pitfall": "group darf nicht ohne erfolgreichen Treffer gelesen werden.",
+    "practice": {
+      "task": "Extrahiere alle Zahlengruppen aus \"Level 3, Punkte 125\".",
+      "hint": "Nutze find in einer Schleife, nicht matches für den ganzen Text.",
+      "code": "var m = java.util.regex.Pattern.compile(\"[0-9]+\").matcher(\"Level 3, Punkte 125\");\nwhile (m.find()) System.out.println(m.group());",
+      "output": "3\n125"
+    }
+  },
+  {
+    "id": "regex-groups",
+    "category": "Reguläre Ausdrücke",
+    "name": "Gruppen mit group(1) lesen",
+    "introduction": "Klammern im Regex können gefundene Teilstücke erfassen. Gruppe 0 ist der gesamte Treffer, die erste Klammergruppe hat Nummer 1.",
+    "steps": [
+      "Das Muster erfasst Name und Zahl getrennt.",
+      "matches prüft die gesamte Zeichenfolge.",
+      "group(1) liefert den ersten geklammerten Teil."
+    ],
+    "code": "var m = java.util.regex.Pattern.compile(\"([A-Za-z]+):([0-9]+)\").matcher(\"Ada:42\");\nif (m.matches()) { System.out.println(m.group(1)); System.out.println(m.group(2)); }",
+    "output": "Ada\n42",
+    "choices": [
+      "Ada\n42",
+      "Ada:42\nAda",
+      "42\nAda"
+    ],
+    "explanation": "Die Gruppennummern beginnen bei 1 für erfasste Klammergruppen. Gruppe 0 bleibt der komplette Treffer.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "matcher.group(gruppennummer)",
+      "parameters": [
+        [
+          "gruppennummer",
+          "0 für den kompletten Treffer; 1 und höher für erfasste Gruppen."
+        ]
+      ],
+      "returns": "Erfasster String; bei bestimmten optionalen Gruppen eventuell null.",
+      "effect": "Liest den aktuellen Matcherzustand."
+    },
+    "useCase": "Einen einfachen Namen-und-Punkte-Eintrag in zwei Werte zerlegen.",
+    "pitfall": "Ungültige Gruppennummern oder Lesen ohne Treffer lösen Fehler aus."
+  },
+  {
+    "id": "regex-quote",
+    "category": "Reguläre Ausdrücke",
+    "name": "Pattern.quote(): Benutzertext wörtlich",
+    "introduction": "Pattern.quote macht einen Text als wörtlichen Regex-Teil verwendbar. Regex-Sonderzeichen verlieren damit ihre Steuerwirkung.",
+    "steps": [
+      "a.b enthält einen Punkt.",
+      "quote behandelt diesen Punkt wörtlich.",
+      "aXb ist deshalb kein Treffer für den erzeugten Ausdruck."
+    ],
+    "code": "String regex = java.util.regex.Pattern.quote(\"a.b\");\nSystem.out.println(\"a.b\".matches(regex));\nSystem.out.println(\"aXb\".matches(regex));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\ntrue"
+    ],
+    "explanation": "Zum bloßen wörtlichen Ersetzen ist String.replace oft einfacher. Pattern.quote schützt ein Suchmuster, nicht automatisch einen Ersatztext.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Pattern.quote(text)",
+      "parameters": [
+        [
+          "text",
+          "Text, der im Regex wörtlich gesucht werden soll."
+        ]
+      ],
+      "returns": "String mit geeignetem wörtlichem Regex-Ausdruck.",
+      "effect": "Ändert die Eingabe nicht."
+    },
+    "useCase": "Einen frei eingegebenen Suchtext in eine Regex-Suche einbauen.",
+    "pitfall": "Pattern.quote und Matcher.quoteReplacement lösen unterschiedliche Aufgaben."
+  },
+  {
+    "id": "regex-replacement",
+    "category": "Reguläre Ausdrücke",
+    "name": "quoteReplacement(): Dollarzeichen schützen",
+    "introduction": "Ein Regex-Ersatztext kann mit $ auf Gruppen verweisen. quoteReplacement macht Dollarzeichen und Backslashes zu wörtlichem Ersatztext.",
+    "steps": [
+      "Der Suchtext ist ein Stern.",
+      "Der gewünschte Ersatz ist ein Dollarzeichen.",
+      "quoteReplacement verhindert die Interpretation als Gruppenverweis."
+    ],
+    "code": "String ersatz = java.util.regex.Matcher.quoteReplacement(\"$\");\nSystem.out.println(\"a*b\".replaceAll(\"\\\\*\", ersatz));",
+    "output": "a$b",
+    "choices": [
+      "a$b",
+      "ab",
+      "IllegalArgumentException"
+    ],
+    "explanation": "Das Muster und der Ersatz werden getrennt interpretiert. Wörtliches String.replace(\"*\", \"$\") wäre in diesem einfachen Fall ebenfalls passend.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Matcher.quoteReplacement(ersatz)",
+      "parameters": [
+        [
+          "ersatz",
+          "Wörtlich einzusetzender Text."
+        ]
+      ],
+      "returns": "String, der als wörtlicher Regex-Ersatz verwendet werden kann.",
+      "effect": "Ändert den Originaltext nicht."
+    },
+    "useCase": "Benutzerdefinierte Ersatztexte mit Dollarzeichen verwenden.",
+    "pitfall": "Ein ungeschütztes $ im Regex-Ersatz kann als Gruppenverweis interpretiert werden."
+  },
+  {
+    "id": "regex-unicode",
+    "category": "Reguläre Ausdrücke",
+    "name": "Unicode-Buchstaben mit \\p{L}",
+    "introduction": "Die Regex-Klasse \\p{L} beschreibt Unicode-Buchstaben. [A-Za-z] beschreibt dagegen nur einen begrenzten ASCII-Bereich.",
+    "steps": [
+      "ä ist ein Unicode-Buchstabe.",
+      "Die ASCII-Gruppe enthält diesen Buchstaben nicht.",
+      "Die Unicode-Klasse L akzeptiert ihn."
+    ],
+    "code": "System.out.println(\"ä\".matches(\"[A-Za-z]+\"));\nSystem.out.println(\"ä\".matches(\"\\\\p{L}+\"));",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Ein Begriff wie Buchstabe umfasst deutlich mehr als A bis Z. Manche geschriebenen Zeichen bestehen aus Basisbuchstaben plus kombinierenden Zeichen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "text.matches(\"\\\\p{L}+\")",
+      "parameters": [],
+      "returns": "boolean: mindestens ein Unicode-Buchstabe und sonst nichts.",
+      "effect": "Keine Textänderung."
+    },
+    "useCase": "Internationale Namen oder Texte bewusst verarbeiten.",
+    "pitfall": "Ein realer Name kann Leerzeichen, Bindestriche oder kombinierende Zeichen enthalten; diese einfache Prüfung ist keine vollständige Namensvalidierung."
+  },
+  {
+    "id": "instanceof-pattern",
+    "category": "Schnittstellen & Typen",
+    "name": "instanceof mit Mustervariable",
+    "introduction": "Ein instanceof-Muster prüft einen Typ und macht im passenden Zweig eine typisierte Variable verfügbar.",
+    "steps": [
+      "wert besitzt den allgemeinen Typ Object.",
+      "Sein tatsächlicher Wert ist ein String.",
+      "Der erfolgreiche Test bindet ihn an text."
+    ],
+    "code": "Object wert = \"Ada\";\nif (wert instanceof String text) System.out.println(text.length());",
+    "output": "3",
+    "choices": [
+      "3",
+      "Ada",
+      "ClassCastException"
+    ],
+    "explanation": "Das String-Muster ist in Java 17 regulär verfügbar. null passt nicht zu diesem instanceof-Test.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "wert instanceof String text",
+      "parameters": [
+        [
+          "wert",
+          "Zu prüfende Referenz."
+        ],
+        [
+          "text",
+          "Typisierte Variable im erfolgreichen Bereich."
+        ]
+      ],
+      "returns": "boolean; erfolgreiche Prüfung macht die Mustervariable verfügbar.",
+      "effect": "Ändert das Objekt nicht."
+    },
+    "useCase": "Werte aus einer allgemeinen Struktur ohne blinden Cast unterscheiden.",
+    "pitfall": "Ein Cast ohne passende Typprüfung kann ClassCastException auslösen."
+  },
+  {
+    "id": "string-builder-length",
+    "category": "Strings",
+    "name": "StringBuilder: setLength()",
+    "introduction": "setLength verändert die Länge eines StringBuilders. Beim Verkürzen entfernt es den Text am Ende.",
+    "steps": [
+      "Der Builder enthält Hallo.",
+      "Die Länge wird auf 3 verkürzt.",
+      "Die ersten drei Zeichen bleiben erhalten."
+    ],
+    "code": "var b = new StringBuilder(\"Hallo\");\nb.setLength(3);\nSystem.out.println(b);",
+    "output": "Hal",
+    "choices": [
+      "Hal",
+      "Hallo",
+      "llo"
+    ],
+    "explanation": "Beim Verlängern werden NUL-Zeichen ergänzt, nicht normale Leerzeichen. Für bewusst formatierten Text sollte man geeigneten Text selbst anhängen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "builder.setLength(neueLaenge)",
+      "parameters": [
+        [
+          "neueLaenge",
+          "Nichtnegative Zielgröße in Codeeinheiten."
+        ]
+      ],
+      "returns": "void: kein Rückgabewert.",
+      "effect": "Verändert den StringBuilder."
+    },
+    "useCase": "Eine vorläufige Textausgabe kürzen oder den Builder mit setLength(0) leeren.",
+    "pitfall": "String und StringBuilder haben unterschiedliche Veränderbarkeit; die Verlängerung mit setLength fügt unsichtbare NUL-Zeichen ein."
+  },
+  {
+    "id": "string-builder-reverse",
+    "category": "Strings",
+    "name": "StringBuilder.reverse()",
+    "introduction": "reverse dreht die enthaltene Zeichenfolge im veränderbaren Builder um. Es liefert denselben Builder zurück.",
+    "steps": [
+      "Der Builder startet mit abc.",
+      "reverse ordnet seinen Inhalt um.",
+      "Die nächste Ausgabe liest den geänderten Builder."
+    ],
+    "code": "var b = new StringBuilder(\"abc\");\nb.reverse();\nSystem.out.println(b);",
+    "output": "cba",
+    "choices": [
+      "cba",
+      "abc",
+      "[c, b, a]"
+    ],
+    "explanation": "Diese Methode ist für einfache Texte nützlich. Komplexe Unicode-Graphemfolgen brauchen gegebenenfalls eine speziellere Umkehrung.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "builder.reverse()",
+      "parameters": [],
+      "returns": "Der veränderte StringBuilder für mögliche Verkettung.",
+      "effect": "Verändert den Builder an Ort und Stelle."
+    },
+    "useCase": "Eine einfache ASCII-Palindromprüfung als Vergleichslösung bauen.",
+    "pitfall": "Ein umgekehrter Text ist nicht automatisch eine korrekte Umkehrung sichtbarer Unicode-Zeichencluster."
+  },
+  {
+    "id": "char-digit",
+    "category": "Datentypen",
+    "name": "Character.isDigit()",
+    "introduction": "Character kann einzelne Unicode-Werte prüfen. Eine Zeichenklassifikation ist noch keine Zahlenkonvertierung.",
+    "steps": [
+      "Der Codepoint 7 ist eine Ziffer.",
+      "A ist keine Ziffer.",
+      "Beide Aufrufe liefern boolean-Werte."
+    ],
+    "code": "System.out.println(Character.isDigit('7'));\nSystem.out.println(Character.isDigit('A'));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "7\n0",
+      "false\ntrue"
+    ],
+    "explanation": "isDigit akzeptiert auch verschiedene Unicode-Ziffern. Ob ein ganzer String mit parseInt konvertierbar ist, muss separat geprüft werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Character.isDigit(codepoint)",
+      "parameters": [
+        [
+          "codepoint",
+          "Ein Unicode-Codepoint oder ein char bei der entsprechenden Überladung."
+        ]
+      ],
+      "returns": "boolean für die Zifferneigenschaft.",
+      "effect": "Ändert den geprüften Wert nicht."
+    },
+    "useCase": "Eingabetext Zeichen für Zeichen klassifizieren.",
+    "pitfall": "Character.isDigit ist keine vollständige Prüfung von Vorzeichen, Dezimaltrennern oder Wertebereichen."
+  },
+  {
+    "id": "boolean-parse",
+    "category": "Datentypen",
+    "name": "Boolean.parseBoolean(): nur true",
+    "introduction": "parseBoolean liefert genau für den Text true ohne Beachtung der Groß-/Kleinschreibung true. Andere Texte liefern false und lösen keinen Formatfehler aus.",
+    "steps": [
+      "TRUE wird als true erkannt.",
+      "ja ist für diese Methode kein true.",
+      "Ungültige Texte werden dadurch nicht als Fehler gemeldet."
+    ],
+    "code": "System.out.println(Boolean.parseBoolean(\"TRUE\"));\nSystem.out.println(Boolean.parseBoolean(\"ja\"));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "NumberFormatException"
+    ],
+    "explanation": "Für eine Konfiguration mit nur true und false sollte man die erlaubten Texte vorab ausdrücklich validieren.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Boolean.parseBoolean(text)",
+      "parameters": [
+        [
+          "text",
+          "Zu interpretierender Text; null ergibt false."
+        ]
+      ],
+      "returns": "boolean gemäß der true-Regel.",
+      "effect": "Keine Textänderung."
+    },
+    "useCase": "Einen bereits validierten true/false-Konfigurationswert lesen.",
+    "pitfall": "Ein Tippfehler wird still false; diese Methode validiert kein strenges Zwei-Werte-Format."
+  },
+  {
+    "id": "long-parse",
+    "category": "Datentypen",
+    "name": "Long.parseLong(): mehr Wertebereich",
+    "introduction": "long bietet mehr Wertebereich als int. parseLong verarbeitet einen String jedoch weiterhin innerhalb eines endlichen Bereichs.",
+    "steps": [
+      "3000000000 ist größer als Integer.MAX_VALUE.",
+      "Für long ist der Wert darstellbar.",
+      "Die Umwandlung liefert den entsprechenden Ganzzahlwert."
+    ],
+    "code": "System.out.println(Long.parseLong(\"3000000000\"));",
+    "output": "3000000000",
+    "choices": [
+      "3000000000",
+      "-1294967296",
+      "NumberFormatException"
+    ],
+    "explanation": "Ein noch größerer Wert außerhalb des long-Bereichs würde NumberFormatException auslösen. Für beliebig große Ganzzahlen gibt es BigInteger.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Long.parseLong(text)",
+      "parameters": [
+        [
+          "text",
+          "Darstellbare Ganzzahl im Dezimalformat."
+        ]
+      ],
+      "returns": "long mit dem gelesenen Wert.",
+      "effect": "Verändert den String nicht."
+    },
+    "useCase": "Größere Zähler oder Dateigrößen als Ganzzahlen einlesen.",
+    "pitfall": "Ein größerer Datentyp hebt die Begrenzung nicht vollständig auf."
+  },
+  {
+    "id": "defensive-input",
+    "category": "Klassen & Objekte",
+    "name": "Defensive Kopie im Konstruktor",
+    "introduction": "Ein Objekt kann ein übergebenes veränderbares Array kopieren, statt es direkt als internen Zustand zu speichern.",
+    "steps": [
+      "Das ursprüngliche Array wird beim Erzeugen kopiert.",
+      "Die spätere Änderung trifft nur die Eingabe.",
+      "Der gespeicherte Objektzustand bleibt bei 1."
+    ],
+    "code": "int[] input = {1};\nDaten daten = new Daten(input);\ninput[0] = 9;\nSystem.out.println(daten.erster());",
+    "output": "1",
+    "choices": [
+      "1",
+      "9",
+      "0"
+    ],
+    "explanation": "Die Kopie schützt bei diesem int-Array die übernommenen Werte. Bei verschachtelten oder veränderbaren Objektelementen kann mehr als eine flache Kopie nötig sein.",
+    "declarations": "static class Daten {\n    private final int[] werte;\n    Daten(int[] input) { werte = input.clone(); }\n    int erster() { return werte[0]; }\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new Daten(eingabe)",
+      "parameters": [
+        [
+          "eingabe",
+          "Array, dessen Inhalt als unabhängiger Zustand übernommen werden soll."
+        ]
+      ],
+      "returns": "Neue Dateninstanz.",
+      "effect": "Kopiert das Eingabearray, statt es gemeinsam zu speichern."
+    },
+    "useCase": "Eine Klasse mit stabilen Einstellungen aus externen Daten anlegen.",
+    "pitfall": "private allein verhindert keine Änderungen durch andere Referenzen auf das gleiche Array."
+  },
+  {
+    "id": "defensive-output",
+    "category": "Klassen & Objekte",
+    "name": "Interne Daten nicht ungeschützt herausgeben",
+    "introduction": "Ein Getter kann eine Kopie liefern, um veränderbaren internen Zustand nicht nach außen freizugeben.",
+    "steps": [
+      "Das Objekt besitzt ein internes int-Array.",
+      "werte() liefert eine Kopie.",
+      "Die Änderung an der Kopie betrifft nicht das Objekt."
+    ],
+    "code": "Daten daten = new Daten();\nint[] out = daten.werte();\nout[0] = 9;\nSystem.out.println(daten.werte()[0]);",
+    "output": "1",
+    "choices": [
+      "1",
+      "9",
+      "0"
+    ],
+    "explanation": "Defensive Eingabe- und Ausgabekopien lösen unterschiedliche Zugriffspfade. Beide können für einen geschützten Zustand wichtig sein.",
+    "declarations": "static class Daten {\n    private final int[] werte = {1};\n    int[] werte() { return werte.clone(); }\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "daten.werte()",
+      "parameters": [],
+      "returns": "int[] als unabhängige Kopie dieses primitiven Arrays.",
+      "effect": "Verändert internen Zustand nicht."
+    },
+    "useCase": "Ein Inventar oder eine Konfiguration lesbar machen, ohne freie Änderungen zu erlauben.",
+    "pitfall": "Ein Getter für das direkte interne Array kann Kapselung umgehen."
+  },
+  {
+    "id": "enum-values",
+    "category": "Schnittstellen & Typen",
+    "name": "Enum.values() und valueOf()",
+    "introduction": "values liefert die definierten Enum-Konstanten in Deklarationsreihenfolge. valueOf sucht nach dem exakten Konstantennamen.",
+    "steps": [
+      "START wird vor ENDE definiert.",
+      "values liefert diese beiden Konstanten.",
+      "valueOf verwendet den genauen Namen ENDE."
+    ],
+    "code": "System.out.println(java.util.Arrays.toString(Status.values()));\nSystem.out.println(Status.valueOf(\"ENDE\"));",
+    "output": "[START, ENDE]\nENDE",
+    "choices": [
+      "[START, ENDE]\nENDE",
+      "[ENDE, START]\nENDE",
+      "[START, ENDE]\nnull"
+    ],
+    "explanation": "Ein unbekannter oder falsch geschriebener Name löst IllegalArgumentException aus. valueOf ignoriert die Groß-/Kleinschreibung nicht.",
+    "declarations": "enum Status { START, ENDE }",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Status.values(); Status.valueOf(name)",
+      "parameters": [
+        [
+          "name",
+          "Exakter Name einer Enum-Konstanten."
+        ]
+      ],
+      "returns": "values liefert ein Array; valueOf die passende Enum-Konstante.",
+      "effect": "Verändert die Konstanten nicht."
+    },
+    "useCase": "Erlaubte Zustände anzeigen und validierte Texte in Zustände umwandeln.",
+    "pitfall": "Ordinalzahlen sind für langfristig gespeicherte fachliche Werte empfindlich gegenüber Änderungen der Deklaration."
+  },
+  {
+    "id": "exception-cause",
+    "category": "Fehlerbehandlung",
+    "name": "Ausnahmen mit Ursache weitergeben",
+    "introduction": "Eine neue Ausnahme kann die ursprüngliche Ursache behalten. So geht die konkrete Fehlerinformation bei einer Abstraktionsgrenze nicht verloren.",
+    "steps": [
+      "Die ursprüngliche Ursache ist ein IOException.",
+      "Die neue Ausnahme beschreibt den höheren Kontext.",
+      "getCause liefert die ursprüngliche Ursache."
+    ],
+    "code": "Exception ursache = new java.io.IOException(\"Datei fehlt\");\nException kontext = new IllegalStateException(\"Import fehlgeschlagen\", ursache);\nSystem.out.println(kontext.getCause().getMessage());",
+    "output": "Datei fehlt",
+    "choices": [
+      "Datei fehlt",
+      "Import fehlgeschlagen",
+      "null"
+    ],
+    "explanation": "Die Meldung der äußeren Ausnahme und die Meldung ihrer Ursache sind verschiedene Informationen. Ein guter Fehlerbericht verbindet Kontext und Ursache.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new IllegalStateException(meldung, ursache)",
+      "parameters": [
+        [
+          "meldung",
+          "Verständlicher Kontext."
+        ],
+        [
+          "ursache",
+          "Die ursprüngliche Throwable-Instanz."
+        ]
+      ],
+      "returns": "Neue Ausnahme mit referenzierter Ursache.",
+      "effect": "Eine Ausnahme wird erst durch throw ausgelöst."
+    },
+    "useCase": "Datei- oder Datenbankfehler in einer Anwendungsoperation erklären.",
+    "pitfall": "Nur die Meldung in einen neuen String zu kopieren verliert Stacktrace und Ursachentyp."
+  },
+  {
+    "id": "suppressed",
+    "category": "Fehlerbehandlung",
+    "name": "Unterdrückte Close-Fehler",
+    "introduction": "Wenn try-with-resources bereits einen Fehler verarbeitet, kann ein zusätzlicher Fehler beim Schließen als unterdrückte Ausnahme angehängt werden.",
+    "steps": [
+      "Im try-Block wird Arbeit als Fehler ausgelöst.",
+      "close wirft zusätzlich Schließen.",
+      "Der erste Fehler bleibt der Hauptfehler; der zweite steht in getSuppressed."
+    ],
+    "code": "try (var r = new Ressource()) { throw new IllegalStateException(\"Arbeit\"); }\ncatch (Exception e) { System.out.println(e.getMessage()); System.out.println(e.getSuppressed()[0].getMessage()); }",
+    "output": "Arbeit\nSchließen",
+    "choices": [
+      "Arbeit\nSchließen",
+      "Schließen\nArbeit",
+      "Arbeit"
+    ],
+    "explanation": "getSuppressed ist nicht dasselbe wie getCause. Die Schließausnahme soll den ursprünglichen Arbeitsfehler nicht verdecken.",
+    "declarations": "static class Ressource implements AutoCloseable {\n    public void close() { throw new IllegalStateException(\"Schließen\"); }\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "throwable.getSuppressed()",
+      "parameters": [],
+      "returns": "Array der angehängten unterdrückten Ausnahmen.",
+      "effect": "Liest Fehlerinformationen."
+    },
+    "useCase": "Bei Datei- oder Netzwerkressourcen beide Fehlerquellen diagnostizieren.",
+    "pitfall": "Ein Fehler im Ressourcen-close darf beim Lesen des Stacktraces nicht übersehen werden."
+  },
+  {
+    "id": "file-copy",
+    "category": "Dateien & Pfade",
+    "name": "Files.copy(): Quelle erhalten",
+    "introduction": "copy kopiert eine Datei an ein anderes Ziel. Die Quelldatei bleibt dabei erhalten.",
+    "steps": [
+      "Eine temporäre Quelle wird beschrieben.",
+      "copy erzeugt die Zieldatei.",
+      "Das Lesen des Ziels liefert den gleichen Inhalt."
+    ],
+    "code": "var root = java.nio.file.Files.createTempDirectory(\"codeklar-\");\nvar a = root.resolve(\"a.txt\"); var b = root.resolve(\"b.txt\");\ntry {\n    java.nio.file.Files.writeString(a, \"Ada\");\n    java.nio.file.Files.copy(a, b);\n    System.out.println(java.nio.file.Files.readString(b));\n    System.out.println(java.nio.file.Files.exists(a));\n} finally { java.nio.file.Files.deleteIfExists(b); java.nio.file.Files.deleteIfExists(a); java.nio.file.Files.deleteIfExists(root); }",
+    "output": "Ada\ntrue",
+    "choices": [
+      "Ada\ntrue",
+      "Ada\nfalse",
+      "true\nAda"
+    ],
+    "explanation": "Die Standardvariante überschreibt keine vorhandene Zieldatei. REPLACE_EXISTING erlaubt ausdrücklich den Ersatz.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Files.copy(quelle, ziel, optionen)",
+      "parameters": [
+        [
+          "quelle",
+          "Dateipfad der Quelle."
+        ],
+        [
+          "ziel",
+          "Dateipfad des neuen Ziels."
+        ],
+        [
+          "optionen",
+          "Zusätzliche Kopierregeln."
+        ]
+      ],
+      "returns": "Path des Ziels.",
+      "effect": "Erstellt oder ersetzt eine Zieldatei; erhält die Quelle."
+    },
+    "useCase": "Vor einer Bearbeitung eine separate Dateikopie anlegen.",
+    "pitfall": "Ein Verzeichnis-copy kopiert nicht automatisch seinen vollständigen Inhalt rekursiv."
+  },
+  {
+    "id": "file-move",
+    "category": "Dateien & Pfade",
+    "name": "Files.move(): verschieben statt kopieren",
+    "introduction": "move verlagert eine Datei an einen anderen Pfad. Danach ist sie normalerweise nicht mehr am ursprünglichen Pfad erreichbar.",
+    "steps": [
+      "Die Datei wird an der Quelle angelegt.",
+      "move verschiebt sie zum Ziel.",
+      "Die Quelle fehlt, das Ziel ist vorhanden."
+    ],
+    "code": "var root = java.nio.file.Files.createTempDirectory(\"codeklar-\");\nvar a = root.resolve(\"a.txt\"); var b = root.resolve(\"b.txt\");\ntry {\n    java.nio.file.Files.writeString(a, \"A\");\n    java.nio.file.Files.move(a, b);\n    System.out.println(java.nio.file.Files.exists(a));\n    System.out.println(java.nio.file.Files.exists(b));\n} finally { java.nio.file.Files.deleteIfExists(b); java.nio.file.Files.deleteIfExists(a); java.nio.file.Files.deleteIfExists(root); }",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Optionen wie ATOMIC_MOVE haben besondere Anforderungen an das Dateisystem. Ein normaler move-Aufruf ist keine universelle Zusicherung atomarer Abläufe.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Files.move(quelle, ziel, optionen)",
+      "parameters": [
+        [
+          "quelle",
+          "Alter Pfad."
+        ],
+        [
+          "ziel",
+          "Neuer Pfad."
+        ],
+        [
+          "optionen",
+          "Zusätzliche Verschieberegeln."
+        ]
+      ],
+      "returns": "Path des Ziels.",
+      "effect": "Ändert die Zuordnung der Datei im Dateisystem."
+    },
+    "useCase": "Eine fertig geschriebene Datei in ein Zielverzeichnis verschieben.",
+    "pitfall": "Bei Dateioperationen müssen vorhandene Ziele, Rechte und Fehlerfälle bewusst berücksichtigt werden."
+  },
+  {
+    "id": "file-size",
+    "category": "Dateien & Pfade",
+    "name": "Files.size(): Anzahl der Bytes",
+    "introduction": "Files.size liefert die Dateigröße in Bytes. Die Anzahl von Textzeichen kann davon abweichen.",
+    "steps": [
+      "ä wird ausdrücklich als UTF-8 gespeichert.",
+      "Diese Kodierung benötigt zwei Bytes.",
+      "size liefert daher 2."
+    ],
+    "code": "var p = java.nio.file.Files.createTempFile(\"codeklar-\", \".txt\");\ntry {\n    java.nio.file.Files.writeString(p, \"ä\", java.nio.charset.StandardCharsets.UTF_8);\n    System.out.println(java.nio.file.Files.size(p));\n} finally { java.nio.file.Files.deleteIfExists(p); }",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "4"
+    ],
+    "explanation": "Der Rückgabewert ist long. Die Regeln für nicht gewöhnliche Dateien können vom Dateisystem abhängen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Files.size(pfad)",
+      "parameters": [
+        [
+          "pfad",
+          "Pfad einer Datei."
+        ]
+      ],
+      "returns": "long: Größe in Bytes bei einer gewöhnlichen Datei.",
+      "effect": "Liest Metadaten, ändert den Inhalt nicht."
+    },
+    "useCase": "Eine Größenbegrenzung vor einem Import berücksichtigen.",
+    "pitfall": "Die Dateigröße ist keine garantierte Zahl von Zeichen oder eine Zusicherung, dass die Datei danach unverändert bleibt."
+  },
+  {
+    "id": "file-walk",
+    "category": "Dateien & Pfade",
+    "name": "Files.walk(): rekursiv durch Pfade",
+    "introduction": "walk liefert einen Stream über den Startpfad und darunter erreichbare Pfade. Der Stream muss geschlossen werden.",
+    "steps": [
+      "Die Probe besitzt den Startordner und eine Datei.",
+      "walk zählt auch den Startordner mit.",
+      "Der Stream wird durch try-with-resources geschlossen."
+    ],
+    "code": "var root = java.nio.file.Files.createTempDirectory(\"codeklar-\");\nvar p = root.resolve(\"a.txt\");\ntry {\n    java.nio.file.Files.writeString(p, \"A\");\n    try (var pfade = java.nio.file.Files.walk(root)) { System.out.println(pfade.count()); }\n} finally { java.nio.file.Files.deleteIfExists(p); java.nio.file.Files.deleteIfExists(root); }",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "0"
+    ],
+    "explanation": "Files.list zählt nur direkte Einträge; Files.walk startet bereits beim übergebenen Pfad. Symbolischen Links wird ohne passende Option nicht generell gefolgt.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Files.walk(start)",
+      "parameters": [
+        [
+          "start",
+          "Pfad, an dem die Traversierung beginnt."
+        ]
+      ],
+      "returns": "Zu schließender Stream<Path>.",
+      "effect": "Keine Änderung allein durch die Traversierung."
+    },
+    "useCase": "Ein kleines Verzeichnis nach passenden Dateien durchsuchen.",
+    "pitfall": "Eine rekursive Suche kann sehr groß werden; Stream schließen und Grenzen oder Filter bewusst wählen."
+  },
+  {
+    "id": "buffered-reader",
+    "category": "Dateien & Pfade",
+    "name": "BufferedReader.readLine()",
+    "introduction": "readLine liefert eine Textzeile ohne den Zeilenumbruch. Am Ende der Eingabe liefert es null.",
+    "steps": [
+      "Der Reader liest hier aus einem festen Text.",
+      "Die erste Zeile ist A.",
+      "Nach der zweiten Zeile meldet null das Ende."
+    ],
+    "code": "try (var reader = new java.io.BufferedReader(new java.io.StringReader(\"A\\nB\\n\"))) {\n    System.out.println(reader.readLine());\n    System.out.println(reader.readLine());\n    System.out.println(reader.readLine());\n}",
+    "output": "A\nB\nnull",
+    "choices": [
+      "A\nB\nnull",
+      "A\nB\n",
+      "A\nB\nB"
+    ],
+    "explanation": "Eine leere Zeile wäre ein leerer String, nicht null. Das ist wichtig für korrekte Schleifen beim Lesen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "reader.readLine()",
+      "parameters": [],
+      "returns": "String ohne Zeilenumbruch oder null am Ende.",
+      "effect": "Verändert die Leseposition des Readers."
+    },
+    "useCase": "Großen Text zeilenweise statt als vollständigen String verarbeiten.",
+    "pitfall": "Ein null-Endwert und eine leere Zeile sind unterschiedliche Zustände."
+  },
+  {
+    "id": "reader-loop",
+    "category": "Dateien & Pfade",
+    "name": "Zeilen mit readLine() durchlaufen",
+    "introduction": "Eine Leseschleife kann jede Zeile bis zum null-Endwert verarbeiten. Leere Zeilen bleiben echte Zeilen.",
+    "steps": [
+      "Die Zuweisung speichert die nächste gelesene Zeile.",
+      "!= null entscheidet über das Ende.",
+      "Auch der leere String erhöht den Zeilenzähler."
+    ],
+    "code": "int anzahl = 0;\ntry (var reader = new java.io.BufferedReader(new java.io.StringReader(\"A\\n\\nB\"))) {\n    String zeile;\n    while ((zeile = reader.readLine()) != null) anzahl++;\n}\nSystem.out.println(anzahl);",
+    "output": "3",
+    "choices": [
+      "3",
+      "2",
+      "4"
+    ],
+    "explanation": "Die Schleife zählt A, eine leere Zeile und B. readLine liefert am tatsächlichen Ende null.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "while ((zeile = reader.readLine()) != null)",
+      "parameters": [
+        [
+          "zeile",
+          "Variable für die nächste Zeile."
+        ]
+      ],
+      "returns": "Die Schleife verarbeitet jede vorhandene Zeile.",
+      "effect": "Konsumiert die Reader-Eingabe."
+    },
+    "useCase": "Dateiimporte mit Zeilennummern aufbauen.",
+    "pitfall": "Nicht anhand isEmpty abbrechen: Eine leere Zeile beendet die Datei nicht.",
+    "practice": {
+      "task": "Zähle nur nichtleere Zeilen in \"A\\n\\nB\".",
+      "hint": "Das Ende wird mit null geprüft; leere Zeilen werden im Block separat gefiltert.",
+      "code": "int anzahl = 0;\ntry (var reader = new java.io.BufferedReader(new java.io.StringReader(\"A\\n\\nB\"))) {\n    String zeile;\n    while ((zeile = reader.readLine()) != null) if (!zeile.isBlank()) anzahl++;\n}\nSystem.out.println(anzahl);",
+      "output": "2"
+    }
+  },
+  {
+    "id": "finite-double",
+    "category": "Zahlen & Zeit",
+    "name": "Double.isFinite(): gültige Rechenwerte",
+    "introduction": "isFinite prüft, ob ein double weder NaN noch positive oder negative Unendlichkeit ist.",
+    "steps": [
+      "1.5 ist ein endlicher Wert.",
+      "Eine Gleitkommadivision durch 0.0 kann Unendlichkeit erzeugen.",
+      "isFinite meldet dafür false."
+    ],
+    "code": "System.out.println(Double.isFinite(1.5));\nSystem.out.println(Double.isFinite(1.0 / 0.0));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "ArithmeticException"
+    ],
+    "explanation": "Gleitkommadivision verhält sich bei null anders als Ganzzahldivision. Eine Eingabeprüfung sollte nicht nur auf Ausnahmen hoffen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Double.isFinite(wert)",
+      "parameters": [
+        [
+          "wert",
+          "Ein double-Wert."
+        ]
+      ],
+      "returns": "boolean: ob der Wert endlich und nicht NaN ist.",
+      "effect": "Verändert den Wert nicht."
+    },
+    "useCase": "Rechnerergebnisse oder Messwerte vor einer Anzeige prüfen.",
+    "pitfall": "Bei double ist eine Division durch 0.0 nicht automatisch eine ArithmeticException."
+  }
+]

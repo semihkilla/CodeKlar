@@ -1,4 +1,5 @@
 import { KnowledgeExample, isTechnologyCourse } from "./KnowledgeExample";
+import { JavaLessonHelp } from "./JavaLessonHelp";
 import { useState } from "react";
 import {
   ArrowUpRight,
@@ -199,6 +200,7 @@ export function Reference({ openLesson }) {
               <h2>{item.title}</h2>
               <p>{item.description}</p>
               {["physics","electrical"].includes(item.course) ? <ScienceExample lesson={item} compact /> : isTechnologyCourse(item.course) ? <KnowledgeExample lesson={item} compact /> : <pre>{item.syntax}</pre>}
+              {item.course === 'java' && <JavaLessonHelp lesson={item} includePractice={false} />}
               <small>{item.note}</small>
             </div>
             <button

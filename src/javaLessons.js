@@ -1,6 +1,18 @@
 import curriculum from './javaCurriculum.json' with { type: 'json' };
+import furtherCurriculum from './javaFurtherCurriculum.json' with { type: 'json' };
+import { javaMethodProfiles } from './javaMethodProfiles.js';
 
 const vocabulary = [
+  [/\bRegex|\bregulär/i, 'Regulärer Ausdruck', 'Ein Suchmuster mit besonderen Zeichen und Regeln. Das Muster und der gefundene Text sind verschiedene Dinge.'],
+  [/\bPredicate/, 'Predicate', 'Eine Funktion, die für einen Eingabewert true oder false liefert, etwa zum Behalten oder Löschen eines Elements.'],
+  [/\bCollection/, 'Collection', 'Ein Java-Vertrag für Gruppen von Elementen, zum Beispiel Listen oder Sets. Maps sind ein eigener Vertrag für Schlüssel-Wert-Zuordnungen.'],
+  [/\bMap\b/, 'Map', 'Ordnet jedem enthaltenen Schlüssel einen Wert zu. Verschiedene Map-Typen besitzen verschiedene Ordnungs- und null-Regeln.'],
+  [/\bOptional/, 'Optional', 'Ein Behälter, der einen vorhandenen Wert oder dessen Abwesenheit ausdrücklich beschreibt.'],
+  [/\bSupplier/, 'Supplier', 'Eine Funktion ohne Eingabeargument, die beim Aufruf einen Wert erzeugt.'],
+  [/\bSicht|\bsubList/, 'Sicht', 'Ein Zugang zu einer vorhandenen Datenstruktur. Er ist keine unabhängige Kopie und kann Änderungen der zugrunde liegenden Struktur zeigen.'],
+  [/\bMomentaufnahme/, 'Momentaufnahme', 'Übernimmt einen aktuellen Datenstand. Eine Strukturkopie macht referenzierte veränderbare Elemente nicht automatisch unabhängig.'],
+  [/\bUnicode/, 'Unicode', 'Ein Zeichensystem für viele Sprachen. Ein Codepoint, eine Codeeinheit und ein sichtbares Zeichen sind nicht immer dasselbe.'],
+  [/\bIterator/, 'Iterator', 'Ein Objekt, das eine Folge schrittweise durchläuft und dabei seine aktuelle Position verwaltet.'],
   [/\bParameter|\bArgument/, 'Parameter und Argument', 'Ein Parameter ist eine Variable in der Methodendefinition. Ein Argument ist der konkrete Wert beim Aufruf.'],
   [/\bReferenz/, 'Referenz', 'Ein Wert, über den ein Objekt erreicht wird. Eine Referenzkopie ist keine Kopie des Objekts.'],
   [/\bInstanz|\bKonstruktor/, 'Instanz', 'Ein konkretes Objekt einer Klasse. Ein Konstruktor setzt seinen Anfangszustand.'],
@@ -15,12 +27,17 @@ const vocabulary = [
   [/\bO\(/, 'Komplexität', 'Beschreibt, wie Zeit- oder Speicheraufwand mit der Eingabegröße wächst, nicht eine feste Ausführungsdauer.'],
 ];
 
-export const javaLessonPack = curriculum.map((row, index) => {
+export function buildJavaSource(code, declarations = '', imports = '') {
+  return `${imports ? imports + '\n\n' : ''}public class Main {\n${declarations ? declarations.split('\n').map(line => '    ' + line).join('\n') + '\n\n' : ''}    public static void main(String[] args) throws Exception {\n${code.split('\n').map(line => '        ' + line).join('\n')}\n    }\n}`;
+}
+
+export const javaLessonPack = [...curriculum, ...furtherCurriculum].map((definition, index) => {
+  const row = { ...javaMethodProfiles[definition.id], ...definition };
   const answer = index % row.choices.length;
   const options = row.choices.slice(1);
   options.splice(answer, 0, row.choices[0]);
-  const source = `${row.imports ? row.imports + '\n\n' : ''}public class Main {\n${row.declarations ? row.declarations.split('\n').map(line => '    ' + line).join('\n') + '\n\n' : ''}    public static void main(String[] args) throws Exception {\n${row.code.split('\n').map(line => '        ' + line).join('\n')}\n    }\n}`;
-  const text = [row.introduction, ...row.steps, row.explanation].join(' ');
+  const source = buildJavaSource(row.code, row.declarations, row.imports);
+  const text = [row.name, row.introduction, ...row.steps, row.explanation, row.pitfall || ''].join(' ');
   const terms = vocabulary.filter(([pattern]) => pattern.test(text)).slice(0, 4).map(([, name, meaning]) => [name, meaning]);
   return {
     id: `java-${row.id}`, course: 'java', category: row.category, name: row.name, title: row.name,
@@ -32,5 +49,7 @@ export const javaLessonPack = curriculum.map((row, index) => {
     task: 'Lies das Beispiel, verfolge die Werte und wähle die passende Ausgabe. Probiere anschließend eine eigene Änderung lokal mit Java aus.',
     options, answer, explanation: row.explanation, hints: [row.steps[0], row.steps[1]],
     solution: row.explanation, expectedOutput: row.output,
+    methodProfile: row.methodProfile, useCase: row.useCase, pitfall: row.pitfall,
+    practice: row.practice ? { ...row.practice, example: buildJavaSource(row.practice.code, row.declarations, row.imports) } : undefined,
   };
 });

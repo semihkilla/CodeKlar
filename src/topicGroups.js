@@ -2,7 +2,7 @@
 const groups = {
   java: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Methoden"]],
-    ["data", "Strings, Arrays & Collections", ["Arrays", "Strings", "Collections", "Lambdas & Streams"]],
+    ["data", "Strings, Arrays & Collections", ["Arrays", "Strings", "Collections", "Lambdas & Streams", "Reguläre Ausdrücke"]],
     ["objects", "Objektorientierung", ["Klassen & Objekte", "Schnittstellen & Typen"]],
     ["io", "Eingaben, Dateien & Fehler", ["Ein-/Ausgabe", "Dateien & Pfade", "Fehlerbehandlung"]],
     ["tools", "Werkzeuge, Tests & Zahlen", ["Werkzeuge & Tests", "Zahlen & Zeit"]],

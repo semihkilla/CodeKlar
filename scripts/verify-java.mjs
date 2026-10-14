@@ -80,5 +80,9 @@ try {
   require(report.stdout.includes('Wörter: 17 · Unterschiedlich: 14') && report.stdout.includes('java: 2') && report.stdout.includes('äpfel: 2'), 'UTF-8 report integration failed');
   const basket = await run(['-cp', projectClasses, 'Basket']);
   require(basket.stdout.includes('Ohne Rabatt: 6.50 EUR') && basket.stdout.includes('Mit 10 Prozent Rabatt: 5.85 EUR'), 'Basket integration failed');
+  const route = await run(['-cp', projectClasses, 'RoutePlanner']);
+  require(route.stdout.includes('Kosten: 3') && route.stdout.includes('Route: [0, 2, 1, 3]'), 'Route reconstruction failed');
+  const unreachable = await run(['-cp', projectClasses, 'RoutePlanner', '4']);
+  require(unreachable.stdout.trim() === 'Kein Weg', 'Unreachable route output failed');
   console.log('All project tests and interactive/persistence checks passed.');
 } finally { await rm(root, { recursive: true, force: true }); }

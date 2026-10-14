@@ -1,5 +1,6 @@
 import curriculum from './javaCurriculum.json' with { type: 'json' };
 import furtherCurriculum from './javaFurtherCurriculum.json' with { type: 'json' };
+import nextCurriculum from './javaNextCurriculum.json' with { type: 'json' };
 import { javaMethodProfiles } from './javaMethodProfiles.js';
 
 const vocabulary = [
@@ -31,7 +32,7 @@ export function buildJavaSource(code, declarations = '', imports = '') {
   return `${imports ? imports + '\n\n' : ''}public class Main {\n${declarations ? declarations.split('\n').map(line => '    ' + line).join('\n') + '\n\n' : ''}    public static void main(String[] args) throws Exception {\n${code.split('\n').map(line => '        ' + line).join('\n')}\n    }\n}`;
 }
 
-export const javaLessonPack = [...curriculum, ...furtherCurriculum].map((definition, index) => {
+export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum].map((definition, index) => {
   const row = { ...javaMethodProfiles[definition.id], ...definition };
   const answer = index % row.choices.length;
   const options = row.choices.slice(1);
@@ -41,7 +42,7 @@ export const javaLessonPack = [...curriculum, ...furtherCurriculum].map((definit
   const terms = vocabulary.filter(([pattern]) => pattern.test(text)).slice(0, 4).map(([, name, meaning]) => [name, meaning]);
   return {
     id: `java-${row.id}`, course: 'java', category: row.category, name: row.name, title: row.name,
-    kind: 'theory', difficulty: ['Algorithmen & Komplexität', 'Nebenläufigkeit', 'HTTP & Daten'].includes(row.category) ? 'Vertiefung' : 'Grundlage',
+    kind: 'theory', difficulty: row.difficulty || (['Algorithmen & Komplexität', 'Nebenläufigkeit', 'HTTP & Daten'].includes(row.category) ? 'Vertiefung' : 'Grundlage'),
     description: row.introduction, guide: [row.introduction, row.steps],
     syntax: row.code, example: source, parts: terms.length ? terms : [['Merke', row.steps[0]]],
     detail: row.explanation, note: row.note, terms,

@@ -1,4 +1,5 @@
 import { javaFurtherProjects } from './javaFurtherProjects.js';
+import { javaNextProjects } from './javaNextProjects.js';
 const originalJavaProjects = [
   {
     "id": "java-calculator",
@@ -131,4 +132,4 @@ const originalJavaProjects = [
   }
 ];
 
-export const javaProjects = [...originalJavaProjects, ...javaFurtherProjects];
+export const javaProjects = [...originalJavaProjects, ...javaFurtherProjects, ...javaNextProjects];

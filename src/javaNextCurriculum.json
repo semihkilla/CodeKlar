@@ -1,0 +1,1527 @@
+[
+  {
+    "id": "constructor-chain",
+    "category": "Klassen & Objekte",
+    "name": "Konstruktoren mit this() verbinden",
+    "introduction": "Ein Konstruktor kann einen anderen Konstruktor derselben Klasse aufrufen. So wird eine gemeinsame Initialisierung wiederverwendet.",
+    "steps": [
+      "Der parameterlose Konstruktor wählt einen Standardwert.",
+      "this(5) übergibt diesen an den zweiten Konstruktor.",
+      "Das Feld erhält dadurch den Wert 5."
+    ],
+    "code": "System.out.println(new Zaehler().wert);",
+    "output": "5",
+    "choices": [
+      "5",
+      "0",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "In Java 17 muss der this-Konstruktoraufruf die erste Anweisung des Konstruktors sein. So gibt es einen gemeinsamen Initialisierungsweg.",
+    "declarations": "static class Zaehler {\n    final int wert;\n    Zaehler() { this(5); }\n    Zaehler(int wert) { this.wert = wert; }\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "this(argumente)",
+      "parameters": [
+        [
+          "argumente",
+          "Werte für einen anderen Konstruktor derselben Klasse."
+        ]
+      ],
+      "returns": "Kein gewöhnlicher Methodenrückgabewert.",
+      "effect": "Initialisiert dieselbe neue Instanz."
+    },
+    "useCase": "Mehrere sinnvolle Startvarianten für eine Klasse anbieten.",
+    "pitfall": "this() ruft keinen beliebigen Konstruktor später im Ablauf auf; zyklische Konstruktoraufrufe sind verboten.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Erzeuge einen Zaehler mit ausdrücklich gewähltem Startwert 9.",
+      "hint": "Verwende den Konstruktor mit int-Argument.",
+      "code": "System.out.println(new Zaehler(9).wert);",
+      "output": "9"
+    }
+  },
+  {
+    "id": "constructor-super",
+    "category": "Klassen & Objekte",
+    "name": "super() initialisiert die Oberklasse",
+    "introduction": "Der Konstruktor einer Unterklasse initialisiert auch den Oberklassenanteil. super übergibt dessen Startwerte.",
+    "steps": [
+      "Hund erzeugt zunächst den Tier-Anteil.",
+      "super übergibt Bello an dessen Konstruktor.",
+      "Das geerbte Feld enthält anschließend den Namen."
+    ],
+    "code": "System.out.println(new Hund().name);",
+    "output": "Bello",
+    "choices": [
+      "Bello",
+      "null",
+      "Hund"
+    ],
+    "explanation": "Ohne ausdrücklich anderen Aufruf wird ein zugänglicher parameterloser Oberklassenkonstruktor benötigt. Ein vorhandener Konstruktor mit Parametern ersetzt diesen nicht automatisch.",
+    "declarations": "static class Tier {\n    final String name;\n    Tier(String name) { this.name = name; }\n}\nstatic class Hund extends Tier { Hund() { super(\"Bello\"); } }",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "super(argumente)",
+      "parameters": [
+        [
+          "argumente",
+          "Werte für den Oberklassenkonstruktor."
+        ]
+      ],
+      "returns": "Kein gewöhnlicher Ergebniswert.",
+      "effect": "Initialisiert den Oberklassenanteil der neuen Instanz."
+    },
+    "useCase": "Gemeinsame Anfangsdaten geerbter Modelle setzen.",
+    "pitfall": "In Java 17 muss super(...) am Anfang stehen; Oberklassenkonstruktoren werden nicht als normale Methoden geerbt.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "interface-default",
+    "category": "Schnittstellen & Typen",
+    "name": "default-Methoden im Interface",
+    "introduction": "Ein Interface kann für eine Methode eine Standardimplementierung anbieten. Eine Klasse darf diese übernehmen oder überschreiben.",
+    "steps": [
+      "Begruessung definiert die Standardmethode.",
+      "Gast implementiert sie nicht erneut.",
+      "Der Aufruf verwendet deshalb den Standard."
+    ],
+    "code": "System.out.println(new Gast().text());",
+    "output": "Hallo",
+    "choices": [
+      "Hallo",
+      "null",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "Default-Methoden erlauben gemeinsamen Code innerhalb eines Vertrags. Konflikte zwischen mehreren Interfaces müssen bewusst aufgelöst werden.",
+    "declarations": "interface Begruessung { default String text() { return \"Hallo\"; } }\nstatic class Gast implements Begruessung {}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "default Rueckgabetyp methode(...)",
+      "parameters": [],
+      "returns": "Die Methode liefert hier einen String.",
+      "effect": "In diesem Beispiel keine Zustandsänderung."
+    },
+    "useCase": "Gemeinsames Standardverhalten für mehrere Implementierungen anbieten.",
+    "pitfall": "default ist weder ein Instanzfeld im Interface noch ein Ersatz für alle abstrakten Methoden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "interface-conflict",
+    "category": "Schnittstellen & Typen",
+    "name": "Konflikte zweier default-Methoden",
+    "introduction": "Wenn zwei unabhängige Interfaces dieselbe default-Methode anbieten, muss eine implementierende Klasse den Konflikt auflösen.",
+    "steps": [
+      "A und B definieren jeweils text.",
+      "C implementiert beide Verträge.",
+      "Die eigene Methode ruft die gewünschten Interface-Standards ausdrücklich auf."
+    ],
+    "code": "System.out.println(new C().text());",
+    "output": "AB",
+    "choices": [
+      "AB",
+      "A",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "A.super und B.super sind hier gezielte Zugriffe auf direkte Interface-Standardimplementierungen. Ohne die Auflösung wäre diese Klasse nicht kompilierbar.",
+    "declarations": "interface A { default String text() { return \"A\"; } }\ninterface B { default String text() { return \"B\"; } }\nstatic class C implements A, B {\n    public String text() { return A.super.text() + B.super.text(); }\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "InterfaceName.super.methode()",
+      "parameters": [],
+      "returns": "Rückgabewert der gewählten Interface-Implementierung.",
+      "effect": "Hier keine Zustandsänderung."
+    },
+    "useCase": "Mehrere Verträge mit bewusst kombinierten Standards umsetzen.",
+    "pitfall": "Java wählt bei solchen unabhängigen gleichnamigen default-Methoden nicht willkürlich eine aus.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "sealed-types",
+    "category": "Schnittstellen & Typen",
+    "name": "sealed: erlaubte Untertypen",
+    "introduction": "Eine sealed-Klasse oder ein sealed-Interface begrenzt seine direkten Untertypen. Diese müssen ihre weitere Erweiterungsregel angeben.",
+    "steps": [
+      "Form erlaubt hier nur Kreis.",
+      "Kreis erfüllt diesen Vertrag als finaler Record.",
+      "Die Instanz ist eine Form."
+    ],
+    "code": "Form form = new Kreis(2);\nSystem.out.println(form instanceof Kreis);",
+    "output": "true",
+    "choices": [
+      "true",
+      "false",
+      "Kompilierungsfehler"
+    ],
+    "explanation": "sealed ist in Java 17 regulär verfügbar. Ein erlaubter direkter Untertyp ist final, sealed oder non-sealed; Records sind bereits final.",
+    "declarations": "sealed interface Form permits Kreis {}\nrecord Kreis(int radius) implements Form {}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "sealed interface Form permits Kreis",
+      "parameters": [],
+      "returns": "Ein begrenzter Typvertrag; kein Methodenaufruf.",
+      "effect": "Ändert keine Instanzwerte."
+    },
+    "useCase": "Eine überschaubare Menge fachlicher Ergebnis- oder Zustandsarten modellieren.",
+    "pitfall": "Die permits-Liste und die Deklarationen der Untertypen müssen zusammenpassen.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "record-validation",
+    "category": "Schnittstellen & Typen",
+    "name": "Record-Konstruktor mit Prüfung",
+    "introduction": "Ein kompakter Record-Konstruktor kann Komponenten prüfen, bevor sie gespeichert werden. Ein ungültiger Datensatz wird gar nicht erst erzeugt.",
+    "steps": [
+      "Preis besitzt eine Cent-Komponente.",
+      "Der Konstruktor lehnt negative Werte ab.",
+      "Der Fehler wird beim Erzeugen abgefangen."
+    ],
+    "code": "try { new Preis(-1); }\ncatch (IllegalArgumentException e) { System.out.println(\"Preis ungültig\"); }",
+    "output": "Preis ungültig",
+    "choices": [
+      "Preis ungültig",
+      "-1",
+      "Keine Ausgabe"
+    ],
+    "explanation": "Validierung im Konstruktor schützt jeden Erzeugungsweg, der diesen Konstruktor verwendet. Die Komponentenparameter sind im kompakten Konstruktor direkt zugänglich.",
+    "declarations": "record Preis(long cent) {\n    Preis { if (cent < 0) throw new IllegalArgumentException(\"negativ\"); }\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "record Preis(long cent) { Preis { ... } }",
+      "parameters": [
+        [
+          "cent",
+          "Zu prüfender Centbetrag."
+        ]
+      ],
+      "returns": "Neue Record-Instanz bei gültiger Eingabe.",
+      "effect": "Verhindert die Erzeugung ungültiger Instanzen."
+    },
+    "useCase": "Preise, Mengen oder Koordinaten mit klaren Regeln erzeugen.",
+    "pitfall": "Ein record bietet nicht automatisch fachliche Validierung; Regeln müssen ausdrücklich implementiert werden.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Erzeuge einen gültigen Preis von 125 Cent und gib die Komponente aus.",
+      "hint": "Die Record-Zugriffsmethode heißt wie die Komponente.",
+      "code": "System.out.println(new Preis(125).cent());",
+      "output": "125"
+    }
+  },
+  {
+    "id": "object-to-string",
+    "category": "Klassen & Objekte",
+    "name": "toString() sinnvoll überschreiben",
+    "introduction": "toString liefert eine Textdarstellung eines Objekts. Eine eigene Implementierung kann nützliche fachliche Angaben anzeigen.",
+    "steps": [
+      "println erhält ein Objekt.",
+      "Die Textdarstellung ruft dessen toString auf.",
+      "Die eigene Implementierung nennt den Punktestand."
+    ],
+    "code": "System.out.println(new Spieler(7));",
+    "output": "Spieler: 7",
+    "choices": [
+      "Spieler: 7",
+      "7",
+      "Spieler"
+    ],
+    "explanation": "Eine Textdarstellung ist für Diagnose und Anzeige gedacht. Sie ist ohne ausdrücklich festgelegtes Format kein verlässlicher Datenaustauschvertrag.",
+    "declarations": "static class Spieler {\n    final int punkte;\n    Spieler(int punkte) { this.punkte = punkte; }\n    @Override public String toString() { return \"Spieler: \" + punkte; }\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "public String toString()",
+      "parameters": [],
+      "returns": "String zur Darstellung der Instanz.",
+      "effect": "Sollte möglichst keine Zustandsänderung durchführen."
+    },
+    "useCase": "Logs und Fehlermeldungen besser lesbar machen.",
+    "pitfall": "Die Standarddarstellung enthält oft einen Typnamen und einen Hashwert; sie ist keine zugesicherte Speicheradresse.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "annotation-runtime",
+    "category": "Werkzeuge & Tests",
+    "name": "Eigene Annotation zur Laufzeit lesen",
+    "introduction": "Eine Annotation kann Metadaten an einem Typ hinterlegen. RUNTIME-Retention macht diese Metadaten über Reflection verfügbar.",
+    "steps": [
+      "Info darf hier an Klassen verwendet werden.",
+      "Retention RUNTIME erhält die Angabe zur Laufzeit.",
+      "getAnnotation liest die vorhandene Annotation."
+    ],
+    "code": "System.out.println(Demo.class.getAnnotation(Info.class).value());",
+    "output": "Lernbeispiel",
+    "choices": [
+      "Lernbeispiel",
+      "Info",
+      "null"
+    ],
+    "explanation": "Annotationen führen nicht automatisch eine fachliche Operation aus. Ein Werkzeug oder Programm muss die Metadaten auswerten.",
+    "declarations": "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)\n@java.lang.annotation.Target(java.lang.annotation.ElementType.TYPE)\n@interface Info { String value(); }\n@Info(\"Lernbeispiel\") static class Demo {}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "typ.getAnnotation(AnnotationTyp.class)",
+      "parameters": [
+        [
+          "AnnotationTyp",
+          "Gesuchter Annotationstyp."
+        ]
+      ],
+      "returns": "Annotation oder null, wenn sie nicht verfügbar ist.",
+      "effect": "Liest Klassenmetadaten."
+    },
+    "useCase": "Eigene Dokumentations- oder Prüfwerkzeuge mit Metadaten versorgen.",
+    "pitfall": "Ohne RUNTIME-Retention ist diese Annotation nicht so zur Laufzeit lesbar.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "method-reference",
+    "category": "Methoden",
+    "name": "Methodenreferenz statt einfachem Lambda",
+    "introduction": "Eine Methodenreferenz kann einen passenden bestehenden Methodenaufruf als Funktion bereitstellen. Die erwartete Signatur entscheidet, ob sie passt.",
+    "steps": [
+      "String::length verweist auf eine Instanzmethode.",
+      "Der Funktionsparameter wird ihr Empfänger.",
+      "applyAsInt liefert dessen Länge."
+    ],
+    "code": "java.util.function.ToIntFunction<String> laenge = String::length;\nSystem.out.println(laenge.applyAsInt(\"Ada\"));",
+    "output": "3",
+    "choices": [
+      "3",
+      "Ada",
+      "0"
+    ],
+    "explanation": "Für diese Signatur ist String::length gleichwertig zu text -> text.length(). Überladungen und Parametertypen müssen zum funktionalen Interface passen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Typ::instanzmethode",
+      "parameters": [],
+      "returns": "Hier eine ToIntFunction<String> mit int-Ergebnis.",
+      "effect": "Die Referenz selbst führt noch keinen Aufruf aus."
+    },
+    "useCase": "Einfache Stream- und Comparator-Ausdrücke lesbar halten.",
+    "pitfall": "Eine Methodenreferenz ruft die Methode nicht bereits beim Anlegen auf.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "effectively-final",
+    "category": "Methoden",
+    "name": "Lambda erfasst effectively-final Variablen",
+    "introduction": "Eine lokale Variable, die in einem Lambda erfasst wird, darf nach ihrer Initialisierung nicht neu zugewiesen werden.",
+    "steps": [
+      "faktor wird einmal gesetzt.",
+      "Die Lambda-Berechnung liest diesen Wert.",
+      "Sie darf die lokale Variable nicht selbst mit faktor++ ändern."
+    ],
+    "code": "int faktor = 3;\njava.util.function.IntUnaryOperator rechnen = n -> n * faktor;\nSystem.out.println(rechnen.applyAsInt(4));",
+    "output": "12",
+    "choices": [
+      "12",
+      "4",
+      "3"
+    ],
+    "explanation": "effectively final beschreibt die ausbleibende Neuzuweisung, auch ohne geschriebenes final. Veränderbare Objekte hinter einer solchen Referenz sind eine andere Frage.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "n -> n * faktor",
+      "parameters": [
+        [
+          "faktor",
+          "Erfasster lokaler Wert ohne weitere Zuweisung."
+        ]
+      ],
+      "returns": "Eine Funktion; hier int zu int.",
+      "effect": "Die lokale Variable wird nur gelesen."
+    },
+    "useCase": "Eine feste Konfiguration für eine kleine Berechnungsfunktion verwenden.",
+    "pitfall": "Ein erfasster Array- oder Objektinhalt kann trotzdem veränderbar sein; das ist kein allgemeiner Schutz vor Nebenläufigkeitsfehlern.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "comparator-chain",
+    "category": "Collections",
+    "name": "thenComparing(): zweites Sortierkriterium",
+    "introduction": "Ein Comparator kann bei Gleichstand ein weiteres Kriterium prüfen. Dadurch wird die Ordnung genauer festgelegt.",
+    "steps": [
+      "Zuerst wird nach Wortlänge verglichen.",
+      "Gleich lange Wörter werden nach natürlicher Reihenfolge sortiert.",
+      "A kommt vor B, danach folgt AA."
+    ],
+    "code": "var n = new ArrayList<String>(List.of(\"B\", \"AA\", \"A\"));\nn.sort(Comparator.comparingInt(String::length).thenComparing(Comparator.naturalOrder()));\nSystem.out.println(n);",
+    "output": "[A, B, AA]",
+    "choices": [
+      "[A, B, AA]",
+      "[A, AA, B]",
+      "[B, A, AA]"
+    ],
+    "explanation": "Das zweite Kriterium kommt nur bei einem Vergleichsergebnis 0 des ersten zum Einsatz. So lassen sich nachvollziehbare Ranglisten bauen.",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "comparator.thenComparing(weitererComparator)",
+      "parameters": [
+        [
+          "weitererComparator",
+          "Entscheidet bei Gleichstand des ersten Kriteriums."
+        ]
+      ],
+      "returns": "Neuer zusammengesetzter Comparator.",
+      "effect": "Die Comparator-Erzeugung ändert nichts; list.sort verändert die Liste."
+    },
+    "useCase": "Ranglisten nach Punkten und bei Gleichstand nach Namen ordnen.",
+    "pitfall": "Die Reihenfolge der Sortierkriterien ist Teil der fachlichen Regel.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Sortiere B, AAA und A nach Länge und bei Gleichstand nach Namen.",
+      "hint": "Verknüpfe comparingInt mit thenComparing.",
+      "code": "var n = new ArrayList<String>(List.of(\"B\", \"AAA\", \"A\"));\nn.sort(Comparator.comparingInt(String::length).thenComparing(Comparator.naturalOrder()));\nSystem.out.println(n);",
+      "output": "[A, B, AAA]"
+    }
+  },
+  {
+    "id": "comparator-reversed",
+    "category": "Collections",
+    "name": "reversed(): welche Ordnung wird umgedreht?",
+    "introduction": "reversed dreht die Ordnung des Comparators um, auf dem es aufgerufen wird. Bei einer verketteten Ordnung betrifft das alle ihre Kriterien.",
+    "steps": [
+      "Die natürliche Zahlenordnung ist aufsteigend.",
+      "reversed kehrt genau diese Ordnung um.",
+      "sort verwendet die neue absteigende Ordnung."
+    ],
+    "code": "var n = new ArrayList<Integer>(List.of(2, 1, 3));\nn.sort(Comparator.<Integer>naturalOrder().reversed());\nSystem.out.println(n);",
+    "output": "[3, 2, 1]",
+    "choices": [
+      "[3, 2, 1]",
+      "[1, 2, 3]",
+      "[2, 1, 3]"
+    ],
+    "explanation": "Bei mehreren Kriterien ist reversed nach der gesamten Verkettung etwas anderes als nur das erste Kriterium umzukehren.",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "comparator.reversed()",
+      "parameters": [],
+      "returns": "Neuer Comparator mit umgekehrter Ordnung.",
+      "effect": "Ändert den ursprünglichen Comparator nicht."
+    },
+    "useCase": "Eine Bestenliste mit höchsten Werten zuerst anzeigen.",
+    "pitfall": "Eine vollständige Comparator-Kette wird insgesamt umgedreht; nicht automatisch nur ihre erste Stufe.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "comparator-nulls",
+    "category": "Collections",
+    "name": "nullsLast(): fehlende Werte sortieren",
+    "introduction": "nullsLast erweitert eine Ordnung um eine ausdrückliche Behandlung von null. Fehlende Werte stehen danach.",
+    "steps": [
+      "Die Liste enthält einen fehlenden Wert.",
+      "Vorhandene Strings werden natürlich sortiert.",
+      "null wird ans Ende eingeordnet."
+    ],
+    "code": "var n = new ArrayList<String>(Arrays.asList(\"B\", null, \"A\"));\nn.sort(Comparator.nullsLast(Comparator.naturalOrder()));\nSystem.out.println(n);",
+    "output": "[A, B, null]",
+    "choices": [
+      "[A, B, null]",
+      "[null, A, B]",
+      "NullPointerException"
+    ],
+    "explanation": "Die Ausgangsliste muss null überhaupt zulassen. List.of würde bereits beim Erzeugen eine NullPointerException auslösen.",
+    "declarations": "",
+    "imports": "import java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Comparator;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Comparator.nullsLast(comparator)",
+      "parameters": [
+        [
+          "comparator",
+          "Ordnung für die nicht-null-Werte."
+        ]
+      ],
+      "returns": "Comparator mit definierter null-Behandlung.",
+      "effect": "Die Comparator-Erzeugung verändert keine Liste."
+    },
+    "useCase": "Unvollständige Importdaten mit fehlenden Einträgen ordnen.",
+    "pitfall": "Die null-Regel eines Comparators ersetzt nicht die null-Regel einer Collection.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "enum-set",
+    "category": "Collections",
+    "name": "EnumSet für mehrere feste Optionen",
+    "introduction": "EnumSet verwaltet eine Menge von Konstanten eines einzigen Enum-Typs. Die Iteration folgt der Enum-Deklaration.",
+    "steps": [
+      "Die erlaubten Rechte sind LESEN und SCHREIBEN.",
+      "Die Menge enthält anfangs nur LESEN.",
+      "Die Mitgliedschaft von SCHREIBEN ist deshalb false."
+    ],
+    "code": "var rechte = EnumSet.of(Recht.LESEN);\nSystem.out.println(rechte.contains(Recht.SCHREIBEN));\nrechte.add(Recht.SCHREIBEN);\nSystem.out.println(rechte);",
+    "output": "false\n[LESEN, SCHREIBEN]",
+    "choices": [
+      "false\n[LESEN, SCHREIBEN]",
+      "true\n[LESEN]",
+      "false\n[SCHREIBEN, LESEN]"
+    ],
+    "explanation": "EnumSet eignet sich für eine feste Optionsmenge. Es speichert keine null-Elemente und mischt keine verschiedenen Enum-Typen.",
+    "declarations": "enum Recht { LESEN, SCHREIBEN }",
+    "imports": "import java.util.EnumSet;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "EnumSet.of(konstanten)",
+      "parameters": [
+        [
+          "konstanten",
+          "Konstanten desselben Enum-Typs."
+        ]
+      ],
+      "returns": "Veränderbare EnumSet-Instanz.",
+      "effect": "add und remove können die Menge verändern."
+    },
+    "useCase": "Erlaubte Aktionen oder Spieleinstellungen sammeln.",
+    "pitfall": "Die Konstantenreihenfolge ist keine willkürliche HashSet-Ausgabe.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "enum-map",
+    "category": "Collections",
+    "name": "EnumMap als Zustandstabelle",
+    "introduction": "EnumMap verwendet Enum-Konstanten als Schlüssel. Ihre Iteration folgt deren Deklarationsreihenfolge.",
+    "steps": [
+      "Die Map gehört zum Typ Status.",
+      "Der Schlüssel OFFEN erhält einen Zähler.",
+      "Die Abfrage liest dessen Wert."
+    ],
+    "code": "var counts = new EnumMap<Status,Integer>(Status.class);\ncounts.put(Status.OFFEN, 3);\nSystem.out.println(counts.get(Status.OFFEN));",
+    "output": "3",
+    "choices": [
+      "3",
+      "OFFEN",
+      "null"
+    ],
+    "explanation": "EnumMap kann bei fehlenden Zuordnungen null liefern. Schlüssel dürfen nicht null sein, zugeordnete Werte können es sein.",
+    "declarations": "enum Status { OFFEN, ERLEDIGT }",
+    "imports": "import java.util.EnumMap;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new EnumMap<EnumTyp,V>(EnumTyp.class)",
+      "parameters": [
+        [
+          "EnumTyp.class",
+          "Legt den Schlüsseltyp fest."
+        ]
+      ],
+      "returns": "Veränderbare Map mit Enum-Schlüsseln.",
+      "effect": "put verändert die Zuordnungen."
+    },
+    "useCase": "Aufgaben nach offen und erledigt zählen.",
+    "pitfall": "Nicht jede Enum-Konstante hat automatisch einen voreingestellten Mapwert.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "map-compute",
+    "category": "Collections",
+    "name": "compute(): Zuordnung neu berechnen",
+    "introduction": "compute bekommt den Schlüssel und den bisherigen Wert, möglicherweise null. Sein Ergebnis bestimmt die neue Zuordnung.",
+    "steps": [
+      "Der Schlüssel A fehlt zuerst.",
+      "Die Funktion setzt bei null den Startwert 1.",
+      "Ein weiterer Aufruf erhöht den bisherigen Wert."
+    ],
+    "code": "var counts = new HashMap<String,Integer>();\ncounts.compute(\"A\", (key, alt) -> alt == null ? 1 : alt + 1);\ncounts.compute(\"A\", (key, alt) -> alt == null ? 1 : alt + 1);\nSystem.out.println(counts.get(\"A\"));",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "null"
+    ],
+    "explanation": "Ein null-Ergebnis der Funktion entfernt die Zuordnung beziehungsweise lässt sie fehlend. Die Funktion sollte nicht zugleich die gleiche Map strukturell verändern.",
+    "declarations": "",
+    "imports": "import java.util.HashMap;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "map.compute(key, funktion)",
+      "parameters": [
+        [
+          "key",
+          "Zu berechnender Schlüssel."
+        ],
+        [
+          "funktion",
+          "Berechnet aus Schlüssel und altem Wert den neuen Wert."
+        ]
+      ],
+      "returns": "Neu berechneter Wert oder null.",
+      "effect": "Kann eine Zuordnung anlegen, ersetzen oder entfernen."
+    },
+    "useCase": "Einzelne Einträge mit einer klaren Aktualisierungsregel pflegen.",
+    "pitfall": "compute ist bei einer gewöhnlichen HashMap keine automatische Synchronisation mehrerer Threads.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Starte A bei 5 und erhöhe den gespeicherten Zähler um 1.",
+      "hint": "compute erhält auch den vorherigen Wert.",
+      "code": "var map = new HashMap<String,Integer>();\nmap.put(\"A\", 5);\nmap.compute(\"A\", (k, alt) -> alt == null ? 1 : alt + 1);\nSystem.out.println(map.get(\"A\"));",
+      "output": "6"
+    }
+  },
+  {
+    "id": "stream-partition",
+    "category": "Lambdas & Streams",
+    "name": "partitioningBy(): zwei Gruppen",
+    "introduction": "partitioningBy teilt Streamwerte anhand einer Ja-Nein-Bedingung in zwei Listen. Die Schlüssel sind true und false.",
+    "steps": [
+      "Das Predicate prüft gerade Zahlen.",
+      "Der true-Eintrag enthält die passenden Werte.",
+      "Der false-Eintrag enthält die übrigen Werte."
+    ],
+    "code": "var gruppen = List.of(1, 2, 3, 4).stream().collect(java.util.stream.Collectors.partitioningBy(n -> n % 2 == 0));\nSystem.out.println(gruppen.get(true));\nSystem.out.println(gruppen.get(false));",
+    "output": "[2, 4]\n[1, 3]",
+    "choices": [
+      "[2, 4]\n[1, 3]",
+      "[1, 3]\n[2, 4]",
+      "[1, 2, 3, 4]"
+    ],
+    "explanation": "Im Gegensatz zu groupingBy mit beliebigen Schlüsseln erzeugt diese Partitionierung genau die beiden booleschen Gruppen.",
+    "declarations": "",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Collectors.partitioningBy(predicate)",
+      "parameters": [
+        [
+          "predicate",
+          "Bedingung für die Zuordnung zu true oder false."
+        ]
+      ],
+      "returns": "Collector für eine Map<Boolean,List<T>>.",
+      "effect": "Die Quellliste bleibt erhalten."
+    },
+    "useCase": "Gültige und ungültige Eingaben gemeinsam aufteilen.",
+    "pitfall": "true bedeutet hier zu dieser Gruppe gehören, nicht automatisch löschen oder behalten.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Trenne -1,0,2 in negative und nichtnegative Werte.",
+      "hint": "Die true-Gruppe soll Werte kleiner als 0 enthalten.",
+      "code": "var g = List.of(-1, 0, 2).stream().collect(java.util.stream.Collectors.partitioningBy(n -> n < 0));\nSystem.out.println(g.get(true));\nSystem.out.println(g.get(false));",
+      "output": "[-1]\n[0, 2]"
+    }
+  },
+  {
+    "id": "stream-counting-group",
+    "category": "Lambdas & Streams",
+    "name": "groupingBy() mit counting()",
+    "introduction": "Ein nachgelagerter Collector kann pro Gruppe statt einer Liste nur eine Anzahl sammeln.",
+    "steps": [
+      "Die Wörter werden nach ihrer Länge gruppiert.",
+      "counting zählt die Elemente jeder Gruppe.",
+      "Länge 1 besitzt hier zwei Einträge."
+    ],
+    "code": "var counts = List.of(\"A\", \"BB\", \"C\").stream().collect(java.util.stream.Collectors.groupingBy(String::length, java.util.stream.Collectors.counting()));\nSystem.out.println(counts.get(1));",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "[A, C]"
+    ],
+    "explanation": "counting liefert Long-Zählwerte. Für andere Gruppenresultate gibt es beispielsweise summingInt oder mapping.",
+    "declarations": "",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Collectors.groupingBy(schluessel, downstream)",
+      "parameters": [
+        [
+          "schluessel",
+          "Funktion für den Gruppenschlüssel."
+        ],
+        [
+          "downstream",
+          "Verarbeitung innerhalb jeder Gruppe."
+        ]
+      ],
+      "returns": "Collector, hier für Map<Integer,Long>.",
+      "effect": "Keine Veränderung der Quelle."
+    },
+    "useCase": "Häufigkeiten nach Kategorie statt vollständiger Elementlisten erzeugen.",
+    "pitfall": "Die Art des Gruppenwerts hängt vom nachgelagerten Collector ab.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Zähle die Häufigkeit von A,B,A mit einem Gruppierungscollector.",
+      "hint": "Gruppenschlüssel ist das Wort selbst; nachgelagert wird gezählt.",
+      "code": "var counts = List.of(\"A\", \"B\", \"A\").stream().collect(java.util.stream.Collectors.groupingBy(w -> w, java.util.stream.Collectors.counting()));\nSystem.out.println(counts.get(\"A\"));",
+      "output": "2"
+    }
+  },
+  {
+    "id": "stream-to-map-duplicate",
+    "category": "Lambdas & Streams",
+    "name": "toMap(): gleiche Schlüssel zusammenführen",
+    "introduction": "toMap benötigt bei mehrfach auftretenden Schlüsseln eine Regel für die Werte. Die Überladung mit Merge-Funktion gibt diese Regel an.",
+    "steps": [
+      "Das Wort A tritt zweimal auf.",
+      "Jedes Vorkommen liefert zunächst den Wert 1.",
+      "Integer::sum führt die Werte für den gleichen Schlüssel zusammen."
+    ],
+    "code": "var counts = List.of(\"A\", \"B\", \"A\").stream().collect(java.util.stream.Collectors.toMap(w -> w, w -> 1, Integer::sum));\nSystem.out.println(counts.get(\"A\"));",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "IllegalStateException"
+    ],
+    "explanation": "Ohne die Zusammenführungsfunktion würde dieser doppelte Schlüssel bei der passenden toMap-Überladung einen Fehler auslösen.",
+    "declarations": "",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Collectors.toMap(keyMapper, valueMapper, merge)",
+      "parameters": [
+        [
+          "keyMapper",
+          "Berechnet den Schlüssel."
+        ],
+        [
+          "valueMapper",
+          "Berechnet den ersten Wert."
+        ],
+        [
+          "merge",
+          "Vereinigt zwei Werte desselben Schlüssels."
+        ]
+      ],
+      "returns": "Collector für eine Map.",
+      "effect": "Die Quelle bleibt unverändert."
+    },
+    "useCase": "Mehrere Datenzeilen unter einem fachlichen Schlüssel zusammenfassen.",
+    "pitfall": "Eine beliebige Entscheidung wie letzter Wert gewinnt ist eine fachliche Regel, keine automatisch richtige Lösung.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "stream-map-to-int",
+    "category": "Lambdas & Streams",
+    "name": "mapToInt(): primitive Endrechnung",
+    "introduction": "mapToInt erzeugt aus Objekten einen IntStream. Dessen sum arbeitet direkt mit int-Werten.",
+    "steps": [
+      "Die Ausgangselemente sind Wörter.",
+      "Jedes Wort wird auf seine Länge abgebildet.",
+      "sum addiert die Längen 3 und 2."
+    ],
+    "code": "System.out.println(List.of(\"Ada\", \"Bo\").stream().mapToInt(String::length).sum());",
+    "output": "5",
+    "choices": [
+      "5",
+      "2",
+      "[3, 2]"
+    ],
+    "explanation": "Der primitive Stream vermeidet hier die Verpackung jedes Ergebniswerts in Integer. int-Überlauf bleibt möglich.",
+    "declarations": "",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.mapToInt(funktion)",
+      "parameters": [
+        [
+          "funktion",
+          "Erzeugt einen int aus jedem Quellwert."
+        ]
+      ],
+      "returns": "IntStream, dessen sum einen int liefert.",
+      "effect": "Keine Änderung der Quellliste."
+    },
+    "useCase": "Gesamtlängen, Mengen oder Punktzahlen aus Objekten berechnen.",
+    "pitfall": "Ein primitiver Stream hat teilweise andere Methoden und Ergebnisarten als Stream<Integer>.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "stream-min",
+    "category": "Lambdas & Streams",
+    "name": "min(): Ergebnis kann fehlen",
+    "introduction": "min sucht nach dem kleinsten Wert gemäß einem Comparator. Da ein Stream leer sein kann, ist das Ergebnis ein Optional.",
+    "steps": [
+      "Die Zahlenordnung wird ausdrücklich angegeben.",
+      "2 ist der kleinste vorhandene Wert.",
+      "orElse greift nur, wenn kein Wert existiert."
+    ],
+    "code": "System.out.println(List.of(7, 2, 5).stream().min(Comparator.naturalOrder()).orElse(-1));",
+    "output": "2",
+    "choices": [
+      "2",
+      "7",
+      "-1"
+    ],
+    "explanation": "Ein fachlicher Ersatz wie -1 ist nur sinnvoll, wenn er eindeutig von gültigen Werten unterscheidbar ist.",
+    "declarations": "",
+    "imports": "import java.util.Comparator;\nimport java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.min(comparator)",
+      "parameters": [
+        [
+          "comparator",
+          "Ordnung, nach der der kleinste Wert bestimmt wird."
+        ]
+      ],
+      "returns": "Optional<T>.",
+      "effect": "Verbraucht den Stream, nicht die Quellliste."
+    },
+    "useCase": "Das günstigste vorhandene Angebot auswählen.",
+    "pitfall": "min ist ohne Werte kein garantiertes Ergebnis; get ohne Prüfung kann fehlschlagen.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "stream-peek-count",
+    "category": "Lambdas & Streams",
+    "name": "peek() ist keine sichere Pflichtaktion",
+    "introduction": "peek ist für das Beobachten eines Streams gedacht. Eine Streamimplementierung darf bei einer Endoperation Arbeit optimieren und dabei peek-Aufrufe auslassen.",
+    "steps": [
+      "Die Liste hat bereits eine bekannte Elementanzahl.",
+      "Die Pipeline fragt nur diese Anzahl ab.",
+      "Für sichere eigene Verarbeitung muss ein geeigneter ausdrücklicher Schritt gewählt werden."
+    ],
+    "code": "long anzahl = List.of(1, 2, 3).stream().count();\nSystem.out.println(anzahl);",
+    "output": "3",
+    "choices": [
+      "3",
+      "0",
+      "6"
+    ],
+    "explanation": "Bei einer Pipeline mit peek darf man sich nicht auf eine bestimmte Zahl an Seiteneffekten verlassen. Die Beispielrechnung vermeidet deshalb bewusst solche Effekte.",
+    "declarations": "",
+    "imports": "import java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "stream.peek(consumer)",
+      "parameters": [
+        [
+          "consumer",
+          "Beobachtung einzelner Werte, keine zugesicherte fachliche Pflichtaktion."
+        ]
+      ],
+      "returns": "Zwischenoperation als Stream.",
+      "effect": "Mögliche Seiteneffekte sind keine zuverlässige Grundlage für notwendige Arbeit."
+    },
+    "useCase": "Eine Pipeline beim Debuggen beobachten.",
+    "pitfall": "Zähler, Datenbankschreiben oder andere Pflichtaktionen nicht von peek abhängen lassen.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "optional-flat-map",
+    "category": "Lambdas & Streams",
+    "name": "Optional.flatMap(): kein Optional im Optional",
+    "introduction": "Wenn eine Umwandlung schon Optional zurückgibt, verbindet flatMap beide optionalen Schritte zu einer Ebene.",
+    "steps": [
+      "Die Eingabe ist vorhanden.",
+      "lesen liefert selbst einen optionalen Zahlenwert.",
+      "flatMap übernimmt dessen Vorhandensein ohne zusätzliche Verpackung."
+    ],
+    "code": "System.out.println(Optional.of(\"42\").flatMap(Main::lesen).orElse(0));",
+    "output": "42",
+    "choices": [
+      "42",
+      "0",
+      "Optional[42]"
+    ],
+    "explanation": "Mit map wäre der Typ hier Optional<Optional<Integer>>. Die Umwandlungsfunktion für flatMap darf nicht null als Optional-Objekt liefern.",
+    "declarations": "static Optional<Integer> lesen(String s) {\n    try { return Optional.of(Integer.parseInt(s)); }\n    catch (NumberFormatException e) { return Optional.empty(); }\n}",
+    "imports": "import java.util.Optional;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "optional.flatMap(funktion)",
+      "parameters": [
+        [
+          "funktion",
+          "Liefert ein Optional für einen vorhandenen Eingang."
+        ]
+      ],
+      "returns": "Optional mit dem möglichen Ergebnis.",
+      "effect": "Keine Veränderung der Eingangswerte."
+    },
+    "useCase": "Optionale Daten schrittweise validieren und konvertieren.",
+    "pitfall": "Leeres Optional und null statt eines Optional-Objekts sind verschiedene Dinge.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Lies aus einem optionalen \"abc\" eine Zahl; gib bei fehlender Zahl -1 aus.",
+      "hint": "lesen liefert für den ungültigen Zahlentext ein leeres Optional.",
+      "code": "System.out.println(Optional.of(\"abc\").flatMap(Main::lesen).orElse(-1));",
+      "output": "-1"
+    }
+  },
+  {
+    "id": "optional-or-throw",
+    "category": "Lambdas & Streams",
+    "name": "orElseThrow(): fehlender Wert als Fehler",
+    "introduction": "orElseThrow beendet einen Zugriff ausdrücklich mit einer Ausnahme, wenn kein Wert vorhanden ist. Die Supplier-Variante kann eine fachliche Meldung erstellen.",
+    "steps": [
+      "Das Optional ist leer.",
+      "Der Supplier erzeugt die passende Ausnahme.",
+      "Der catch-Block zeigt den fachlichen Kontext."
+    ],
+    "code": "try { Optional.<String>empty().orElseThrow(() -> new IllegalArgumentException(\"Name fehlt\")); }\ncatch (IllegalArgumentException e) { System.out.println(e.getMessage()); }",
+    "output": "Name fehlt",
+    "choices": [
+      "Name fehlt",
+      "null",
+      "Gast"
+    ],
+    "explanation": "Die Supplier-Funktion wird nur im leeren Fall benötigt. Ein Pflichtwert ist manchmal besser als ein stiller Standardwert zu behandeln.",
+    "declarations": "",
+    "imports": "import java.util.Optional;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "optional.orElseThrow(exceptionSupplier)",
+      "parameters": [
+        [
+          "exceptionSupplier",
+          "Erzeugt den Fehler für den leeren Fall."
+        ]
+      ],
+      "returns": "Vorhandener Wert oder ausgelöste Ausnahme.",
+      "effect": "Das Optional bleibt unverändert."
+    },
+    "useCase": "Fehlende Pflichtfelder bei einem Import ausdrücklich zurückweisen.",
+    "pitfall": "Ein Standardwert darf einen fachlich wichtigen Fehler nicht unbemerkt verdecken.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "regex-case-insensitive",
+    "category": "Reguläre Ausdrücke",
+    "name": "Pattern-Flags bewusst setzen",
+    "introduction": "CASE_INSENSITIVE erlaubt eine Suche ohne einfache Groß-/Kleinschreibungsunterscheidung. Für vollständige Unicode-Fallregeln gibt es zusätzlich UNICODE_CASE.",
+    "steps": [
+      "Das Muster ist java.",
+      "Das Flag erlaubt hier JAVA.",
+      "find sucht die passende Teilstelle."
+    ],
+    "code": "var p = java.util.regex.Pattern.compile(\"java\", java.util.regex.Pattern.CASE_INSENSITIVE);\nSystem.out.println(p.matcher(\"JAVA lernen\").find());",
+    "output": "true",
+    "choices": [
+      "true",
+      "false",
+      "JAVA"
+    ],
+    "explanation": "Flags verändern die Bedeutung eines Regex. Für Unicode kann CASE_INSENSITIVE mit UNICODE_CASE kombiniert werden; sprachsensitive Regeln sind noch eine eigene Frage.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Pattern.compile(regex, flags)",
+      "parameters": [
+        [
+          "regex",
+          "Suchmuster."
+        ],
+        [
+          "flags",
+          "Bitweise kombinierbare Optionen."
+        ]
+      ],
+      "returns": "Kompiliertes Pattern.",
+      "effect": "Ändert die Eingabetexte nicht."
+    },
+    "useCase": "Einen Suchfilter mit ausdrücklich gewählter Schreibweisentoleranz bauen.",
+    "pitfall": "Ein Flag ist keine Zusicherung beliebiger sprachlicher Gleichheit.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "regex-greedy",
+    "category": "Reguläre Ausdrücke",
+    "name": "Greedy und reluctant Quantifier",
+    "introduction": "Ein greedy Quantifier nimmt im passenden Bereich möglichst viel; eine reluctant Variante versucht zunächst weniger. Beide müssen den restlichen Ausdruck erfüllen.",
+    "steps": [
+      "Der Text hat zwei getrennte Klammerteile.",
+      ".* reicht greedy bis zur letzten passenden Schlussklammer.",
+      ".*? stoppt hier bereits an der ersten passenden Schlussklammer."
+    ],
+    "code": "var g = java.util.regex.Pattern.compile(\"\\\\[.*\\\\]\").matcher(\"[A] [B]\");\nvar r = java.util.regex.Pattern.compile(\"\\\\[.*?\\\\]\").matcher(\"[A] [B]\");\nif (g.find()) System.out.println(g.group());\nif (r.find()) System.out.println(r.group());",
+    "output": "[A] [B]\n[A]",
+    "choices": [
+      "[A] [B]\n[A]",
+      "[A]\n[B]",
+      "[A]\n[A]"
+    ],
+    "explanation": "Die Wirkung hängt vom vollständigen Muster ab. Eine klare eingeschränkte Zeichenklasse kann einfacher und effizienter als ein weitreichendes .* sein.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "* und *?",
+      "parameters": [],
+      "returns": "Greedy beziehungsweise reluctant Wiederholung im Regex.",
+      "effect": "Der Matcher führt eine Suche durch."
+    },
+    "useCase": "Mehrere begrenzte Textabschnitte unterscheiden.",
+    "pitfall": "Regex ist kein allgemeiner Parser für beliebig verschachtelte Klammerstrukturen.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "floor-mod",
+    "category": "Zahlen & Zeit",
+    "name": "Math.floorMod(): zyklische Indizes",
+    "introduction": "floorMod liefert bei einem positiven Teiler einen nichtnegativen Rest. Das ist bei negativen Bewegungen oft nützlicher als %.",
+    "steps": [
+      "-1 % 5 ist in Java negativ.",
+      "floorMod(-1,5) liefert den passenden zyklischen Index.",
+      "Der letzte Platz wird mit 4 erreicht."
+    ],
+    "code": "System.out.println(-1 % 5);\nSystem.out.println(Math.floorMod(-1, 5));",
+    "output": "-1\n4",
+    "choices": [
+      "-1\n4",
+      "4\n4",
+      "-1\n-1"
+    ],
+    "explanation": "Die Regel für den Vorzeichenbereich hängt vom Teiler ab. Das Beispiel verwendet ausdrücklich einen positiven Teiler.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Math.floorMod(wert, positiverTeiler)",
+      "parameters": [
+        [
+          "wert",
+          "Zu normalisierender Ganzzahlwert."
+        ],
+        [
+          "positiverTeiler",
+          "Größe des zyklischen Bereichs."
+        ]
+      ],
+      "returns": "Ganzzahliger Indexrest.",
+      "effect": "Ändert keine Eingabewerte."
+    },
+    "useCase": "In einem Ringpuffer oder Spielmenü nach links umlaufen.",
+    "pitfall": "Bei negativen Werten ist % nicht automatisch ein gültiger Arrayindex.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Verschiebe Index 0 in einem Bereich der Größe 4 um einen Schritt nach links.",
+      "hint": "Normalisiere den negativen neuen Wert mit floorMod.",
+      "code": "System.out.println(Math.floorMod(0 - 1, 4));",
+      "output": "3"
+    }
+  },
+  {
+    "id": "decimal-round",
+    "category": "Zahlen & Zeit",
+    "name": "BigDecimal.setScale(): Rundungsregel",
+    "introduction": "setScale liefert einen neuen BigDecimal mit der gewünschten Zahl an Nachkommastellen. Eine Rundungsregel beschreibt nötige Kürzungen.",
+    "steps": [
+      "1.235 wird als Dezimalstring exakt erzeugt.",
+      "Zwei Stellen verlangen eine Rundung.",
+      "HALF_UP macht daraus 1.24."
+    ],
+    "code": "var wert = new java.math.BigDecimal(\"1.235\");\nSystem.out.println(wert.setScale(2, java.math.RoundingMode.HALF_UP));",
+    "output": "1.24",
+    "choices": [
+      "1.24",
+      "1.23",
+      "1.235"
+    ],
+    "explanation": "BigDecimal ist unveränderlich. Die passende Rundungsregel hängt vom Anwendungsfall ab und sollte auch in Tests festgelegt werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "wert.setScale(stellen, rundungsmodus)",
+      "parameters": [
+        [
+          "stellen",
+          "Gewünschte Skala."
+        ],
+        [
+          "rundungsmodus",
+          "Regel bei nicht exakt darstellbarer Kürzung."
+        ]
+      ],
+      "returns": "Neuer BigDecimal mit passender Skala.",
+      "effect": "Der ursprüngliche Wert bleibt unverändert."
+    },
+    "useCase": "Geld- oder Messwertdarstellung nach einer ausdrücklichen Regel berechnen.",
+    "pitfall": "Ohne geeignete Rundungsregel kann eine nicht exakte Skalierung eine ArithmeticException auslösen.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "instant-zone",
+    "category": "Zahlen & Zeit",
+    "name": "Instant und Zeitzone unterscheiden",
+    "introduction": "Instant beschreibt einen globalen Zeitpunkt. Eine Zeitzone bestimmt, wie dieser Zeitpunkt lokal als Datum und Uhrzeit erscheint.",
+    "steps": [
+      "Der Zeitpunkt liegt in UTC am 1. Januar um 00:30.",
+      "Eine feste Verschiebung um -1 Stunde führt lokal zum Vortag.",
+      "Der Zeitpunkt selbst bleibt derselbe."
+    ],
+    "code": "var instant = java.time.Instant.parse(\"2024-01-01T00:30:00Z\");\nSystem.out.println(instant.atOffset(java.time.ZoneOffset.ofHours(-1)).toLocalDate());",
+    "output": "2023-12-31",
+    "choices": [
+      "2023-12-31",
+      "2024-01-01",
+      "2024-01-02"
+    ],
+    "explanation": "Ein ZoneOffset ist eine feste Verschiebung. Eine regionale ZoneId kann zusätzlich historische und Sommerzeitregeln besitzen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "instant.atOffset(offset)",
+      "parameters": [
+        [
+          "offset",
+          "Feste Verschiebung gegenüber UTC."
+        ]
+      ],
+      "returns": "OffsetDateTime als lokale Darstellung des Zeitpunkts.",
+      "effect": "Verändert den Instant nicht."
+    },
+    "useCase": "Zeitpunkte global speichern und für Nutzer passend anzeigen.",
+    "pitfall": "Ein lokales Kalenderdatum ist nicht automatisch weltweit für denselben Zeitpunkt gleich.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "date-period",
+    "category": "Zahlen & Zeit",
+    "name": "Period: Kalenderabstand",
+    "introduction": "Period berechnet Jahre, Monate und Tage zwischen Kalenderdaten. Das Ergebnis ist keine feste Sekundenanzahl.",
+    "steps": [
+      "Der Abstand beginnt am 31. Januar.",
+      "Der 29. Februar im Schaltjahr liegt 29 Kalendertage später.",
+      "Der Period-Wert beschreibt hier diese Tage."
+    ],
+    "code": "System.out.println(java.time.Period.between(java.time.LocalDate.of(2024, 1, 31), java.time.LocalDate.of(2024, 2, 29)));",
+    "output": "P29D",
+    "choices": [
+      "P29D",
+      "P1M",
+      "PT696H"
+    ],
+    "explanation": "Bei diesen Tagespositionen entsteht P29D. Für verstrichene zeitbasierte Dauern wäre Duration ein anderes Modell.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Period.between(startDatum, endDatum)",
+      "parameters": [
+        [
+          "startDatum",
+          "Eingeschlossener Beginn."
+        ],
+        [
+          "endDatum",
+          "Enddatum des Kalenderabstands."
+        ]
+      ],
+      "returns": "Period mit Jahren, Monaten und Tagen.",
+      "effect": "Ändert keine Datumswerte."
+    },
+    "useCase": "Kalenderregeln oder Fälligkeiten als Datum modellieren.",
+    "pitfall": "Monate besitzen keine allgemein feste Zahl von Tagen oder Sekunden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "prefix-sum",
+    "category": "Algorithmen & Komplexität",
+    "name": "Präfixsummen für Bereichsabfragen",
+    "introduction": "Eine Präfixsumme speichert die Summe bis zu jeder Grenze. Eine Bereichssumme ergibt sich danach aus einer Differenz.",
+    "steps": [
+      "pref[0] beginnt bei 0.",
+      "Jeder nächste Eintrag ergänzt einen Zahlenwert.",
+      "Für den Bereich [1,3) wird pref[3] - pref[1] verwendet."
+    ],
+    "code": "int[] n = {2, 3, 5, 7};\nint[] pref = new int[n.length + 1];\nfor (int i = 0; i < n.length; i++) pref[i + 1] = pref[i] + n[i];\nSystem.out.println(pref[3] - pref[1]);",
+    "output": "8",
+    "choices": [
+      "8",
+      "10",
+      "15"
+    ],
+    "explanation": "Die Vorbereitung benötigt O(n) Zeit und O(n) Speicher. Jede gültige Bereichsabfrage benötigt danach O(1) Zeit. Große Summen benötigen einen passenden Datentyp.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "summe(von,bis) = prefix[bis] - prefix[von]",
+      "parameters": [
+        [
+          "von / bis",
+          "Gültige eingeschlossene Start- und ausgeschlossene Endgrenze."
+        ]
+      ],
+      "returns": "Summe im abgefragten Bereich.",
+      "effect": "Verändert die ursprünglichen Zahlen nicht."
+    },
+    "useCase": "Viele Summen über dieselbe Messreihe effizient abfragen.",
+    "pitfall": "Grenzen und ausgeschlossener Endindex müssen zu denselben Regeln passen.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "sliding-window",
+    "category": "Algorithmen & Komplexität",
+    "name": "Ein gleitendes Fenster aktualisieren",
+    "introduction": "Bei einem Fenster fester Länge kann man den ausgehenden Wert abziehen und den neuen Wert hinzufügen, statt jedes Fenster neu zu summieren.",
+    "steps": [
+      "Die ersten zwei Werte bilden das Startfenster.",
+      "Jeder Schritt verschiebt das Fenster um eine Position.",
+      "Die größte Fenstersumme wird gespeichert."
+    ],
+    "code": "System.out.println(maxFenster(new int[]{2, 1, 5, 1, 3}, 2));",
+    "output": "6",
+    "choices": [
+      "6",
+      "12",
+      "5"
+    ],
+    "explanation": "Die Laufzeit ist O(n), der Zusatzspeicher O(1). Die Fenstergröße muss zwischen 1 und der Eingabelänge liegen.",
+    "declarations": "static int maxFenster(int[] n, int k) {\n    if (k < 1 || k > n.length) throw new IllegalArgumentException();\n    int summe = 0;\n    for (int i = 0; i < k; i++) summe += n[i];\n    int best = summe;\n    for (int i = k; i < n.length; i++) {\n        summe += n[i] - n[i - k];\n        best = Math.max(best, summe);\n    }\n    return best;\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "maxFenster(zahlen, groesse)",
+      "parameters": [
+        [
+          "zahlen",
+          "Messfolge."
+        ],
+        [
+          "groesse",
+          "Gültige feste Fensterlänge."
+        ]
+      ],
+      "returns": "Größte Summe eines zusammenhängenden Fensters.",
+      "effect": "Die Quelle bleibt unverändert."
+    },
+    "useCase": "Die aktivste Zeitspanne in einer Reihe von Tageswerten finden.",
+    "pitfall": "Das Fenster darf weder leer noch größer als die Reihe sein.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Finde die größte Summe eines Fensters mit Länge 3 in {2,1,5,1,3}.",
+      "hint": "Die vorbereitete Methode übernimmt die gleitende Aktualisierung.",
+      "code": "System.out.println(maxFenster(new int[]{2, 1, 5, 1, 3}, 3));",
+      "output": "9"
+    }
+  },
+  {
+    "id": "kadane",
+    "category": "Algorithmen & Komplexität",
+    "name": "Größte Teilsumme mit Kadane",
+    "introduction": "Für jede Position wird entschieden, ob eine bisherige Teilfolge fortgesetzt oder neu begonnen wird. So genügt ein Durchlauf.",
+    "steps": [
+      "Die aktuelle Summe endet jeweils am aktuellen Wert.",
+      "Ein schlechter vorheriger Abschnitt kann verworfen werden.",
+      "Das beste bisherige Ergebnis wird separat gespeichert."
+    ],
+    "code": "System.out.println(maxTeil(new int[]{-2, 3, -1, 4, -5}));",
+    "output": "6",
+    "choices": [
+      "6",
+      "-1",
+      "4"
+    ],
+    "explanation": "Die beste Teilfolge ist 3,-1,4. Diese Variante verlangt eine nichtleere Teilfolge und behandelt auch ausschließlich negative Zahlen. Zeit O(n), Zusatzspeicher O(1).",
+    "declarations": "static int maxTeil(int[] n) {\n    if (n.length == 0) throw new IllegalArgumentException();\n    int aktuell = n[0], best = n[0];\n    for (int i = 1; i < n.length; i++) {\n        aktuell = Math.max(n[i], aktuell + n[i]);\n        best = Math.max(best, aktuell);\n    }\n    return best;\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "maxTeil(zahlen)",
+      "parameters": [
+        [
+          "zahlen",
+          "Nichtleere int-Folge im geeigneten Wertebereich."
+        ]
+      ],
+      "returns": "Größte Summe einer nichtleeren zusammenhängenden Teilfolge.",
+      "effect": "Keine Änderung der Quelle."
+    },
+    "useCase": "Die stärkste zusammenhängende Gewinnphase in einer Folge finden.",
+    "pitfall": "Eine Initialisierung mit 0 würde bei ausschließlich negativen Werten eine andere, leere-Teilfolge-Regel unterstellen.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Prüfe die größte nichtleere Teilsumme bei {-4,-2,-7}.",
+      "hint": "Der beste Wert kann negativ sein; eine leere Teilfolge ist nicht erlaubt.",
+      "code": "System.out.println(maxTeil(new int[]{-4, -2, -7}));",
+      "output": "-2"
+    }
+  },
+  {
+    "id": "gcd-euclid",
+    "category": "Algorithmen & Komplexität",
+    "name": "Größter gemeinsamer Teiler",
+    "introduction": "Der euklidische Algorithmus ersetzt ein Zahlenpaar wiederholt durch die zweite Zahl und den Divisionsrest.",
+    "steps": [
+      "Der Rest von 48 und 18 ist 12.",
+      "Danach folgen 18 und 12, dann 12 und 6.",
+      "Bei Rest 0 ist 6 der gemeinsame Teiler."
+    ],
+    "code": "System.out.println(ggt(48, 18));",
+    "output": "6",
+    "choices": [
+      "6",
+      "12",
+      "18"
+    ],
+    "explanation": "Für nichtnegative Werte, die hier nicht beide 0 sind, liefert die Methode den größten gemeinsamen Teiler. Die Folge schrumpft schnell; die Laufzeit wächst logarithmisch.",
+    "declarations": "static int ggt(int a, int b) {\n    if (a < 0 || b < 0 || (a == 0 && b == 0)) throw new IllegalArgumentException();\n    while (b != 0) { int rest = a % b; a = b; b = rest; }\n    return a;\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "ggt(a,b)",
+      "parameters": [
+        [
+          "a / b",
+          "Nichtnegative Ganzzahlen, nicht beide null."
+        ]
+      ],
+      "returns": "Größter gemeinsamer Teiler.",
+      "effect": "Ändert nur lokale Parameterkopien."
+    },
+    "useCase": "Brüche kürzen oder periodische Abläufe vergleichen.",
+    "pitfall": "Die Regel für negative Werte und das Paar (0,0) muss ausdrücklich definiert werden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "fib-dp",
+    "category": "Algorithmen & Komplexität",
+    "name": "Dynamische Programmierung: Fibonacci",
+    "introduction": "Statt die gleichen rekursiven Teilprobleme immer neu zu berechnen, können zuvor bestimmte Werte wiederverwendet werden.",
+    "steps": [
+      "Die Startwerte sind F(0)=0 und F(1)=1.",
+      "Jeder weitere Wert addiert die zwei Vorgänger.",
+      "Die Tabelle vermeidet wiederholte Berechnungen."
+    ],
+    "code": "System.out.println(fib(7));",
+    "output": "13",
+    "choices": [
+      "13",
+      "21",
+      "7"
+    ],
+    "explanation": "Diese Tabellenvariante braucht O(n) Zeit und O(n) Speicher. Nur die beiden letzten Werte aufzubewahren senkt den Zusatzspeicher auf O(1).",
+    "declarations": "static int fib(int n) {\n    if (n < 0 || n > 46) throw new IllegalArgumentException();\n    if (n < 2) return n;\n    int[] dp = new int[n + 1]; dp[1] = 1;\n    for (int i = 2; i <= n; i++) dp[i] = dp[i - 1] + dp[i - 2];\n    return dp[n];\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "fib(n)",
+      "parameters": [
+        [
+          "n",
+          "Ganzzahl zwischen 0 und 46 für ein int-Ergebnis."
+        ]
+      ],
+      "returns": "n-ter Fibonacci-Wert.",
+      "effect": "Erstellt eine lokale Hilfstabelle."
+    },
+    "useCase": "Wiederkehrende Teilprobleme durch gespeicherte Zwischenergebnisse lösen.",
+    "pitfall": "Die Werte wachsen schnell. Ein int passt hier nur bis F(46); der Wertebereich ist Teil des Vertrags.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "backtracking-bits",
+    "category": "Algorithmen & Komplexität",
+    "name": "Backtracking: Entscheidungen aufbauen",
+    "introduction": "Backtracking untersucht mögliche Entscheidungen schrittweise. Nach einem Zweig wird der nächste Zweig bearbeitet.",
+    "steps": [
+      "An jeder Position wird zuerst 0 gewählt.",
+      "Danach wird derselbe Teilanfang mit 1 fortgesetzt.",
+      "Bei der Ziellänge wird die vollständige Folge ausgegeben."
+    ],
+    "code": "bits(\"\", 2);",
+    "output": "00\n01\n10\n11",
+    "choices": [
+      "00\n01\n10\n11",
+      "00\n11",
+      "0\n1"
+    ],
+    "explanation": "Es gibt 2 hoch n mögliche Bitfolgen. Die Ergebniszahl selbst wächst exponentiell; eine solche Aufgabe kann nicht allgemein linear alle Ergebnisse ausgeben.",
+    "declarations": "static void bits(String prefix, int n) {\n    if (prefix.length() == n) { System.out.println(prefix); return; }\n    bits(prefix + \"0\", n);\n    bits(prefix + \"1\", n);\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "bits(prefix, laenge)",
+      "parameters": [
+        [
+          "prefix",
+          "Bereits aufgebaute Entscheidungen."
+        ],
+        [
+          "laenge",
+          "Gewünschte Gesamtlänge."
+        ]
+      ],
+      "returns": "void; hier Ausgabe aller Folgen.",
+      "effect": "Erzeugt neue Strings für die Zweige."
+    },
+    "useCase": "Kleine Kombinationsräume systematisch erkunden.",
+    "pitfall": "Die Zahl möglicher Ergebnisse begrenzt die sinnvolle Eingabegröße.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "insertion-sort",
+    "category": "Algorithmen & Komplexität",
+    "name": "Insertion Sort: sortierten Anfang erweitern",
+    "introduction": "Insertion Sort hält einen sortierten Anfang und fügt den nächsten Wert an seiner passenden Stelle ein. Größere Werte werden verschoben.",
+    "steps": [
+      "Der nächste Wert wird vorübergehend gespeichert.",
+      "Größere Vorgänger werden nach rechts geschoben.",
+      "Der gespeicherte Wert wird in die entstandene Lücke eingesetzt."
+    ],
+    "code": "int[] n = {3, 1, 2};\neinfuegenSort(n);\nSystem.out.println(Arrays.toString(n));",
+    "output": "[1, 2, 3]",
+    "choices": [
+      "[1, 2, 3]",
+      "[3, 1, 2]",
+      "[1, 3, 2]"
+    ],
+    "explanation": "Im schlechtesten Fall braucht dieser Algorithmus O(n²) Zeit und O(1) Zusatzspeicher. Auf bereits geordneten Daten benötigt diese Umsetzung nur O(n) Vergleichsarbeit.",
+    "declarations": "static void einfuegenSort(int[] n) {\n    for (int i = 1; i < n.length; i++) {\n        int wert = n[i], j = i - 1;\n        while (j >= 0 && n[j] > wert) { n[j + 1] = n[j]; j--; }\n        n[j + 1] = wert;\n    }\n}",
+    "imports": "import java.util.Arrays;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "einfuegenSort(zahlen)",
+      "parameters": [
+        [
+          "zahlen",
+          "Veränderbares int-Array."
+        ]
+      ],
+      "returns": "void; das Array ist danach sortiert.",
+      "effect": "Verändert das Eingabearray."
+    },
+    "useCase": "Einen einfachen Sortieralgorithmus verstehen und kleine fast sortierte Folgen bearbeiten.",
+    "pitfall": "Für große beliebige Folgen ist diese Methode normalerweise nicht die erste Wahl.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "lower-bound-java",
+    "category": "Algorithmen & Komplexität",
+    "name": "Lower Bound: erster passender Index",
+    "introduction": "Eine binäre Suche kann gezielt die erste Position mit einem Wert größer oder gleich dem Ziel bestimmen, auch bei Duplikaten.",
+    "steps": [
+      "Der Suchbereich wird als [links,rechts) geführt.",
+      "Auch nach einem passenden Wert wird weiter links geprüft.",
+      "Bei fehlendem passenden Wert ergibt sich die Listenlänge."
+    ],
+    "code": "System.out.println(lowerBound(new int[]{1, 2, 2, 5}, 2));\nSystem.out.println(lowerBound(new int[]{1, 2, 2, 5}, 9));",
+    "output": "1\n4",
+    "choices": [
+      "1\n4",
+      "2\n-1",
+      "1\n-1"
+    ],
+    "explanation": "Die Quelle muss aufsteigend sortiert sein. Laufzeit O(log n), Zusatzspeicher O(1); diese Rückgaberegel unterscheidet sich von Arrays.binarySearch.",
+    "declarations": "static int lowerBound(int[] n, int ziel) {\n    int links = 0, rechts = n.length;\n    while (links < rechts) {\n        int mitte = links + (rechts - links) / 2;\n        if (n[mitte] < ziel) links = mitte + 1; else rechts = mitte;\n    }\n    return links;\n}",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "lowerBound(sortierteZahlen, ziel)",
+      "parameters": [
+        [
+          "sortierteZahlen",
+          "Aufsteigend sortiertes Array."
+        ],
+        [
+          "ziel",
+          "Untere Zielgrenze."
+        ]
+      ],
+      "returns": "Erster passender Index oder die Länge.",
+      "effect": "Verändert die Quelle nicht."
+    },
+    "useCase": "Einen Einfügeort oder den Anfang eines Wertebereichs bestimmen.",
+    "pitfall": "Bei Duplikaten liefert eine gewöhnliche binarySearch nicht zwingend den ersten Treffer.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Finde den ersten Wert >= 3 in {1,2,2,5}.",
+      "hint": "Der erste passende Wert ist 5; zurückgegeben wird dessen Index.",
+      "code": "System.out.println(lowerBound(new int[]{1, 2, 2, 5}, 3));",
+      "output": "3"
+    }
+  },
+  {
+    "id": "dijkstra-matrix",
+    "category": "Algorithmen & Komplexität",
+    "name": "Dijkstra für nichtnegative Kanten",
+    "introduction": "Dijkstra erweitert wiederholt die bisher nächstgelegene erreichbare Position. Die Regel setzt nichtnegative Kantengewichte voraus.",
+    "steps": [
+      "Der direkte Weg von 0 nach 1 kostet 4.",
+      "Über 2 kostet derselbe Weg 1 + 1.",
+      "Die beste Distanz zu 1 ist deshalb 2."
+    ],
+    "code": "int[][] kanten = {{0, 4, 1}, {-1, 0, -1}, {-1, 1, 0}};\nSystem.out.println(distanz(kanten, 0, 1));",
+    "output": "2",
+    "choices": [
+      "2",
+      "4",
+      "1"
+    ],
+    "explanation": "Diese einfache Matrixvariante braucht O(V²) Zeit und O(V) zusätzliche Distanz-/Besuchsverwaltung; die Eingabematrix selbst braucht O(V²) Speicher. Eine PriorityQueue mit Adjazenzlisten ist eine andere Umsetzung.",
+    "declarations": "static int distanz(int[][] m, int start, int ziel) {\n    int[] d = new int[m.length]; boolean[] fertig = new boolean[m.length];\n    Arrays.fill(d, Integer.MAX_VALUE); d[start] = 0;\n    for (int r = 0; r < m.length; r++) {\n        int u = -1;\n        for (int i = 0; i < m.length; i++) if (!fertig[i] && (u < 0 || d[i] < d[u])) u = i;\n        if (u < 0 || d[u] == Integer.MAX_VALUE) break;\n        fertig[u] = true;\n        for (int v = 0; v < m.length; v++)\n            if (!fertig[v] && m[u][v] >= 0) d[v] = Math.min(d[v], Math.addExact(d[u], m[u][v]));\n    }\n    return d[ziel];\n}",
+    "imports": "import java.util.Arrays;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "distanz(matrix, start, ziel)",
+      "parameters": [
+        [
+          "matrix",
+          "Quadratische Matrix: -1 bedeutet keine Kante, sonst nichtnegatives Gewicht."
+        ],
+        [
+          "start / ziel",
+          "Gültige Knotenindizes."
+        ]
+      ],
+      "returns": "Kleinste int-Distanz oder Integer.MAX_VALUE für unerreichbar.",
+      "effect": "Verändert die Matrix nicht."
+    },
+    "useCase": "Kleine Wegnetze oder Kostenmodelle vergleichen.",
+    "pitfall": "Negative Kosten sind für diese Dijkstra-Regel unzulässig; sehr große Summen müssen gesondert behandelt werden.",
+    "difficulty": "Vertiefung"
+  },
+  {
+    "id": "topological-order",
+    "category": "Algorithmen & Komplexität",
+    "name": "Topologische Ordnung für Abhängigkeiten",
+    "introduction": "Eine topologische Ordnung stellt jede Abhängigkeit vor die darauf angewiesene Aufgabe. Ein gerichteter Zyklus verhindert eine vollständige Ordnung.",
+    "steps": [
+      "Zuerst kommen Knoten ohne eingehende Kanten in die Queue.",
+      "Nach ihrer Verarbeitung werden Nachfolger freigegeben.",
+      "Nur wenn alle Knoten verarbeitet sind, liegt eine vollständige Ordnung vor."
+    ],
+    "code": "var g = List.of(List.of(1, 2), List.of(3), List.of(3), List.<Integer>of());\nSystem.out.println(reihenfolge(g));",
+    "output": "[0, 1, 2, 3]",
+    "choices": [
+      "[0, 1, 2, 3]",
+      "[3, 2, 1, 0]",
+      "[0, 3, 1, 2]"
+    ],
+    "explanation": "Diese Kahn-Variante benötigt O(V + E) Zeit und O(V) Zusatzspeicher bei Adjazenzlisten. Es können mehrere gültige Reihenfolgen existieren; die verwendete Queue legt diese Beispielausgabe fest.",
+    "declarations": "static List<Integer> reihenfolge(List<List<Integer>> g) {\n    int[] grad = new int[g.size()];\n    for (var nachbarn : g) for (int v : nachbarn) grad[v]++;\n    var q = new ArrayDeque<Integer>(); var out = new ArrayList<Integer>();\n    for (int i = 0; i < grad.length; i++) if (grad[i] == 0) q.offer(i);\n    while (!q.isEmpty()) {\n        int u = q.poll(); out.add(u);\n        for (int v : g.get(u)) if (--grad[v] == 0) q.offer(v);\n    }\n    if (out.size() != g.size()) throw new IllegalArgumentException(\"Zyklus\");\n    return out;\n}",
+    "imports": "import java.util.ArrayDeque;\nimport java.util.ArrayList;\nimport java.util.List;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "reihenfolge(adjazenzlisten)",
+      "parameters": [
+        [
+          "adjazenzlisten",
+          "Gerichteter Graph mit gültigen Knotenindizes."
+        ]
+      ],
+      "returns": "Liste in einer gültigen Abhängigkeitsreihenfolge oder Fehler bei Zyklus.",
+      "effect": "Verändert die Graphquelle nicht."
+    },
+    "useCase": "Buildschritte, Kursvoraussetzungen oder Aufgaben mit Abhängigkeiten planen.",
+    "pitfall": "Eine vollständige topologische Ordnung gibt es nur bei einem gerichteten azyklischen Graphen.",
+    "difficulty": "Vertiefung",
+    "practice": {
+      "task": "Erkenne einen Zyklus aus 0 -> 1 und 1 -> 0.",
+      "hint": "Keine vollständige Freigabereihenfolge ist möglich; behandle die Ausnahme.",
+      "code": "try { reihenfolge(List.of(List.of(1), List.of(0))); }\ncatch (IllegalArgumentException e) { System.out.println(e.getMessage()); }",
+      "output": "Zyklus"
+    }
+  }
+]

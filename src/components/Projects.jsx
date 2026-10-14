@@ -4,10 +4,10 @@ import { projects } from '../projects';
 import { courses, lessonById } from '../data';
 import { ProjectBuild } from './ProjectBuild';
 
-export default function Projects({ course, openLesson }) {
+export default function Projects({ course, openLesson, initialProjectId }) {
   const [filter, setFilter] = useState('all');
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState(projects.find(p => p.course === course)?.id || projects[0].id);
+  const [selected, setSelected] = useState(initialProjectId || projects.find(p => p.course === course)?.id || projects[0].id);
   const [file, setFile] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
   const [downloadStatus, setDownloadStatus] = useState('');

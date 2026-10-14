@@ -8,9 +8,11 @@ import { useProgress } from "./useProgress";
 import { useWebApp } from "./useWebApp";
 import { Appearance } from "./components/Appearance";
 
+const IdeaToCode = lazy(() => import("./components/IdeaToCode"));
 const Projects = lazy(() => import("./components/Projects"));
 
 export default function App() {
+  const [projectId, setProjectId] = useState(null);
   const [view, setView] = useState("learn");
   const [course, setCourse] = useState("js");
   const [lessonId, setLessonId] = useState("js-map");
@@ -118,9 +120,10 @@ export default function App() {
             />
           )}
           {view === "exercises" && (
-            <Exercises progress={progress} openLesson={openLesson} openProjects={() => navigate("projects")} />
+            <Exercises progress={progress} openLesson={openLesson} openProjects={() => { setProjectId(null); navigate("projects"); }} openIdeas={() => navigate("ideas")} />
           )}
-          {view === "projects" && <Suspense fallback={<p role="status">Projektbeispiele werden geladen …</p>}><Projects course={course} openLesson={openLesson} /></Suspense>}
+          {view === "projects" && <Suspense fallback={<p role="status">Projektbeispiele werden geladen …</p>}><Projects key={projectId || "all"} course={course} initialProjectId={projectId} openLesson={openLesson} /></Suspense>}
+          {view === "ideas" && <Suspense fallback={<p role="status">Baupläne werden geladen …</p>}><IdeaToCode openProject={id => { setProjectId(id); navigate("projects"); }} /></Suspense>}
           {view === "reference" && <Reference openLesson={openLesson} />}
           {view === "progress" && (
             <ProgressView progress={progress} openLesson={openLesson} />
@@ -128,11 +131,11 @@ export default function App() {
         </main>
       </div>
       <nav className="mobile-bottom-nav" aria-label="Schnellnavigation">
-        {navigation.filter(item => item.id !== "projects").map(({ id, label, icon: Icon }) => (
+        {navigation.filter(item => item.id !== "projects" && item.id !== "ideas").map(({ id, label, icon: Icon }) => (
           <button
             key={id}
-            aria-current={(view === id || (view === "projects" && id === "exercises")) ? "page" : undefined}
-            className={(view === id || (view === "projects" && id === "exercises")) ? "selected" : ""}
+            aria-current={(view === id || ((view === "projects" || view === "ideas") && id === "exercises")) ? "page" : undefined}
+            className={(view === id || ((view === "projects" || view === "ideas") && id === "exercises")) ? "selected" : ""}
             onClick={() => navigate(id)}
           >
             <Icon size={23} strokeWidth={1.8} />

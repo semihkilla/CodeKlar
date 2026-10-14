@@ -2355,3 +2355,5 @@ body {
 .java-api-parameters dt { font-size:15px; margin-bottom:6px; color:var(--accent); }
 .java-api-parameters dd { margin:0; font-size:16px; line-height:1.75; overflow-wrap:anywhere; }
 .java-practice-note { color:var(--muted); }
+
+.idea-entry { display:block; margin-block:12px; text-align:left; white-space:normal; }

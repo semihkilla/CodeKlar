@@ -1,0 +1,423 @@
+[
+  {
+    "id": "score",
+    "title": "Punkte in einem Spiel zählen",
+    "goal": "Nach jedem Treffer möchte ich mehr Punkte sehen.",
+    "small": "Zuerst genügt ein Punktestand und genau ein Treffer. Grafik, Gegner und Highscore kommen später.",
+    "fields": [
+      [
+        "punkte",
+        "int",
+        "Eine ganze Zahl reicht für den aktuellen Stand."
+      ],
+      [
+        "trefferWert",
+        "int",
+        "Wie viele Punkte ein Treffer hinzufügt."
+      ]
+    ],
+    "logic": [
+      [
+        "Treffer erhalten",
+        "Ein Ereignis startet die Änderung; eine spätere Schaltfläche kann dieselbe Regel aufrufen."
+      ],
+      [
+        "Stand berechnen",
+        "Alter Stand + Trefferwert. Speichere das Ergebnis wieder in punkte."
+      ],
+      [
+        "Stand anzeigen",
+        "Die Anzeige liest den neuen Stand. Sie ist von der Berechnung getrennt."
+      ]
+    ],
+    "pseudocode": "punkte = 0\nbei einem Treffer:\n    punkte = punkte + trefferWert\n    zeige punkte",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        int punkte = 0;\n        int trefferWert = 10;\n        punkte = Math.addExact(punkte, trefferWert);\n        System.out.println(\"Punkte: \" + punkte);\n    }\n}\n",
+    "output": "Punkte: 10",
+    "checks": [
+      "Ein Treffer mit Wert 10: Stand 10.",
+      "Zwei Treffer mit Wert 10: Stand 20.",
+      "Lege fest, ob negative Werte erlaubt sind. Math.addExact meldet einen int-Überlauf."
+    ],
+    "task": "Ergänze einen zweiten Treffer mit Wert 25. Welcher Stand wird angezeigt?",
+    "hint": "Der neue Treffer wird zum bisherigen Stand hinzugefügt, nicht an dessen Stelle gesetzt.",
+    "solution": "Nach dem ersten Treffer sind es 10 Punkte. Math.addExact(punkte, 25) ergibt 35. Danach muss der neue Stand angezeigt werden.",
+    "projectId": null,
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das erste Beispiel läuft in der Konsole. Die App zeigt Code und Ausgabe; du führst Java auf deinem Rechner aus.",
+    "connections": [
+      [
+        "Stand merken",
+        "int punkte = 0;",
+        "Eine Variable hält den Zustand zwischen zwei Treffern. Ohne gespeicherten Stand würdest du jedes Mal bei null beginnen."
+      ],
+      [
+        "Treffer einrechnen",
+        "punkte = Math.addExact(punkte, trefferWert);",
+        "Die Methode liefert die neue Zahl. Die Zuweisung speichert sie als aktuellen Stand; addExact meldet außerdem Ganzzahlüberlauf."
+      ],
+      [
+        "Wert zeigen",
+        "System.out.println(\"Punkte: \" + punkte);",
+        "Die Ausgabe liest den gespeicherten Stand und verbindet ihn mit einer Beschriftung. Sie zählt keine Punkte hinzu."
+      ]
+    ]
+  },
+  {
+    "id": "tasks",
+    "title": "Aufgaben als Daten darstellen",
+    "goal": "Ich möchte Aufgaben hinzufügen und später abhaken.",
+    "small": "Zuerst speichern wir eine Aufgabe und erzeugen ihre erledigte Fassung. Eine Oberfläche ist noch nicht nötig.",
+    "fields": [
+      [
+        "id",
+        "int",
+        "Eine stabile Kennung unterscheidet Aufgaben, auch wenn ihre Texte gleich sind."
+      ],
+      [
+        "text",
+        "String",
+        "Was erledigt werden soll."
+      ],
+      [
+        "erledigt",
+        "boolean",
+        "Genau zwei Zustände: offen oder erledigt."
+      ],
+      [
+        "aufgaben",
+        "Liste von Aufgabe",
+        "Mehrere Datensätze werden gemeinsam verwaltet."
+      ]
+    ],
+    "logic": [
+      [
+        "Datensatz definieren",
+        "Ein record fasst zusammengehörige Felder zusammen."
+      ],
+      [
+        "Aufgabe hinzufügen",
+        "Eine veränderbare ArrayList nimmt einen neuen Datensatz auf."
+      ],
+      [
+        "Per Kennung aktualisieren",
+        "Suche id=1 und ersetze den unveränderlichen record durch eine erledigte Kopie."
+      ]
+    ],
+    "pseudocode": "erstelle Liste\nfüge Aufgabe(id=1, text=\"Java üben\", erledigt=false) hinzu\nsuche Aufgabe mit id=1\nersetze sie durch Kopie mit erledigt=true\nzeige die Aufgabe",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        record Aufgabe(int id, String text, boolean erledigt) {}\n        var aufgaben = new java.util.ArrayList<Aufgabe>();\n        aufgaben.add(new Aufgabe(1, \"Java üben\", false));\n        for (int i = 0; i < aufgaben.size(); i++) {\n            var a = aufgaben.get(i);\n            if (a.id() == 1) aufgaben.set(i, new Aufgabe(a.id(), a.text(), true));\n        }\n        var a = aufgaben.get(0);\n        System.out.println(a.id() + \" | \" + a.text() + \" | \" + a.erledigt());\n    }\n}\n",
+    "output": "1 | Java üben | true",
+    "checks": [
+      "Nach dem Hinzufügen ist die Aufgabe offen.",
+      "Nach dem Abhaken ist nur die gesuchte ID erledigt.",
+      "Zwei Aufgaben mit gleichem Text müssen trotzdem getrennte IDs haben."
+    ],
+    "task": "Füge eine zweite Aufgabe mit ID 2 hinzu. Hake nur ID 1 ab.",
+    "hint": "Suche nach der Kennung, nicht nach dem Aufgabentext.",
+    "solution": "Aufgabe 1 wird ersetzt. Aufgabe 2 behält erledigt=false. Prüfe beide Einträge, statt nur den ersten auszugeben.",
+    "projectId": "java-notebook",
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das erste Beispiel läuft in der Konsole. Die App zeigt Code und Ausgabe; du führst Java auf deinem Rechner aus.",
+    "connections": [
+      [
+        "Zusammengehörige Eigenschaften",
+        "record Aufgabe(int id, String text, boolean erledigt) {}",
+        "Der Datensatz ersetzt lose parallele Variablen: ID, Text und Zustand gehören zu einer Aufgabe."
+      ],
+      [
+        "Mehrere Aufgaben halten",
+        "var aufgaben = new java.util.ArrayList<Aufgabe>();",
+        "Eine Liste verwaltet mehrere Datensätze. ArrayList erlaubt Hinzufügen und Ersetzen."
+      ],
+      [
+        "Eine Aufgabe abhaken",
+        "aufgaben.set(i, new Aufgabe(a.id(), a.text(), true));",
+        "set ersetzt genau den gefundenen Listeneintrag. Der record wird nicht verändert; wir erzeugen seine neue Fassung."
+      ]
+    ]
+  },
+  {
+    "id": "display",
+    "title": "Daten sichtbar machen",
+    "goal": "Ich möchte nicht nur Werte speichern, sondern eine verständliche Anzeige bauen.",
+    "small": "Starte mit einer textuellen Zeile pro Aufgabe. Eine Browseransicht verwendet später dieselben Daten in HTML-Elementen.",
+    "fields": [
+      [
+        "name",
+        "String",
+        "Die Information, die der Mensch lesen soll."
+      ],
+      [
+        "erledigt",
+        "boolean",
+        "Ein Zustand bestimmt das sichtbare Zeichen."
+      ],
+      [
+        "anzeige",
+        "String",
+        "Die daraus abgeleitete Darstellung; sie muss nicht zusätzlich gespeichert werden."
+      ]
+    ],
+    "logic": [
+      [
+        "Daten lesen",
+        "Die Anzeige bekommt den aktuellen Namen und Zustand."
+      ],
+      [
+        "Darstellung ableiten",
+        "Wähle [x] für erledigt oder [ ] für offen."
+      ],
+      [
+        "Ausgabe erzeugen",
+        "Konsole: println. Browser: DOM-Element mit textContent. Java-GUI: beispielsweise ein Label."
+      ]
+    ],
+    "pseudocode": "für jede Aufgabe:\n    wenn erledigt: Zeichen = \"[x]\"\n    sonst: Zeichen = \"[ ]\"\n    zeige Zeichen + Name",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        String name = \"Java üben\";\n        boolean erledigt = true;\n        String zeichen = erledigt ? \"[x]\" : \"[ ]\";\n        System.out.println(zeichen + \" \" + name);\n    }\n}\n",
+    "output": "[x] Java üben",
+    "checks": [
+      "erledigt=true zeigt [x].",
+      "erledigt=false zeigt [ ].",
+      "Die Daten bleiben gleich, auch wenn Farben oder Schrift geändert werden."
+    ],
+    "task": "Zeige eine offene Aufgabe und ergänze darunter, wie viele Aufgaben offen sind.",
+    "hint": "Die offene Anzahl wird aus den Daten berechnet. HTML ist nur eine andere Art der Ausgabe.",
+    "solution": "Für eine einzelne offene Aufgabe lautet die Zeile [ ] Java üben und die Anzahl 1. Bei mehreren Aufgaben zählt eine Schleife oder filter die Einträge mit erledigt=false.",
+    "projectId": null,
+    "files": {
+      "anzeige.html": "<!doctype html>\n<html lang=\"de\">\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Aufgaben anzeigen</title>\n<h1>Meine Aufgaben</h1>\n<ul id=\"aufgaben\"></ul>\n<script>\nconst aufgaben = [{ id: 1, text: \"Java üben\", erledigt: true }];\nconst liste = document.querySelector(\"#aufgaben\");\nfor (const aufgabe of aufgaben) {\n  const zeile = document.createElement(\"li\");\n  zeile.textContent = `${aufgabe.erledigt ? \"[x]\" : \"[ ]\"} ${aufgabe.text}`;\n  liste.append(zeile);\n}\n</script>\n</html>\n"
+    },
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das Java-Beispiel zeigt eine Konsolenausgabe. Unter „Browseransicht als nächster Schritt“ findest du dieselbe Darstellung in einer vollständigen HTML-Datei mit JavaScript. textContent behandelt den Aufgabentext als Text.",
+    "connections": [
+      [
+        "Zustand in ein Zeichen übersetzen",
+        "erledigt ? \"[x]\" : \"[ ]\"",
+        "Der bedingte Operator wählt anhand eines boolean eine von zwei Darstellungen."
+      ],
+      [
+        "Konsolenausgabe erzeugen",
+        "System.out.println(zeichen + \" \" + name);",
+        "Die Konsole erhält eine fertige Textzeile. Die Aufgabe selbst bleibt unverändert."
+      ],
+      [
+        "Dieselben Daten im Browser zeigen",
+        "zeile.textContent = `${aufgabe.erledigt ? \"[x]\" : \"[ ]\"} ${aufgabe.text}`;",
+        "textContent setzt den sichtbaren Text eines HTML-Elements; liste.append fügt dieses Element in die Anzeige ein. Diese Zeile steht in anzeige.html."
+      ]
+    ]
+  },
+  {
+    "id": "save",
+    "title": "Daten nach dem Schließen behalten",
+    "goal": "Mein Programm soll sich einen Punktestand merken.",
+    "small": "Speichere zunächst eine einzelne ganze Zahl in einer eigenen Textdatei. Für mehrere Nutzer brauchst du später andere Speicherregeln.",
+    "fields": [
+      [
+        "punkte",
+        "int",
+        "Der aktuelle Stand im Arbeitsspeicher."
+      ],
+      [
+        "pfad",
+        "Path",
+        "Ort der Datei, hier punktestand-demo.txt."
+      ],
+      [
+        "dateiinhalt",
+        "String",
+        "Textdarstellung der Zahl für den Speicher."
+      ]
+    ],
+    "logic": [
+      [
+        "Format wählen",
+        "Für eine einzelne Zahl reicht eine Textzeile. Für strukturierte Daten vereinbare CSV, JSON oder ein anderes Format."
+      ],
+      [
+        "Schreiben",
+        "Wandle die Zahl in Text und schreibe ausdrücklich UTF-8."
+      ],
+      [
+        "Lesen und prüfen",
+        "Lies den Text zurück und parse ihn als int. Beschädigte oder fremde Daten sind ein Fehlerfall."
+      ]
+    ],
+    "pseudocode": "wandle Punkte in Text um\nschreibe Text in Demo-Datei\nlies Datei\nparse den Text als Zahl\nzeige geladenen Stand",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        var pfad = java.nio.file.Path.of(\"punktestand-demo.txt\");\n        int punkte = 35;\n        java.nio.file.Files.writeString(pfad, Integer.toString(punkte), java.nio.charset.StandardCharsets.UTF_8);\n        String text = java.nio.file.Files.readString(pfad, java.nio.charset.StandardCharsets.UTF_8);\n        int geladen = Integer.parseInt(text.strip());\n        System.out.println(\"Geladen: \" + geladen);\n    }\n}\n",
+    "output": "Geladen: 35",
+    "checks": [
+      "Die Datei enthält 35.",
+      "Ein getrennt gestartetes Leseprogramm erhält denselben Wert.",
+      "Fehlende Datei, ungültiger Zahlentext oder fehlende Schreibrechte brauchen eine passende Fehlermeldung."
+    ],
+    "task": "Teile das Beispiel in zwei Programme auf: eines schreibt, das andere liest nur.",
+    "hint": "Im Leseprogramm dürfen writeString und die feste Vorgabe 35 nicht stehen.",
+    "solution": "Programm A schreibt den aktuellen Wert. Programm B liest ausschließlich die vorhandene Datei. Erst dann beweist ein Neustart, dass Daten erhalten geblieben sind.",
+    "projectId": "java-notebook",
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das Beispiel erstellt beziehungsweise überschreibt punktestand-demo.txt im aktuellen Ordner. Starte es in einem eigenen Übungsordner. Es zeigt Datei-I/O; eine fertige Anwendung ergänzt Fehlerbehandlung. Browser-localStorage bleibt auf Gerät, Browserprofil und Herkunft begrenzt und synchronisiert keine Geräte.",
+    "connections": [
+      [
+        "Eine Zahl als Text speichern",
+        "Integer.toString(punkte)",
+        "Eine Textdatei benötigt Zeichen. Die Konvertierung vereinbart hier das einfache Dateiformat."
+      ],
+      [
+        "Auf den Datenträger schreiben",
+        "java.nio.file.Files.writeString(pfad, Integer.toString(punkte), java.nio.charset.StandardCharsets.UTF_8);",
+        "writeString schreibt den Zahlentext an den festgelegten Dateipfad. UTF_8 legt die Zeichenkodierung fest. Die Demo überschreibt diese eigene Datei."
+      ],
+      [
+        "Text zurück in eine Zahl verwandeln",
+        "Integer.parseInt(text.strip())",
+        "readString liefert Text. Erst parseInt macht daraus wieder einen Rechenwert und lehnt ungültigen Zahlentext ab."
+      ]
+    ]
+  },
+  {
+    "id": "transfer",
+    "title": "Daten zwischen Programmen übertragen",
+    "goal": "Ich möchte eine Eingabe an ein anderes Programm schicken und dessen Antwort verwenden.",
+    "small": "Zuerst lassen wir einen lokalen Server zwei Zahlen addieren. Dieser kleine Request-Response-Weg ist auch ein Baustein größerer Apps.",
+    "fields": [
+      [
+        "a und b",
+        "Ganzzahlen im Querystring",
+        "Client und Server vereinbaren die Namen der Eingabewerte."
+      ],
+      [
+        "Adresse",
+        "URI",
+        "Host, Port, Pfad und Query bestimmen das Ziel."
+      ],
+      [
+        "status",
+        "HTTP-Statuscode",
+        "200 signalisiert Erfolg; beispielsweise 400 einen Eingabefehler."
+      ],
+      [
+        "body",
+        "String",
+        "Der Antwortinhalt, hier eine Zahl als Text."
+      ]
+    ],
+    "logic": [
+      [
+        "Client bereitet Request vor",
+        "GET /sum?a=2&b=3 beschreibt eine Anfrage. HTTP ist das Übertragungsprotokoll; Queryparameter sind hier das vereinbarte Eingabeformat."
+      ],
+      [
+        "Server verarbeitet Eingabe",
+        "Die kleine HTTP-API prüft die beiden Ganzzahlen, addiert sie und erzeugt eine Antwort. Öffne das verknüpfte Projekt und starte zuerst Api.java."
+      ],
+      [
+        "Client liest Antwort",
+        "send überträgt tatsächlich eine HTTP-Anfrage. Prüfe den Status, bevor du den Body als Ergebnis verwendest. Verbindungs- und Zeitfehler werden getrennt behandelt."
+      ]
+    ],
+    "pseudocode": "starte lokalen Server\nClient sendet GET /sum?a=2&b=3\nServer prüft und addiert\nClient prüft Antwortstatus\nwenn Erfolg: zeige Ergebnis\nsonst: zeige Fehler",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        String base = args.length == 0 ? \"http://127.0.0.1:8080\" : args[0];\n        var client = java.net.http.HttpClient.newBuilder()\n            .connectTimeout(java.time.Duration.ofSeconds(3)).build();\n        var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(base + \"/sum?a=2&b=3\"))\n            .timeout(java.time.Duration.ofSeconds(3)).GET().build();\n        try {\n            var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString(java.nio.charset.StandardCharsets.UTF_8));\n            if (response.statusCode() != 200) {\n                System.out.println(\"Serverfehler: \" + response.statusCode());\n            } else {\n                System.out.println(\"Ergebnis: \" + response.body().strip());\n            }\n        } catch (java.io.IOException e) {\n            System.out.println(\"Verbindung fehlgeschlagen\");\n        } catch (InterruptedException e) {\n            Thread.currentThread().interrupt();\n            System.out.println(\"Anfrage unterbrochen\");\n        }\n    }\n}\n",
+    "output": "Ergebnis: 5",
+    "checks": [
+      "Server aktiv, 2 und 3: Ergebnis 5.",
+      "a=x: Server antwortet 400; der Client darf dies nicht als gültige Summe behandeln.",
+      "Server aus: Verbindung fehlgeschlagen. Anfrage und Verbindungsaufbau haben hier eine Zeitgrenze."
+    ],
+    "task": "Ändere die Eingabe auf a=7 und b=-2. Teste danach a=x.",
+    "hint": "Du änderst die Querywerte, nicht die Methode send. Prüfe sowohl den Antwortstatus als auch den Body.",
+    "solution": "7 + (-2) ergibt 5. Für x lehnt der Server die Eingabe mit 400 ab. Ein HTTP-Fehlerstatus löst bei HttpClient nicht automatisch eine IOException aus.",
+    "projectId": "java-mini-api",
+    "files": {},
+    "run": "Zuerst das Projekt „Java: Kleine HTTP-API“ herunterladen. In Terminal 1: java Api.java 8080. Den Client als Main.java speichern. In Terminal 2: java Main.java. Strg+C beendet den Server.",
+    "note": "Hier wird wirklich HTTP zwischen zwei Programmen auf demselben Rechner verwendet. 127.0.0.1 meint deinen eigenen Rechner. Für andere Geräte benötigt man eine erreichbare Serveradresse und passende Betriebsregeln. Die App selbst startet keinen Java-Server. JSON wäre ein mögliches Datenformat, ist aber weder Transport noch Datenbank. Ein Chat braucht zusätzlich Nachrichtenverwaltung und einen Empfangsweg, etwa Polling oder WebSockets.",
+    "connections": [
+      [
+        "Ziel und Eingabe vereinbaren",
+        "base + \"/sum?a=2&b=3\"",
+        "Pfad und Parameternamen müssen mit dem Serververtrag übereinstimmen. Bei freien Textwerten brauchst du zusätzlich passende Kodierung."
+      ],
+      [
+        "Anfrage wirklich senden",
+        "client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString(java.nio.charset.StandardCharsets.UTF_8))",
+        "send überträgt den vorbereiteten Request und wartet mit den gewählten Zeitgrenzen auf eine Antwort. Der BodyHandler stellt den Antwortinhalt als UTF-8-Text bereit."
+      ],
+      [
+        "Ergebnis von Fehler unterscheiden",
+        "response.statusCode() != 200",
+        "Der Body allein beweist keinen Erfolg. Auch eine HTTP-Fehlerantwort ist eine empfangene Antwort; ein Verbindungsfehler ist ein anderer Fall."
+      ]
+    ]
+  },
+  {
+    "id": "search",
+    "title": "Aus vielen Daten passende Treffer finden",
+    "goal": "Ich möchte Namen durchsuchen, statt alles anzeigen zu müssen.",
+    "small": "Nimm zunächst eine kleine Liste und einen Suchbegriff. Eine Datenbank oder Suchmaschine ist für diesen ersten Schritt nicht nötig.",
+    "fields": [
+      [
+        "namen",
+        "Liste von String",
+        "Die vorhandenen Einträge."
+      ],
+      [
+        "suche",
+        "String",
+        "Bereinigter Suchbegriff."
+      ],
+      [
+        "treffer",
+        "Liste von String",
+        "Nur die passenden Einträge; Originaldaten bleiben erhalten."
+      ]
+    ],
+    "logic": [
+      [
+        "Suchregel bestimmen",
+        "Hier: Teilstringvergleich ohne Groß-/Kleinschreibung mit Locale.ROOT. Keine unscharfe Suche oder sprachsensitive Sortierung."
+      ],
+      [
+        "Einträge prüfen",
+        "filter entscheidet je Element, ob es den Suchbegriff enthält."
+      ],
+      [
+        "Treffer darstellen",
+        "Sammle die ausgewählten Namen und zeige die Ergebnisliste."
+      ]
+    ],
+    "pseudocode": "bereinige Suchbegriff\nfür jeden Namen:\n    wenn normalisierter Name Suchbegriff enthält:\n        übernimm Namen in Treffer\nzeige Treffer",
+    "source": "public class Main {\n    public static void main(String[] args) throws Exception {\n        var namen = java.util.List.of(\"Ada\", \"Alan\", \"Bo\");\n        String suche = \"  al  \".strip().toLowerCase(java.util.Locale.ROOT);\n        var treffer = namen.stream()\n            .filter(name -> name.toLowerCase(java.util.Locale.ROOT).contains(suche))\n            .toList();\n        System.out.println(treffer);\n    }\n}\n",
+    "output": "[Alan]",
+    "checks": [
+      "al findet Alan.",
+      "zz ergibt eine leere Liste.",
+      "Ein leerer Suchbegriff trifft hier alle Namen. Entscheide bewusst, ob das gewünscht ist. Alle Einträge werden geprüft; die Textlänge beeinflusst den Aufwand zusätzlich."
+    ],
+    "task": "Zeige bei null Treffern „Nichts gefunden“ statt einer leeren Liste.",
+    "hint": "Die Auswahlregel bleibt unverändert; nur die Ausgabe entscheidet anhand isEmpty.",
+    "solution": "Wenn treffer.isEmpty() wahr ist, gib Nichts gefunden aus. Andernfalls zeigst du die Treffer. Verändere nicht die Originaldaten, nur um die Anzeige zu leeren.",
+    "projectId": null,
+    "files": {},
+    "run": "Als Main.java speichern und mit java Main.java starten. Du brauchst ein JDK ab Version 17.",
+    "note": "Das erste Beispiel läuft in der Konsole. Die App zeigt Code und Ausgabe; du führst Java auf deinem Rechner aus.",
+    "connections": [
+      [
+        "Vergleich vorbereiten",
+        "strip().toLowerCase(Locale.ROOT)",
+        "Die Bereinigung entfernt Rand-Leerraum und legt für dieses Beispiel eine einheitliche Schreibweise fest."
+      ],
+      [
+        "Auswahlregel formulieren",
+        "filter(name -> name.toLowerCase(Locale.ROOT).contains(suche))",
+        "Die Lambda-Funktion liefert je Name true oder false. filter übernimmt nur die Namen mit true."
+      ],
+      [
+        "Treffer sammeln",
+        "toList()",
+        "Die terminale Operation führt die Pipeline aus und sammelt die Treffer als unveränderliche Liste. Sie verändert die Ursprungsliste nicht."
+      ]
+    ]
+  }
+]

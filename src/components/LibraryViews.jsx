@@ -33,7 +33,7 @@ function SearchField({ value, onChange, placeholder }) {
   );
 }
 
-export function Exercises({ progress, openLesson, openProjects }) {
+export function Exercises({ progress, openLesson, openProjects, openIdeas }) {
   const [mode, setMode] = useState("all");
   const [query, setQuery] = useState("");
   const [course, setCourse] = useState("all");
@@ -55,6 +55,7 @@ export function Exercises({ progress, openLesson, openProjects }) {
       <div className="page-intro">
         <h1>Vom Verstehen zum Anwenden.</h1>
         <p>Kleine Aufgaben. Klare Rückmeldung. Dein nächster Schritt.</p>
+      <button className="text-button idea-entry" onClick={openIdeas}>Von der Idee zum Code →</button>
       <button className="text-button" onClick={openProjects}>Projektideen für alle Lernbereiche →</button>
       </div>
       <nav className="reference-modes" aria-label="Übungsbereiche"><button className={`button ${mode === "all" ? "primary" : "secondary"}`} aria-pressed={mode === "all"} onClick={()=>setMode("all")}>Alle Aufgaben</button><button className={`button ${mode === "challenges" ? "primary" : "secondary"}`} aria-pressed={mode === "challenges"} onClick={()=>setMode("challenges")}>Algorithmus-Challenges</button></nav>

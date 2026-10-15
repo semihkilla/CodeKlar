@@ -1,0 +1,1152 @@
+[
+  {
+    "id": "while",
+    "category": "Schleifen",
+    "name": "while: wiederholen, solange eine Bedingung gilt",
+    "introduction": "while prüft die Bedingung vor jedem Durchlauf. Der Rumpf muss den Zustand so verändern, dass die Schleife sinnvoll weiterkommt.",
+    "steps": [
+      "Start ist 3.",
+      "Solange n positiv ist, wird es ausgegeben.",
+      "Nach jedem Durchlauf wird n um 1 kleiner."
+    ],
+    "code": "n = 3\nwhile n > 0:\n    print(n)\n    n -= 1",
+    "output": "3\n2\n1",
+    "choices": [
+      "3\n2\n1",
+      "3\n2\n1\n0",
+      "0\n1\n2"
+    ],
+    "explanation": "Die Bedingung kann schon am Anfang False sein; dann läuft der Rumpf kein einziges Mal. Ein Terminal-Menü kann ebenfalls eine while-Schleife verwenden, benötigt aber eine klar erreichbare Abbruchregel.",
+    "methodProfile": {
+      "signature": "while bedingung: …",
+      "parameters": [
+        [
+          "bedingung",
+          "Vor jedem Durchlauf geprüfter Ausdruck."
+        ]
+      ],
+      "returns": "Anweisung ohne eigenen Rückgabewert.",
+      "effect": "Der Rumpf verändert hier den Zähler n."
+    },
+    "useCase": "Wiederholen, bis ein Countdown endet oder ein Suchzustand erreicht ist.",
+    "pitfall": "Ohne passende Zustandsänderung kann eine Endlosschleife entstehen.",
+    "practice": {
+      "task": "Verdopple einen Startwert 1 mit while so lange, bis er mindestens 10 ist. Gib den Endwert aus.",
+      "hint": "Prüfe n < 10 und verdopple n im Rumpf.",
+      "code": "n = 1\nwhile n < 10:\n    n *= 2\nprint(n)",
+      "output": "16"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "loop-control",
+    "category": "Schleifen",
+    "name": "break und continue: Schleifen gezielt steuern",
+    "introduction": "continue beginnt den nächsten Durchlauf. break beendet die innerste umgebende Schleife.",
+    "steps": [
+      "Überspringe die 2.",
+      "Bei 4 wird die Schleife beendet.",
+      "Nur 1 und 3 werden ausgegeben."
+    ],
+    "code": "for n in range(1, 6):\n    if n == 2:\n        continue\n    if n == 4:\n        break\n    print(n)",
+    "output": "1\n3",
+    "choices": [
+      "1\n3",
+      "1\n3\n5",
+      "1\n2\n3"
+    ],
+    "explanation": "continue überspringt den Rest des aktuellen Rumpfes, nicht die ganze Schleife. In einer while-Schleife darf dadurch die nötige Zähleränderung nicht versehentlich ausgelassen werden.",
+    "methodProfile": {
+      "signature": "break; continue",
+      "parameters": [],
+      "returns": "Kontrollfluss-Anweisungen ohne Rückgabewert.",
+      "effect": "Ändern, welche Schleifenanweisungen noch ausgeführt werden."
+    },
+    "useCase": "Ungültige Einträge überspringen oder beim ersten Treffer aufhören.",
+    "pitfall": "break beendet nur die innerste Schleife; es kehrt nicht automatisch aus der ganzen Funktion zurück.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "for-else",
+    "category": "Schleifen",
+    "name": "for … else: kein vorzeitiger Abbruch",
+    "introduction": "Der else-Block einer Schleife läuft, wenn die Schleife ohne break endet. Das gilt auch bei einer leeren Quelle.",
+    "steps": [
+      "Die Schleife sucht eine gerade Zahl.",
+      "Alle Werte sind ungerade.",
+      "Weil kein break ausgeführt wird, läuft else."
+    ],
+    "code": "for n in [1, 3, 5]:\n    if n % 2 == 0:\n        print(\"Treffer\")\n        break\nelse:\n    print(\"Kein Treffer\")",
+    "output": "Kein Treffer",
+    "choices": [
+      "Kein Treffer",
+      "Treffer",
+      "Treffer\nKein Treffer"
+    ],
+    "explanation": "Das else gehört zur for-Schleife und ist auf derselben Ebene eingerückt. Es beschreibt nicht einfach den Gegenfall des if im Rumpf. Auch bei einer leeren Liste endet for ohne break und führt else aus.",
+    "methodProfile": {
+      "signature": "for wert in quelle: …\nelse: …",
+      "parameters": [
+        [
+          "quelle",
+          "Zu durchlaufendes Iterable."
+        ]
+      ],
+      "returns": "Anweisung ohne Rückgabewert.",
+      "effect": "Führt den else-Zweig nur bei normalem Schleifenende aus."
+    },
+    "useCase": "Nach einer Suche melden, dass kein passendes Element gefunden wurde.",
+    "pitfall": "continue unterdrückt das Schleifen-else nicht; ein ausgeführtes break tut es.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "zip",
+    "category": "Listen",
+    "name": "enumerate() und zip(): Daten gemeinsam durchlaufen",
+    "introduction": "enumerate ergänzt eine laufende Nummer. zip verbindet mehrere Iterables positionsweise miteinander.",
+    "steps": [
+      "Die Namen und Punkte haben je zwei Einträge.",
+      "zip bildet Paare.",
+      "enumerate nummeriert diese Paare ab 1."
+    ],
+    "code": "namen = [\"Ada\", \"Bo\"]\npunkte = [7, 5]\nfor nummer, (name, wert) in enumerate(zip(namen, punkte), start=1):\n    print(f\"{nummer}: {name} {wert}\")",
+    "output": "1: Ada 7\n2: Bo 5",
+    "choices": [
+      "1: Ada 7\n2: Bo 5",
+      "0: Ada 7\n1: Bo 5",
+      "1: Ada 5\n2: Bo 7"
+    ],
+    "explanation": "zip endet standardmäßig mit der kürzesten Quelle. Ab Python 3.10 prüft strict=True, dass die Längen zusammenpassen, während die Paare konsumiert werden. Das verhindert unbemerkten Datenverlust bei eigentlich gleich langen Datenreihen.",
+    "methodProfile": {
+      "signature": "zip(a, b, strict=False); enumerate(iterable, start=0)",
+      "parameters": [
+        [
+          "a und b",
+          "Positionsweise zu verbindende Quellen."
+        ],
+        [
+          "strict",
+          "True=Meldet unterschiedliche Längen beim Durchlaufen."
+        ]
+      ],
+      "returns": "Iteratoren über Paare.",
+      "effect": "Verbraucht gegebenenfalls die übergebenen Iteratoren."
+    },
+    "useCase": "Namen und Messwerte gemeinsam anzeigen oder mehrere Datenreihen abgleichen.",
+    "pitfall": "Ein zip-Iterator kann verbraucht werden; für erneute Durchläufe neu erzeugen oder bewusst in eine Liste umwandeln.",
+    "practice": {
+      "task": "Verbinde [\"A\",\"B\"] und [10,20] mit zip(strict=True). Gib die Paare als Liste aus.",
+      "hint": "zip liefert einen Iterator; list macht seine Paare für die Ausgabe sichtbar.",
+      "code": "print(list(zip([\"A\", \"B\"], [10, 20], strict=True)))",
+      "output": "[('A', 10), ('B', 20)]"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "any-all",
+    "category": "Listen",
+    "name": "any() und all(): Gruppen von Bedingungen prüfen",
+    "introduction": "any prüft, ob mindestens ein Wert truthy ist. all prüft, ob alle Werte truthy sind. Beide können frühzeitig aufhören.",
+    "steps": [
+      "Die Quelle enthält einen positiven Wert.",
+      "any trifft deshalb zu.",
+      "Bei einer leeren Quelle ist all True und any False."
+    ],
+    "code": "werte = [-2, 0, 3]\nprint(any(n > 0 for n in werte))\nprint(all([]))\nprint(any([]))",
+    "output": "True\nTrue\nFalse",
+    "choices": [
+      "True\nTrue\nFalse",
+      "True\nFalse\nFalse",
+      "False\nTrue\nTrue"
+    ],
+    "explanation": "Ein Generatorausdruck kann Prüfwerte erst beim Bedarf erzeugen. Die Ergebnisse leerer Quellen folgen den mathematischen Grundregeln für Existenz- und All-Aussagen; für eine Pflichtliste musst du ihre Nichtleere gegebenenfalls extra prüfen.",
+    "methodProfile": {
+      "signature": "any(iterable); all(iterable)",
+      "parameters": [
+        [
+          "iterable",
+          "Quelle der zu prüfenden Wahrheitswerte."
+        ]
+      ],
+      "returns": "bool.",
+      "effect": "Verbraucht die benötigten Iteratoreinträge."
+    },
+    "useCase": "Prüfen, ob irgendeine Aufgabe offen ist oder alle Formularfelder befüllt sind.",
+    "pitfall": "all(leere_liste) ist True und bestätigt nicht, dass überhaupt ein Eintrag vorhanden war.",
+    "practice": {
+      "task": "Prüfe für [2,4,6], ob alle Zahlen gerade sind und ob irgendeine Zahl größer als 10 ist.",
+      "hint": "Verwende je einen Generatorausdruck mit all und any.",
+      "code": "werte = [2, 4, 6]\nprint(all(n % 2 == 0 for n in werte))\nprint(any(n > 10 for n in werte))",
+      "output": "True\nFalse"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "dict-comprehension",
+    "category": "Dictionaries & Sets",
+    "name": "Dictionary Comprehension: Zuordnungen aufbauen",
+    "introduction": "Eine Dictionary Comprehension erzeugt Schlüssel-Wert-Paare aus einer Quelle. Ein Schlüssel kann nur einen aktuellen Wert besitzen.",
+    "steps": [
+      "Durchlaufe die Zahlen 1 bis 3.",
+      "Die Zahl ist der Schlüssel.",
+      "Ihr Quadrat ist der zugehörige Wert."
+    ],
+    "code": "quadrate = {n: n * n for n in range(1, 4)}\nprint(quadrate[2])\nprint(len(quadrate))",
+    "output": "4\n3",
+    "choices": [
+      "4\n3",
+      "2\n3",
+      "4\n4"
+    ],
+    "explanation": "Wenn derselbe Schlüssel mehrfach erzeugt wird, ersetzt der später zugeordnete Wert den vorherigen. Eine Dictionary Comprehension gruppiert gleiche Schlüssel nicht automatisch in Listen.",
+    "methodProfile": {
+      "signature": "{schluessel: wert for element in quelle}",
+      "parameters": [
+        [
+          "schluessel",
+          "Hashbarer Schlüssel."
+        ],
+        [
+          "wert",
+          "Zuzuordnender Datenwert."
+        ]
+      ],
+      "returns": "Ein neues dict.",
+      "effect": "Die Quelle wird nicht verändert; neue Zuordnungen entstehen."
+    },
+    "useCase": "Eine schnelle Nachschlagetabelle oder einen Index über Datensätze bauen.",
+    "pitfall": "Doppelte Schlüssel überschreiben Werte; für Gruppierungen etwa defaultdict(list) bewusst verwenden.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "set-operations",
+    "category": "Dictionaries & Sets",
+    "name": "Mengen schneiden, vereinigen und abziehen",
+    "introduction": "& bildet die Schnittmenge, | die Vereinigung und - die Differenz. Set-Operationen arbeiten mit eindeutigen Werten.",
+    "steps": [
+      "a enthält 1, 2 und 3.",
+      "b enthält 3 und 4.",
+      "Für stabile Ausgabe werden die Ergebnismengen sortiert."
+    ],
+    "code": "a = {1, 2, 3}\nb = {3, 4}\nprint(sorted(a & b))\nprint(sorted(a | b))\nprint(sorted(a - b))",
+    "output": "[3]\n[1, 2, 3, 4]\n[1, 2]",
+    "choices": [
+      "[3]\n[1, 2, 3, 4]\n[1, 2]",
+      "[1, 2]\n[3, 4]\n[4]",
+      "[3]\n[1, 2, 3, 4]\n[4]"
+    ],
+    "explanation": "a - b enthält die Elemente aus a, die in b fehlen. Es ist im Allgemeinen ein anderes Ergebnis als b - a. Diese Ausdrücke erzeugen neue Sets; Methoden wie intersection_update ändern dagegen das vorhandene Set.",
+    "methodProfile": {
+      "signature": "a & b; a | b; a - b",
+      "parameters": [
+        [
+          "a und b",
+          "Sets mit hashbaren Einträgen."
+        ]
+      ],
+      "returns": "Neue Sets.",
+      "effect": "Die beiden Quellmengen bleiben erhalten."
+    },
+    "useCase": "Gemeinsame Tags finden oder bereits erledigte Aufgaben aus einer Auswahl entfernen.",
+    "pitfall": "Die Differenz ist nicht symmetrisch; achte darauf, welche Menge links steht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "format",
+    "category": "Strings",
+    "name": "f-Strings: Zahlen lesbar formatieren",
+    "introduction": "Ein f-String setzt Ausdruckswerte in Text ein. Eine Formatspezifikation steuert die Darstellung, nicht die zugrunde liegende Rechnung.",
+    "steps": [
+      "Die Zahl bleibt 3.5.",
+      ":.2f zeigt zwei Nachkommastellen.",
+      ":04d zeigt eine ganze Zahl mit mindestens vier Stellen."
+    ],
+    "code": "preis = 3.5\nprint(f\"Preis: {preis:.2f}\")\nprint(f\"ID: {7:04d}\")",
+    "output": "Preis: 3.50\nID: 0007",
+    "choices": [
+      "Preis: 3.50\nID: 0007",
+      "Preis: 3.5\nID: 7",
+      "Preis: 3,50\nID: 0007"
+    ],
+    "explanation": "Die Formatspezifikation .2f erzeugt hier Text mit zwei Dezimalstellen. Das ist keine Lösung für binäre Gleitkommaungenauigkeiten und verwendet nicht automatisch eine deutsche Lokalisierung.",
+    "methodProfile": {
+      "signature": "f\"{wert:.2f}\"; f\"{nummer:04d}\"",
+      "parameters": [
+        [
+          "wert",
+          "Zu formatierende Zahl."
+        ],
+        [
+          "nummer",
+          "Ganze Zahl für das d-Format."
+        ]
+      ],
+      "returns": "String.",
+      "effect": "Die Zahlenwerte werden nicht verändert."
+    },
+    "useCase": "Berichte, Tabellen und verständliche Rückmeldungen gestalten.",
+    "pitfall": "Ein formatierter Zahlenstring ist für spätere Rechnungen zunächst Text.",
+    "practice": {
+      "task": "Formatiere 0.375 als Prozentzahl mit einer Nachkommastelle.",
+      "hint": "Die Formatart % multipliziert für die Darstellung mit 100.",
+      "code": "anteil = 0.375\nprint(f\"{anteil:.1%}\")",
+      "output": "37.5%"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "remove-del",
+    "category": "Listen",
+    "name": "remove(), del und clear(): Werte oder Positionen löschen",
+    "introduction": "remove sucht den ersten gleichen Wert. del löscht eine Position oder einen Slice. clear leert die Liste.",
+    "steps": [
+      "Entferne mit remove den ersten Wert 2.",
+      "Lösche danach die erste Position.",
+      "Leere die verbleibende Liste."
+    ],
+    "code": "werte = [1, 2, 2, 3]\nwerte.remove(2)\ndel werte[0]\nprint(werte)\nwerte.clear()\nprint(werte)",
+    "output": "[2, 3]\n[]",
+    "choices": [
+      "[2, 3]\n[]",
+      "[3]\n[]",
+      "[1, 3]\nNone"
+    ],
+    "explanation": "remove entfernt nur das erste passende Vorkommen und löst bei fehlendem Wert ValueError aus. del liste[index] verwendet dagegen einen Index und kann IndexError auslösen. Keine dieser Operationen gibt das entfernte Element zurück; dafür eignet sich pop.",
+    "methodProfile": {
+      "signature": "liste.remove(wert); del liste[index]; liste.clear()",
+      "parameters": [
+        [
+          "wert",
+          "Erster gleicher Eintrag, der entfernt werden soll."
+        ],
+        [
+          "index",
+          "Zu löschende Position."
+        ]
+      ],
+      "returns": "remove und clear liefern None; del ist eine Anweisung.",
+      "effect": "Verändert die vorhandene Liste."
+    },
+    "useCase": "Gezielt einen Eintrag oder einen ganzen Datenbestand aus einer Arbeitsliste entfernen.",
+    "pitfall": "remove(2) meint den Wert 2, nicht automatisch das Element an Index 2.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "kwargs",
+    "category": "Funktionen",
+    "name": "* und ** beim Aufruf: Argumente entpacken",
+    "introduction": "* verteilt ein Iterable auf Positionsargumente. ** verteilt ein Mapping auf benannte Argumente. Das ist etwas anderes als das Sammeln in einer Signatur.",
+    "steps": [
+      "Die Liste enthält zwei Zahlen.",
+      "Der erste Aufruf verteilt sie auf a und b.",
+      "Der zweite Aufruf benennt dieselben Parameter über ein Dictionary."
+    ],
+    "code": "def addiere(a, b):\n    return a + b\n\nprint(addiere(*[2, 5]))\nprint(addiere(**{\"b\": 5, \"a\": 2}))",
+    "output": "7\n7",
+    "choices": [
+      "7\n7",
+      "[2, 5]\n7",
+      "7\nTypeError"
+    ],
+    "explanation": "Beim Entpacken mit ** müssen die Schlüssel passende Parameternamen sein. Einen Parameter doppelt zu belegen, etwa positional und zusätzlich per Schlüsselwort, führt zu TypeError.",
+    "methodProfile": {
+      "signature": "funktion(*werte); funktion(**optionen)",
+      "parameters": [
+        [
+          "werte",
+          "Iterable für Positionsargumente."
+        ],
+        [
+          "optionen",
+          "Mapping mit passenden Stringschlüsseln."
+        ]
+      ],
+      "returns": "Rückgabe der aufgerufenen Funktion.",
+      "effect": "Das Entpacken verändert die übergebenen Container hier nicht."
+    },
+    "useCase": "Bereits gespeicherte Optionen an eine klar definierte Funktion übergeben.",
+    "pitfall": "Unbekannte Schlüsselnamen werden nicht automatisch ignoriert; passe das Mapping an die Signatur an.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "closure",
+    "category": "Funktionen",
+    "name": "Closures: eine Funktion merkt sich ihre Umgebung",
+    "introduction": "Eine innere Funktion kann Werte aus dem umgebenden Funktionsaufruf weiterverwenden. Jeder Aufruf der äußeren Funktion erzeugt seine eigene Umgebung.",
+    "steps": [
+      "Erzeuge eine Funktion mit Faktor 2.",
+      "Erzeuge unabhängig eine Funktion mit Faktor 3.",
+      "Beide verwenden ihren gespeicherten Faktor."
+    ],
+    "code": "def multiplikator(faktor):\n    def rechnen(n):\n        return n * faktor\n    return rechnen\n\ndoppelt = multiplikator(2)\ndreifach = multiplikator(3)\nprint(doppelt(4))\nprint(dreifach(4))",
+    "output": "8\n12",
+    "choices": [
+      "8\n12",
+      "12\n12",
+      "8\n8"
+    ],
+    "explanation": "Die innere Funktion wird zurückgegeben, nicht bereits ausgeführt. Werden äußere Variablen später verändert, ist bei geteilten Bindungen Vorsicht nötig. Insbesondere Schleifen-Closures sehen oft den zuletzt gebundenen Schleifenwert.",
+    "methodProfile": {
+      "signature": "def aussen(wert): … return innen",
+      "parameters": [
+        [
+          "wert",
+          "In der Umgebung des jeweiligen äußeren Aufrufs gebundener Wert."
+        ]
+      ],
+      "returns": "Ein Funktionsobjekt.",
+      "effect": "Erzeugt hier unabhängige Funktionsumgebungen ohne globale Variable."
+    },
+    "useCase": "Konfigurierte Prüfer, Rechenregeln oder Callback-Funktionen erzeugen.",
+    "pitfall": "return innen() würde die Funktion schon aufrufen, statt sie als später verwendbare Funktion zurückzugeben.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "recursion",
+    "category": "Funktionen",
+    "name": "Rekursion: Problem verkleinern und beenden",
+    "introduction": "Eine rekursive Funktion ruft sich selbst mit einem kleineren Teilproblem auf. Sie braucht einen erreichbaren Basisfall.",
+    "steps": [
+      "Bei n=0 ist das Ergebnis 1.",
+      "Sonst wird n mit fakultaet(n-1) multipliziert.",
+      "Für 4 ergibt sich 4·3·2·1."
+    ],
+    "code": "def fakultaet(n):\n    if n < 0:\n        raise ValueError(\"n muss nichtnegativ sein\")\n    if n == 0:\n        return 1\n    return n * fakultaet(n - 1)\n\nprint(fakultaet(4))",
+    "output": "24",
+    "choices": [
+      "24",
+      "16",
+      "10"
+    ],
+    "explanation": "Für nichtnegative ganze n terminiert dieser Aufruf durch schrittweises Verringern. Python optimiert diese Rekursion nicht einfach zu einer Schleife; viele tiefe Aufrufe können RecursionError auslösen. Für große Folgen ist oft eine iterative Lösung geeigneter.",
+    "methodProfile": {
+      "signature": "funktion(kleineres_problem)",
+      "parameters": [
+        [
+          "kleineres_problem",
+          "Eingabe, die sich dem Basisfall nähert."
+        ]
+      ],
+      "returns": "Der im Basisfall beziehungsweise Rückweg berechnete Wert.",
+      "effect": "Verwendet einen Stack Frame pro noch nicht beendetem Aufruf."
+    },
+    "useCase": "Baumstrukturen oder natürliche Teilprobleme Schritt für Schritt bearbeiten.",
+    "pitfall": "Ohne Basisfall oder echte Verkleinerung kann die Rekursion nicht normal enden.",
+    "practice": {
+      "task": "Berechne rekursiv die Summe von 1 bis n für n=4. Verwende 0 als Basisfall.",
+      "hint": "summe(n) ist n plus summe(n-1), summe(0) ist 0.",
+      "code": "def summe(n):\n    if n < 0:\n        raise ValueError(\"n muss nichtnegativ sein\")\n    if n == 0:\n        return 0\n    return n + summe(n - 1)\n\nprint(summe(4))",
+      "output": "10"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "decorator",
+    "category": "Funktionen",
+    "name": "Dekoratoren: eine Funktion mit Verhalten umgeben",
+    "introduction": "Ein Dekorator erhält ein Funktionsobjekt und liefert typischerweise eine andere Funktion zurück. @name wendet ihn bei der Definition an.",
+    "steps": [
+      "Der Wrapper ruft die ursprüngliche Funktion auf.",
+      "Danach macht er deren Ergebnis groß.",
+      "@laut ersetzt die gebundene Funktion durch den Wrapper."
+    ],
+    "code": "from functools import wraps\n\ndef laut(funktion):\n    @wraps(funktion)\n    def wrapper(*args, **kwargs):\n        return funktion(*args, **kwargs).upper()\n    return wrapper\n\n@laut\ndef hallo(name):\n    return f\"Hallo {name}\"\n\nprint(hallo(\"Ada\"))",
+    "output": "HALLO ADA",
+    "choices": [
+      "HALLO ADA",
+      "Hallo Ada",
+      "None"
+    ],
+    "explanation": "wraps übernimmt wichtige Metadaten wie Name und Dokumentation. Der Dekorator wird beim Definieren angewendet; der Wrapper läuft bei späteren Aufrufen. In diesem Beispiel muss die dekorierte Funktion einen String zurückgeben.",
+    "methodProfile": {
+      "signature": "@dekorator\ndef funktion(...): …",
+      "parameters": [
+        [
+          "funktion",
+          "Zu dekorierendes Funktionsobjekt."
+        ]
+      ],
+      "returns": "Hier eine Wrapper-Funktion.",
+      "effect": "Ersetzt die Namensbindung durch die dekorierte Funktion."
+    },
+    "useCase": "Logging, Messung oder gemeinsame Prüfregeln um Funktionen legen.",
+    "pitfall": "Ein Wrapper ohne return kann die eigentliche Funktionsrückgabe versehentlich durch None ersetzen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "yield-from",
+    "category": "Funktionen",
+    "name": "yield from: andere Iterables weiterreichen",
+    "introduction": "yield from gibt Werte eines anderen Iterables über den eigenen Generator weiter. Das verbindet Datenfolgen ohne eine zusätzliche Ergebnisliste.",
+    "steps": [
+      "Gib zuerst A und B weiter.",
+      "Danach folgt ein eigener yield-Wert.",
+      "list konsumiert die ganze Folge."
+    ],
+    "code": "def folge():\n    yield from [\"A\", \"B\"]\n    yield \"C\"\n\nprint(list(folge()))",
+    "output": "['A', 'B', 'C']",
+    "choices": [
+      "['A', 'B', 'C']",
+      "[['A', 'B'], 'C']",
+      "['C']"
+    ],
+    "explanation": "yield [\"A\", \"B\"] würde die Liste als ein einziges Element liefern. yield from geht dagegen über ihre Elemente. Auch dieser Generator wird beim Durchlaufen verbraucht.",
+    "methodProfile": {
+      "signature": "yield from iterable",
+      "parameters": [
+        [
+          "iterable",
+          "Quelle der weiterzureichenden Werte."
+        ]
+      ],
+      "returns": "Die Werte der Quelle, nacheinander.",
+      "effect": "Verbraucht das eingebundene Iterable beziehungsweise dessen Iterator."
+    },
+    "useCase": "Mehrere Datenquellen zu einer lesbaren Generator-Pipeline verbinden.",
+    "pitfall": "Ein String ist ein Iterable aus Zeichen; yield from \"AB\" gibt A und B einzeln weiter.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "property",
+    "category": "Klassen & Datenmodelle",
+    "name": "property: Attributzugriff mit einer Prüfung verbinden",
+    "introduction": "Eine property bietet Attributsyntax, kann aber beim Lesen oder Schreiben Methoden ausführen. So lässt sich eine Regel am Datenmodell bündeln.",
+    "steps": [
+      "Der Setter lehnt negative Werte ab.",
+      "Der gültige Wert 7 wird intern gespeichert.",
+      "Der Getter liefert ihn beim Lesen zurück."
+    ],
+    "code": "class Konto:\n    def __init__(self):\n        self._punkte = 0\n    @property\n    def punkte(self):\n        return self._punkte\n    @punkte.setter\n    def punkte(self, wert):\n        if wert < 0:\n            raise ValueError(\"Punkte dürfen nicht negativ sein\")\n        self._punkte = wert\n\nk = Konto()\nk.punkte = 7\nprint(k.punkte)",
+    "output": "7",
+    "choices": [
+      "7",
+      "0",
+      "None"
+    ],
+    "explanation": "_punkte ist eine Konvention für internen Gebrauch und keine Zugriffssperre. Der Setter schreibt deshalb in _punkte; eine Zuweisung an self.punkte im Setter würde ihn rekursiv erneut aufrufen.",
+    "methodProfile": {
+      "signature": "@property; @name.setter",
+      "parameters": [
+        [
+          "wert",
+          "Neuer Attributwert für den Setter."
+        ]
+      ],
+      "returns": "Der Getter liefert den Attributwert; der Setter normalerweise None.",
+      "effect": "Ein Schreibzugriff kann den geprüften internen Zustand ändern."
+    },
+    "useCase": "Fachregeln bei scheinbar einfachem Attributzugriff kontrollieren.",
+    "pitfall": "Eigenschaften sollten für Leser nachvollziehbar bleiben; verstecke darin keine überraschend langsamen Netzwerkaktionen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "inheritance",
+    "category": "Klassen & Datenmodelle",
+    "name": "Vererbung und super(): Verhalten erweitern",
+    "introduction": "Eine Unterklasse kann Verhalten einer Basisklasse übernehmen und gezielt überschreiben. super ruft die passende nächste Implementierung in der Methodenreihenfolge auf.",
+    "steps": [
+      "Geraet liefert einen Grundtext.",
+      "Lampe erweitert diesen Text.",
+      "super().status() verwendet die geerbte Implementierung."
+    ],
+    "code": "class Geraet:\n    def status(self):\n        return \"bereit\"\n\nclass Lampe(Geraet):\n    def status(self):\n        return super().status() + \": Licht an\"\n\nprint(Lampe().status())",
+    "output": "bereit: Licht an",
+    "choices": [
+      "bereit: Licht an",
+      "Licht an",
+      "bereit"
+    ],
+    "explanation": "Vererbung passt, wenn die Unterklasse als Variante des Basistyps sinnvoll ist. Für bloßes Wiederverwenden einzelner Helfer ist oft Zusammensetzung mit enthaltenen Objekten klarer. Mehrfachvererbung benötigt zusätzlich ein Verständnis der Methodenreihenfolge.",
+    "methodProfile": {
+      "signature": "class Kind(Basis): …; super().methode()",
+      "parameters": [
+        [
+          "Basis",
+          "Basisklasse."
+        ],
+        [
+          "super()",
+          "Zugang zur nächsten Implementierung in der Methodenreihenfolge."
+        ]
+      ],
+      "returns": "Rückgabe der angesprochenen Methode.",
+      "effect": "Hängt von den aufgerufenen Methoden ab."
+    },
+    "useCase": "Gemeinsames Verhalten verwandter Datenmodelle erweitern.",
+    "pitfall": "super() bedeutet nicht in jeder komplexen Hierarchie einfach die direkt ausgeschriebene Elternklasse.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "default-factory",
+    "category": "Klassen & Datenmodelle",
+    "name": "default_factory: eigene Listen pro Datenobjekt",
+    "introduction": "Ein veränderlicher Standardwert soll meist für jede Instanz neu entstehen. field(default_factory=list) ruft dafür list pro Instanz auf.",
+    "steps": [
+      "Definiere eine Liste von Tags als Feld.",
+      "Erzeuge zwei Instanzen.",
+      "Eine Änderung an a.tags betrifft b.tags nicht."
+    ],
+    "code": "from dataclasses import dataclass, field\n\n@dataclass\nclass Notiz:\n    tags: list[str] = field(default_factory=list)\n\na = Notiz()\nb = Notiz()\na.tags.append(\"lernen\")\nprint(a.tags)\nprint(b.tags)",
+    "output": "['lernen']\n[]",
+    "choices": [
+      "['lernen']\n[]",
+      "['lernen']\n['lernen']",
+      "[]\n[]"
+    ],
+    "explanation": "default_factory erwartet eine aufrufbare Fabrik, nicht eine bereits erzeugte Liste. Auch frozen=True würde eine enthaltene Liste nicht automatisch unveränderlich machen; es schützt die Feldbindung, nicht jeden inneren Wert.",
+    "methodProfile": {
+      "signature": "field(default_factory=list)",
+      "parameters": [
+        [
+          "default_factory",
+          "Aufrufbare Funktion ohne nötige Argumente, die den Standard erzeugt."
+        ]
+      ],
+      "returns": "Ein Feld mit jeweils neu erzeugtem Standardwert.",
+      "effect": "Erzeugt pro Instanz eine unabhängige äußere Liste."
+    },
+    "useCase": "Tags, Nachrichten oder Unteraufgaben in Datenobjekten unabhängig halten.",
+    "pitfall": "default_factory=list() übergibt eine Liste statt der benötigten Fabrik list.",
+    "practice": {
+      "task": "Erzeuge zwei dataclass-Objekte mit unabhängigen namens-Listen. Füge nur beim ersten Ada hinzu und gib beide Listen aus.",
+      "hint": "Verwende field(default_factory=list), ohne Klammern hinter list.",
+      "code": "from dataclasses import dataclass, field\n\n@dataclass\nclass Gruppe:\n    namen: list[str] = field(default_factory=list)\n\na, b = Gruppe(), Gruppe()\na.namen.append(\"Ada\")\nprint(a.namen)\nprint(b.namen)",
+      "output": "['Ada']\n[]"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "enum",
+    "category": "Klassen & Datenmodelle",
+    "name": "Enum: benannte Zustände statt beliebiger Strings",
+    "introduction": "Ein Enum definiert feste benannte Mitglieder. Dadurch wird ein Status wie OFFEN expliziter als ein überall frei geschriebener Text.",
+    "steps": [
+      "Definiere OFFEN und FERTIG.",
+      "Wähle das Mitglied FERTIG.",
+      "name und value zeigen unterschiedliche Teile."
+    ],
+    "code": "from enum import Enum\n\nclass Status(Enum):\n    OFFEN = \"offen\"\n    FERTIG = \"fertig\"\n\nstatus = Status.FERTIG\nprint(status.name)\nprint(status.value)",
+    "output": "FERTIG\nfertig",
+    "choices": [
+      "FERTIG\nfertig",
+      "fertig\nFERTIG",
+      "Status.FERTIG\nFERTIG"
+    ],
+    "explanation": "Ein Enum-Mitglied ist nicht einfach derselbe Typ wie sein Stringwert. Für JSON muss die Anwendung bewusst festlegen, ob sie name oder value speichert und wie unbekannte Werte behandelt werden.",
+    "methodProfile": {
+      "signature": "Status.FERTIG; Status(\"fertig\")",
+      "parameters": [
+        [
+          "wert",
+          "Ein zu einem Mitglied passender gespeicherter Wert."
+        ]
+      ],
+      "returns": "Enum-Mitglied oder bei unbekanntem Wert ValueError.",
+      "effect": "Die Enum-Definition wird hier nicht verändert."
+    },
+    "useCase": "Erlaubte Aufgaben- oder Spielzustände klar benennen.",
+    "pitfall": "Vergleiche nicht versehentlich status == \"fertig\"; verwende das Mitglied oder ausdrücklich status.value.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "finally",
+    "category": "Eingaben & Fehler",
+    "name": "finally: nach Erfolg und Fehler aufräumen",
+    "introduction": "finally läuft beim Verlassen des try-Ablaufs auch dann, wenn ein Fehler behandelt wird. Für Ressourcen ist oft ein with-Block noch klarer.",
+    "steps": [
+      "Die Division löst ZeroDivisionError aus.",
+      "except meldet den Fehler.",
+      "finally führt die Aufräumaktion aus."
+    ],
+    "code": "try:\n    print(1 / 0)\nexcept ZeroDivisionError:\n    print(\"Fehler\")\nfinally:\n    print(\"Aufräumen\")",
+    "output": "Fehler\nAufräumen",
+    "choices": [
+      "Fehler\nAufräumen",
+      "Aufräumen\nFehler",
+      "Fehler"
+    ],
+    "explanation": "Ein finally-Block läuft normalerweise auch vor einem return aus dem try-Block. Ein eigener return in finally kann jedoch das ursprüngliche Ergebnis oder sogar einen Fehler verdrängen und sollte deshalb vermieden werden.",
+    "methodProfile": {
+      "signature": "try: … finally: …",
+      "parameters": [],
+      "returns": "Kontrollfluss ohne eigenen Rückgabewert.",
+      "effect": "Führt die Aufräumaktion beim Verlassen des Blocks aus."
+    },
+    "useCase": "Temporäre Zustände oder Ressourcen nach einem Vorgang zurücksetzen.",
+    "pitfall": "finally ist keine Garantie gegen Prozessabbruch oder Stromausfall und sollte keine ursprünglichen Fehler verschlucken.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "with-file",
+    "category": "Dateien & Datenformate",
+    "name": "with open(): Dateien zuverlässig schließen",
+    "introduction": "Ein with-Block verwaltet eine Ressource. Nach dem Block wird die Datei geschlossen, auch wenn im Block ein normaler Python-Fehler auftritt.",
+    "steps": [
+      "Schreibe mit einem expliziten Dateihandle.",
+      "Der with-Block endet.",
+      "Das Handle meldet danach closed=True."
+    ],
+    "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as ordner:\n    p = Path(ordner) / \"notiz.txt\"\n    with p.open(\"w\", encoding=\"utf-8\") as datei:\n        datei.write(\"Hallo\")\n    print(datei.closed)",
+    "output": "True",
+    "choices": [
+      "True",
+      "False",
+      "None"
+    ],
+    "explanation": "Der Name datei kann nach dem Block noch gebunden sein, aber das zugehörige Handle ist geschlossen. Ein weiterer Schreibversuch würde scheitern. Modus w überschreibt vorhandenen Inhalt, a hängt an, r liest.",
+    "methodProfile": {
+      "signature": "with pfad.open(modus, encoding=\"utf-8\") as datei: …",
+      "parameters": [
+        [
+          "modus",
+          "Zum Beispiel r zum Lesen, w zum Ersetzen oder a zum Anhängen."
+        ]
+      ],
+      "returns": "Der Kontextmanager liefert ein Dateihandle.",
+      "effect": "Öffnet eine Datei und schließt das Handle beim Verlassen."
+    },
+    "useCase": "Textdateien schrittweise lesen oder schreiben, ohne Handles offen zu lassen.",
+    "pitfall": "Ein with-Block schließt die Ressource; er macht das Dateischreiben nicht automatisch zu einer atomaren Transaktion.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "bytes",
+    "category": "Dateien & Datenformate",
+    "name": "bytes und encode/decode: Text braucht eine Kodierung",
+    "introduction": "Ein String enthält Unicode-Text. bytes enthält Bytewerte. encode und decode übersetzen anhand einer Kodierung zwischen beiden.",
+    "steps": [
+      "ü benötigt in UTF-8 zwei Bytes.",
+      "len(text) und len(daten) zählen deshalb Verschiedenes.",
+      "decode erzeugt wieder den Text."
+    ],
+    "code": "text = \"ü\"\ndaten = text.encode(\"utf-8\")\nprint(len(text))\nprint(len(daten))\nprint(daten.decode(\"utf-8\"))",
+    "output": "1\n2\nü",
+    "choices": [
+      "1\n2\nü",
+      "1\n1\nü",
+      "2\n2\nü"
+    ],
+    "explanation": "Binäre Dateien öffnest du mit rb oder wb; dabei wird keine encoding-Option verwendet. Eine falsche Dekodierung kann UnicodeDecodeError auslösen. errors=\"ignore\" verliert Informationen und ist kein allgemeiner Reparaturmechanismus.",
+    "methodProfile": {
+      "signature": "text.encode(\"utf-8\"); daten.decode(\"utf-8\")",
+      "parameters": [
+        [
+          "text",
+          "String."
+        ],
+        [
+          "daten",
+          "Bytefolge mit passender Kodierung."
+        ]
+      ],
+      "returns": "encode liefert bytes; decode liefert str.",
+      "effect": "Die Quellwerte werden nicht verändert."
+    },
+    "useCase": "Textdateien und übertragene Bytes richtig unterscheiden.",
+    "pitfall": "Die Anzahl der Bytes ist nicht allgemein gleich der Zeichenanzahl.",
+    "practice": {
+      "task": "Kodiere \"Öl\" als UTF-8 und gib die Anzahl der Bytes sowie den zurückdekodierten Text aus.",
+      "hint": "Ö braucht zwei Bytes und l eines.",
+      "code": "daten = \"Öl\".encode(\"utf-8\")\nprint(len(daten))\nprint(daten.decode(\"utf-8\"))",
+      "output": "3\nÖl"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "glob",
+    "category": "Dateien & Datenformate",
+    "name": "Path.glob(): Dateien nach einem Muster finden",
+    "introduction": "glob liefert passende Pfade innerhalb eines Verzeichnisses. Die Ergebnisreihenfolge ist keine zugesicherte Sortierung.",
+    "steps": [
+      "Erzeuge zwei Textdateien und eine CSV-Datei.",
+      "Das Muster *.txt findet nur die Textdateien.",
+      "Sortiere die Namen für stabile Ausgabe."
+    ],
+    "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as ordner:\n    root = Path(ordner)\n    for name in [\"b.txt\", \"a.txt\", \"daten.csv\"]:\n        (root / name).write_text(\"\", encoding=\"utf-8\")\n    print(sorted(p.name for p in root.glob(\"*.txt\") if p.is_file()))",
+    "output": "['a.txt', 'b.txt']",
+    "choices": [
+      "['a.txt', 'b.txt']",
+      "['b.txt', 'a.txt']",
+      "['a.txt', 'b.txt', 'daten.csv']"
+    ],
+    "explanation": "glob(\"*.txt\") sucht hier auf dieser Ebene. rglob(\"*.txt\") durchsucht auch Unterverzeichnisse. Auch ein Verzeichnisname kann auf ein Muster passen, deshalb prüft das Beispiel is_file.",
+    "methodProfile": {
+      "signature": "pfad.glob(muster); pfad.rglob(muster)",
+      "parameters": [
+        [
+          "muster",
+          "Dateinamensmuster, kein regulärer Ausdruck."
+        ]
+      ],
+      "returns": "Iterator über passende Path-Objekte.",
+      "effect": "Liest Verzeichniseinträge; verändert keine Dateien."
+    },
+    "useCase": "Mehrere Textdateien zu einem Bericht zusammenfassen.",
+    "pitfall": "Ein Suchmuster ist keine Löschfreigabe; prüfe die gefundenen Pfade vor einer späteren Schreibaktion.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "sqlite",
+    "category": "Dateien & Datenformate",
+    "name": "sqlite3: Daten mit SQL speichern und abfragen",
+    "introduction": "sqlite3 gehört zur Python-Standardbibliothek. Eine Verbindung kann eine Datei oder eine nur im Speicher liegende Datenbank verwenden.",
+    "steps": [
+      "Lege eine Tabelle an.",
+      "Füge einen Titel über einen SQL-Parameter ein.",
+      "Lies ihn anschließend aus."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE tasks(title TEXT NOT NULL)\")\n    db.execute(\"INSERT INTO tasks(title) VALUES (?)\", (\"Lernen\",))\n    print(db.execute(\"SELECT title FROM tasks\").fetchone()[0])",
+    "output": "Lernen",
+    "choices": [
+      "Lernen",
+      "tasks",
+      "None"
+    ],
+    "explanation": "Das Beispiel verwendet eine flüchtige Datenbank. Für dauerhafte Speicherung wäre eine Datei und ein bewusstes commit nötig. with db steuert Transaktionen, schließt die Connection aber nicht automatisch; closing übernimmt hier das Schließen.",
+    "methodProfile": {
+      "signature": "db.execute(sql, parameter); cursor.fetchone()",
+      "parameters": [
+        [
+          "sql",
+          "SQL mit Platzhaltern für Werte."
+        ],
+        [
+          "parameter",
+          "Zum Beispiel ein Tuple; bei einem Eintrag mit Komma schreiben."
+        ]
+      ],
+      "returns": "execute liefert Cursor; fetchone eine Zeile als Tuple oder None.",
+      "effect": "Führt echte SQL-Anweisungen in der verbundenen Datenbank aus."
+    },
+    "useCase": "Strukturierte Daten suchen und später in einer Datei speichern.",
+    "pitfall": "Baue Eingabewerte nicht durch Stringverkettung in SQL ein; Platzhalter stehen für Werte, nicht für Tabellennamen.",
+    "practice": {
+      "task": "Lege in einer In-Memory-SQLite-Datenbank eine Tabelle punkte an, füge 5 und 7 als Parameter ein und gib deren SQL-Summe aus.",
+      "hint": "Nutze executemany für die Zeilen und SELECT SUM(wert) zum Lesen.",
+      "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE punkte(wert INTEGER)\")\n    db.executemany(\"INSERT INTO punkte(wert) VALUES (?)\", [(5,), (7,)])\n    print(db.execute(\"SELECT SUM(wert) FROM punkte\").fetchone()[0])",
+      "output": "12"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "exception-cause",
+    "category": "Eingaben & Fehler",
+    "name": "raise … from …: Fehler mit Ursache weitergeben",
+    "introduction": "Eine neue Exception kann einen fachlichen Kontext ergänzen und dabei den ursprünglichen Fehler behalten. Die Ursache steht dann in __cause__.",
+    "steps": [
+      "Die Zahlenumwandlung scheitert.",
+      "Der Fehler wird als Mengenproblem weitergegeben.",
+      "Der Aufrufer liest Kontext und Ursachentyp."
+    ],
+    "code": "def menge(text):\n    try:\n        return int(text)\n    except ValueError as error:\n        raise ValueError(\"Ungültige Menge\") from error\n\ntry:\n    menge(\"x\")\nexcept ValueError as error:\n    print(error)\n    print(type(error.__cause__).__name__)",
+    "output": "Ungültige Menge\nValueError",
+    "choices": [
+      "Ungültige Menge\nValueError",
+      "x\nTypeError",
+      "Ungültige Menge\nNoneType"
+    ],
+    "explanation": "Die Fehlerkette macht sichtbar, welcher technische Fehler zum fachlichen Problem geführt hat. Ein Stacktrace enthält deshalb sowohl die ursprüngliche Umwandlung als auch die neue Meldung. __cause__ kann bei anderen Fehlern None sein.",
+    "methodProfile": {
+      "signature": "raise NeuerFehler(nachricht) from ursache",
+      "parameters": [
+        [
+          "ursache",
+          "Ursprüngliche Exception, die erhalten bleiben soll."
+        ]
+      ],
+      "returns": "Kein normaler Rückgabewert.",
+      "effect": "Unterbricht den normalen Ablauf mit einer verknüpften Exception."
+    },
+    "useCase": "Datei- oder Eingabefehler verständlich melden und trotzdem diagnostizierbar halten.",
+    "pitfall": "Eine hilfreiche Meldung ergänzt die Ursache; ein leerer catch- beziehungsweise except-Block würde sie verstecken.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "bisect",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "bisect_left: binär suchen in sortierten Daten",
+    "introduction": "bisect_left findet die linke Einfügeposition in einer bereits sortierten Folge. Das ist noch kein garantierter Treffer.",
+    "steps": [
+      "Suche den Einfügeplatz für 4.",
+      "Die Position ist 2.",
+      "Prüfe danach, ob an dieser Position wirklich die 4 liegt."
+    ],
+    "code": "from bisect import bisect_left\n\nwerte = [1, 3, 5, 7]\nindex = bisect_left(werte, 4)\nprint(index)\nprint(index < len(werte) and werte[index] == 4)",
+    "output": "2\nFalse",
+    "choices": [
+      "2\nFalse",
+      "2\nTrue",
+      "-1\nFalse"
+    ],
+    "explanation": "Die Suche halbiert den verbleibenden Bereich und benötigt O(log n) Vergleiche. Das anschließende Einfügen in eine gewöhnliche Liste kostet trotzdem O(n), weil Elemente verschoben werden. Die Sortierung herzustellen ist ebenfalls ein eigener Aufwand.",
+    "methodProfile": {
+      "signature": "bisect_left(sortierte_folge, ziel)",
+      "parameters": [
+        [
+          "sortierte_folge",
+          "Aufsteigend passend sortierte Werte."
+        ],
+        [
+          "ziel",
+          "Gesuchter Wert."
+        ]
+      ],
+      "returns": "Index der linken Einfügeposition.",
+      "effect": "Verändert die Folge nicht."
+    },
+    "useCase": "Werte in einer sortierten Messreihe finden oder Einfügepositionen bestimmen.",
+    "pitfall": "Bei einem Ergebnis gleich len(werte) liegt die Position hinter dem letzten Element; vor Indexzugriff prüfen.",
+    "practice": {
+      "task": "Finde die linke Position der 3 in [1,3,3,8] und prüfe, ob es ein echter Treffer ist.",
+      "hint": "bisect_left liefert die erste passende Position, nicht irgendeine der gleichen Zahlen.",
+      "code": "from bisect import bisect_left\n\na = [1, 3, 3, 8]\ni = bisect_left(a, 3)\nprint(i)\nprint(i < len(a) and a[i] == 3)",
+      "output": "1\nTrue"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "two-sum",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "Two Sum: eine doppelte Suche durch ein Dictionary ersetzen",
+    "introduction": "Gesucht sind zwei verschiedene Positionen mit einer bestimmten Summe. Ein Dictionary merkt sich zuvor gesehene Werte und ihre Indizes.",
+    "steps": [
+      "Für jeden Wert wird sein benötigtes Gegenstück berechnet.",
+      "Prüfe zuerst die schon gesehenen Werte.",
+      "Speichere erst danach den aktuellen Wert."
+    ],
+    "code": "def two_sum(werte, ziel):\n    gesehen = {}\n    for i, wert in enumerate(werte):\n        rest = ziel - wert\n        if rest in gesehen:\n            return gesehen[rest], i\n        gesehen[wert] = i\n    return None\n\nprint(two_sum([2, 7, 11, 15], 9))\nprint(two_sum([3, 3], 6))",
+    "output": "(0, 1)\n(0, 1)",
+    "choices": [
+      "(0, 1)\n(0, 1)",
+      "(0, 0)\n(0, 1)",
+      "(0, 1)\nNone"
+    ],
+    "explanation": "Der Dictionary-Ansatz braucht im üblichen Durchschnitt O(n) Zeit und O(n) zusätzlichen Speicher. Die naive Paarprüfung hat quadratische Zeit. Das Prüfen vor dem Speichern verhindert, dass derselbe Eintrag zweimal verwendet wird.",
+    "methodProfile": {
+      "signature": "two_sum(werte, ziel)",
+      "parameters": [
+        [
+          "werte",
+          "Zahlenfolge."
+        ],
+        [
+          "ziel",
+          "Gesuchte Summe zweier unterschiedlicher Positionen."
+        ]
+      ],
+      "returns": "Indexpaar oder None.",
+      "effect": "Erzeugt eine Hilfstabelle; die Quelle bleibt unverändert."
+    },
+    "useCase": "Eine typische Coding-Aufgabe lösen und den Zeit-Speicher-Tausch erklären.",
+    "pitfall": "Doppelte Zahlen sind erlaubt, solange es zwei unterschiedliche Indizes sind.",
+    "practice": {
+      "task": "Schreibe eine Two-Sum-Funktion und prüfe [1,4,6] mit Ziel 10 sowie [1] mit Ziel 2.",
+      "hint": "Prüfe die Gegenstelle vor dem Eintragen der aktuellen Position.",
+      "code": "def paar(werte, ziel):\n    gesehen = {}\n    for i, n in enumerate(werte):\n        if ziel - n in gesehen:\n            return gesehen[ziel - n], i\n        gesehen[n] = i\n    return None\n\nprint(paar([1, 4, 6], 10))\nprint(paar([1], 2))",
+      "output": "(1, 2)\nNone"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "brackets",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "Klammern prüfen: ein Stack merkt sich offene Paare",
+    "introduction": "Ein Stack speichert noch nicht geschlossene Klammern. Die zuletzt geöffnete muss zuerst passend geschlossen werden.",
+    "steps": [
+      "Öffnende Klammern werden gestapelt.",
+      "Bei einer schließenden wird das erwartete Paar geprüft.",
+      "Am Ende darf nichts offen bleiben."
+    ],
+    "code": "def gueltig(text):\n    paare = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}\n    stapel = []\n    for zeichen in text:\n        if zeichen in \"([{\":\n            stapel.append(zeichen)\n        elif zeichen in paare:\n            if not stapel or stapel.pop() != paare[zeichen]:\n                return False\n        else:\n            return False\n    return not stapel\n\nprint(gueltig(\"([])\"))\nprint(gueltig(\"([)]\"))",
+    "output": "True\nFalse",
+    "choices": [
+      "True\nFalse",
+      "True\nTrue",
+      "False\nFalse"
+    ],
+    "explanation": "Jedes Zeichen wird höchstens einmal verarbeitet. Zeit O(n), zusätzlicher Speicher im schlechtesten Fall O(n). Dieses Lernmodell akzeptiert nur Klammerzeichen; es ist kein Parser für vollständigen Python-Code mit Strings und Kommentaren.",
+    "methodProfile": {
+      "signature": "stapel.append(zeichen); stapel.pop()",
+      "parameters": [
+        [
+          "zeichen",
+          "Öffnende oder schließende Klammer nach der vereinbarten Eingaberegel."
+        ]
+      ],
+      "returns": "bool für eine gültig geschachtelte Klammerfolge.",
+      "effect": "Verwendet eine lokale Stack-Liste."
+    },
+    "useCase": "Geschachtelte Strukturen erkennen und Randfälle systematisch testen.",
+    "pitfall": "Gleiche Anzahlen offener und geschlossener Klammern beweisen noch keine richtige Reihenfolge.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "bfs",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "Breitensuche: kürzeste Wege bei gleichen Schrittkosten",
+    "introduction": "BFS erkundet Knoten nach ihrer Entfernung vom Start. Eine Queue sorgt dafür, dass zuerst kürzere Wege weiterverfolgt werden.",
+    "steps": [
+      "Starte mit A bei Entfernung 0.",
+      "Nachbarn erhalten die Entfernung ihres Vorgängers plus 1.",
+      "Markiere Knoten beim Einreihen als entdeckt."
+    ],
+    "code": "from collections import deque\n\ngraph = {\"A\": [\"B\", \"C\"], \"B\": [\"D\"], \"C\": [\"D\"], \"D\": []}\nentfernung = {\"A\": 0}\nqueue = deque([\"A\"])\nwhile queue:\n    aktuell = queue.popleft()\n    for nachbar in graph[aktuell]:\n        if nachbar not in entfernung:\n            entfernung[nachbar] = entfernung[aktuell] + 1\n            queue.append(nachbar)\nprint(entfernung[\"D\"])",
+    "output": "2",
+    "choices": [
+      "2",
+      "3",
+      "1"
+    ],
+    "explanation": "Bei einer Adjazenzliste liegt der Aufwand bei O(V+E) und der zusätzliche Besuchsspeicher bei O(V). Gleiche Schrittkosten sind die wichtige Voraussetzung für kürzeste Wege. Das Labyrinthprojekt rekonstruiert zusätzlich den tatsächlichen Weg über Vorgänger.",
+    "methodProfile": {
+      "signature": "queue.popleft(); queue.append(nachbar)",
+      "parameters": [
+        [
+          "nachbar",
+          "Noch nicht entdeckter benachbarter Knoten."
+        ]
+      ],
+      "returns": "Hier eine Tabelle der kürzesten Entfernungen.",
+      "effect": "Füllt lokale Queue und Besuchstabelle."
+    },
+    "useCase": "Ein Labyrinth oder Verbindungen mit gleich teuren Schritten durchsuchen.",
+    "pitfall": "Bei unterschiedlichen Kantengewichten ist eine gewöhnliche BFS nicht allgemein der richtige kürzeste-Wege-Algorithmus.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "multi-sort",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "Mehrere Sortierschlüssel: Regeln als Tuple beschreiben",
+    "introduction": "Ein key kann ein Tuple liefern. Python vergleicht dann zuerst das erste Feld, bei Gleichstand das nächste.",
+    "steps": [
+      "Sortiere nach Punkten absteigend.",
+      "Bei gleichen Punkten sortiere nach Namen aufsteigend.",
+      "Ein Minus kehrt nur den numerischen Punkteschlüssel um."
+    ],
+    "code": "daten = [(\"Bo\", 7), (\"Ada\", 7), (\"Cem\", 5)]\nprint(sorted(daten, key=lambda e: (-e[1], e[0])))",
+    "output": "[('Ada', 7), ('Bo', 7), ('Cem', 5)]",
+    "choices": [
+      "[('Ada', 7), ('Bo', 7), ('Cem', 5)]",
+      "[('Bo', 7), ('Ada', 7), ('Cem', 5)]",
+      "[('Cem', 5), ('Ada', 7), ('Bo', 7)]"
+    ],
+    "explanation": "reverse=True würde die gesamte Schlüsselordnung umdrehen, auch die Namen. Ein zusammengesetzter Schlüssel macht die gewünschten einzelnen Richtungen sichtbar. Stringordnung ist dabei keine automatisch lokalisierte Wörterbuchsortierung.",
+    "methodProfile": {
+      "signature": "key=lambda eintrag: (-punkte, name)",
+      "parameters": [
+        [
+          "punkte",
+          "Numerischer Hauptschlüssel."
+        ],
+        [
+          "name",
+          "Aufsteigender Zweitschlüssel."
+        ]
+      ],
+      "returns": "sorted liefert eine neue Liste.",
+      "effect": "Die Quelldaten werden nicht verändert."
+    },
+    "useCase": "Ranglisten oder Berichte mit reproduzierbarer Reihenfolge bei Gleichstand anzeigen.",
+    "pitfall": "reverse=True kehrt nicht ausschließlich den ersten Teil eines Tuple-Schlüssels um.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  },
+  {
+    "id": "complexity",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "Laufzeit untersuchen: Operationen zählen statt nur stoppen",
+    "introduction": "Eine verschachtelte Schleife kann quadratisch wachsen. Zähle die tatsächlich ausgeführten Schritte, um das Wachstum zu verstehen.",
+    "steps": [
+      "Die äußere Schleife läuft n-mal.",
+      "Für jeden äußeren Durchlauf läuft die innere ebenfalls n-mal.",
+      "Bei n=4 entstehen 16 gezählte Schritte."
+    ],
+    "code": "def schritte(n):\n    anzahl = 0\n    for _ in range(n):\n        for _ in range(n):\n            anzahl += 1\n    return anzahl\n\nprint(schritte(4))\nprint(schritte(8))",
+    "output": "16\n64",
+    "choices": [
+      "16\n64",
+      "4\n8",
+      "16\n32"
+    ],
+    "explanation": "Verdoppeln der Eingabelänge vervierfacht hier die Schritte. O(n²) beschreibt das Wachstum, nicht die genaue Dauer auf jedem Gerät. Nicht jede optisch verschachtelte Schleife ist automatisch quadratisch: Entscheidend sind ihre tatsächlichen Grenzen.",
+    "methodProfile": {
+      "signature": "O(n); O(n log n); O(n²)",
+      "parameters": [
+        [
+          "n",
+          "Größe der Eingabe im betrachteten Kostenmodell."
+        ]
+      ],
+      "returns": "Eine Aufwandseinordnung, kein Python-Rückgabewert.",
+      "effect": "Die Beispielinstrumentierung zählt zusätzliche lokale Schritte."
+    },
+    "useCase": "Lösungen vergleichen, bevor große Eingaben einen langsamen Ansatz sichtbar machen.",
+    "pitfall": "Eine einzelne Zeitmessung vermischt Algorithmus, Daten, Gerät und Hintergrundlast; ergänze sie durch eine Analyse der Operationen.",
+    "practice": {
+      "task": "Zähle für n=4 die Paare mit i < j. Gib die Zahl aus und überlege, wie sie mit n wächst.",
+      "hint": "Die innere Schleife beginnt bei i+1; jedes ungeordnete Paar wird einmal gezählt.",
+      "code": "n = 4\nanzahl = 0\nfor i in range(n):\n    for j in range(i + 1, n):\n        anzahl += 1\nprint(anzahl)",
+      "output": "6"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-maze-bfs",
+    "projectTitle": "Labyrinth mit Breitensuche"
+  }
+]

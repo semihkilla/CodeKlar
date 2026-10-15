@@ -46,5 +46,14 @@ try {
   const result = await run(['report.py', 'beispiel.txt', '--top', '2', '--csv', 'report.csv'], { cwd: report });
   require(result.stdout.includes('python: 2') && result.stdout.includes('lernen: 2'), 'Word report CLI failed');
   require((await readFile(join(report, 'report.csv'), 'utf8')).includes('python,2'), 'CSV export missing');
-  console.log('Separate-process task persistence, invalid-command preservation and real CSV export passed.');
+  const maze = join(root, 'python-maze-bfs');
+  const original = await readFile(join(maze, 'maps/einfach.txt'), 'utf8');
+  const solved = await run(['maze.py', 'maps/einfach.txt', '--output', 'geloest.txt'], { cwd: maze });
+  require(solved.stdout.includes('8 Schritte') && (await readFile(join(maze, 'geloest.txt'), 'utf8')).includes('*'), 'Maze CLI solution/export failed');
+  try { await run(['maze.py', 'maps/einfach.txt', '--output', 'maps/einfach.txt'], { cwd: maze }); throw new Error('Existing output accepted'); }
+  catch (error) { require(error.code === 2 && error.stderr.includes('Fehler:'), 'Expected export refusal missing'); }
+  require(await readFile(join(maze, 'maps/einfach.txt'), 'utf8') === original, 'Maze input changed');
+  try { await run(['maze.py', 'maps/gesperrt.txt'], { cwd: maze }); throw new Error('Unreachable map accepted'); }
+  catch (error) { require(error.code === 1 && error.stdout.includes('Kein Weg'), 'Unreachable CLI result missing'); }
+  console.log('Separate-process task persistence, invalid-command preservation, real CSV export and maze CLI/export checks passed.');
 } finally { await rm(root, { recursive: true, force: true }); }

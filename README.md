@@ -731,3 +731,33 @@ python3 report.py beispiel.txt --top 5 --csv bericht.csv
 Die Baupläne verbinden die Idee mit Datenmodell, Aktionen, Eingabe, Speicherung, Ausgabe und Tests. Neue Lektionen verlinken direkt das passende Projekt; ZIPs bewahren Package-Verzeichnisse und enthalten den jeweiligen Bauplan. Alle Inhalte und Projekte sind nach dem ersten vollständigen Laden auch offline zugänglich.
 
 `npm run test:python` führt die tatsächlichen 42 Beispielprogramme und 14 Übungslösungen mit CPython aus und vergleicht stdout. Anschließend laufen die 20 Projekt-Testmethoden sowie zusätzliche echte Prozessstarts für Aufgabenpersistenz, ungültige IDs ohne Dateiänderung und einen tatsächlichen CSV-Export. Die Prüfung arbeitet ausschließlich mit eigenen temporären Dateien. Der vorhandene Java-Prüfer und die Java-Lerninhalte bleiben getrennt davon nutzbar.
+
+### Python vertiefen: Schleifen, Datenmodelle, SQLite und Suchalgorithmen
+
+**30 weitere Lektionen und elf zusätzliche lokale Übungen** erweitern Python auf **73 Lektionen insgesamt** (72 neue ausführbare Programme plus die bestehende append-Lektion) und **25 lokale Programmierübungen**. Die bisherigen 42 generierten Lektionen behalten ihre IDs, Beispielprogramme und Antwortpositionen. Die sechs Hauptbereiche bleiben erhalten; die neuen Inhalte sind als Vertiefung markiert und in vorhandene Themen eingeordnet:
+
+- Schleifen mit while, break/continue und for/else.
+- enumerate/zip inklusive strict, any/all und leere Quellen, Dictionary Comprehensions, Set-Operationen, f-String-Formate und Löschen aus Listen.
+- Argumente entpacken, Closures, Rekursion, Dekoratoren mit wraps und yield from.
+- property/Setter, Vererbung/super, dataclass default_factory und Enum-Zustände.
+- finally, with-Dateihandles, bytes/UTF-8, glob/rglob, echte SQLite-Abfragen mit gebundenen Parametern und Fehlerursachen mit raise from.
+- Binäre Suche mit bisect_left, Two Sum, Klammerprüfung per Stack, Breitensuche, zusammengesetzte Sortierschlüssel und das Wachstum gezählter Operationen.
+
+Jede Vertiefung hat drei Erklärungsschritte, konkrete Ausgabe-Fragen, Syntax-/Parameter-/Rückgabewert-Hilfe, Anwendung und Stolperstein. Elf Übungen ergänzen eigenständiges Programmieren mit Hinweis und vollständiger Lösung, beispielsweise eine rekursive Summe, unabhängige dataclass-Listen, SQLite-Aggregation und Two Sum ohne Wiederverwendung desselben Index. Die Lernrunden, Prüfungen und Wiederholungen verwenden auch die neuen Wissensfragen. Python-Code wird weiterhin lokal ausgeführt, nicht im Browser.
+
+**Projekte → Python: Labyrinth mit Breitensuche** verbindet die Bausteine zu einem vollständigen Terminalprojekt. `maze.py` trennt Textkarte, Datenmodell, Nachbarn, BFS, Wegrekonstruktion und Darstellung. Zwei Karten und `BAUPLAN.md` erklären den Weg von der Idee zum Algorithmus. `#` ist Wand, `.` frei, `S` Start und `G` Ziel. Karten müssen rechteckig sein, genau ein S/G enthalten und höchstens 100 × 100 Felder groß sein. Die Terminal-Eingabedatei ist auf 100 KB begrenzt.
+
+```sh
+python3 -m unittest -v
+python3 maze.py maps/einfach.txt
+python3 maze.py maps/einfach.txt --output geloest.txt
+python3 maze.py maps/gesperrt.txt
+```
+
+Start im entpackten Projektordner mit Python 3.10 oder neuer; unter Windows je nach Installation `py` oder `python`. Keine zusätzlichen Pakete nötig. Die Beispielkarte hat einen kürzesten Weg von acht Schritten. Sternchen zeigen den Weg zwischen S und G; eine feste Nachbarreihenfolge macht die Auswahl bei gleich kurzen Wegen reproduzierbar. `--output` erzeugt ausschließlich eine neue Datei und überschreibt keine vorhandene Zieldatei. Exit-Codes: 0 gefunden, 1 unlösbar, 2 Argument-/Datei-/Kartenfehler. Dieses Projekt zeigt eine Lösung im Terminal; es ist kein manuell gesteuertes Grafikspiel.
+
+BFS benötigt O(V+E) Zeit und O(V) zusätzlichen Suchspeicher und setzt für minimale Schrittzahlen gleiche Schrittkosten voraus. Einlesen und Ausgabe benötigen zusätzlich Arbeit für das gesamte Raster. Der Bauplan erklärt auch, wie man das Suchmodell später mit manueller Bewegung oder unterschiedlichen Geländekosten erweitert.
+
+Die zwölf Labyrinth-Testmethoden prüfen unter anderem Randgrenzen ohne negative Indexumklappung, Umwege, unlösbare Karten, Zyklen, Größenregeln, deterministische Auswahl, Export und Fehlerfälle. Alle 16 Wandbelegungen einer 2×3-Karte werden mit einer unabhängig implementierten Distanzrelaxation verglichen. `npm run test:python` prüft jetzt alle 72 Beispielprogramme und 25 Übungslösungen sowie 32 Testmethoden über die drei neuen Python-Projekte. Zusätzlich werden Terminalprogramme als getrennte Prozesse gestartet: Aufgabenpersistenz, Fehler ohne Datenänderung, CSV-Export und nun Labyrinth-Lösung/Export mit verweigertem Überschreiben. Native Verifikation: CPython 3.12.14.
+
+Unter Projekte stehen einschließlich des älteren Zahlenratespiels nun vier Python-Projektangebote zur Verfügung. Die vorhandenen Java-Inhalte und Projektangebote bleiben erreichbar. Die Produktions-Webapp wird weiterhin mit Service Worker und precache gebaut; die neuen Lektionen, Lösungen, Projektdateien und ZIP-Downloads sind nach dem ersten vollständigen Laden offline verfügbar.

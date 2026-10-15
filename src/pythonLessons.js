@@ -1,12 +1,13 @@
+import furtherCurriculum from './pythonFurtherCurriculum.json' with { type: 'json' };
 import curriculum from './pythonCurriculum.json' with { type: 'json' };
 
-export const pythonLessonPack = curriculum.map((row, index) => {
+export const pythonLessonPack = [...curriculum, ...furtherCurriculum].map((row, index) => {
   const answer = index % row.choices.length;
   const options = row.choices.slice(1);
   options.splice(answer, 0, row.choices[0]);
   return {
     id: `python-${row.id}`, course: 'python', category: row.category,
-    name: row.name, title: row.name, kind: 'theory', difficulty: 'Grundlage',
+    name: row.name, title: row.name, kind: 'theory', difficulty: row.difficulty || 'Grundlage',
     description: row.introduction, guide: [row.introduction, row.steps],
     syntax: row.code, example: row.code,
     parts: row.methodProfile.parameters.length ? row.methodProfile.parameters : [['Merke', row.steps[0]]],

@@ -1,4 +1,5 @@
-export const pythonProjects = [
+import { pythonFurtherProjects } from './pythonFurtherProjects.js';
+const originalPythonProjects = [
   {
     "id": "python-task-cli",
     "course": "python",
@@ -119,3 +120,5 @@ export const pythonProjects = [
     ]
   }
 ];
+
+export const pythonProjects = [...originalPythonProjects, ...pythonFurtherProjects];

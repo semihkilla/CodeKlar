@@ -3,9 +3,9 @@ const groups = {
   java: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Methoden"]],
     ["data", "Strings, Arrays & Collections", ["Arrays", "Strings", "Collections", "Lambdas & Streams", "Reguläre Ausdrücke"]],
-    ["objects", "Objektorientierung", ["Klassen & Objekte", "Schnittstellen & Typen", "Oberflächen & Swing"]],
-    ["io", "Eingaben, Dateien & Fehler", ["Ein-/Ausgabe", "Dateien & Pfade", "Fehlerbehandlung", "Datenformate & Protokolle"]],
-    ["tools", "Werkzeuge, Tests & Zahlen", ["Werkzeuge & Tests", "Zahlen & Zeit", "Packages & Bibliotheken"]],
+    ["objects", "Objektorientierung", ["Klassen & Objekte", "Schnittstellen & Typen", "Oberflächen & Swing", "Zeichnen & Spiele"]],
+    ["io", "Eingaben, Dateien & Fehler", ["Ein-/Ausgabe", "Dateien & Pfade", "Fehlerbehandlung", "Datenformate & Protokolle", "Speichern & Datenbanken"]],
+    ["tools", "Werkzeuge, Tests & Zahlen", ["Werkzeuge & Tests", "Zahlen & Zeit", "Packages & Bibliotheken", "Build & Bibliotheken", "Programme verteilen", "Debugging"]],
     ["advanced", "Algorithmen, Threads & HTTP", ["Algorithmen & Komplexität", "Nebenläufigkeit", "HTTP & Daten"]],
   ],
   js: [

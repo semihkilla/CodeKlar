@@ -1,0 +1,1201 @@
+[
+  {
+    "id": "desktop-menu",
+    "category": "Oberflächen & Swing",
+    "name": "JMenuBar: Befehle in Menüs sammeln",
+    "introduction": "Eine Menüleiste enthält Menüs; ein Menü enthält Einträge. JMenuItem löst wie ein Button eine Aktion aus.",
+    "steps": [
+      "Erzeuge ein Datei-Menü.",
+      "Füge einen Speichern-Eintrag hinzu.",
+      "Setze die Leiste später mit setJMenuBar am JFrame."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var leiste = new JMenuBar();\n    var datei = new JMenu(\"Datei\");\n    datei.add(new JMenuItem(\"Speichern\"));\n    leiste.add(datei);\n    System.out.println(leiste.getMenu(0).getItem(0).getText());\n});",
+    "output": "Speichern",
+    "choices": [
+      "Speichern",
+      "Datei",
+      "0"
+    ],
+    "explanation": "Das Beispiel baut die Menüstruktur ohne Fenster. Im Projekt verbinden Menü und Button dieselbe Speicheraktion. So musst du fachliche Regeln nicht an mehreren Stellen kopieren.",
+    "declarations": "",
+    "imports": "import javax.swing.JMenu;\nimport javax.swing.JMenuBar;\nimport javax.swing.JMenuItem;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "menu.add(eintrag); fenster.setJMenuBar(leiste)",
+      "parameters": [
+        [
+          "eintrag",
+          "JMenuItem mit Text und ActionListener."
+        ],
+        [
+          "leiste",
+          "JMenuBar für das Fenster."
+        ]
+      ],
+      "returns": "add liefert den Eintrag; setJMenuBar liefert void.",
+      "effect": "Verändert die Menüstruktur des Fensters."
+    },
+    "useCase": "Datei-, Bearbeiten- und Hilfe-Befehle übersichtlich anbieten.",
+    "pitfall": "Ein JMenu ist kein Menüpunkt mit fertiger Speicherfunktion; das Verhalten wird über einen Listener registriert.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-dialog",
+    "category": "Oberflächen & Swing",
+    "name": "Dialoge: Bestätigen und Abbrechen",
+    "introduction": "JOptionPane kann nachfragen, Informationen anzeigen oder eine Eingabe anfordern. Abbrechen muss als eigener Fall behandelt werden.",
+    "steps": [
+      "Ein Bestätigungsdialog liefert einen Optionswert.",
+      "Vergleiche ihn mit YES_OPTION.",
+      "Nur bei Ja darf die bestätigte Aktion starten."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    int antwort = JOptionPane.NO_OPTION;\n    System.out.println(antwort == JOptionPane.YES_OPTION);\n    System.out.println(antwort == JOptionPane.NO_OPTION);\n});",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\nfalse",
+      "true\ntrue"
+    ],
+    "explanation": "Der Beispielcode wertet eine vorbereitete Nein-Antwort aus und öffnet keinen Dialog. Im Projekt verwendet showConfirmDialog das Fenster als Elternkomponente. CLOSED_OPTION ist ebenfalls keine Zustimmung. showInputDialog kann null zurückgeben.",
+    "declarations": "",
+    "imports": "import javax.swing.JOptionPane;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "JOptionPane.showConfirmDialog(eltern, frage, titel, JOptionPane.YES_NO_OPTION)",
+      "parameters": [
+        [
+          "eltern",
+          "Komponente, zu der der Dialog gehört."
+        ],
+        [
+          "frage",
+          "Angezeigter Fragetext."
+        ]
+      ],
+      "returns": "int mit YES_OPTION, NO_OPTION oder CLOSED_OPTION je nach Dialog.",
+      "effect": "Ein echter Dialog unterbricht den aktuellen Aufruf bis zur Auswahl."
+    },
+    "useCase": "Vor dem Löschen einer Aufgabe nachfragen.",
+    "pitfall": "Fenster schließen oder Abbrechen bedeutet nicht Ja; prüfe ausdrücklich YES_OPTION.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-table",
+    "category": "Oberflächen & Swing",
+    "name": "JTable: Zeilen und Spalten darstellen",
+    "introduction": "JTable zeigt tabellarische Daten über ein TableModel an. Das Modell speichert Zellwerte, die Tabelle stellt sie dar.",
+    "steps": [
+      "Lege Spalten und eine Datenzeile an.",
+      "Lies die Zelle an Zeile 0, Spalte 1.",
+      "Verpacke große Tabellen später in eine JScrollPane."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var modell = new DefaultTableModel(new Object[][]{{\"Lernen\", false}}, new Object[]{\"Aufgabe\", \"Fertig\"});\n    var tabelle = new JTable(modell);\n    System.out.println(tabelle.getRowCount());\n    System.out.println(tabelle.getValueAt(0, 1));\n});",
+    "output": "1\nfalse",
+    "choices": [
+      "1\nfalse",
+      "2\nfalse",
+      "1\ntrue"
+    ],
+    "explanation": "Zeilen und Spalten beginnen bei Index null. Bei aktivierter Sortierung kann die sichtbare Zeile einen anderen Modellindex haben: convertRowIndexToModel übersetzt ihn. Das Projekt nutzt ein nicht editierbares Modell und ändert Daten über ausdrücklich beschriftete Aktionen.",
+    "declarations": "",
+    "imports": "import javax.swing.JTable;\nimport javax.swing.SwingUtilities;\nimport javax.swing.table.DefaultTableModel;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "tabelle.getValueAt(zeile, spalte)",
+      "parameters": [
+        [
+          "zeile",
+          "Index der sichtbaren Zeile."
+        ],
+        [
+          "spalte",
+          "Index der sichtbaren Spalte."
+        ]
+      ],
+      "returns": "Object mit dem Zellwert.",
+      "effect": "Lesen verändert das Modell nicht."
+    },
+    "useCase": "Aufgaben oder Messwerte in einer verständlichen Tabelle zeigen.",
+    "pitfall": "DefaultTableModel ist standardmäßig editierbar; überschreibe isCellEditable, wenn Änderungen kontrolliert erfolgen sollen.",
+    "practice": {
+      "task": "Baue ein Tabellenmodell mit zwei Aufgaben und gib die Anzahl der Zeilen sowie den Namen der zweiten Aufgabe aus.",
+      "hint": "Der zweite Eintrag hat Zeilenindex 1.",
+      "code": "SwingUtilities.invokeAndWait(() -> {\n    var m = new DefaultTableModel(new Object[][]{{\"Lesen\"}, {\"Üben\"}}, new Object[]{\"Aufgabe\"});\n    System.out.println(m.getRowCount());\n    System.out.println(m.getValueAt(1, 0));\n});",
+      "output": "2\nÜben"
+    },
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-chooser",
+    "category": "Oberflächen & Swing",
+    "name": "JFileChooser: eine Datei auswählen",
+    "introduction": "Ein JFileChooser liefert eine Dateiauswahl. Auswählen und tatsächlich Lesen oder Schreiben sind getrennte Schritte.",
+    "steps": [
+      "Ein echter Dialog liefert APPROVE_OPTION oder einen Abbruchwert.",
+      "Nur bei Zustimmung liest du getSelectedFile.",
+      "Danach prüfst du Pfad und Schreibregeln."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    int antwort = JFileChooser.CANCEL_OPTION;\n    System.out.println(antwort == JFileChooser.APPROVE_OPTION);\n});",
+    "output": "false",
+    "choices": [
+      "false",
+      "true",
+      "null"
+    ],
+    "explanation": "Hier wird nur eine Abbruchentscheidung geprüft. Das Projekt öffnet showSaveDialog und exportiert erst nach Zustimmung. Ein Dateifilter hilft bei der Auswahl, erzwingt aber keine sichere Endung oder gültigen Dateiinhalt.",
+    "declarations": "",
+    "imports": "import javax.swing.JFileChooser;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "chooser.showSaveDialog(eltern); chooser.getSelectedFile()",
+      "parameters": [
+        [
+          "eltern",
+          "Elternkomponente für den Dialog."
+        ]
+      ],
+      "returns": "Der Dialog liefert int; getSelectedFile liefert File oder null.",
+      "effect": "Der Dialog wählt einen Pfad; er schreibt selbst noch keine Datei."
+    },
+    "useCase": "Ein JSON-Exportziel auswählen lassen.",
+    "pitfall": "Bei bestehender Zieldatei ausdrücklich nach Überschreiben fragen und Fehler beim Schreiben anzeigen.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-cards",
+    "category": "Oberflächen & Swing",
+    "name": "CardLayout: mehrere Ansichten wechseln",
+    "introduction": "CardLayout zeigt jeweils eine benannte Ansicht. Damit kannst du zwischen Aufgabenliste und Hilfe wechseln.",
+    "steps": [
+      "Füge zwei Panels mit verschiedenen Namen hinzu.",
+      "Zeige die Karte hilfe.",
+      "Prüfe die Sichtbarkeit beider Karten."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var layout = new CardLayout();\n    var root = new JPanel(layout);\n    var liste = new JPanel();\n    var hilfe = new JPanel();\n    root.add(liste, \"liste\");\n    root.add(hilfe, \"hilfe\");\n    layout.show(root, \"hilfe\");\n    System.out.println(liste.isVisible());\n    System.out.println(hilfe.isVisible());\n});",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\nfalse",
+      "true\ntrue"
+    ],
+    "explanation": "Die Panels bleiben vorhanden; CardLayout wechselt ihre Sichtbarkeit. Die Projekt-Hilfe kann dadurch angezeigt werden, ohne das Aufgabenmodell oder dessen Daten beim Zurückwechseln neu anzulegen.",
+    "declarations": "",
+    "imports": "import java.awt.CardLayout;\nimport javax.swing.JPanel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "layout.show(container, name)",
+      "parameters": [
+        [
+          "container",
+          "Container mit diesem CardLayout."
+        ],
+        [
+          "name",
+          "Name einer vorher hinzugefügten Karte."
+        ]
+      ],
+      "returns": "void.",
+      "effect": "Ändert die Sichtbarkeit der Karten."
+    },
+    "useCase": "Liste, Einstellungen und Hilfe in einem Fenster anbieten.",
+    "pitfall": "Ein nicht vorhandener Kartenname erzeugt keine neue Ansicht und meldet keinen passenden Treffer.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-worker",
+    "category": "Oberflächen & Swing",
+    "name": "SwingWorker: langsame Arbeit auslagern",
+    "introduction": "Dateien und Datenbanken können langsam sein. SwingWorker führt Hintergrundarbeit aus und übergibt das Ergebnis im EDT.",
+    "steps": [
+      "doInBackground erledigt die langsame Arbeit.",
+      "done läuft anschließend auf dem EDT.",
+      "execute startet den Worker; get im EDT würde vorher blockieren."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    System.out.println(SwingWorker.class.getSuperclass().getSimpleName());\n    System.out.println(SwingUtilities.isEventDispatchThread());\n});",
+    "output": "Object\ntrue",
+    "choices": [
+      "Object\ntrue",
+      "Thread\ntrue",
+      "Object\nfalse"
+    ],
+    "explanation": "Die Ausgabe prüft nur die Klasse und den aktuellen EDT. Das vollständige Projekt verwendet einen SwingWorker für SQLite und Datei-Exporte: Eingaben werden vorher erfasst, Buttons währenddessen gesperrt und Meldungen in done aktualisiert. Fehler aus get sind dort zu behandeln.",
+    "declarations": "",
+    "imports": "import javax.swing.SwingUtilities;\nimport javax.swing.SwingWorker;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new SwingWorker<Ergebnis, Zwischenwert>() { doInBackground(); done(); }.execute()",
+      "parameters": [
+        [
+          "Ergebnis",
+          "Typ des fertigen Ergebnisses."
+        ],
+        [
+          "Zwischenwert",
+          "Typ optionaler Zwischenmeldungen."
+        ]
+      ],
+      "returns": "execute liefert void; get liefert das Ergebnis oder meldet den Fehler.",
+      "effect": "Die Hintergrundarbeit läuft getrennt vom EDT."
+    },
+    "useCase": "Speichern ermöglichen, während das Fenster weiterhin auf Eingaben und Neuzeichnen reagiert.",
+    "pitfall": "Swing-Komponenten nicht in doInBackground ändern; lies Eingaben vor dem Start und aktualisiere die Ansicht in done.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-paint",
+    "category": "Zeichnen & Spiele",
+    "name": "paintComponent: selbst zeichnen",
+    "introduction": "Eine eigene JPanel-Unterklasse kann paintComponent überschreiben. Darin wird der aktuelle Modellzustand gezeichnet.",
+    "steps": [
+      "Erzeuge für das Beispiel eine Zeichenfläche im Speicher.",
+      "Zeichne ein rotes Rechteck.",
+      "Lies einen Pixel innerhalb und außerhalb des Rechtecks."
+    ],
+    "code": "var bild = new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB);\nvar g = bild.createGraphics();\ntry { g.setColor(Color.RED); g.fillRect(2, 2, 5, 5); } finally { g.dispose(); }\nSystem.out.println(bild.getRGB(3, 3) == Color.RED.getRGB());\nSystem.out.println(bild.getRGB(0, 0) == Color.BLACK.getRGB());",
+    "output": "true\ntrue",
+    "choices": [
+      "true\ntrue",
+      "false\ntrue",
+      "true\nfalse"
+    ],
+    "explanation": "Im Pong-Projekt beginnt paintComponent mit super.paintComponent(g), damit der Hintergrund sauber wird. Danach folgen Ball und Schläger aus dem Modell. Den von Swing gelieferten Graphics-Kontext entsorgst du nicht selbst; eine mit create erzeugte Kopie hingegen schon.",
+    "declarations": "",
+    "imports": "import java.awt.Color;\nimport java.awt.image.BufferedImage;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "g.fillRect(x, y, breite, hoehe)",
+      "parameters": [
+        [
+          "x und y",
+          "Position von links beziehungsweise oben."
+        ],
+        [
+          "breite und hoehe",
+          "Ausdehnung in Pixeln."
+        ]
+      ],
+      "returns": "void.",
+      "effect": "Zeichnet in den aktuellen Graphics-Kontext."
+    },
+    "useCase": "Spielbrett, Diagramm oder bewegte Spielfigur darstellen.",
+    "pitfall": "Ändere in paintComponent nicht den Spielzustand; Swing kann diese Methode jederzeit erneut aufrufen.",
+    "projectId": "java-pong-lab",
+    "projectTitle": "Pong-Labor",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-keys",
+    "category": "Zeichnen & Spiele",
+    "name": "Key Bindings: auf Tasten reagieren",
+    "introduction": "InputMap verbindet eine Taste mit einem Aktionsnamen. ActionMap verbindet diesen Namen mit ausführbarem Verhalten.",
+    "steps": [
+      "Ordne Leertaste dem Namen start zu.",
+      "Lies die Zuordnung aus.",
+      "Im Spiel registrierst du zusätzlich die zugehörige Action."
+    ],
+    "code": "var map = new InputMap();\nmap.put(KeyStroke.getKeyStroke(\"SPACE\"), \"start\");\nSystem.out.println(map.get(KeyStroke.getKeyStroke(\"SPACE\")));",
+    "output": "start",
+    "choices": [
+      "start",
+      "SPACE",
+      "null"
+    ],
+    "explanation": "Pong registriert W/S sowie Hoch/Runter als pressed- und released-Ereignisse. Dadurch bleibt Bewegung aktiv, solange die Taste gedrückt ist. WHEN_IN_FOCUSED_WINDOW hilft bei Tastatursteuerung innerhalb des aktiven Fensters; es ist kein globaler Tastatur-Hook.",
+    "declarations": "",
+    "imports": "import javax.swing.InputMap;\nimport javax.swing.KeyStroke;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "inputMap.put(taste, name); actionMap.put(name, action)",
+      "parameters": [
+        [
+          "taste",
+          "KeyStroke für ein Tastaturereignis."
+        ],
+        [
+          "action",
+          "Aktion, die beispielsweise einen Bewegungszustand setzt."
+        ]
+      ],
+      "returns": "put liefert void.",
+      "effect": "Die Tastatur-Zuordnung wird geändert."
+    },
+    "useCase": "Spiele oder Tastenkürzel ohne störanfällige KeyListener-Fokusannahmen bauen.",
+    "pitfall": "Beim Verlust des Fensterfokus müssen gehaltene Tasten zurückgesetzt werden, sonst kann eine Bewegung hängen bleiben.",
+    "projectId": "java-pong-lab",
+    "projectTitle": "Pong-Labor",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-timer",
+    "category": "Zeichnen & Spiele",
+    "name": "Swing-Timer: regelmäßig aktualisieren",
+    "introduction": "javax.swing.Timer löst seine Listener auf dem EDT aus. Jeder Tick kann eine kleine Modelländerung und repaint anfordern.",
+    "steps": [
+      "Erzeuge einen Timer mit 16 ms Verzögerung.",
+      "Starte ihn in diesem Beispiel noch nicht.",
+      "Lies Verzögerung und Wiederholungsmodus aus."
+    ],
+    "code": "var timer = new Timer(16, event -> {});\nSystem.out.println(timer.getDelay());\nSystem.out.println(timer.isRepeats());\nSystem.out.println(timer.isRunning());",
+    "output": "16\ntrue\nfalse",
+    "choices": [
+      "16\ntrue\nfalse",
+      "16\ntrue\ntrue",
+      "60\nfalse\ntrue"
+    ],
+    "explanation": "Eine Verzögerung von 16 ms garantiert keine exakten 60 Bilder pro Sekunde. Im Pong-Projekt wird die vergangene Zeit gemessen und begrenzt. timer.stop gibt nach dem Schließen des Fensters den Tick-Mechanismus frei.",
+    "declarations": "",
+    "imports": "import javax.swing.Timer;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new Timer(verzoegerung, listener); timer.start(); timer.stop()",
+      "parameters": [
+        [
+          "verzoegerung",
+          "Gewünschte Pause zwischen Ereignissen in Millisekunden."
+        ],
+        [
+          "listener",
+          "Kurze Aktion pro Tick."
+        ]
+      ],
+      "returns": "Ein neuer Timer; start und stop liefern void.",
+      "effect": "Ein gestarteter Timer plant wiederkehrende EDT-Ereignisse."
+    },
+    "useCase": "Animation und kleine Spiele schrittweise aktualisieren.",
+    "pitfall": "Thread.sleep im EDT hält die gesamte Oberfläche an; ein Timer-Listener muss kurz bleiben.",
+    "projectId": "java-pong-lab",
+    "projectTitle": "Pong-Labor",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-movement",
+    "category": "Zeichnen & Spiele",
+    "name": "Bewegung: Geschwindigkeit mal Zeit",
+    "introduction": "Eine Geschwindigkeit in Pixeln pro Sekunde wird mit der verstrichenen Zeit multipliziert. So hängt die Bewegung weniger von der Bildrate ab.",
+    "steps": [
+      "Die Geschwindigkeit beträgt 120 Pixel pro Sekunde.",
+      "Ein Tick entspricht 0,25 Sekunden.",
+      "Addiere deshalb 30 Pixel zur Position."
+    ],
+    "code": "double x = 10;\ndouble geschwindigkeit = 120;\ndouble sekunden = 0.25;\nx += geschwindigkeit * sekunden;\nSystem.out.println(x);",
+    "output": "40.0",
+    "choices": [
+      "40.0",
+      "130.0",
+      "30.0"
+    ],
+    "explanation": "Das Pong-Modell erhält dt als Argument. Tests können damit exakt festgelegte Zeitschritte simulieren. Nach einer langen Pause wird dt begrenzt, damit der Ball nicht mit einem Riesenschritt durch Wände springt.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "position += geschwindigkeit * dt",
+      "parameters": [
+        [
+          "geschwindigkeit",
+          "Pixel pro Sekunde."
+        ],
+        [
+          "dt",
+          "Verstrichene Zeit in Sekunden."
+        ]
+      ],
+      "returns": "Die Rechnung ergibt die neue Position.",
+      "effect": "Verändert eine Modellkoordinate."
+    },
+    "useCase": "Bewegung unabhängig von einer fest angenommenen Zahl von Timer-Ereignissen berechnen.",
+    "pitfall": "Millisekunden zuerst durch 1000.0 teilen; ganzzahlige Division kann einen Zeitschritt auf null kürzen.",
+    "practice": {
+      "task": "Ein Ball steht bei x=50 und bewegt sich mit -80 Pixeln pro Sekunde. Berechne seine Position nach 0,5 Sekunden.",
+      "hint": "Ein negatives Tempo bewegt den Ball nach links.",
+      "code": "double x = 50;\nx += -80 * 0.5;\nSystem.out.println(x);",
+      "output": "10.0"
+    },
+    "projectId": "java-pong-lab",
+    "projectTitle": "Pong-Labor",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-collision",
+    "category": "Zeichnen & Spiele",
+    "name": "Kollisionen: Rechtecke vergleichen",
+    "introduction": "Rectangle.intersects erkennt eine Überschneidung mit positiver Fläche. Bloßes Berühren am Rand zählt hier nicht als Schnitt.",
+    "steps": [
+      "Das erste Rechteck reicht von x=0 bis x=10.",
+      "Das zweite beginnt bei x=9 und überschneidet sich.",
+      "Das dritte beginnt bei x=10 und berührt nur den Rand."
+    ],
+    "code": "var a = new Rectangle(0, 0, 10, 10);\nSystem.out.println(a.intersects(new Rectangle(9, 0, 10, 10)));\nSystem.out.println(a.intersects(new Rectangle(10, 0, 10, 10)));",
+    "output": "true\nfalse",
+    "choices": [
+      "true\nfalse",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "Für schnelle Bewegung reicht eine Kollisionsprüfung nur am Endpunkt nicht immer aus: Das Objekt kann zwischen zwei Ticks durch ein Hindernis springen. Das Lernspiel nutzt kleine Teilschritte und begrenzte Zeitsprünge; komplexe Spiele brauchen gegebenenfalls kontinuierliche Kollisionsprüfung.",
+    "declarations": "",
+    "imports": "import java.awt.Rectangle;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "rechteck.intersects(anderesRechteck)",
+      "parameters": [
+        [
+          "anderesRechteck",
+          "Zweite Begrenzungsfläche."
+        ]
+      ],
+      "returns": "boolean: ob beide Rechtecke eine positive Schnittfläche haben.",
+      "effect": "Keine Veränderung an den Rechtecken."
+    },
+    "useCase": "Ball und Schläger oder Spielfigur und Hindernis auf Überschneidung prüfen.",
+    "pitfall": "Nach dem Abprallen die Position korrigieren und die Bewegungsrichtung prüfen, damit der Ball nicht mehrfach im selben Schläger umkehrt.",
+    "projectId": "java-pong-lab",
+    "projectTitle": "Pong-Labor",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-json",
+    "category": "Speichern & Datenbanken",
+    "name": "JSON: Objekte als Daten austauschen",
+    "introduction": "JSON besitzt Objekte, Arrays, Strings, Zahlen, true/false und null. Es speichert keine Java-Methoden.",
+    "steps": [
+      "Die Aufgabe enthält Titel und Fertig-Zustand.",
+      "Anführungszeichen im JSON-String werden im Java-String maskiert.",
+      "Für echte Verarbeitung nutzt das Projekt Gson."
+    ],
+    "code": "String json = \"{\\\"title\\\":\\\"Lernen\\\",\\\"done\\\":false}\";\nSystem.out.println(json);",
+    "output": "{\"title\":\"Lernen\",\"done\":false}",
+    "choices": [
+      "{\"title\":\"Lernen\",\"done\":false}",
+      "{title:Lernen,done:false}",
+      "[Lernen,false]"
+    ],
+    "explanation": "Das Beispiel erzeugt nur einen JSON-Text, es parst keine beliebigen JSON-Daten. Das Projekt verwendet Gson statt selbst Texte mit Kommas oder Anführungszeichen zu zerlegen. Gson muss als externe Abhängigkeit eingebunden werden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "gson.toJson(daten); gson.fromJson(text, typ)",
+      "parameters": [
+        [
+          "daten",
+          "Java-Datenobjekte."
+        ],
+        [
+          "typ",
+          "Zieltyp einschließlich der Struktur."
+        ]
+      ],
+      "returns": "toJson liefert String; fromJson liefert ein Objekt oder einen Fehler.",
+      "effect": "Serialisieren kopiert Daten in Text; Speichern erfolgt in einem weiteren Schritt."
+    },
+    "useCase": "Aufgaben als menschenlesbare JSON-Datei exportieren.",
+    "pitfall": "Unbekannte oder fehlende Felder brauchen Regeln; gültiges JSON ist noch kein gültiges Aufgabenmodell.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-utf8",
+    "category": "Speichern & Datenbanken",
+    "name": "UTF-8 und Dateifehler beim Export",
+    "introduction": "Eine Textdatei braucht eine vereinbarte Zeichenkodierung. UTF-8 kann auch Umlaute und viele andere Schriftzeichen darstellen.",
+    "steps": [
+      "Wandle Grüße in UTF-8-Bytes um.",
+      "Dekodiere mit derselben Kodierung.",
+      "Vergleiche Textlänge und Byteanzahl."
+    ],
+    "code": "String text = \"Grüße\";\nbyte[] bytes = text.getBytes(java.nio.charset.StandardCharsets.UTF_8);\nSystem.out.println(bytes.length);\nSystem.out.println(new String(bytes, java.nio.charset.StandardCharsets.UTF_8));",
+    "output": "7\nGrüße",
+    "choices": [
+      "7\nGrüße",
+      "5\nGrüße",
+      "7\nGrusse"
+    ],
+    "explanation": "Files.writeString mit StandardCharsets.UTF_8 schreibt den Text mit einer ausdrücklichen Kodierung. Das Projekt exportiert einen Datenschnappschuss und meldet I/O-Fehler. Eine Datei schreiben und eine Datenbanktransaktion sind unterschiedliche Vorgänge.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Files.writeString(pfad, text, StandardCharsets.UTF_8)",
+      "parameters": [
+        [
+          "pfad",
+          "Exportdatei."
+        ],
+        [
+          "text",
+          "Bereits erzeugter JSON-Inhalt."
+        ]
+      ],
+      "returns": "Path auf die geschriebene Datei; I/O-Fehler werden als IOException gemeldet.",
+      "effect": "Erzeugt oder ersetzt je nach Optionen eine Datei."
+    },
+    "useCase": "JSON mit Namen und Umlauten zwischen Rechnern übertragen.",
+    "pitfall": "Ein erfolgreicher Klick bedeutet noch keinen erfolgreichen Export; zeige die Erfolgsmeldung erst nach abgeschlossenem Schreiben.",
+    "practice": {
+      "task": "Wandle \"Öl\" in UTF-8 um. Gib die Byteanzahl aus und dekodiere die Bytes wieder zum Text.",
+      "hint": "Ö benötigt zwei UTF-8-Bytes, l benötigt eines.",
+      "code": "byte[] b = \"Öl\".getBytes(java.nio.charset.StandardCharsets.UTF_8);\nSystem.out.println(b.length);\nSystem.out.println(new String(b, java.nio.charset.StandardCharsets.UTF_8));",
+      "output": "3\nÖl"
+    },
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-jdbc",
+    "category": "Speichern & Datenbanken",
+    "name": "JDBC und SQLite: Daten dauerhaft speichern",
+    "introduction": "JDBC ist die Java-Schnittstelle für Datenbanken. Für SQLite benötigt das Projekt zusätzlich einen JDBC-Treiber.",
+    "steps": [
+      "java.sql liefert die Schnittstellen.",
+      "Der Treiber verbindet diese mit SQLite.",
+      "Eine Connection muss nach der Verwendung geschlossen werden."
+    ],
+    "code": "System.out.println(java.sql.Connection.class.isInterface());\nSystem.out.println(java.sql.Connection.class.getPackageName());",
+    "output": "true\njava.sql",
+    "choices": [
+      "true\njava.sql",
+      "false\njava.sql",
+      "true\njava.sqlite"
+    ],
+    "explanation": "Das Beispiel untersucht nur den JDBC-Vertrag und öffnet keine Datenbank. Im Projekt erzeugt DriverManager.getConnection(\"jdbc:sqlite:aufgaben.db\") über den eingebundenen Xerial-Treiber eine Verbindung. try-with-resources schließt sie wieder. Die Datei bleibt nach dem Programmende erhalten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "DriverManager.getConnection(\"jdbc:sqlite:aufgaben.db\")",
+      "parameters": [
+        [
+          "URL",
+          "JDBC-Adresse mit dem Pfad zur SQLite-Datei."
+        ]
+      ],
+      "returns": "Connection; Verbindungsfehler werden als SQLException gemeldet.",
+      "effect": "Öffnet eine Verbindung und kann eine Datenbankdatei anlegen."
+    },
+    "useCase": "Aufgaben dauerhaft speichern und später wieder laden.",
+    "pitfall": "JDBC allein enthält nicht automatisch den SQLite-Treiber; die passende Abhängigkeit muss zur Laufzeit auf dem Classpath liegen.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-prepared",
+    "category": "Speichern & Datenbanken",
+    "name": "PreparedStatement: Werte getrennt von SQL",
+    "introduction": "Ein PreparedStatement trennt den SQL-Befehl von seinen Datenwerten. Parameter werden ab Index 1 gesetzt.",
+    "steps": [
+      "Schreibe ein Fragezeichen an die Stelle des Wertes.",
+      "Binde den Titel mit setString(1, titel).",
+      "executeUpdate führt die Änderung aus."
+    ],
+    "code": "String sql = \"INSERT INTO tasks(title, done) VALUES (?, ?)\";\nSystem.out.println(sql.chars().filter(c -> c == '?').count());\nSystem.out.println(java.sql.PreparedStatement.class.isInterface());",
+    "output": "2\ntrue",
+    "choices": [
+      "2\ntrue",
+      "1\ntrue",
+      "2\nfalse"
+    ],
+    "explanation": "Die Ausgabe zählt Platzhalter und prüft den Typ; sie führt kein SQL aus. Im Projekt werden Titel und Fertig-Status als Parameter gebunden. Fragezeichen stehen für Datenwerte, nicht beliebig für Tabellen- oder Spaltennamen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "statement.setString(1, titel); statement.setInt(2, fertig); statement.executeUpdate()",
+      "parameters": [
+        [
+          "1 und 2",
+          "Parameterpositionen ab eins."
+        ],
+        [
+          "titel",
+          "Unverändert zu bindender Text."
+        ]
+      ],
+      "returns": "executeUpdate liefert die Zahl der betroffenen Zeilen.",
+      "effect": "Ändert Daten in der verbundenen Datenbank."
+    },
+    "useCase": "Auch Titel mit Apostrophen sicher in einer Tabelle speichern.",
+    "pitfall": "Baue Benutzereingaben nicht per Stringverkettung in SQL ein; bloßes Ersetzen einzelner Zeichen ist kein Ersatz für Parameterbindung.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-transaction",
+    "category": "Speichern & Datenbanken",
+    "name": "Transaktionen: alles oder nichts speichern",
+    "introduction": "Eine Transaktion bündelt zusammengehörige Datenänderungen. Bei einem Fehler wird zurückgerollt, damit kein halbfertiger Zustand bleibt.",
+    "steps": [
+      "Deaktiviere Auto-Commit für die zusammengehörigen Schritte.",
+      "Führe die Änderungen aus.",
+      "Bestätige mit commit oder verwerfe mit rollback."
+    ],
+    "code": "var schritte = java.util.List.of(\"BEGIN\", \"DELETE\", \"INSERT\", \"COMMIT\");\nSystem.out.println(schritte.get(0));\nSystem.out.println(schritte.get(schritte.size() - 1));",
+    "output": "BEGIN\nCOMMIT",
+    "choices": [
+      "BEGIN\nCOMMIT",
+      "DELETE\nINSERT",
+      "COMMIT\nBEGIN"
+    ],
+    "explanation": "Diese Liste veranschaulicht nur die Reihenfolge. Das Projekt führt echte SQLite-Transaktionen aus: Es ersetzt den gespeicherten Aufgabensatz vollständig und rollt bei SQLException zurück. Ein Datenbankfehler lässt die vorher gespeicherten Aufgaben bestehen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "connection.setAutoCommit(false); connection.commit(); connection.rollback()",
+      "parameters": [
+        [
+          "false",
+          "Änderungen nicht einzeln automatisch bestätigen."
+        ]
+      ],
+      "returns": "Die Methoden liefern void oder melden SQLException.",
+      "effect": "Änderungen werden gemeinsam bestätigt oder verworfen."
+    },
+    "useCase": "Einen kompletten Aufgabensatz ohne halb geleerte Tabelle ersetzen.",
+    "pitfall": "Nach einem Fehler nicht einfach commit aufrufen; rollback gehört in die Fehlerbehandlung.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-maven",
+    "category": "Build & Bibliotheken",
+    "name": "Maven und pom.xml: Abhängigkeiten beschreiben",
+    "introduction": "Maven liest pom.xml. groupId, artifactId und version identifizieren ein Artefakt; dependencies benennt benötigte Bibliotheken.",
+    "steps": [
+      "Das Projekt bindet Gson für JSON ein.",
+      "Die Version wird ausdrücklich angegeben.",
+      "Maven lädt Abhängigkeiten und führt den Build aus."
+    ],
+    "code": "String koordinaten = String.join(\":\", \"com.google.code.gson\", \"gson\", \"2.11.0\");\nSystem.out.println(koordinaten);",
+    "output": "com.google.code.gson:gson:2.11.0",
+    "choices": [
+      "com.google.code.gson:gson:2.11.0",
+      "gson:java:17",
+      "com.google.code.gson.gson.2.11.0"
+    ],
+    "explanation": "Der Code setzt nur Artefaktkoordinaten als Text zusammen. Die echte pom.xml im Aufgabenprojekt enthält Compiler- und Shade-Plugin. mvn package kompiliert und bündelt Abhängigkeiten in eine ausführbare JAR. Maven muss installiert sein und beim ersten Build die Artefakte herunterladen können.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "mvn package",
+      "parameters": [
+        [
+          "package",
+          "Lifecycle-Phase, die vorherige Phasen wie compile und test einschließt."
+        ]
+      ],
+      "returns": "Terminalbefehl mit Exit-Code; kein Java-Methodenaufruf.",
+      "effect": "Erzeugt Build-Artefakte unter target und lädt gegebenenfalls Abhängigkeiten."
+    },
+    "useCase": "Ein Projekt mit denselben Bibliotheksversionen auf einem anderen Rechner bauen.",
+    "pitfall": "Eine dependency-Deklaration ist kein import; import verkürzt nur Klassennamen, Maven stellt Bibliotheken bereit.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-gradle",
+    "category": "Build & Bibliotheken",
+    "name": "Gradle und build.gradle: denselben Build beschreiben",
+    "introduction": "Gradle beschreibt Plugins, Abhängigkeiten und Tasks. Das Aufgabenprojekt enthält eine alternative build.gradle mit application-Plugin.",
+    "steps": [
+      "repositories nennt die Paketquelle.",
+      "dependencies nennt Bibliotheken.",
+      "application.mainClass legt die Startklasse fest."
+    ],
+    "code": "String mainClass = \"de.codeklar.tasks.App\";\nSystem.out.println(mainClass.substring(mainClass.lastIndexOf('.') + 1));",
+    "output": "App",
+    "choices": [
+      "App",
+      "de.codeklar.tasks",
+      "main"
+    ],
+    "explanation": "Das Beispiel liest nur den einfachen Klassennamen. Der reale Gradle-Build verwendet Java-Toolchain 17 und application.mainClass. gradle installDist erstellt ein Startverzeichnis mit Skripten und Bibliotheken. Ein Wrapper ist im ZIP nicht enthalten; verwende eine installierte Gradle-8-Version und ein JDK 17.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "gradle installDist",
+      "parameters": [
+        [
+          "installDist",
+          "Task des application-Plugins, der Startskripte und Bibliotheken zusammenstellt."
+        ]
+      ],
+      "returns": "Terminalbefehl mit Exit-Code.",
+      "effect": "Erzeugt build/install/codeklar-tasks."
+    },
+    "useCase": "Eine Anwendung mitsamt Laufzeit-Abhängigkeiten und Startskripten verteilen.",
+    "pitfall": "Maven und Gradle sind alternative Build-Wege. Mische target- und build-Verzeichnisse nicht versehentlich beim Starten.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-classpath",
+    "category": "Build & Bibliotheken",
+    "name": "Classpath: Klassen und JARs auffindbar machen",
+    "introduction": "Der Classpath enthält Wurzeln kompilierter Klassen und JAR-Dateien. Sein Trenner ist vom Betriebssystem abhängig.",
+    "steps": [
+      "File.pathSeparator liefert den richtigen Trenner.",
+      "Baue daraus zwei Classpath-Einträge.",
+      "Eine JAR bleibt dabei ein eigener Eintrag."
+    ],
+    "code": "String trenner = java.io.File.pathSeparator;\nString cp = \"out\" + trenner + \"lib/gson.jar\";\nSystem.out.println(cp.split(java.util.regex.Pattern.quote(trenner)).length);",
+    "output": "2",
+    "choices": [
+      "2",
+      "1",
+      "3"
+    ],
+    "explanation": "Unter Linux/macOS trennt : die Einträge, unter Windows ;. Der Unterschied betrifft den Classpath, nicht den Punkt im Klassennamen. Maven/Gradle oder ein Startskript übernehmen diese Details normalerweise für dich.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "java -cp \"out<Trenner>lib/gson.jar\" de.codeklar.tasks.App",
+      "parameters": [
+        [
+          "out",
+          "Wurzel deiner Klassen."
+        ],
+        [
+          "lib/gson.jar",
+          "Zusätzliche Bibliothek."
+        ]
+      ],
+      "returns": "Terminalbefehl.",
+      "effect": "Legt fest, wo der Java-Launcher nach Klassen sucht."
+    },
+    "useCase": "ClassNotFoundException bei vorhandenen, aber nicht eingebundenen Bibliotheken lösen.",
+    "pitfall": "java -jar nutzt nicht einfach zusätzlich einen beliebigen -cp-Aufruf; dafür braucht die JAR passende Metadaten oder gebündelte Abhängigkeiten.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-dependency",
+    "category": "Build & Bibliotheken",
+    "name": "Direkte und transitive Abhängigkeiten",
+    "introduction": "Eine Bibliothek kann weitere Bibliotheken benötigen. Diese indirekten Abhängigkeiten heißen transitiv.",
+    "steps": [
+      "Die App benötigt SQLite-JDBC.",
+      "Der Treiber verwendet weitere Infrastruktur.",
+      "Das Build-Werkzeug löst die deklarierten Abhängigkeiten auf."
+    ],
+    "code": "var graph = java.util.Map.of(\"app\", java.util.List.of(\"sqlite-jdbc\"), \"sqlite-jdbc\", java.util.List.of(\"slf4j-api\"));\nSystem.out.println(graph.get(\"app\").get(0));\nSystem.out.println(graph.get(\"sqlite-jdbc\").get(0));",
+    "output": "sqlite-jdbc\nslf4j-api",
+    "choices": [
+      "sqlite-jdbc\nslf4j-api",
+      "slf4j-api\napp",
+      "app\nsqlite-jdbc"
+    ],
+    "explanation": "Die Map illustriert einen Abhängigkeitsgraphen und lädt selbst keine JARs. mvn dependency:tree oder gradle dependencies zeigt den tatsächlichen Graphen. Versionen sollten bewusst gepflegt werden; für das Lernprojekt sind sie fest angegeben.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "mvn dependency:tree\ngradle dependencies",
+      "parameters": [],
+      "returns": "Terminalbefehle mit Textausgabe.",
+      "effect": "Lesen beziehungsweise lösen den Abhängigkeitsgraphen des Projekts."
+    },
+    "useCase": "Erkennen, warum eine Bibliothek im Projekt auftaucht oder mehrfach vorkommt.",
+    "pitfall": "Die Versionsnummer der direkten Bibliothek sagt nichts darüber aus, ob jede transitive Abhängigkeit dieselbe Version oder Lizenz hat.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-resources",
+    "category": "Build & Bibliotheken",
+    "name": "Ressourcen: Texte und Bilder im Projekt",
+    "introduction": "Dateien unter src/main/resources werden bei Maven/Gradle als Ressourcen in die Ausgabe kopiert. Zur Laufzeit werden sie über den Classpath geladen.",
+    "steps": [
+      "Der Projekttext liegt unter /de/codeklar/tasks/hilfe.txt.",
+      "Ein führender Schrägstrich sucht bei Class.getResourceAsStream ab der Ressourcenwurzel.",
+      "Eine fehlende Ressource liefert null."
+    ],
+    "code": "System.out.println(String.class.getResourceAsStream(\"/codeklar-nicht-vorhanden.txt\") == null);",
+    "output": "true",
+    "choices": [
+      "true",
+      "false",
+      "IOException"
+    ],
+    "explanation": "Im Projekt liegt die Hilfe-Datei im ZIP und später in der JAR. App.class.getResourceAsStream lädt sie unabhängig vom aktuellen Arbeitsverzeichnis. Der Stream wird mit try-with-resources geschlossen und als UTF-8 gelesen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "App.class.getResourceAsStream(\"/de/codeklar/tasks/hilfe.txt\")",
+      "parameters": [
+        [
+          "pfad",
+          "Absoluter Ressourcenpfad innerhalb des Classpath."
+        ]
+      ],
+      "returns": "InputStream oder null.",
+      "effect": "Öffnet einen zu schließenden Lesestream."
+    },
+    "useCase": "Hilfetexte, Vorlagen oder Bilder zusammen mit der Anwendung ausliefern.",
+    "pitfall": "Eine Ressource in einer JAR ist nicht automatisch eine normale Datei auf dem Dateisystem; new File mit dem Ressourcenpfad ist oft falsch.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-jar",
+    "category": "Programme verteilen",
+    "name": "JAR und Manifest: den Startpunkt festlegen",
+    "introduction": "Eine ausführbare JAR enthält Klassen und ein Manifest mit Main-Class. Abhängigkeiten müssen zusätzlich verfügbar oder passend gebündelt sein.",
+    "steps": [
+      "Erzeuge ein Manifest im Speicher.",
+      "Trage die vollständige Startklasse ein.",
+      "Lies Main-Class wieder aus."
+    ],
+    "code": "var manifest = new java.util.jar.Manifest();\nmanifest.getMainAttributes().putValue(\"Manifest-Version\", \"1.0\");\nmanifest.getMainAttributes().putValue(\"Main-Class\", \"de.codeklar.tasks.App\");\nSystem.out.println(manifest.getMainAttributes().getValue(\"Main-Class\"));",
+    "output": "de.codeklar.tasks.App",
+    "choices": [
+      "de.codeklar.tasks.App",
+      "App.java",
+      "main"
+    ],
+    "explanation": "Das Beispiel erzeugt noch keine JAR-Datei. Maven Shade bündelt im Projekt die Bibliotheken und setzt Main-Class. Den resultierenden Build startest du mit java -jar target/codeklar-tasks-1.0.0.jar.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "java -jar target/codeklar-tasks-1.0.0.jar",
+      "parameters": [
+        [
+          "-jar",
+          "Starte die im Manifest deklarierte Main-Class."
+        ]
+      ],
+      "returns": "Terminalbefehl mit Exit-Code.",
+      "effect": "Startet einen neuen Java-Prozess."
+    },
+    "useCase": "Eine Anwendung ohne IDE starten.",
+    "pitfall": "Eine normale dünne JAR enthält ihre Abhängigkeiten nicht automatisch; das Lernprojekt konfiguriert dafür ausdrücklich Shade.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-jar-content",
+    "category": "Programme verteilen",
+    "name": "JAR-Inhalt prüfen: Packages bleiben erhalten",
+    "introduction": "Eine JAR ist ein ZIP-basiertes Archiv. Die Eintragsnamen verwenden Schrägstriche, beispielsweise de/codeklar/tasks/App.class.",
+    "steps": [
+      "Erzeuge einen Archiveintrag im Speicher.",
+      "Lies seinen Namen.",
+      "Die Package-Struktur bleibt im Archiv erhalten."
+    ],
+    "code": "var eintrag = new java.util.zip.ZipEntry(\"de/codeklar/tasks/App.class\");\nSystem.out.println(eintrag.getName());\nSystem.out.println(eintrag.isDirectory());",
+    "output": "de/codeklar/tasks/App.class\nfalse",
+    "choices": [
+      "de/codeklar/tasks/App.class\nfalse",
+      "App.java\nfalse",
+      "de.codeklar.tasks.App\ntrue"
+    ],
+    "explanation": "jar --list --file datei.jar zeigt die echten Einträge einer JAR. Das Aufgabenprojekt enthält außerdem hilfe.txt. Ein fehlender Ressourcenpfad lässt sich so prüfen, ohne die Anwendung zu verändern.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "jar --list --file target/codeklar-tasks-1.0.0.jar",
+      "parameters": [
+        [
+          "--file",
+          "Zu untersuchendes Archiv."
+        ]
+      ],
+      "returns": "Terminalbefehl mit Liste der Archiveinträge.",
+      "effect": "Liest das Archiv; verändert es nicht."
+    },
+    "useCase": "Prüfen, ob Klassen, Hilfetexte und eingebundene Bibliotheken im Build enthalten sind.",
+    "pitfall": "Entpacke unbekannte Archive nicht ungeprüft über bestehende Projektdateien; zum Nachsehen reicht die Inhaltsliste.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-jpackage",
+    "category": "Programme verteilen",
+    "name": "jpackage: eine Desktop-App ausliefern",
+    "introduction": "jpackage kann eine Anwendung mit Java-Laufzeit bündeln. Ein app-image ist ein startbarer Ordner; ein Installer ist ein weiterer Schritt.",
+    "steps": [
+      "Baue zunächst die ausführbare JAR.",
+      "Erzeuge auf deinem Zielsystem ein app-image.",
+      "Teste es und erstelle erst danach einen Installer."
+    ],
+    "code": "System.out.println(java.nio.file.Path.of(\"release\", \"CodeKlarTasks\").getFileName());",
+    "output": "CodeKlarTasks",
+    "choices": [
+      "CodeKlarTasks",
+      "release",
+      "CodeKlarTasks.jar"
+    ],
+    "explanation": "Das Beispiel verarbeitet nur den Zielpfad. Im Projekt steht ein vollständiger jpackage --type app-image-Befehl. jpackage ist plattformabhängig: Eine Windows-Ausgabe wird auf Windows gebaut, eine macOS-Ausgabe auf macOS. Installertypen können zusätzliche Systemwerkzeuge und Signierung benötigen.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "jpackage --type app-image --name CodeKlarTasks --input target --main-jar codeklar-tasks-1.0.0.jar --dest release",
+      "parameters": [
+        [
+          "--input",
+          "Ordner mit der gebauten JAR."
+        ],
+        [
+          "--dest",
+          "Ausgabeordner für das App-Image."
+        ]
+      ],
+      "returns": "Terminalbefehl mit Exit-Code.",
+      "effect": "Erzeugt eine plattformspezifische Anwendung samt Laufzeit."
+    },
+    "useCase": "Ein Programm an Personen verteilen, die keine IDE und kein separates JDK installieren möchten.",
+    "pitfall": "jpackage ist kein universeller Cross-Compiler und erledigt Signierung oder macOS-Notarisierung nicht automatisch.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-datapath",
+    "category": "Programme verteilen",
+    "name": "Programmdaten brauchen einen beschreibbaren Ort",
+    "introduction": "Die Installationsdateien und die veränderlichen Benutzerdaten gehören an unterschiedliche Orte. Der Programmordner ist oft nicht beschreibbar.",
+    "steps": [
+      "Die App nimmt standardmäßig einen Ordner im Benutzerverzeichnis.",
+      "Die Datenbank liegt außerhalb der JAR.",
+      "Ein Startargument kann für Tests einen anderen Datenordner festlegen."
+    ],
+    "code": "var ordner = java.nio.file.Path.of(\"benutzer\", \".codeklar-tasks\");\nSystem.out.println(ordner.resolve(\"aufgaben.db\").getFileName());",
+    "output": "aufgaben.db",
+    "choices": [
+      "aufgaben.db",
+      ".codeklar-tasks",
+      "benutzer"
+    ],
+    "explanation": "Das Projekt verwendet Path.of(System.getProperty(\"user.home\"), \".codeklar-tasks\") und legt diesen Ordner bei Bedarf an. Es gibt den aktiven Pfad in der Hilfe aus. Tests verwenden eigene temporäre Verzeichnisse statt echter Benutzerdaten.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Files.createDirectories(datenordner); datenordner.resolve(\"aufgaben.db\")",
+      "parameters": [
+        [
+          "datenordner",
+          "Beschreibbarer Speicherort für diese Anwendung."
+        ]
+      ],
+      "returns": "createDirectories und resolve liefern Path.",
+      "effect": "createDirectories kann Ordner anlegen; resolve baut zunächst nur einen Pfad."
+    },
+    "useCase": "Daten behalten, wenn ein neues Programm-Build installiert wird.",
+    "pitfall": "Versuche nicht, eine SQLite-Datei direkt in einer JAR zu verändern; Ressourcen und veränderliche Daten erfüllen verschiedene Aufgaben.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-breakpoint",
+    "category": "Debugging",
+    "name": "Breakpoints: Werte vor einer Zeile ansehen",
+    "introduction": "Ein Breakpoint hält den laufenden Prozess an einer markierten Stelle an. Du kannst dann Variablen prüfen, bevor der nächste Schritt ausgeführt wird.",
+    "steps": [
+      "Der Warenpreis ist 7 und die Anzahl 3.",
+      "Vor der Berechnung sind beide Eingaben sichtbar.",
+      "Nach dem Schritt ist summe gleich 21."
+    ],
+    "code": "int preis = 7;\nint anzahl = 3;\nint summe = preis * anzahl;\nSystem.out.println(summe);",
+    "output": "21",
+    "choices": [
+      "21",
+      "10",
+      "73"
+    ],
+    "explanation": "Setze in der IDE einen Breakpoint auf die Berechnungszeile und starte Debug statt Run. Das Projekt beschreibt auch, wie du auf Counter-ähnliche UI-Ereignisse wartest und den Listener schrittweise ausführst. Ein Breakpoint verändert nicht den Quelltext, sondern die Ausführung während der Debug-Sitzung.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Breakpoint → Debug starten → Variablen ansehen → Step Over",
+      "parameters": [],
+      "returns": "Debugger-Aktionen, keine Java-Methoden.",
+      "effect": "Hält den ausgewählten Prozess beziehungsweise je nach Einstellung seine Threads an."
+    },
+    "useCase": "Prüfen, ob falsche Ergebnisse aus falschen Eingaben oder aus der Rechnung entstehen.",
+    "pitfall": "Ein pausierter EDT lässt das Fenster eingefroren wirken; das kann eine normale Folge des Breakpoints sein.",
+    "practice": {
+      "task": "Prüfe einen Mengenrabatt: Drei Artikel zu je 8 Euro, ab drei Artikeln 4 Euro Rabatt. Gib den Endbetrag aus.",
+      "hint": "Beobachte zuerst die Zwischensumme, dann den Rabatt.",
+      "code": "int anzahl = 3;\nint summe = anzahl * 8;\nif (anzahl >= 3) summe -= 4;\nSystem.out.println(summe);",
+      "output": "20"
+    },
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-step",
+    "category": "Debugging",
+    "name": "Step Into, Step Over und Step Out",
+    "introduction": "Step Into führt in eine aufgerufene Methode. Step Over führt den Aufruf aus und bleibt auf derselben Ebene. Step Out läuft bis zur Rückkehr.",
+    "steps": [
+      "main ruft verdoppeln mit 4 auf.",
+      "In der Methode heißt der Parameter n.",
+      "Nach der Rückkehr erhält main die 8."
+    ],
+    "code": "int ergebnis = verdoppeln(4);\nSystem.out.println(ergebnis);",
+    "output": "8",
+    "choices": [
+      "8",
+      "4",
+      "44"
+    ],
+    "explanation": "Beim Schritt in die Methode siehst du deren lokale Variablen und einen weiteren Stack Frame. Step Over überspringt die Methode nicht fachlich: Sie wird trotzdem ausgeführt. Im Aufgabenprojekt kannst du so die Eingabeprüfung verfolgen.",
+    "declarations": "static int verdoppeln(int n) { return n * 2; }",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Step Into → Methodenrumpf; Step Over → nächster Aufruferschritt; Step Out → Rückkehr",
+      "parameters": [],
+      "returns": "Debugger-Steuerung ohne festen Java-Rückgabewert.",
+      "effect": "Bestimmt, bis zu welcher Stelle der pausierte Prozess weiterläuft."
+    },
+    "useCase": "Eigene Methoden verstehen, ohne gleich durch jede Bibliotheksimplementierung zu springen.",
+    "pitfall": "Eine Methode wird durch Step Over nicht ausgelassen; Seiteneffekte finden weiterhin statt.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-stack",
+    "category": "Debugging",
+    "name": "Stacktrace: von der Fehlerstelle zum Aufrufer",
+    "introduction": "Ein Stacktrace listet Aufrufstellen auf. Der erste passende Frame im eigenen Code ist ein guter Startpunkt für die Fehlersuche.",
+    "steps": [
+      "Eine Exception wird in berechne erzeugt.",
+      "Der erste Frame nennt berechne.",
+      "Der nächste Frame führt zurück zu main."
+    ],
+    "code": "try { berechne(); } catch (IllegalStateException e) {\n    System.out.println(e.getStackTrace()[0].getMethodName());\n    System.out.println(e.getStackTrace()[1].getMethodName());\n}",
+    "output": "berechne\nmain",
+    "choices": [
+      "berechne\nmain",
+      "main\nberechne",
+      "Exception\nmain"
+    ],
+    "explanation": "Dateiname und Zeilennummer zeigen, wo du nachsehen solltest. Die oberste Bibliothekszeile erklärt aber nicht immer die fachliche Ursache: Lies zusätzlich die Fehlermeldung und die Aufrufer im eigenen Code.",
+    "declarations": "static void berechne() { throw new IllegalStateException(\"Ungültiger Zustand\"); }",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "exception.getStackTrace()",
+      "parameters": [],
+      "returns": "Array von StackTraceElement mit Methoden-, Datei- und Zeileninformationen.",
+      "effect": "Liest die gespeicherten Aufrufinformationen."
+    },
+    "useCase": "Von einer Fehlermeldung zur verantwortlichen Codezeile gelangen.",
+    "pitfall": "Die letzte Zeile ist nicht automatisch die Ursache; Stacktraces zeigen Aufrufwege und können mehrere verschachtelte Ursachen enthalten.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-cause",
+    "category": "Debugging",
+    "name": "Caused by: die ursprüngliche Ursache finden",
+    "introduction": "Eine Exception kann eine andere Exception als Ursache enthalten. Die äußere Meldung beschreibt den Kontext, die Ursache oft das konkrete Problem.",
+    "steps": [
+      "Erzeuge einen Zahlenfehler.",
+      "Verpacke ihn mit einem fachlichen Kontext.",
+      "Lies den Typ der ursprünglichen Ursache."
+    ],
+    "code": "var ursache = new NumberFormatException(\"Keine Zahl\");\nvar fehler = new IllegalArgumentException(\"Schritt ungültig\", ursache);\nSystem.out.println(fehler.getMessage());\nSystem.out.println(fehler.getCause().getClass().getSimpleName());",
+    "output": "Schritt ungültig\nNumberFormatException",
+    "choices": [
+      "Schritt ungültig\nNumberFormatException",
+      "Keine Zahl\nIllegalArgumentException",
+      "Schritt ungültig\nnull"
+    ],
+    "explanation": "SwingWorker.get kann eine ExecutionException liefern. Im Projekt wird deren Ursache für eine verständliche Meldung verwendet. Für Entwickler bleibt der vollständige Stacktrace auf Standardfehler sichtbar, statt durch einen leeren catch-Block zu verschwinden.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "new IllegalArgumentException(kontext, ursache); fehler.getCause()",
+      "parameters": [
+        [
+          "kontext",
+          "Fachliche Beschreibung."
+        ],
+        [
+          "ursache",
+          "Ursprünglicher Fehler."
+        ]
+      ],
+      "returns": "getCause liefert Throwable oder null.",
+      "effect": "Erhält die Fehlerkette für spätere Diagnose."
+    },
+    "useCase": "Eine gescheiterte Speicheraktion verständlich melden, ohne die ursprüngliche Ursache zu verlieren.",
+    "pitfall": "getCause kann null sein; eine Kette muss vor dem nächsten Zugriff auf ihr Ende geprüft werden.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  },
+  {
+    "id": "desktop-watch",
+    "category": "Debugging",
+    "name": "Watch und bedingte Breakpoints: gezielt suchen",
+    "introduction": "Ein Watch-Ausdruck zeigt einen berechneten Wert im aktuellen Stack Frame. Ein bedingter Breakpoint hält nur bei einer passenden Bedingung an.",
+    "steps": [
+      "Die Liste enthält einen negativen Eintrag.",
+      "Die Bedingung wert < 0 trifft genau einmal zu.",
+      "Dort kannst du Herkunft und Bedeutung prüfen."
+    ],
+    "code": "int[] werte = {2, 4, -1, 8};\nfor (int wert : werte) {\n    if (wert < 0) System.out.println(wert);\n}",
+    "output": "-1",
+    "choices": [
+      "-1",
+      "2\n4\n-1\n8",
+      "0"
+    ],
+    "explanation": "Setze den bedingten Breakpoint im Schleifenrumpf auf wert < 0. Ein Watch wie werte.length ist harmlos; ein Methodenaufruf mit Seiteneffekten kann dagegen beim Auswerten den Zustand verändern. Beim Pong-Spiel ist ein Breakpoint vor dem Abprallen hilfreicher als bei jedem Timer-Tick.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Bedingung: wert < 0\nWatch: werte.length",
+      "parameters": [],
+      "returns": "Ein Ausdruck liefert einen Wert im aktuell gewählten Stack Frame.",
+      "effect": "Ein reiner Ausdruck liest Daten; Methodenaufrufe können Seiteneffekte haben."
+    },
+    "useCase": "Einen seltenen Fehlerfall finden, ohne hunderte Schleifendurchläufe manuell weiterzuschalten.",
+    "pitfall": "Beobachte nicht unbedacht queue.remove() oder iterator.next(): Ein Watch kann damit Daten verändern.",
+    "projectId": "java-task-desktop",
+    "projectTitle": "Aufgabenverwaltung",
+    "projectDescription": "Das vollständige Desktop-Projekt verbindet diese Bausteine. Im ZIP findest du Quellcode, Startanleitung und eigene Tests. Starte Java-Oberflächen auf deinem Computer; im Browser lernst du die Zusammenhänge."
+  }
+]

@@ -3,22 +3,23 @@ import { javaLessonPack } from '../src/javaLessons.js';
 import { javaProjects } from '../src/javaProjects.js';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, dirname } from 'node:path';
+import { join, dirname, delimiter } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 const exec = promisify(execFile);
 const root = await mkdtemp(join(tmpdir(), 'codeklar-java-'));
 const run = (args, options = {}) => exec('java', args, { timeout: 20000, maxBuffer: 1024 * 1024, ...options });
 const normalized = text => text.replaceAll('\r\n', '\n').trimEnd();
-async function compile(files, output) {
+async function compile(files, output, classpath) {
+  const dependencies = classpath ? ['-cp', classpath] : [];
   const compiler = ['-m', 'jdk.compiler/com.sun.tools.javac.Main'];
   try {
-    await run([...compiler, '--release', '17', '-encoding', 'UTF-8', '-d', output, ...files]);
+    await run([...compiler, '--release', '17', '-encoding', 'UTF-8', '-d', output, ...dependencies, ...files]);
   } catch (error) {
     if (!error.stderr?.includes('release version 17 not supported')) throw error;
     // Some stripped execution environments include the compiler but no ct.sym API signatures.
     console.warn('Java 17 API signatures unavailable; checking source/bytecode level 17 against the installed JDK.');
-    await run([...compiler, '-source', '17', '-target', '17', '-encoding', 'UTF-8', '-d', output, ...files]);
+    await run([...compiler, '-source', '17', '-target', '17', '-encoding', 'UTF-8', '-d', output, ...dependencies, ...files]);
   }
 }
 function require(condition, message) { if (!condition) throw new Error(message); }
@@ -44,6 +45,14 @@ try {
     }
   }));
   console.log(`${javaLessonPack.length} Java examples and ${programs.length - javaLessonPack.length} exercise solutions compiled and produced the expected output.`);
+  const dependencyFiles = [];
+  const dependencies = new Map(javaProjects.flatMap(p => p.javaDependencies || []).map(d => [d.name, d]));
+  const libraries = join(root, 'libraries'); await mkdir(libraries);
+  for (const dependency of dependencies.values()) {
+    const file = join(libraries, dependency.name);
+    await exec('curl', ['--fail', '--location', '--silent', '--show-error', '--max-time', '60', '--output', file, dependency.url], { timeout: 65000 });
+    dependencyFiles.push(file);
+  }
   const projectFiles = [];
   for (const project of javaProjects) {
     const dir = join(root, project.id); await mkdir(dir);
@@ -51,9 +60,14 @@ try {
       const file = join(dir, name); await mkdir(dirname(file), { recursive: true }); await writeFile(file, source); if (name.endsWith('.java')) projectFiles.push(file);
     }
   }
-  const projectClasses = join(root, 'project-classes'); await compile(projectFiles, projectClasses);
+  const projectClasses = join(root, 'project-classes'); await compile(projectFiles, projectClasses, dependencyFiles.join(delimiter));
+  for (const project of javaProjects) for (const [name, source] of Object.entries(project.files)) {
+    const prefix = 'src/main/resources/';
+    if (name.startsWith(prefix)) { const target = join(projectClasses, name.slice(prefix.length)); await mkdir(dirname(target), { recursive: true }); await writeFile(target, source); }
+  }
+  const projectClasspath = [projectClasses, ...dependencyFiles].join(delimiter);
   for (const name of javaProjects.flatMap(project => project.javaMainClass ? [project.javaMainClass] : Object.keys(project.files).filter(file => file.endsWith('.java')).map(file => file.slice(0, -5)))) {
-    const result = await run(['-cp', projectClasses, name, 'test']);
+    const result = await run(['-Djava.awt.headless=true', '-cp', projectClasspath, name, 'test']);
     require(result.stdout.includes('Tests') || result.stdout.includes('tests bestanden'), `${name}: test success missing`);
     console.log(normalized(result.stdout));
   }

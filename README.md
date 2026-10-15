@@ -661,3 +661,35 @@ java -cp out de.codeklar.desktop.App
 Die zwölf Swing-Tests prüfen Initialzustand, Addition, Reset, ungültige/leer gelassene Eingaben, Grenzen, Rand-Leerzeichen, Enter-Aktion und Überlauf. Der Projektprüfer unterstützt nun verschachtelte Quellpfade und einen vollständigen Startklassennamen. `npm run test:java` prüft sämtliche 318 generierten Beispielprogramme, 90 Übungslösungen und nun zwölf getestete Java-Projekte mit insgesamt 119 eingebauten Testprüfungen. Dazu kommen die bestehenden Interaktions-, Datei- und HTTP-Prüfungen. Unter Projekte gibt es einschließlich des älteren Zahlenratespiels jetzt 13 Java-Projektangebote.
 
 Die native Prüfung lief unter OpenJDK 21 mit Quell-/Bytecode-Level 17; die API-Signaturen für einen echten `--release 17`-Lauf fehlen in dieser Umgebung. Die Swing-Komponententests benötigen kein sichtbares Fenster. Ein echtes JFrame-Fenster wurde hier mangels grafischer Desktop-Sitzung nicht visuell geprüft. Browserprüfungen decken mobile Lesbarkeit, vollständige ZIP-Inhalte, Lektion-/Projektverknüpfung sowie die nach dem ersten Laden offline verfügbaren Lerninhalte ab.
+
+### Java: vollständige Desktop-Praxis von Oberflächen bis Verteilung
+
+Weitere **30 Lektionen** ergänzen Java auf **349 Lektionen insgesamt**, **94 lokale Programmierübungen** und **234 Syntax-/Methodenhilfen**. Alle sechs vorgeschlagenen Themengebiete sind enthalten, ohne die sechs Java-Hauptbereiche zu vermehren:
+
+- **Objektorientierung → Oberflächen & Swing:** Menüleisten, Bestätigungsdialoge, JTable, JFileChooser, CardLayout und SwingWorker. Dazu unter **Zeichnen & Spiele**: paintComponent, Key Bindings, Swing-Timer, zeitbezogene Bewegung und Kollisionen.
+- **Eingaben, Dateien & Fehler → Speichern & Datenbanken:** JSON-Datenvertrag, UTF-8, JDBC/SQLite, PreparedStatement und Transaktionen mit Rollback.
+- **Werkzeuge, Tests & Zahlen → Build & Bibliotheken:** Maven/pom.xml, Gradle/build.gradle, Classpath, transitive Abhängigkeiten und Ressourcen. Unter **Programme verteilen** folgen JAR/Manifest, Archivinhalt, jpackage und beschreibbare Datenpfade. **Debugging** erklärt Breakpoints, Step Into/Over/Out, Stacktrace, Ursachenketten, Watches und bedingte Breakpoints.
+
+Vier weitere lokale Aufgaben haben Hinweise, vollständige Java-Lösungen und erwartete Ausgaben. Jede der neuen Lektionen verlinkt eines der beiden vollständigen Beispielprojekte. Terminalbefehle werden als solche erklärt: Ein Java-Beispiel, das einen Pfad oder Artefaktnamen ausgibt, führt damit noch keinen Maven-Build oder SQL-Befehl aus. Die vollständigen Arbeitsabläufe stehen in den Projekten.
+
+**Projekte → Java: Aufgabenverwaltung mit SQLite & JSON** enthält fünf Java-Dateien, Maven- und Gradle-Builds, eine gebündelte Hilfe-Ressource und eine ausführliche `ANLEITUNG.md`. Die App bietet eine sortierbare Tabelle, Hinzufügen/Fertig/Löschen, Menü, Dateiauswahl, JSON-Import/Export, SQLite-Speichern/Laden und eine Hilfe-Ansicht. Hintergrundarbeit läuft in SwingWorker; währenddessen sind Änderungen gesperrt. Vor dem Schließen oder Ersetzen ungespeicherter Daten erscheint eine Rückfrage. Die Datei wird standardmäßig unter `user.home/.codeklar-tasks/aufgaben.db` gespeichert, außerhalb der JAR. JSON-Import ist zunächst ungespeichert; SQLite speichern übernimmt den Stand dauerhaft. Das Lernmodell ist für eine lokal geöffnete App-Instanz gedacht und besitzt keine Konfliktauflösung zwischen mehreren gleichzeitig schreibenden Instanzen.
+
+Der JSON-Vertrag verlangt genau die Felder `id` (positive ganze Zahl im long-Bereich), `title` (String mit 1–200 Zeichen nach strip) und `done` (boolean). Höchstens 1000 Aufgaben und eindeutige IDs; ungültige oder mehr als 1 MB große Importdateien werden verworfen. Ein fehlgeschlagener Import ersetzt die aktuelle Liste nicht. SQL-Werte werden gebunden; das Ersetzen des gespeicherten Aufgabensatzes ist eine echte Transaktion.
+
+```sh
+mvn package
+java -Djava.awt.headless=true -jar target/codeklar-tasks-1.0.0.jar test
+java -jar target/codeklar-tasks-1.0.0.jar
+```
+
+Alternative mit installiertem Gradle 8 (kein Wrapper im ZIP): `gradle check installDist`. Danach das Startskript unter `build/install/codeklar-tasks/bin` ausführen; die gesamte Distribution inklusive `lib` gehört zusammen. Maven erzeugt mittels Shade eine einzelne ausführbare JAR mit Bibliotheken, Gradle hier eine Distribution mit Startskripten. Beide Builds benötigen beim ersten Mal Internet für Abhängigkeiten und Plugins. Das Projekt verwendet Gson 2.11.0, SQLite-JDBC 3.46.1.0 sowie SLF4J API/Simple 2.0.16; die Versionen sind festgelegt und müssen bei langfristiger Nutzung gepflegt werden.
+
+`ANLEITUNG.md` erklärt Ressourcen in `src/main/resources`, Manifest/Archivprüfung, einen Debugging-Durchlauf und `jpackage --type app-image`. App-Images werden auf dem jeweiligen Zielbetriebssystem gebaut. Installer können zusätzliche Systemwerkzeuge sowie Signierung/Notarisierung benötigen; diese Schritte sind nicht vorkonfiguriert.
+
+**Projekte → Java: Pong-Labor für zwei** enthält vier Java-Dateien ohne externe Abhängigkeiten. Leertaste startet/pausiert, W/S steuert links, Hoch/Runter rechts, R setzt das Spiel zurück. Nach einem Punkt wird pausiert. Bei Fokusverlust werden Tasten zurückgesetzt; beim Schließen stoppt der Timer. Modell und Zeichnen sind getrennt; Zeitmessung, begrenztes dt und kleine Teilschritte machen die Simulation nachvollziehbar. Die Spielfeldgröße ist bewusst fest 640 × 360 Pixel.
+
+**Verifikation:** Alle 348 generierten Beispiele und 94 Übungslösungen wurden mit einem vollständigen JDK 17 kompiliert (`--release 17`) und ausgeführt. Die 14 geprüften Java-Projekte haben insgesamt 164 eingebaute Testprüfungen; die bestehenden Interaktions-, Datei- und HTTP-Prüfungen bleiben erhalten. Die Aufgabenverwaltung prüft in 24 Fällen echte SQLite-Dateien, Transaktions-Rollback, JSON mit Umlauten/Anführungszeichen, ungültige Feldtypen und IDs, Ressourcen sowie Swing-Tabellenauswahl nach Sortierung. 21 Pong-Prüfungen decken Bewegung, Wände, Schläger, Punkte, ungültiges dt, Key Bindings, Fokusverlust, Timer-Stopp und Zeichnen in ein Bild ab. Der Java-Prüfer lädt die festgelegten Projektbibliotheken aus Maven Central und kopiert Ressourcen in die Testausgabe. Unter Projekte gibt es einschließlich des älteren Zahlenratespiels nun 15 Java-Projektangebote.
+
+Swing bleibt eine Desktop-Technik: Die mobile Webapp zeigt die Lerninhalte, Aufgaben und Downloads. Ein sichtbares Desktop-Fenster wurde hier mangels grafischer Sitzung nicht visuell geprüft; Komponententests und Zeichentests laufen ohne Fenster. Native Installer und macOS-/Windows-Ausgaben benötigen Prüfung auf ihren Zielsystemen.
+
+Für diese Erweiterung wurden außerdem Maven 3.9.9 (`clean package`), Gradle 8.10.2 (`check installDist`), die gebündelte Maven-JAR und ein unter Linux erzeugtes jpackage-App-Image mit JDK 17 geprüft. Alle 24 Aufgabenprüfungen liefen auch aus der JAR und dem App-Image erfolgreich. Sichtbare Fenster/Dateidialoge sowie Installer und andere Betriebssysteme sind damit nicht visuell geprüft.

@@ -10,7 +10,8 @@
     "test": "playwright test",
     "test:pwa": "npm run build && playwright test --config=playwright.pwa.config.js",
     "test:java": "node scripts/verify-java.mjs",
-    "test:ideas": "node scripts/verify-idea-guides.mjs"
+    "test:ideas": "node scripts/verify-idea-guides.mjs",
+    "test:python": "node scripts/verify-python.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",

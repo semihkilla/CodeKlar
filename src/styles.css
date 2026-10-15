@@ -2348,12 +2348,12 @@ body {
  .topic-navigation .topic-tabs { display:none; }
 }
 @media (max-height:550px) { .topic-sheet { height:calc(100vh - 100px - env(safe-area-inset-bottom)); height:calc(100dvh - 100px - env(safe-area-inset-bottom)); } }
-.java-quiz-output { white-space:pre-wrap; font-family:var(--mono); font-size:14px; line-height:1.7; overflow-wrap:anywhere; text-align:left; }
+.java-quiz-output, .python-quiz-output { white-space:pre-wrap; font-family:var(--mono); font-size:14px; line-height:1.7; overflow-wrap:anywhere; text-align:left; }
 .java-api-help p,.java-self-practice p { font-size:16px; line-height:1.75; overflow-wrap:anywhere; }
-.java-api-parameters { margin:0 0 20px; }
-.java-api-parameters > div { padding:12px 0; border-bottom:1px solid var(--border); }
-.java-api-parameters dt { font-size:15px; margin-bottom:6px; color:var(--accent); }
-.java-api-parameters dd { margin:0; font-size:16px; line-height:1.75; overflow-wrap:anywhere; }
-.java-practice-note { color:var(--muted); }
+.java-api-parameters, .python-api-parameters { margin:0 0 20px; }
+.java-api-parameters > div, .python-api-parameters > div { padding:12px 0; border-bottom:1px solid var(--border); }
+.java-api-parameters dt, .python-api-parameters dt { font-size:15px; margin-bottom:6px; color:var(--accent); }
+.java-api-parameters dd, .python-api-parameters dd { margin:0; font-size:16px; line-height:1.75; overflow-wrap:anywhere; }
+.java-practice-note, .python-practice-note { color:var(--muted); }
 
 .idea-entry { display:block; margin-block:12px; text-align:left; white-space:normal; }

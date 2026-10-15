@@ -1,0 +1,1568 @@
+[
+  {
+    "id": "variables",
+    "category": "Grundlagen",
+    "name": "Variablen und print(): Werte benennen",
+    "introduction": "Eine Variable bindet einen Namen an einen Wert. print gibt Werte aus; = weist zu und vergleicht nicht.",
+    "steps": [
+      "Binde punkte an die Zahl 3.",
+      "Berechne einen neuen Wert und weise ihn wieder zu.",
+      "print zeigt den aktuellen Wert."
+    ],
+    "code": "punkte = 3\npunkte = punkte + 2\nprint(punkte)",
+    "output": "5",
+    "choices": [
+      "5",
+      "3",
+      "32"
+    ],
+    "explanation": "Python braucht hier keine Deklaration mit int vor dem Namen. Die Einrückung gehört zur Syntax; ein späterer Block wie if oder def wird üblicherweise mit vier Leerzeichen eingerückt.",
+    "methodProfile": {
+      "signature": "name = wert; print(wert)",
+      "parameters": [
+        [
+          "wert",
+          "Zu speichernder beziehungsweise auszugebender Wert."
+        ]
+      ],
+      "returns": "Zuweisung liefert keinen Ausdruckswert; print liefert None.",
+      "effect": "Ändert die Namensbindung und schreibt auf die Standardausgabe."
+    },
+    "useCase": "Punktestand oder Rechenergebnis eines Programms speichern.",
+    "pitfall": "Ein Name muss vor dem Lesen gebunden sein; sonst entsteht NameError.",
+    "practice": {
+      "task": "Starte mit 10 Punkten, addiere 7 und ziehe 2 ab. Gib den Endstand aus.",
+      "hint": "Führe die Änderungen nacheinander am selben Namen aus.",
+      "code": "punkte = 10\npunkte += 7\npunkte -= 2\nprint(punkte)",
+      "output": "15"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "types",
+    "category": "Grundlagen",
+    "name": "int, float, str, bool und None",
+    "introduction": "Werte besitzen Typen. None bezeichnet das Fehlen eines Wertes; es ist weder die Zahl 0 noch der Text \"None\".",
+    "steps": [
+      "type liefert den Typ eines Wertes.",
+      "__name__ zeigt hier dessen kurzen Namen.",
+      "Ein String bleibt Text, auch wenn er Ziffern enthält."
+    ],
+    "code": "print(type(7).__name__)\nprint(type(\"7\").__name__)\nprint(type(None).__name__)",
+    "output": "int\nstr\nNoneType",
+    "choices": [
+      "int\nstr\nNoneType",
+      "int\nint\nNoneType",
+      "float\nstr\nnull"
+    ],
+    "explanation": "Python ist dynamisch typisiert: Derselbe Name kann später einen Wert anderen Typs binden. Das bedeutet nicht, dass beliebige Typen automatisch zusammenpassen. \"7\" + 1 verursacht beispielsweise TypeError.",
+    "methodProfile": {
+      "signature": "type(wert)",
+      "parameters": [
+        [
+          "wert",
+          "Ein beliebiges Python-Objekt."
+        ]
+      ],
+      "returns": "Ein Typobjekt; dessen __name__ ist ein String.",
+      "effect": "Liest den Typ, ohne den Wert zu ändern."
+    },
+    "useCase": "Unterscheiden, ob eine Eingabe schon eine Zahl oder noch Text ist.",
+    "pitfall": "bool ist in Python eine Unterklasse von int; eine strenge Ganzzahlprüfung muss booleans bei Bedarf ausdrücklich ausschließen.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "convert",
+    "category": "Grundlagen",
+    "name": "int() und float(): Text in Zahlen umwandeln",
+    "introduction": "int liest eine ganze Zahl aus Text. float liest eine Gleitkommazahl. Ungültiger Text löst ValueError aus.",
+    "steps": [
+      "Entferne Rand-Leerzeichen.",
+      "Wandle \"12\" in int um.",
+      "Rechne erst danach mit Zahlen."
+    ],
+    "code": "text = \" 12 \"\nzahl = int(text.strip())\nprint(zahl + 3)\nprint(float(\"2.5\") * 2)",
+    "output": "15\n5.0",
+    "choices": [
+      "15\n5.0",
+      "123\n2.52",
+      "15\n5"
+    ],
+    "explanation": "Eine deutsch geschriebene Dezimalzahl wie \"2,5\" wird nicht direkt von float akzeptiert. int(\"2.5\") scheitert ebenfalls; eine Umwandlung von float zu int schneidet dagegen Richtung null ab.",
+    "methodProfile": {
+      "signature": "int(text); float(text)",
+      "parameters": [
+        [
+          "text",
+          "Eine zum gewünschten Zahlenformat passende Zeichenfolge."
+        ]
+      ],
+      "returns": "int beziehungsweise float oder ValueError.",
+      "effect": "Erzeugt einen Zahlenwert; der Eingabestring bleibt unverändert."
+    },
+    "useCase": "Konsoleneingaben für einen Taschenrechner verarbeiten.",
+    "pitfall": "float verwendet binäre Gleitkommazahlen; für exakte Geldbeträge sind Ganzzahl-Cents oder Decimal oft geeigneter.",
+    "practice": {
+      "task": "Lies die vorbereitete Eingabe \" 8 \" als ganze Zahl und gib deren Quadrat aus.",
+      "hint": "Bereinige den Text, konvertiere ihn und multipliziere die Zahl mit sich selbst.",
+      "code": "n = int(\" 8 \".strip())\nprint(n * n)",
+      "output": "64"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "arithmetic",
+    "category": "Operatoren & Entscheidungen",
+    "name": "/, //, % und ** unterscheiden",
+    "introduction": "/ dividiert, // rundet den Quotienten nach unten, % liefert den passenden Rest und ** potenziert.",
+    "steps": [
+      "7 / 2 ist 3.5.",
+      "7 // 2 ist 3.",
+      "7 % 2 ist 1 und 2 ** 3 ist 8."
+    ],
+    "code": "print(7 / 2)\nprint(7 // 2)\nprint(7 % 2)\nprint(2 ** 3)",
+    "output": "3.5\n3\n1\n8",
+    "choices": [
+      "3.5\n3\n1\n8",
+      "3\n3\n1\n6",
+      "3.5\n4\n0\n8"
+    ],
+    "explanation": "Bei negativen Zahlen ist Abrunden wichtig: -7 // 2 ergibt -4 und -7 % 2 ergibt 1. ** bindet stärker als ein vorangestelltes Minus: -2 ** 2 ist -4, (-2) ** 2 ist 4.",
+    "methodProfile": {
+      "signature": "a / b; a // b; a % b; a ** b",
+      "parameters": [
+        [
+          "a und b",
+          "Zahlen; bei Division und Rest darf b nicht 0 sein."
+        ]
+      ],
+      "returns": "Numerisches Ergebnis; / erzeugt bei int-Eingaben einen float.",
+      "effect": "Die Operanden werden nicht verändert."
+    },
+    "useCase": "Zeit in Minuten/Restsekunden zerlegen oder gerade Zahlen erkennen.",
+    "pitfall": "// bedeutet nicht Abschneiden Richtung null; negative Ergebnisse werden nach unten gerundet.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "comparison",
+    "category": "Operatoren & Entscheidungen",
+    "name": "==, is und in: unterschiedliche Fragen",
+    "introduction": "== vergleicht Gleichheit, is Objektidentität und in Zugehörigkeit. Diese Operatoren sind nicht austauschbar.",
+    "steps": [
+      "Zwei Listen können denselben Inhalt haben.",
+      "Sie sind trotzdem verschiedene Listenobjekte.",
+      "in sucht einen passenden Eintrag."
+    ],
+    "code": "a = [1, 2]\nb = [1, 2]\nprint(a == b)\nprint(a is b)\nprint(2 in a)",
+    "output": "True\nFalse\nTrue",
+    "choices": [
+      "True\nFalse\nTrue",
+      "True\nTrue\nTrue",
+      "False\nFalse\nTrue"
+    ],
+    "explanation": "Nutze is None, wenn du auf den einzelnen None-Wert prüfst. Verwende für Text- und Zahlengleichheit ==. Identitätsvergleiche von Literalen können durch Implementierungsdetails scheinbar funktionieren und sind dafür ungeeignet.",
+    "methodProfile": {
+      "signature": "a == b; a is b; wert in sammlung",
+      "parameters": [
+        [
+          "a und b",
+          "Zu vergleichende Objekte."
+        ],
+        [
+          "sammlung",
+          "Container, dessen Zugehörigkeitsregel verwendet wird."
+        ]
+      ],
+      "returns": "bool mit True oder False.",
+      "effect": "Die Objekte bleiben unverändert."
+    },
+    "useCase": "Gleiche Inhalte von derselben veränderlichen Liste unterscheiden.",
+    "pitfall": "Eine Zuweisung b = a kopiert keine Liste, sondern bindet einen weiteren Namen an dasselbe Objekt.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "truth",
+    "category": "Operatoren & Entscheidungen",
+    "name": "and, or, not und leere Werte",
+    "introduction": "Leere Container, leere Strings, 0 und None sind falsy. and und or können einen ihrer Operanden zurückgeben.",
+    "steps": [
+      "Ein leerer Name ist falsy.",
+      "or liefert dann den Ersatztext.",
+      "not wandelt den Wahrheitswert in sein Gegenteil um."
+    ],
+    "code": "name = \"\"\nprint(name or \"Gast\")\nprint(not [])\nprint(0 or 5)",
+    "output": "Gast\nTrue\n5",
+    "choices": [
+      "Gast\nTrue\n5",
+      "False\nTrue\nTrue",
+      "Gast\nFalse\n0"
+    ],
+    "explanation": "and und or werten kurzschließend aus. Das ist für Ersatzwerte praktisch, aber 0 oder eine absichtlich leere Liste werden ebenfalls ersetzt. Wenn nur None fehlen soll, prüfe ausdrücklich wert is None.",
+    "methodProfile": {
+      "signature": "a and b; a or b; not a",
+      "parameters": [
+        [
+          "a und b",
+          "Ausdrücke mit einem Wahrheitswert."
+        ]
+      ],
+      "returns": "and/or liefern einen Operanden; not liefert bool.",
+      "effect": "Reine Prüfungen verändern die Eingaben nicht."
+    },
+    "useCase": "Optionalen Benutzernamen durch einen Standardwert ersetzen.",
+    "pitfall": "or ist kein ausschließlicher None-Ersatz und liefert nicht immer einen bool.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "if",
+    "category": "Operatoren & Entscheidungen",
+    "name": "if, elif und else: Entscheidungen treffen",
+    "introduction": "Einrückung bestimmt, welche Anweisungen zu einem Zweig gehören. Von einer if/elif/else-Kette wird höchstens ein Zweig ausgeführt.",
+    "steps": [
+      "Prüfe zuerst die obere Grenze.",
+      "Falls sie nicht trifft, prüfe elif.",
+      "else ist der verbleibende Fall."
+    ],
+    "code": "punkte = 72\nif punkte >= 90:\n    print(\"Sehr gut\")\nelif punkte >= 60:\n    print(\"Bestanden\")\nelse:\n    print(\"Weiter üben\")",
+    "output": "Bestanden",
+    "choices": [
+      "Bestanden",
+      "Sehr gut",
+      "Bestanden\nWeiter üben"
+    ],
+    "explanation": "Ein Doppelpunkt öffnet den Block; alle zugehörigen Anweisungen werden gleich eingerückt. Mehrere unabhängige if-Blöcke würden dagegen unabhängig voneinander geprüft.",
+    "methodProfile": {
+      "signature": "if bedingung: … elif andere: … else: …",
+      "parameters": [
+        [
+          "bedingung",
+          "Ausdruck, dessen Wahrheitswert geprüft wird."
+        ]
+      ],
+      "returns": "Kontrollfluss-Anweisung ohne Rückgabewert.",
+      "effect": "Führt nur den gewählten Zweig aus."
+    },
+    "useCase": "Punktzahlen in verständliche Rückmeldungen umwandeln.",
+    "pitfall": "Vergiss die Reihenfolge nicht: Eine zu allgemeine erste Bedingung kann spätere speziellere Fälle abfangen.",
+    "practice": {
+      "task": "Bewerte 18 Grad: unter 10 \"kalt\", unter 20 \"mild\", sonst \"warm\".",
+      "hint": "Prüfe die Grenzen von klein nach groß.",
+      "code": "grad = 18\nif grad < 10:\n    print(\"kalt\")\nelif grad < 20:\n    print(\"mild\")\nelse:\n    print(\"warm\")",
+      "output": "mild"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "range",
+    "category": "Schleifen",
+    "name": "for und range(): Wiederholungen verstehen",
+    "introduction": "for durchläuft ein Iterable. range erzeugt eine Folge ganzer Zahlen mit ausgeschlossenem Endwert.",
+    "steps": [
+      "range(1, 4) liefert 1, 2 und 3.",
+      "Addiere jeden Wert zu summe.",
+      "Nach der Schleife ist summe gleich 6."
+    ],
+    "code": "summe = 0\nfor n in range(1, 4):\n    summe += n\nprint(summe)",
+    "output": "6",
+    "choices": [
+      "6",
+      "10",
+      "3"
+    ],
+    "explanation": "range speichert bei dieser Verwendung nicht erst eine große Liste aller Zahlen. while ist die Alternative für Wiederholungen anhand einer Bedingung; dabei musst du selbst sicherstellen, dass sich die Bedingung ändern kann.",
+    "methodProfile": {
+      "signature": "range(start, ende, schritt)",
+      "parameters": [
+        [
+          "start",
+          "Erster Wert, standardmäßig 0."
+        ],
+        [
+          "ende",
+          "Ausgeschlossene Grenze."
+        ],
+        [
+          "schritt",
+          "Abstand; darf nicht 0 sein."
+        ]
+      ],
+      "returns": "Ein range-Objekt, über das iteriert werden kann.",
+      "effect": "Die Schleife ändert hier die Variable summe."
+    },
+    "useCase": "Eine feste Anzahl Runden oder nummerierte Arbeitsschritte ausführen.",
+    "pitfall": "range(4) endet bei 3; range(4, 1) ist ohne negativen Schritt leer.",
+    "practice": {
+      "task": "Summiere alle geraden Zahlen von 2 bis einschließlich 10.",
+      "hint": "Verwende den Schritt 2 und eine ausgeschlossene Grenze oberhalb von 10.",
+      "code": "summe = 0\nfor n in range(2, 11, 2):\n    summe += n\nprint(summe)",
+      "output": "30"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "index-slice",
+    "category": "Listen",
+    "name": "Index und Slicing: Listenteile lesen",
+    "introduction": "Listen beginnen bei Index 0. Ein Slice enthält die Startposition, aber nicht die Endposition. Negative Indizes zählen vom Ende.",
+    "steps": [
+      "Index 0 ist der erste Eintrag.",
+      "-1 ist der letzte Eintrag.",
+      "[1:3] übernimmt Position 1 und 2."
+    ],
+    "code": "werte = [10, 20, 30, 40]\nprint(werte[0])\nprint(werte[-1])\nprint(werte[1:3])",
+    "output": "10\n40\n[20, 30]",
+    "choices": [
+      "10\n40\n[20, 30]",
+      "10\n40\n[20, 30, 40]",
+      "20\n10\n[10, 20]"
+    ],
+    "explanation": "Ein Slice einer Liste erzeugt eine neue äußere Liste. Enthaltene veränderliche Objekte werden dabei nicht tief kopiert. Ein ungültiger einzelner Index löst IndexError aus; Slice-Grenzen können dagegen über das Ende hinausreichen.",
+    "methodProfile": {
+      "signature": "liste[index]; liste[start:ende:schritt]",
+      "parameters": [
+        [
+          "index",
+          "Einzelne Position."
+        ],
+        [
+          "ende",
+          "Ausgeschlossene Slice-Grenze."
+        ]
+      ],
+      "returns": "Ein Element beziehungsweise eine neue Liste.",
+      "effect": "Lesen verändert die ursprüngliche Liste nicht."
+    },
+    "useCase": "Die letzten Einträge oder ein Teilstück einer Ergebnisliste anzeigen.",
+    "pitfall": "liste[-1] scheitert bei einer leeren Liste; prüfe diesen Randfall.",
+    "practice": {
+      "task": "Lies aus [2,4,6,8,10] die letzten zwei Elemente als neue Liste.",
+      "hint": "Ein negativer Startindex zählt vom Ende zurück.",
+      "code": "zahlen = [2, 4, 6, 8, 10]\nprint(zahlen[-2:])",
+      "output": "[8, 10]"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "extend",
+    "category": "Listen",
+    "name": "append() und extend(): ein Wert oder viele",
+    "introduction": "append fügt ein Objekt ein. extend durchläuft ein Iterable und hängt dessen Elemente einzeln an.",
+    "steps": [
+      "append behandelt [2,3] als einen Eintrag.",
+      "extend übernimmt 2 und 3 einzeln.",
+      "Beide verändern die vorhandene Liste."
+    ],
+    "code": "a = [1]\nb = [1]\na.append([2, 3])\nb.extend([2, 3])\nprint(a)\nprint(b)",
+    "output": "[1, [2, 3]]\n[1, 2, 3]",
+    "choices": [
+      "[1, [2, 3]]\n[1, 2, 3]",
+      "[1, 2, 3]\n[1, [2, 3]]",
+      "[1, 2, 3]\n[1, 2, 3]"
+    ],
+    "explanation": "Beide Methoden geben None zurück. Bei extend(\"ab\") würden die einzelnen Zeichen a und b hinzugefügt. Wenn du eine neue Liste ohne Änderung der vorhandenen brauchst, ist etwa a + b eine andere Operation.",
+    "methodProfile": {
+      "signature": "liste.append(objekt); liste.extend(iterable)",
+      "parameters": [
+        [
+          "objekt",
+          "Ein neuer Eintrag."
+        ],
+        [
+          "iterable",
+          "Quelle mehrerer Einträge."
+        ]
+      ],
+      "returns": "None.",
+      "effect": "Verändert die vorhandene Liste."
+    },
+    "useCase": "Mehrere neue Aufgaben aus einem Import übernehmen.",
+    "pitfall": "werte = werte.extend(neu) ersetzt deine Listenbindung durch None.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "pop",
+    "category": "Listen",
+    "name": "pop(): entfernen und zurückgeben",
+    "introduction": "pop entfernt einen Eintrag und liefert ihn zurück. Ohne Index wird das letzte Element entfernt.",
+    "steps": [
+      "Die Liste enthält A und B.",
+      "pop entfernt B.",
+      "Die Liste enthält danach nur A."
+    ],
+    "code": "stapel = [\"A\", \"B\"]\nprint(stapel.pop())\nprint(stapel)",
+    "output": "B\n['A']",
+    "choices": [
+      "B\n['A']",
+      "A\n['B']",
+      "None\n['A']"
+    ],
+    "explanation": "Für einen Stack passen append und pop am Listenende. pop(0) entfernt den ersten Eintrag, verschiebt aber die restlichen Elemente und kostet bei langen Listen lineare Zeit. Für Queues eignet sich deque.",
+    "methodProfile": {
+      "signature": "liste.pop(index=-1)",
+      "parameters": [
+        [
+          "index",
+          "Position des zu entfernenden Elements."
+        ]
+      ],
+      "returns": "Das entfernte Element.",
+      "effect": "Verkürzt die vorhandene Liste."
+    },
+    "useCase": "Den letzten Arbeitsschritt aus einem Stapel übernehmen.",
+    "pitfall": "pop auf einer leeren Liste löst IndexError aus.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "copy",
+    "category": "Listen",
+    "name": "Referenz oder Kopie: Änderungen nachverfolgen",
+    "introduction": "b = a teilt dieselbe Liste. a.copy() erzeugt dagegen eine neue äußere Liste.",
+    "steps": [
+      "alias zeigt auf dasselbe Objekt wie a.",
+      "kopie ist eine andere Liste.",
+      "Eine Änderung über alias betrifft auch a."
+    ],
+    "code": "a = [1, 2]\nalias = a\nkopie = a.copy()\nalias.append(3)\nprint(a)\nprint(kopie)",
+    "output": "[1, 2, 3]\n[1, 2]",
+    "choices": [
+      "[1, 2, 3]\n[1, 2]",
+      "[1, 2]\n[1, 2]",
+      "[1, 2, 3]\n[1, 2, 3]"
+    ],
+    "explanation": "copy ist eine flache Kopie. Bei einer Liste aus Listen bleiben die inneren Listen geteilt. copy.deepcopy kann für geeignete Objektstrukturen tiefer kopieren, sollte aber nicht ohne Verständnis der benötigten Datenstruktur eingesetzt werden.",
+    "methodProfile": {
+      "signature": "kopie = liste.copy()",
+      "parameters": [],
+      "returns": "Eine neue äußere Liste mit denselben Elementreferenzen.",
+      "effect": "Ändert die Quelle nicht; spätere Änderungen an geteilten inneren Objekten können sichtbar bleiben."
+    },
+    "useCase": "Einen Arbeitsstand unabhängig umsortieren, ohne die Ausgangsliste zu verändern.",
+    "pitfall": "Eine neue Namensbindung ist noch keine Kopie.",
+    "practice": {
+      "task": "Kopiere [3,1,2], sortiere nur die Kopie und gib Original und Kopie aus.",
+      "hint": "copy trennt die äußeren Listen, sort verändert nur seinen Empfänger.",
+      "code": "original = [3, 1, 2]\nkopie = original.copy()\nkopie.sort()\nprint(original)\nprint(kopie)",
+      "output": "[3, 1, 2]\n[1, 2, 3]"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "dict-get",
+    "category": "Dictionaries & Sets",
+    "name": "dict.get(): einen Wert mit Standard lesen",
+    "introduction": "Ein Dictionary ordnet Schlüssel Werten zu. get liefert für einen fehlenden Schlüssel einen Standard, ohne ihn einzutragen.",
+    "steps": [
+      "Ada hat bereits 4 Punkte.",
+      "Bo fehlt und bekommt den Lesestandard 0.",
+      "Das Dictionary hat weiterhin nur einen Eintrag."
+    ],
+    "code": "punkte = {\"Ada\": 4}\nprint(punkte.get(\"Bo\", 0))\nprint(len(punkte))",
+    "output": "0\n1",
+    "choices": [
+      "0\n1",
+      "0\n2",
+      "None\n1"
+    ],
+    "explanation": "punkte[\"Bo\"] würde bei fehlendem Schlüssel KeyError auslösen. get ändert das Dictionary nicht. Wenn None selbst ein erlaubter Wert ist, lässt sich mit get allein nicht immer zwischen fehlendem Eintrag und gespeichertem None unterscheiden.",
+    "methodProfile": {
+      "signature": "mapping.get(schluessel, standard=None)",
+      "parameters": [
+        [
+          "schluessel",
+          "Gesuchter Schlüssel."
+        ],
+        [
+          "standard",
+          "Rückgabe bei fehlendem Schlüssel."
+        ]
+      ],
+      "returns": "Gespeicherter Wert oder der Standard.",
+      "effect": "Keine Änderung am Dictionary."
+    },
+    "useCase": "Punkte, Häufigkeiten oder Konfigurationen mit sinnvoller Vorgabe lesen.",
+    "pitfall": "get legt den Standard nicht im Dictionary ab; dafür ist eine Zuweisung oder setdefault nötig.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "dict-items",
+    "category": "Dictionaries & Sets",
+    "name": "items(): Schlüssel und Wert gemeinsam lesen",
+    "introduction": "items liefert eine Sicht auf die Schlüssel-Wert-Paare. Eine for-Schleife kann beide Teile direkt entpacken.",
+    "steps": [
+      "Das Dictionary wurde mit Ada und Bo angelegt.",
+      "Die Paare werden in Einfügereihenfolge durchlaufen.",
+      "Jeder Durchlauf hat name und punkte."
+    ],
+    "code": "werte = {\"Ada\": 4, \"Bo\": 2}\nfor name, punkte in werte.items():\n    print(f\"{name}: {punkte}\")",
+    "output": "Ada: 4\nBo: 2",
+    "choices": [
+      "Ada: 4\nBo: 2",
+      "4: Ada\n2: Bo",
+      "Bo: 2\nAda: 4"
+    ],
+    "explanation": "Python-Dictionaries bewahren die Einfügereihenfolge. Sie sortieren dadurch nicht automatisch alphabetisch oder nach Werten. Eine strukturelle Änderung während des Durchlaufens derselben Sicht ist zu vermeiden.",
+    "methodProfile": {
+      "signature": "mapping.items()",
+      "parameters": [],
+      "returns": "Dynamische Sicht auf Schlüssel-Wert-Paare.",
+      "effect": "Lesen verändert das Dictionary nicht."
+    },
+    "useCase": "Ein Punktetableau oder einen Häufigkeitsbericht ausgeben.",
+    "pitfall": "Eine Dict-Sicht ist kein unabhängiger Schnappschuss; kopiere Daten für eine unabhängig zu verändernde Arbeitsliste.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "set",
+    "category": "Dictionaries & Sets",
+    "name": "set: eindeutige Werte und Mitgliedschaft",
+    "introduction": "Ein Set hält jeden gleichen hashbaren Wert höchstens einmal. Seine Iterationsreihenfolge ist keine verlässliche Sortierung.",
+    "steps": [
+      "Die 2 kommt doppelt vor.",
+      "Das Set enthält sie nur einmal.",
+      "Für reproduzierbare Ausgabe wird ausdrücklich sortiert."
+    ],
+    "code": "werte = {1, 2, 2, 3}\nprint(len(werte))\nprint(2 in werte)\nprint(sorted(werte))",
+    "output": "3\nTrue\n[1, 2, 3]",
+    "choices": [
+      "3\nTrue\n[1, 2, 3]",
+      "4\nTrue\n[1, 2, 2, 3]",
+      "3\nFalse\n[3, 2, 1]"
+    ],
+    "explanation": "Set-Mitgliedschaft ist im üblichen Durchschnitt konstant schnell. Ein leeres Set heißt set(); {} erzeugt ein leeres Dictionary. Listen können wegen ihrer Veränderlichkeit nicht direkt als Set-Elemente verwendet werden.",
+    "methodProfile": {
+      "signature": "set(iterable); wert in menge",
+      "parameters": [
+        [
+          "iterable",
+          "Quelle hashbarer Werte."
+        ]
+      ],
+      "returns": "Ein set beziehungsweise bool bei der Mitgliedschaftsprüfung.",
+      "effect": "Erzeugt hier eine neue Menge ohne Änderung der Quelle."
+    },
+    "useCase": "Doppelte Tags entfernen oder bereits besuchte Knoten merken.",
+    "pitfall": "Verlasse dich nicht auf eine bestimmte Set-Ausgabereihenfolge; sortiere für stabile Berichte.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "tuple",
+    "category": "Dictionaries & Sets",
+    "name": "tuple und Entpacken: Werte gemeinsam zurückgeben",
+    "introduction": "Ein Tuple fasst Werte zusammen und lässt seine Eintragszuordnung nicht verändern. Entpacken bindet die Teile an einzelne Namen.",
+    "steps": [
+      "Ein Paar enthält x und y.",
+      "Entpacken bindet beide Namen.",
+      "Ein Tuple mit einem Eintrag benötigt ein Komma."
+    ],
+    "code": "punkt = (3, 4)\nx, y = punkt\nprint(x + y)\nprint(type((5,)).__name__)",
+    "output": "7\ntuple",
+    "choices": [
+      "7\ntuple",
+      "34\nint",
+      "7\nlist"
+    ],
+    "explanation": "Das Komma ist für das ein-elementige Tuple entscheidend. Unveränderlichkeit gilt für die Eintragszuordnung; ein im Tuple enthaltenes Listenobjekt kann weiterhin verändert werden.",
+    "methodProfile": {
+      "signature": "x, y = paar; einzel = (wert,)",
+      "parameters": [
+        [
+          "paar",
+          "Iterable mit genau zwei Werten für diese Entpackung."
+        ]
+      ],
+      "returns": "Entpacken bindet Namen; Tuple-Erzeugung liefert ein tuple.",
+      "effect": "Ändert das Tuple nicht."
+    },
+    "useCase": "Koordinaten oder mehrere Ergebnisse einer Funktion transportieren.",
+    "pitfall": "Die Anzahl der Namen muss passen; sonst entsteht beim Entpacken ValueError.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "strip-replace",
+    "category": "Strings",
+    "name": "strip(), lower() und replace(): Text bereinigen",
+    "introduction": "Strings sind unveränderlich. Methoden geben einen String zurück, der für die weitere Arbeit verwendet werden muss.",
+    "steps": [
+      "strip entfernt Rand-Leerzeichen.",
+      "lower wandelt die Schreibweise um.",
+      "replace ersetzt passende Teiltexte."
+    ],
+    "code": "text = \"  HALLO JAVA  \"\nneu = text.strip().lower().replace(\"java\", \"python\")\nprint(neu)\nprint(text.startswith(\"  \"))",
+    "output": "hallo python\nTrue",
+    "choices": [
+      "hallo python\nTrue",
+      "hallo python\nFalse",
+      "HALLO PYTHON\nTrue"
+    ],
+    "explanation": "Die Methoden verändern text nicht. strip entfernt Zeichen an den Rändern, nicht jeden Abstand im Inneren. replace behandelt den Suchtext wörtlich und ist keine Regex-Operation.",
+    "methodProfile": {
+      "signature": "text.strip().lower().replace(alt, neu)",
+      "parameters": [
+        [
+          "alt",
+          "Gesuchter Teiltext."
+        ],
+        [
+          "neu",
+          "Ersatz für jedes Vorkommen."
+        ]
+      ],
+      "returns": "Ein String mit dem jeweiligen Ergebnis.",
+      "effect": "Keine Änderung am ursprünglichen String."
+    },
+    "useCase": "Benutzereingaben vor einem Vergleich vereinheitlichen.",
+    "pitfall": "text.strip() ohne gespeicherte oder direkt verwendete Rückgabe bereinigt deine Variable nicht.",
+    "practice": {
+      "task": "Bereinige \"  Ja  \" zu \"ja\" und prüfe, ob es der erwarteten Antwort entspricht.",
+      "hint": "Verbinde strip und lower vor dem Vergleich.",
+      "code": "antwort = \"  Ja  \".strip().lower()\nprint(antwort == \"ja\")",
+      "output": "True"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "split-join",
+    "category": "Strings",
+    "name": "split() und join(): Text und Listen verbinden",
+    "introduction": "split zerlegt einen String. join verbindet Strings mit einem Trenntext zwischen den Einträgen.",
+    "steps": [
+      "split ohne Argument trennt an zusammenhängendem Whitespace.",
+      "Die Wortliste hat zwei Einträge.",
+      "join setzt einen Schrägstrich dazwischen."
+    ],
+    "code": "woerter = \"  Java   Python \".split()\nprint(woerter)\nprint(\" / \".join(woerter))",
+    "output": "['Java', 'Python']\nJava / Python",
+    "choices": [
+      "['Java', 'Python']\nJava / Python",
+      "['Java', '', 'Python']\nJavaPython",
+      "Java Python\nJava / Python"
+    ],
+    "explanation": "split(\",\") hat andere Regeln als split() ohne Argument und kann leere Felder behalten. Für korrektes CSV mit Anführungszeichen nutzt du das csv-Modul. join erwartet Stringelemente, nicht automatisch Zahlen.",
+    "methodProfile": {
+      "signature": "text.split(); trenner.join(strings)",
+      "parameters": [
+        [
+          "strings",
+          "Iterable aus Strings."
+        ],
+        [
+          "trenner",
+          "String zwischen zwei Elementen."
+        ]
+      ],
+      "returns": "split liefert list[str], join einen String.",
+      "effect": "Die Ausgangsstrings werden nicht verändert."
+    },
+    "useCase": "Einfache Wortlisten aus Text erzeugen oder Tags lesbar anzeigen.",
+    "pitfall": "join([1,2]) verursacht TypeError; wandle Zahlen vorher bewusst mit str um.",
+    "projectId": "python-word-report",
+    "projectTitle": "Wörterbericht"
+  },
+  {
+    "id": "comprehension",
+    "category": "Listen",
+    "name": "List Comprehension: filtern und umformen",
+    "introduction": "Eine Comprehension erzeugt aus einem Iterable eine neue Liste. Ein optionales if filtert die Quelle.",
+    "steps": [
+      "Durchlaufe 1, 2, 3 und 4.",
+      "Behalte gerade Zahlen.",
+      "Quadriere die behaltenen Zahlen."
+    ],
+    "code": "zahlen = [1, 2, 3, 4]\nquadrate = [n * n for n in zahlen if n % 2 == 0]\nprint(quadrate)\nprint(zahlen)",
+    "output": "[4, 16]\n[1, 2, 3, 4]",
+    "choices": [
+      "[4, 16]\n[1, 2, 3, 4]",
+      "[1, 4, 9, 16]\n[1, 2, 3, 4]",
+      "[2, 4]\n[4, 16]"
+    ],
+    "explanation": "Die Reihenfolge der Quelle bleibt für die behaltenen Elemente erhalten. Das ist für kurze Transformationen gut lesbar; komplexe Schritte mit vielen Bedingungen gehören oft in eine normale Schleife oder eigene Funktion.",
+    "methodProfile": {
+      "signature": "[ausdruck for element in quelle if bedingung]",
+      "parameters": [
+        [
+          "ausdruck",
+          "Neuer Wert für ein behaltenes Element."
+        ],
+        [
+          "bedingung",
+          "Filter, der vor der Aufnahme geprüft wird."
+        ]
+      ],
+      "returns": "Eine neue Liste.",
+      "effect": "Die äußere Quellliste wird nicht verändert."
+    },
+    "useCase": "Aus Rohdaten nur passende Anzeige- oder Rechenwerte erzeugen.",
+    "pitfall": "Eine Comprehension ist kein Platz für schwer verständliche Seiteneffekte.",
+    "practice": {
+      "task": "Erzeuge aus [1,2,3,4,5] die verdoppelten Werte aller Zahlen größer als 3.",
+      "hint": "Prüfe n > 3 und berechne anschließend n * 2.",
+      "code": "zahlen = [1, 2, 3, 4, 5]\nprint([n * 2 for n in zahlen if n > 3])",
+      "output": "[8, 10]"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "sorted",
+    "category": "Listen",
+    "name": "sorted() und sort(): Kopie oder Änderung",
+    "introduction": "sorted liefert eine neue sortierte Liste. list.sort sortiert die vorhandene Liste und gibt None zurück.",
+    "steps": [
+      "sorted ordnet die Zahlen ohne Änderung der Quelle.",
+      "sort verändert danach die Quelle.",
+      "Die Rückgabe von sort ist None."
+    ],
+    "code": "zahlen = [3, 1, 2]\nprint(sorted(zahlen))\nprint(zahlen)\nprint(zahlen.sort())",
+    "output": "[1, 2, 3]\n[3, 1, 2]\nNone",
+    "choices": [
+      "[1, 2, 3]\n[3, 1, 2]\nNone",
+      "[1, 2, 3]\n[1, 2, 3]\nNone",
+      "[1, 2, 3]\n[3, 1, 2]\n[1, 2, 3]"
+    ],
+    "explanation": "Mit key legst du einen Vergleichsschlüssel fest, mit reverse=True eine absteigende Reihenfolge. Beide Sortierwege sind stabil: Gleiche Schlüssel behalten ihre relative Reihenfolge.",
+    "methodProfile": {
+      "signature": "sorted(iterable, key=None, reverse=False); liste.sort()",
+      "parameters": [
+        [
+          "key",
+          "Optionale Funktion, die je Element einen Sortierschlüssel erzeugt."
+        ]
+      ],
+      "returns": "sorted liefert list; sort liefert None.",
+      "effect": "sorted erhält die Quelle; sort verändert seine Liste."
+    },
+    "useCase": "Aufgaben nach Titel oder Ergebnisse nach Punktestand anzeigen.",
+    "pitfall": "zahlen = zahlen.sort() verliert die Listenbindung und speichert None.",
+    "projectId": "python-word-report",
+    "projectTitle": "Wörterbericht"
+  },
+  {
+    "id": "function",
+    "category": "Funktionen",
+    "name": "def und return: Arbeit wiederverwenden",
+    "introduction": "def definiert eine Funktion. Ein Aufruf führt ihren Rumpf aus; return gibt einen Wert an den Aufrufer zurück.",
+    "steps": [
+      "Definiere verdoppeln mit Parameter n.",
+      "Rufe die Funktion mit 5 auf.",
+      "print zeigt den zurückgegebenen Wert."
+    ],
+    "code": "def verdoppeln(n):\n    return n * 2\n\nprint(verdoppeln(5))",
+    "output": "10",
+    "choices": [
+      "10",
+      "5",
+      "None"
+    ],
+    "explanation": "Parameter sind Namen innerhalb der Funktion. Argumente sind die beim Aufruf übergebenen Werte. Ohne ausgeführtes return mit Wert liefert eine Funktion None; print im Rumpf ist kein Ersatz für eine Rückgabe.",
+    "methodProfile": {
+      "signature": "def name(parameter): return ergebnis",
+      "parameters": [
+        [
+          "parameter",
+          "Lokaler Name für ein übergebenes Argument."
+        ]
+      ],
+      "returns": "Der return-Wert oder None.",
+      "effect": "Das hängt vom Rumpf ab; diese Funktion verändert keine äußeren Daten."
+    },
+    "useCase": "Eine Berechnung an mehreren Stellen mit derselben Regel verwenden.",
+    "pitfall": "return beendet die aktuelle Funktion; nachfolgender Code im selben Ablauf wird nicht mehr ausgeführt.",
+    "practice": {
+      "task": "Schreibe eine Funktion flaeche(breite, hoehe), die das Produkt zurückgibt. Prüfe sie mit 4 und 3.",
+      "hint": "Gib das Ergebnis mit return zurück und drucke es erst beim Aufruf.",
+      "code": "def flaeche(breite, hoehe):\n    return breite * hoehe\n\nprint(flaeche(4, 3))",
+      "output": "12"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "default",
+    "category": "Funktionen",
+    "name": "Standardargumente: gefährliche geteilte Listen vermeiden",
+    "introduction": "Standardargumente werden bei der Funktionsdefinition ausgewertet. Eine dort erzeugte Liste wäre zwischen Aufrufen geteilt.",
+    "steps": [
+      "Verwende None als Standard.",
+      "Lege im Rumpf bei Bedarf eine neue Liste an.",
+      "Zwei Aufrufe erhalten so zwei unabhängige Listen."
+    ],
+    "code": "def sammeln(wert, liste=None):\n    if liste is None:\n        liste = []\n    liste.append(wert)\n    return liste\n\nprint(sammeln(1))\nprint(sammeln(2))",
+    "output": "[1]\n[2]",
+    "choices": [
+      "[1]\n[2]",
+      "[1]\n[1, 2]",
+      "None\nNone"
+    ],
+    "explanation": "def sammeln(wert, liste=[]) würde dieselbe Standardliste wiederverwenden. Das kann beabsichtigt sein, ist für unabhängige Aufrufe aber meist ein Fehler. Übergibst du eine vorhandene Liste, verändert diese Funktion sie ausdrücklich.",
+    "methodProfile": {
+      "signature": "def sammeln(wert, liste=None): …",
+      "parameters": [
+        [
+          "liste",
+          "Optionale vorhandene Liste; None fordert eine neue Liste an."
+        ]
+      ],
+      "returns": "Die befüllte Liste.",
+      "effect": "Verändert eine übergebene Liste oder erzeugt eine neue."
+    },
+    "useCase": "Eingaben sammeln, ohne alte Aufrufe unbemerkt weiterzuführen.",
+    "pitfall": "Ein Standardwert [] wird nicht bei jedem Aufruf neu erzeugt.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "keyword",
+    "category": "Funktionen",
+    "name": "Schlüsselwortargumente und *args",
+    "introduction": "Schlüsselwortargumente benennen ihre Zuordnung. *args sammelt zusätzliche Positionsargumente als Tuple.",
+    "steps": [
+      "Die Funktion sammelt drei Zahlen.",
+      "faktor wird ausdrücklich benannt.",
+      "summe wird danach mit dem Faktor multipliziert."
+    ],
+    "code": "def summe(*werte, faktor=1):\n    return sum(werte) * faktor\n\nprint(summe(2, 3, 4, faktor=2))",
+    "output": "18",
+    "choices": [
+      "18",
+      "9",
+      "24"
+    ],
+    "explanation": "Ein Parameter hinter *werte ist hier nur per Schlüsselwort belegbar. **kwargs würde zusätzliche benannte Argumente in einem Dictionary sammeln; nutze es nur, wenn die Funktion bewusst offene Optionen erlaubt.",
+    "methodProfile": {
+      "signature": "def summe(*werte, faktor=1): …",
+      "parameters": [
+        [
+          "werte",
+          "Tuple zusätzlicher Positionsargumente."
+        ],
+        [
+          "faktor",
+          "Benannter Multiplikator."
+        ]
+      ],
+      "returns": "Das berechnete numerische Ergebnis.",
+      "effect": "Die übergebenen Zahlen werden nicht verändert."
+    },
+    "useCase": "Eine Funktion mit variabler Anzahl von Messwerten anbieten.",
+    "pitfall": "Eine beliebig offene Signatur ersetzt keine verständliche API; benenne wichtige Parameter ausdrücklich.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "scope",
+    "category": "Funktionen",
+    "name": "Lokale Namen und geteilte Objekte",
+    "introduction": "Eine Zuweisung im Funktionsrumpf bindet normalerweise einen lokalen Namen. Änderungen an übergebenen veränderlichen Objekten können dagegen außen sichtbar sein.",
+    "steps": [
+      "innen bekommt einen lokalen Namen n.",
+      "liste verweist auf die übergebene Liste.",
+      "append verändert dieses gemeinsame Objekt."
+    ],
+    "code": "n = 1\nwerte = []\ndef innen(liste):\n    n = 9\n    liste.append(n)\ninnen(werte)\nprint(n)\nprint(werte)",
+    "output": "1\n[9]",
+    "choices": [
+      "1\n[9]",
+      "9\n[9]",
+      "1\n[]"
+    ],
+    "explanation": "Die lokale Zuweisung n = 9 verändert das äußere n nicht. Die Liste wird jedoch nicht kopiert. Das zeigt den Unterschied zwischen einer neuen Namensbindung und einer Änderung an einem gemeinsam referenzierten Objekt.",
+    "methodProfile": {
+      "signature": "funktion(objekt)",
+      "parameters": [
+        [
+          "objekt",
+          "Referenz auf ein Python-Objekt."
+        ]
+      ],
+      "returns": "Hier None, weil kein return ausgeführt wird.",
+      "effect": "Ändert die übergebene Liste, nicht den äußeren Zahlennamen."
+    },
+    "useCase": "Nebenwirkungen einer Hilfsfunktion erkennen und bewusst begrenzen.",
+    "pitfall": "Eine Liste als Argument ist nicht automatisch eine unabhängige Arbeitskopie.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "lambda",
+    "category": "Funktionen",
+    "name": "lambda und key: kleine Funktionen übergeben",
+    "introduction": "lambda erzeugt eine Funktion aus einem Ausdruck. Ein key-Aufruf übersetzt jedes Element in seinen Sortierschlüssel.",
+    "steps": [
+      "Jeder Datensatz enthält Name und Punkte.",
+      "key wählt die Punkte an Position 1.",
+      "reverse=True ordnet absteigend."
+    ],
+    "code": "werte = [(\"Ada\", 4), (\"Bo\", 7)]\nprint(sorted(werte, key=lambda eintrag: eintrag[1], reverse=True))",
+    "output": "[('Bo', 7), ('Ada', 4)]",
+    "choices": [
+      "[('Bo', 7), ('Ada', 4)]",
+      "[('Ada', 4), ('Bo', 7)]",
+      "[7, 4]"
+    ],
+    "explanation": "Die Funktion wird übergeben und später von sorted aufgerufen. lambda ist für einen kurzen Ausdruck gedacht; mehrere Anweisungen oder komplexe Regeln werden mit einer benannten def-Funktion lesbarer.",
+    "methodProfile": {
+      "signature": "lambda parameter: ausdruck",
+      "parameters": [
+        [
+          "parameter",
+          "Lokaler Name für den übergebenen Wert."
+        ]
+      ],
+      "returns": "Ein Funktionsobjekt, das beim Aufruf den Ausdruckswert liefert.",
+      "effect": "Dieses key-Beispiel liest die Datensätze nur."
+    },
+    "useCase": "Datensätze anhand eines bestimmten Feldes ordnen.",
+    "pitfall": "key=lambda e: e[1] übergibt die Funktion; ein voreiliger Funktionsaufruf wäre etwas anderes.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "generator",
+    "category": "Funktionen",
+    "name": "yield: Werte nach Bedarf erzeugen",
+    "introduction": "Eine Generatorfunktion liefert bei einem Aufruf einen Iterator. yield gibt einen Wert ab und merkt sich die Fortsetzungsstelle.",
+    "steps": [
+      "Der erste next-Aufruf erhält 0.",
+      "Der Generator steht danach beim nächsten Wert.",
+      "list verbraucht die verbleibenden Werte."
+    ],
+    "code": "def zahlen():\n    for n in range(3):\n        yield n\n\ng = zahlen()\nprint(next(g))\nprint(list(g))",
+    "output": "0\n[1, 2]",
+    "choices": [
+      "0\n[1, 2]",
+      "0\n[0, 1, 2]",
+      "[0, 1, 2]\n[]"
+    ],
+    "explanation": "Ein Generator wird beim Durchlaufen verbraucht und startet nicht bei jedem Zugriff neu. Für einen neuen Durchlauf rufst du die Generatorfunktion erneut auf. next auf einem erschöpften Iterator löst ohne Standardwert StopIteration aus.",
+    "methodProfile": {
+      "signature": "yield wert; next(iterator, standard)",
+      "parameters": [
+        [
+          "wert",
+          "Nächster erzeugter Wert."
+        ],
+        [
+          "standard",
+          "Optionale Rückgabe bei erschöpftem Iterator."
+        ]
+      ],
+      "returns": "Generatorfunktion: Iterator; next: nächstes Element.",
+      "effect": "Der Iterator verändert seinen internen Fortschritt."
+    },
+    "useCase": "Große Datenfolgen schrittweise verarbeiten, ohne alle Ergebnisse gleichzeitig zu speichern.",
+    "pitfall": "Ein Generator ist keine beliebig erneut lesbare Liste.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "class",
+    "category": "Klassen & Datenmodelle",
+    "name": "class und self: Daten mit Verhalten verbinden",
+    "introduction": "Eine Klasse beschreibt Objekte. self bezeichnet in einer Instanzmethode die jeweilige Instanz.",
+    "steps": [
+      "__init__ legt den Anfangszustand an.",
+      "erhoehen ändert das Attribut dieser Instanz.",
+      "Eine zweite Instanz bleibt unabhängig."
+    ],
+    "code": "class Zaehler:\n    def __init__(self):\n        self.wert = 0\n    def erhoehen(self):\n        self.wert += 1\n\na = Zaehler()\nb = Zaehler()\na.erhoehen()\nprint(a.wert)\nprint(b.wert)",
+    "output": "1\n0",
+    "choices": [
+      "1\n0",
+      "1\n1",
+      "0\n0"
+    ],
+    "explanation": "Instanzattribute wie self.wert gehören zum jeweiligen Objekt. Veränderliche Klassenattribute würden dagegen über die Klasse geteilt. __init__ initialisiert die bereits erzeugte Instanz und muss None zurückgeben.",
+    "methodProfile": {
+      "signature": "objekt = Klasse(); objekt.methode()",
+      "parameters": [
+        [
+          "self",
+          "Die Instanz, die beim Methodenaufruf automatisch übergeben wird."
+        ]
+      ],
+      "returns": "Der Klassenaufruf liefert eine Instanz; erhoehen liefert None.",
+      "effect": "Verändert das Attribut der angesprochenen Instanz."
+    },
+    "useCase": "Punktestände oder Aufgaben als eigene Datenmodelle abbilden.",
+    "pitfall": "self ist ein üblicher Parametername, kein automatisch verfügbarer globaler Name.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "dataclass",
+    "category": "Klassen & Datenmodelle",
+    "name": "dataclass: Datenobjekte mit weniger Wiederholung",
+    "introduction": "dataclass erzeugt unter anderem Initialisierung, Darstellung und Gleichheitsvergleich aus den deklarierten Feldern.",
+    "steps": [
+      "Definiere Titel und Fertig-Status.",
+      "Erzeuge eine Aufgabe mit dem Standard False.",
+      "Vergleiche zwei inhaltsgleiche Datenobjekte."
+    ],
+    "code": "from dataclasses import dataclass\n\n@dataclass\nclass Aufgabe:\n    titel: str\n    fertig: bool = False\n\na = Aufgabe(\"Lernen\")\nprint(a.fertig)\nprint(a == Aufgabe(\"Lernen\"))",
+    "output": "False\nTrue",
+    "choices": [
+      "False\nTrue",
+      "True\nFalse",
+      "False\nFalse"
+    ],
+    "explanation": "Typangaben sind Hinweise und keine automatische Laufzeitvalidierung. Für Regeln wie einen nichtleeren Titel kannst du __post_init__ ergänzen. Das Aufgabenprojekt zeigt diese Prüfung und verwendet frozen=True für unveränderliche Feldbindungen.",
+    "methodProfile": {
+      "signature": "@dataclass\nclass Name: feld: Typ",
+      "parameters": [
+        [
+          "feld",
+          "Ein annotiertes Datenfeld mit optionalem Standardwert."
+        ]
+      ],
+      "returns": "Ein dekorierter Klassentyp; Aufrufe erzeugen Instanzen.",
+      "effect": "Erzeugt zusätzliche Methoden für das Datenmodell."
+    },
+    "useCase": "Strukturierte Datensätze statt unklarer Listenpositionen verwenden.",
+    "pitfall": "Veränderliche Standards gehören in field(default_factory=list), nicht in eine gemeinsam verwendete Standardliste.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "input",
+    "category": "Eingaben & Fehler",
+    "name": "input(): Konsoleneingaben sind Text",
+    "introduction": "input liest eine Zeile von der Standardeingabe. Der abschließende Zeilenumbruch ist nicht Teil der Rückgabe.",
+    "steps": [
+      "Das Beispiel erhält die vorbereitete Eingabe 7.",
+      "input liefert den Text \"7\".",
+      "int wandelt ihn vor der Rechnung um."
+    ],
+    "code": "eingabe = input()\nprint(int(eingabe) + 1)",
+    "output": "8",
+    "choices": [
+      "8",
+      "71",
+      "7"
+    ],
+    "explanation": "Beim lokalen Start tippst du die 7 ein und bestätigst Enter. Die native Inhaltsprüfung führt dasselbe Programm mit vorbereiteter Standardeingabe aus. Die Webapp führt Python hier nicht aus; sie prüft die Wissensantwort.",
+    "methodProfile": {
+      "signature": "input(prompt=\"\")",
+      "parameters": [
+        [
+          "prompt",
+          "Optionaler Text, der vor dem Lesen ausgegeben wird."
+        ]
+      ],
+      "returns": "String ohne abschließenden Zeilenumbruch; EOF kann EOFError auslösen.",
+      "effect": "Liest eine Zeile von der Standardeingabe."
+    },
+    "useCase": "Einen Taschenrechner oder ein Terminal-Menü bedienen.",
+    "pitfall": "Eine leere oder ungültige Zahleneingabe muss vor der weiteren Verarbeitung behandelt werden.",
+    "stdin": "7\n",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "except",
+    "category": "Eingaben & Fehler",
+    "name": "try und except: erwartete Fehler behandeln",
+    "introduction": "Ein except-Zweig reagiert auf passende Ausnahmen. Behandle gezielt erwartete Fehler, statt alle Probleme still zu verschlucken.",
+    "steps": [
+      "int kann diesen Text nicht lesen.",
+      "ValueError wird gezielt aufgefangen.",
+      "Die Fehlermeldung ersetzt hier den normalen Erfolgsweg."
+    ],
+    "code": "try:\n    zahl = int(\"sieben\")\n    print(zahl)\nexcept ValueError:\n    print(\"Bitte eine ganze Zahl eingeben\")",
+    "output": "Bitte eine ganze Zahl eingeben",
+    "choices": [
+      "Bitte eine ganze Zahl eingeben",
+      "sieben",
+      "0"
+    ],
+    "explanation": "Code nach der fehlgeschlagenen Anweisung im try-Block wird übersprungen. Andere Fehler wie ein NameError werden von diesem ValueError-Zweig nicht abgefangen. Für Dateifehler gibt es etwa OSError.",
+    "methodProfile": {
+      "signature": "try: … except ValueError: …",
+      "parameters": [
+        [
+          "ValueError",
+          "Zu behandelnder Ausnahmetyp."
+        ]
+      ],
+      "returns": "Kontrollfluss ohne eigenen Rückgabewert.",
+      "effect": "Führt bei einem passenden Fehler den Fehlerzweig aus."
+    },
+    "useCase": "Ungültige Benutzereingaben verständlich zurückmelden.",
+    "pitfall": "except: ohne konkrete Ausnahme kann auch Abbrüche verdecken; leere Fehlerbehandlung macht Fehlersuche schwer.",
+    "practice": {
+      "task": "Verarbeite \"12\" und \"kaputt\": Gib für gültige Eingaben die Zahl, sonst \"ungültig\" aus.",
+      "hint": "Setze try/except pro Eingabe in die Schleife.",
+      "code": "for text in [\"12\", \"kaputt\"]:\n    try:\n        print(int(text))\n    except ValueError:\n        print(\"ungültig\")",
+      "output": "12\nungültig"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "raise",
+    "category": "Eingaben & Fehler",
+    "name": "raise: eigene Eingaberegeln durchsetzen",
+    "introduction": "raise meldet einen ungültigen Zustand an den Aufrufer. Eine klare Fehlermeldung erklärt die verletzte Regel.",
+    "steps": [
+      "Die Funktion akzeptiert nur positive Mengen.",
+      "0 verletzt die Regel.",
+      "Der Aufrufer behandelt den ValueError."
+    ],
+    "code": "def pruefen(menge):\n    if menge <= 0:\n        raise ValueError(\"Menge muss positiv sein\")\n    return menge\n\ntry:\n    pruefen(0)\nexcept ValueError as fehler:\n    print(fehler)",
+    "output": "Menge muss positiv sein",
+    "choices": [
+      "Menge muss positiv sein",
+      "0",
+      "None"
+    ],
+    "explanation": "Validierung gehört an die Grenze, an der Daten in dein Modell gelangen. Dadurch müssen nicht alle späteren Funktionen dieselbe Regel erneut erraten. Nutze sinnvolle Ausnahmetypen und bewahre bei einer Übersetzung mit raise ... from ... die Ursache.",
+    "methodProfile": {
+      "signature": "raise ValueError(nachricht)",
+      "parameters": [
+        [
+          "nachricht",
+          "Verständliche Beschreibung der verletzten Regel."
+        ]
+      ],
+      "returns": "Kein normaler Rückgabewert; der aktuelle Ablauf wird unterbrochen.",
+      "effect": "Beendet den normalen Funktionsablauf bis zu einem passenden Handler."
+    },
+    "useCase": "Leere Aufgabentitel oder ungültige Mengen früh zurückweisen.",
+    "pitfall": "Validierung mit assert ist ungeeignet: Python kann assert bei optimiertem Start abschalten.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "files",
+    "category": "Dateien & Datenformate",
+    "name": "Path, UTF-8 und Dateien lesen/schreiben",
+    "introduction": "pathlib.Path beschreibt einen Pfad. read_text und write_text lesen beziehungsweise schreiben Text mit einer gewählten Kodierung.",
+    "steps": [
+      "Das Beispiel legt einen temporären Ordner an.",
+      "Schreibe Grüße ausdrücklich als UTF-8.",
+      "Lies denselben Text wieder ein."
+    ],
+    "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as ordner:\n    datei = Path(ordner) / \"notiz.txt\"\n    datei.write_text(\"Grüße\", encoding=\"utf-8\")\n    print(datei.read_text(encoding=\"utf-8\"))",
+    "output": "Grüße",
+    "choices": [
+      "Grüße",
+      "Grusse",
+      "notiz.txt"
+    ],
+    "explanation": "with beendet hier das temporäre Verzeichnis und räumt seine Dateien auf. Für einen eigenen dauerhaft gespeicherten Text wählst du einen echten Projekt- oder Benutzerdatenpfad. write_text überschreibt eine vorhandene Datei.",
+    "methodProfile": {
+      "signature": "pfad.write_text(text, encoding=\"utf-8\"); pfad.read_text(encoding=\"utf-8\")",
+      "parameters": [
+        [
+          "pfad",
+          "Path auf die Textdatei."
+        ],
+        [
+          "text",
+          "Zu speichernder String."
+        ]
+      ],
+      "returns": "write_text liefert die Zahl geschriebener Zeichen; read_text liefert String.",
+      "effect": "Erzeugt oder überschreibt eine Datei; Lesen verändert sie nicht."
+    },
+    "useCase": "Notizen oder gespeicherte Einstellungen wiederverwenden.",
+    "pitfall": "Ein relativer Pfad bezieht sich auf das aktuelle Arbeitsverzeichnis, nicht automatisch auf den Ordner der Quelldatei.",
+    "practice": {
+      "task": "Schreibe \"A\\nB\" in eine temporäre UTF-8-Datei und zähle die mit splitlines gelesenen Zeilen.",
+      "hint": "Verwende TemporaryDirectory, damit die Übung keine vorhandenen Dateien überschreibt.",
+      "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as ordner:\n    p = Path(ordner) / \"zeilen.txt\"\n    p.write_text(\"A\\nB\", encoding=\"utf-8\")\n    print(len(p.read_text(encoding=\"utf-8\").splitlines()))",
+      "output": "2"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "json",
+    "category": "Dateien & Datenformate",
+    "name": "json.dumps() und loads(): Daten austauschen",
+    "introduction": "dumps erzeugt JSON-Text aus passenden Python-Werten. loads liest JSON-Text zurück in Python-Werte.",
+    "steps": [
+      "Die Aufgabe ist zunächst ein Dictionary.",
+      "dumps verwendet die JSON-Schreibweise false.",
+      "loads liefert wieder ein Dictionary."
+    ],
+    "code": "import json\n\ndaten = {\"titel\": \"Lernen\", \"fertig\": False}\ntext = json.dumps(daten, ensure_ascii=False)\nprint(text)\nprint(json.loads(text)[\"fertig\"])",
+    "output": "{\"titel\": \"Lernen\", \"fertig\": false}\nFalse",
+    "choices": [
+      "{\"titel\": \"Lernen\", \"fertig\": false}\nFalse",
+      "{\"titel\": \"Lernen\", \"fertig\": False}\nFalse",
+      "{\"titel\": \"Lernen\", \"fertig\": false}\nfalse"
+    ],
+    "explanation": "JSON kennt weder Python-Funktionen noch beliebige Klasseninstanzen. Nach dem Parsen müssen erwartete Felder und Typen geprüft werden. Das Aufgabenprojekt validiert auch IDs und Titel, bevor gespeicherte Daten übernommen werden.",
+    "methodProfile": {
+      "signature": "json.dumps(objekt); json.loads(text)",
+      "parameters": [
+        [
+          "objekt",
+          "JSON-kompatible Daten wie dict, list, str, int, bool oder None."
+        ],
+        [
+          "text",
+          "JSON-Text."
+        ]
+      ],
+      "returns": "dumps liefert str; loads liefert die dekodierte Datenstruktur.",
+      "effect": "Verändert hier keine Datei und keine Quelldaten."
+    },
+    "useCase": "Aufgaben zwischen Programmläufen oder Anwendungen übertragen.",
+    "pitfall": "JSON ist kein Python-Ausdruck; benutze niemals eval zum Einlesen von JSON.",
+    "practice": {
+      "task": "Serialisiere {\"name\":\"Ada\",\"punkte\":5} und lies die Punkte wieder ein. Gib nur die Zahl aus.",
+      "hint": "Verbinde dumps und loads; der Zahlenwert bleibt eine Zahl.",
+      "code": "import json\n\ntext = json.dumps({\"name\": \"Ada\", \"punkte\": 5})\nprint(json.loads(text)[\"punkte\"])",
+      "output": "5"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "csv",
+    "category": "Dateien & Datenformate",
+    "name": "csv.reader: Tabellen mit Trennzeichen lesen",
+    "introduction": "CSV besitzt Regeln für Trennzeichen und Anführungszeichen. Das csv-Modul berücksichtigt diese Regeln; split(\",\") tut das nicht zuverlässig.",
+    "steps": [
+      "Ein Name enthält selbst ein Komma.",
+      "Die Anführungszeichen halten ihn als ein Feld zusammen.",
+      "Der gelesene Datensatz hat zwei Spalten."
+    ],
+    "code": "import csv\nfrom io import StringIO\n\nzeile = next(csv.reader(StringIO('\"Ada, A.\",7\\n')))\nprint(zeile[0])\nprint(len(zeile))",
+    "output": "Ada, A.\n2",
+    "choices": [
+      "Ada, A.\n2",
+      "Ada\n3",
+      "\"Ada, A.\"\n2"
+    ],
+    "explanation": "Bei echten Dateien öffnest du mit newline=\"\" und einer ausdrücklichen Kodierung. CSV-Felder sind zunächst Strings; Zahlen und erwartete Spalten müssen geprüft werden. Das Textbericht-Projekt exportiert seine Ergebnisse über csv.writer.",
+    "methodProfile": {
+      "signature": "csv.reader(textstrom, delimiter=\",\")",
+      "parameters": [
+        [
+          "textstrom",
+          "Iterable mit Textzeilen."
+        ],
+        [
+          "delimiter",
+          "Ein Zeichen als Feldtrenner."
+        ]
+      ],
+      "returns": "Iterator über Zeilen mit Stringfeldern.",
+      "effect": "Liest den Stream schrittweise; verändert die Datenquelle nicht."
+    },
+    "useCase": "Daten aus Tabellenprogrammen übernehmen oder Berichte exportieren.",
+    "pitfall": "Eine gültige CSV-Struktur garantiert noch keine gültigen Datentypen oder vollständigen Spalten.",
+    "projectId": "python-word-report",
+    "projectTitle": "Wörterbericht"
+  },
+  {
+    "id": "import",
+    "category": "Imports & Pakete",
+    "name": "import und as: Module verwenden",
+    "introduction": "Ein Modul stellt Namen wie Funktionen oder Klassen bereit. as gibt einem importierten Namen einen lokalen Alias.",
+    "steps": [
+      "Importiere math als mathe.",
+      "Rufe sqrt über diesen Alias auf.",
+      "from ... import übernimmt gezielt einen Namen."
+    ],
+    "code": "import math as mathe\nfrom pathlib import Path\n\nprint(mathe.sqrt(81))\nprint((Path(\"daten\") / \"notiz.txt\").as_posix())",
+    "output": "9.0\ndaten/notiz.txt",
+    "choices": [
+      "9.0\ndaten/notiz.txt",
+      "81\nnotiz.txt",
+      "9\ndaten"
+    ],
+    "explanation": "Der Pfad wird im Beispiel plattformunabhängig als POSIX-Text ausgegeben. import installiert keine externen Pakete. Benenne eine eigene Datei nicht versehentlich json.py oder math.py, wenn sie das Standardmodul verdecken würde.",
+    "methodProfile": {
+      "signature": "import modul as alias; from modul import name",
+      "parameters": [
+        [
+          "modul",
+          "Importierbares Modul auf dem Modul-Suchpfad."
+        ]
+      ],
+      "returns": "Import-Anweisung ohne normalen Rückgabewert.",
+      "effect": "Bindet Namen und kann beim ersten Import Modulcode ausführen."
+    },
+    "useCase": "Standardbibliotheksfunktionen verwenden, ohne selbst jede Hilfsfunktion zu schreiben.",
+    "pitfall": "from modul import * macht Herkunft und Namenskonflikte schwer nachvollziehbar.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "main",
+    "category": "Imports & Pakete",
+    "name": "__name__ und if __name__ == \"__main__\"",
+    "introduction": "Beim direkten Start heißt ein Modul __main__. Beim Import bekommt es seinen Modulnamen. Der Guard trennt Startverhalten von wiederverwendbaren Funktionen.",
+    "steps": [
+      "Definiere die Funktion main.",
+      "Prüfe, ob die Datei direkt gestartet wurde.",
+      "Nur dann wird main ausgeführt."
+    ],
+    "code": "def main():\n    print(\"Programm gestartet\")\n\nif __name__ == \"__main__\":\n    main()",
+    "output": "Programm gestartet",
+    "choices": [
+      "Programm gestartet",
+      "main",
+      "Keine Ausgabe"
+    ],
+    "explanation": "So können Tests Funktionen importieren, ohne sofort ein interaktives Programm zu starten. Im Aufgabenprojekt bildet __main__.py den Einstieg für python3 -m codeklar_tasks; model.py und storage.py bleiben unabhängig testbar.",
+    "methodProfile": {
+      "signature": "if __name__ == \"__main__\": main()",
+      "parameters": [],
+      "returns": "Der Guard steuert den Aufruf; main liefert hier None.",
+      "effect": "Startet den Programmablauf nur beim passenden Moduleinstieg."
+    },
+    "useCase": "Eigenen Code zugleich ausführen und in Tests importieren können.",
+    "pitfall": "Ein Guard verhindert nur den umschlossenen Code; andere Anweisungen auf Modulebene laufen beim Import weiterhin.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "unittest",
+    "category": "Tests & Werkzeuge",
+    "name": "unittest: Verhalten automatisch prüfen",
+    "introduction": "unittest ist in der Standardbibliothek enthalten. Ein Test vergleicht erwartetes mit tatsächlichem Verhalten und meldet Fehlschläge.",
+    "steps": [
+      "Definiere einen Test mit assertEqual.",
+      "Führe ihn in einem TestResult aus.",
+      "Lies Anzahl und Erfolg ab."
+    ],
+    "code": "import unittest\n\nclass RechnenTest(unittest.TestCase):\n    def test_summe(self):\n        self.assertEqual(2 + 3, 5)\n\nergebnis = unittest.TestResult()\nRechnenTest(\"test_summe\").run(ergebnis)\nprint(ergebnis.testsRun)\nprint(ergebnis.wasSuccessful())",
+    "output": "1\nTrue",
+    "choices": [
+      "1\nTrue",
+      "0\nTrue",
+      "1\nFalse"
+    ],
+    "explanation": "In einem echten Projekt heißen Testdateien beispielsweise test_tasks.py. python3 -m unittest -v entdeckt und startet die Tests. assertRaises prüft erwartete Fehler, setUp und temporäre Verzeichnisse helfen beim Isolieren der Daten.",
+    "methodProfile": {
+      "signature": "self.assertEqual(ist, soll); self.assertRaises(Fehlertyp)",
+      "parameters": [
+        [
+          "ist und soll",
+          "Zu vergleichende Werte."
+        ],
+        [
+          "Fehlertyp",
+          "Erwartete Ausnahme."
+        ]
+      ],
+      "returns": "Test-Assertions liefern bei Erfolg None und melden sonst einen Testfehler.",
+      "effect": "Prüft Verhalten; die Tests sollten eigene Testdaten verwenden."
+    },
+    "useCase": "Sicherstellen, dass Hinzufügen, Speichern und ungültige Eingaben nach Änderungen weiter funktionieren.",
+    "pitfall": "Tests nur für den Erfolgsfall reichen nicht; prüfe auch leere Daten, Grenzen und erwartete Fehler.",
+    "practice": {
+      "task": "Schreibe einen unittest, der prüft, dass int(\"kaputt\") ValueError auslöst. Gib das Testergebnis als bool aus.",
+      "hint": "Nutze assertRaises als Kontextmanager innerhalb einer Testmethode.",
+      "code": "import unittest\n\nclass EingabeTest(unittest.TestCase):\n    def test_fehler(self):\n        with self.assertRaises(ValueError):\n            int(\"kaputt\")\n\nr = unittest.TestResult()\nEingabeTest(\"test_fehler\").run(r)\nprint(r.wasSuccessful())",
+      "output": "True"
+    },
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "hints",
+    "category": "Tests & Werkzeuge",
+    "name": "Typannotationen sind Hinweise, keine Laufzeitprüfung",
+    "introduction": "Eine Annotation wie int dokumentiert einen erwarteten Typ. Python konvertiert oder validiert damit nicht automatisch jeden Aufruf.",
+    "steps": [
+      "Die Funktion erwartet laut Annotation int.",
+      "Der Rumpf verwendet den Operator *.",
+      "Ein Stringargument wird trotz Annotation wiederholt."
+    ],
+    "code": "def doppelt(n: int) -> int:\n    return n * 2\n\nprint(doppelt(3))\nprint(doppelt(\"ha\"))",
+    "output": "6\nhaha",
+    "choices": [
+      "6\nhaha",
+      "6\nTypeError",
+      "6\nha"
+    ],
+    "explanation": "Ein statischer Typprüfer kann den zweiten Aufruf melden, der Python-Interpreter führt ihn trotzdem aus. Für Benutzerdaten brauchst du explizite Laufzeitprüfungen. Annotationen helfen beim Lesen und bei IDE-Unterstützung.",
+    "methodProfile": {
+      "signature": "def name(parameter: Typ) -> Ergebnistyp: …",
+      "parameters": [
+        [
+          "Typ",
+          "Beschreibung des erwarteten Wertes für Werkzeuge und Leser."
+        ]
+      ],
+      "returns": "Die Annotation legt den tatsächlichen Rückgabewert nicht fest.",
+      "effect": "Fügt Typinformationen hinzu; keine automatische Umwandlung."
+    },
+    "useCase": "Schnittstellen eigener Funktionen verständlich dokumentieren.",
+    "pitfall": "Verlasse dich bei importierten oder gespeicherten Daten nicht auf Typannotationen als Validierung.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "venv",
+    "category": "Tests & Werkzeuge",
+    "name": "venv und pip: Projektabhängigkeiten trennen",
+    "introduction": "Eine virtuelle Umgebung hält installierte Projektpakete von anderen Umgebungen getrennt. pip installiert Pakete in die angesprochene Python-Umgebung.",
+    "steps": [
+      "python3 -m venv .venv legt eine Umgebung an.",
+      "Nutze danach deren Python-Interpreter.",
+      "python -m pip verwendet genau diesen Interpreter."
+    ],
+    "code": "import venv\n\nbuilder = venv.EnvBuilder(with_pip=True)\nprint(builder.with_pip)",
+    "output": "True",
+    "choices": [
+      "True",
+      "False",
+      ".venv"
+    ],
+    "explanation": "Das Beispiel konfiguriert nur einen Builder und legt keine Umgebung an. Lokal erstellst du sie mit python3 -m venv .venv. Linux/macOS: .venv/bin/python; Windows: .venv\\Scripts\\python.exe. Beide neuen Projekte benötigen nur die Standardbibliothek und keine Installation zusätzlicher Pakete.",
+    "methodProfile": {
+      "signature": "python3 -m venv .venv\n.venv/bin/python -m pip --version",
+      "parameters": [
+        [
+          "with_pip",
+          "True=Beim Erstellen pip vorbereiten, sofern die Python-Installation dies unterstützt."
+        ]
+      ],
+      "returns": "EnvBuilder-Objekt; create würde Ordner und Dateien erzeugen.",
+      "effect": "Der Beispielcode erzeugt noch keine Umgebung."
+    },
+    "useCase": "Bibliotheksversionen pro Projekt verwalten und den richtigen Interpreter erkennen.",
+    "pitfall": "Verwechsle einen importierbaren Modulnamen nicht mit dem Namen eines installierbaren Distributionspakets.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  },
+  {
+    "id": "search",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "Lineare Suche und O(n): Aufwand verstehen",
+    "introduction": "Eine lineare Suche prüft Werte nacheinander. Im schlechtesten Fall muss sie alle n Elemente betrachten.",
+    "steps": [
+      "Prüfe jeden Eintrag mit seinem Index.",
+      "Beim Treffer kehrt die Funktion sofort zurück.",
+      "Ohne Treffer liefert sie -1."
+    ],
+    "code": "def suche(werte, ziel):\n    for index, wert in enumerate(werte):\n        if wert == ziel:\n            return index\n    return -1\n\nprint(suche([4, 8, 12], 8))\nprint(suche([4, 8, 12], 9))",
+    "output": "1\n-1",
+    "choices": [
+      "1\n-1",
+      "2\n0",
+      "8\nNone"
+    ],
+    "explanation": "enumerate liefert Index und Element gemeinsam. O(n) beschreibt hier, wie die Zahl der Prüfungen mit der Eingabelänge wachsen kann; es ist keine feste Anzahl von Sekunden. Im besten Fall liegt der Treffer bereits am Anfang.",
+    "methodProfile": {
+      "signature": "enumerate(iterable, start=0)",
+      "parameters": [
+        [
+          "iterable",
+          "Zu durchlaufende Werte."
+        ],
+        [
+          "start",
+          "Erster Zählwert."
+        ]
+      ],
+      "returns": "Iterator mit Paaren aus Index und Element.",
+      "effect": "Liest die Quelle; verändert sie nicht."
+    },
+    "useCase": "Eine Suchaufgabe lösen und den Aufwand anhand der Datenmenge erklären.",
+    "pitfall": "-1 ist eine selbst gewählte Konvention; als Listenindex würde -1 das letzte Element lesen.",
+    "projectId": "python-word-report",
+    "projectTitle": "Wörterbericht"
+  },
+  {
+    "id": "counter",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "Counter: Häufigkeiten zählen",
+    "introduction": "collections.Counter zählt gleiche hashbare Werte. most_common liefert häufige Werte mit ihren Anzahlen.",
+    "steps": [
+      "Die Quelle enthält zweimal a und einmal b.",
+      "Counter speichert die Häufigkeiten.",
+      "Für einen fehlenden Schlüssel liefert er 0."
+    ],
+    "code": "from collections import Counter\n\nzaehler = Counter([\"a\", \"b\", \"a\"])\nprint(zaehler[\"a\"])\nprint(zaehler[\"c\"])\nprint(zaehler.most_common(1))",
+    "output": "2\n0\n[('a', 2)]",
+    "choices": [
+      "2\n0\n[('a', 2)]",
+      "2\nNone\n[('a', 2)]",
+      "1\n0\n[('b', 1)]"
+    ],
+    "explanation": "Ein Wörterbericht kann so Tokens zählen und nach Häufigkeit ordnen. Für eine reproduzierbare zusätzliche alphabetische Reihenfolge bei Gleichstand sortierst du die Paare ausdrücklich nach (-anzahl, wort).",
+    "methodProfile": {
+      "signature": "Counter(iterable); counter.most_common(n)",
+      "parameters": [
+        [
+          "iterable",
+          "Quelle hashbarer Werte."
+        ],
+        [
+          "n",
+          "Maximale Anzahl zurückzugebender Häufigkeiten."
+        ]
+      ],
+      "returns": "Counter-Objekt beziehungsweise Liste aus Wert-Anzahl-Paaren.",
+      "effect": "Erzeugt hier einen neuen Zähler."
+    },
+    "useCase": "Häufige Wörter, Tags oder Ereignisse in einem Bericht anzeigen.",
+    "pitfall": "Counter zählt, was du ihm gibst; Großschreibung und Satzzeichen müssen vorher nach deiner Regel behandelt werden.",
+    "practice": {
+      "task": "Zähle in [\"rot\",\"blau\",\"rot\",\"rot\"] die Farbe rot. Gib nur deren Anzahl aus.",
+      "hint": "Erzeuge einen Counter und lies den Schlüssel \"rot\".",
+      "code": "from collections import Counter\n\nc = Counter([\"rot\", \"blau\", \"rot\", \"rot\"])\nprint(c[\"rot\"])",
+      "output": "3"
+    },
+    "projectId": "python-word-report",
+    "projectTitle": "Wörterbericht"
+  },
+  {
+    "id": "deque",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "deque: Warteschlangen effizient verarbeiten",
+    "introduction": "deque unterstützt effizientes Anhängen und Entfernen an beiden Enden. Für eine FIFO-Queue kommen neue Werte rechts an und alte gehen links ab.",
+    "steps": [
+      "Die Queue enthält A und B.",
+      "append fügt C rechts an.",
+      "popleft entfernt den ältesten Eintrag A."
+    ],
+    "code": "from collections import deque\n\nqueue = deque([\"A\", \"B\"])\nqueue.append(\"C\")\nprint(queue.popleft())\nprint(list(queue))",
+    "output": "A\n['B', 'C']",
+    "choices": [
+      "A\n['B', 'C']",
+      "C\n['A', 'B']",
+      "A\n['A', 'B', 'C']"
+    ],
+    "explanation": "Anders als list.pop(0) muss deque.popleft nicht alle verbleibenden Listenelemente verschieben. Operationen an den Enden haben im üblichen Kostenmodell konstanten Aufwand; beliebiger Indexzugriff in der Mitte ist nicht der Anwendungsfall.",
+    "methodProfile": {
+      "signature": "queue.append(wert); queue.popleft()",
+      "parameters": [
+        [
+          "wert",
+          "Neuer Eintrag am rechten Ende."
+        ]
+      ],
+      "returns": "append liefert None; popleft das entfernte linke Element.",
+      "effect": "Verändert die Queue."
+    },
+    "useCase": "Aufträge in Eingangsreihenfolge oder eine Breitensuche abarbeiten.",
+    "pitfall": "popleft auf einer leeren deque löst IndexError aus; prüfe den Leerfall.",
+    "projectId": "python-task-cli",
+    "projectTitle": "Aufgabenverwaltung"
+  }
+]

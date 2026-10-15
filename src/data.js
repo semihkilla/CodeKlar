@@ -1,3 +1,4 @@
+import { pythonLessonPack, pythonAppendHelp } from "./pythonLessons";
 import { networkingLessons } from "./networkingLessons";
 import { cloudLessons } from "./cloudLessons";
 import { cybersecurityLessons } from "./cybersecurityLessons";
@@ -77,7 +78,9 @@ export const courses = [
     id: "python",
     name: "Python",
     mark: "Py",
-    description: "Lesbarer Code, Listen und ihre Methoden.",
+    guided: true,
+    headline: "Python verstehen und eigene Programme bauen.",
+    description: "Python 3.10+: Operatoren, Methoden, Dateien und Tests mit vollständigen Beispielen. Die Programme startest du lokal mit Python.",
   },
   {
     id: "css",
@@ -631,10 +634,13 @@ const learningOrder = ["js-variables", "js-typeof", "js-missing", "js-number", "
 export const javaLessons = [...javaLessonPack];
 // Keep the existing lesson ID and its stored progress, inside the String chapter.
 javaLessons.splice(javaLessons.findLastIndex(lesson => lesson.category === "Strings") + 1, 0, otherLessons.find(lesson => lesson.id === "java-equals"));
+export const pythonLessons = [...pythonLessonPack];
+pythonLessons.splice(pythonLessons.findIndex(lesson => lesson.id === "python-extend"), 0, { ...otherLessons.find(lesson => lesson.id === "python-append"), ...pythonAppendHelp });
 export const lessons = [
   ...[...jsLessons].sort((a, b) => learningOrder.indexOf(a.id) - learningOrder.indexOf(b.id)),
   ...javaLessons,
-  ...otherLessons.filter(lesson => lesson.course !== "java"),
+  ...pythonLessons,
+  ...otherLessons.filter(lesson => lesson.course !== "java" && lesson.course !== "python"),
   ...computerLessons,
   ...terminalLessons,
   ...scienceLessons,

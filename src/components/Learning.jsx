@@ -1,3 +1,4 @@
+import { PythonLessonHelp } from "./PythonLessonHelp";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
 import { courses, lessons } from "../data";
@@ -55,7 +56,7 @@ function Quiz({ lesson, record }) {
             }}
           >
             <span className="radio-mark" />
-            {lesson.course === 'java' && lesson.expectedOutput !== undefined ? <span className="java-quiz-output">{option}</span> : option}
+            {['java', 'python'].includes(lesson.course) && lesson.expectedOutput !== undefined ? <span className={lesson.course === 'java' ? 'java-quiz-output' : 'python-quiz-output'}>{option}</span> : option}
           </button>
         ))}
       </div>
@@ -158,6 +159,7 @@ function LessonPanel({
               {science && <FormulaWorkshop key={lesson.id} course={lesson.course} lessonId={lesson.id} />}
               {lesson.pitfall && <div className="learning-pitfall"><strong>Typischer Stolperstein</strong><p>{lesson.pitfall}</p></div>}
               {lesson.course === 'java' && <JavaLessonHelp lesson={lesson} openProject={openProject} />}
+              {lesson.course === 'python' && <PythonLessonHelp lesson={lesson} openProject={openProject} />}
               {lesson.terms?.length > 0 && <details className="reading-more learning-vocabulary"><summary>Begriffe einfach erklärt</summary><dl>{lesson.terms.map(([name,meaning]) => <div key={name}><dt>{name}</dt><dd>{meaning}</dd></div>)}</dl></details>}
               <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>
                 {!technology && <><p>{lesson.description}</p>

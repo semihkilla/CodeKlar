@@ -693,3 +693,41 @@ Alternative mit installiertem Gradle 8 (kein Wrapper im ZIP): `gradle check inst
 Swing bleibt eine Desktop-Technik: Die mobile Webapp zeigt die Lerninhalte, Aufgaben und Downloads. Ein sichtbares Desktop-Fenster wurde hier mangels grafischer Sitzung nicht visuell geprüft; Komponententests und Zeichentests laufen ohne Fenster. Native Installer und macOS-/Windows-Ausgaben benötigen Prüfung auf ihren Zielsystemen.
 
 Für diese Erweiterung wurden außerdem Maven 3.9.9 (`clean package`), Gradle 8.10.2 (`check installDist`), die gebündelte Maven-JAR und ein unter Linux erzeugtes jpackage-App-Image mit JDK 17 geprüft. Alle 24 Aufgabenprüfungen liefen auch aus der JAR und dem App-Image erfolgreich. Sichtbare Fenster/Dateidialoge sowie Installer und andere Betriebssysteme sind damit nicht visuell geprüft.
+
+### Python: strukturierter Lernpfad mit lokalen Übungen und Projekten
+
+Python ist jetzt ein geführter Lernbereich mit **43 Lektionen insgesamt**: 42 neue vollständige Beispiele plus die bisherige `python-append`-Lektion. Deren ID, Frage, Antwortreihenfolge und gespeicherter Fortschritt bleiben erhalten. Sechs Hauptbereiche ordnen den Stoff:
+
+- **Einstieg & Sprache:** Variablen, Typen, Konvertierung, `/`, `//`, `%`, `**`, `==`/`is`/`in`, Wahrheitswerte, Entscheidungen, Einrückung, for/range.
+- **Listen, Texte & Sammlungen:** Index/Slices, append/extend/pop, Referenzen/Kopien, Dictionaries, Sets, Tuples, Stringmethoden, Comprehensions und Sortieren.
+- **Funktionen:** Parameter/return, Standardargumente, `*args`, benannte Argumente, lokale Namen, geteilte Objekte, lambda/key und Generatoren.
+- **Klassen & Datenmodelle:** self, Instanzattribute, dataclass und die Grenzen von Typannotationen.
+- **Eingaben, Dateien & Fehler:** input, try/except/raise, pathlib, temporäre Dateien, UTF-8, JSON und CSV.
+- **Module, Tests & Algorithmen:** Imports/Aliasse, `__name__`, Package-Einstieg, unittest, Typannotationen, venv/pip, lineare Suche/O(n), Counter und deque.
+
+Jede neue Lektion enthält drei Erklärungsschritte, ein ausführbares Python-Beispiel, eine Wissensfrage zur Ausgabe, einen Anwendungsfall, einen typischen Fehler und aufklappbare Syntax-/Parameter-/Rückgabewert-Hilfe. **14 zusätzliche Programmierübungen** besitzen Hinweise, vollständige Musterlösungen und erwartete Ausgaben. Nachschlagen zeigt die Methodenhilfe ohne die komplette Übung; Lernrunden, Prüfungen und Wiederholungen können nach Python und den sechs Kapiteln gefiltert werden. Wissensantworten ersetzen keinen lokalen Test einer eigenen Implementierung.
+
+Die Programme sind für Python 3.10 oder neuer geschrieben. Native Prüfung dieser Erweiterung: **CPython 3.12.14**. Die mobile Webapp führt Python nicht aus; sie zeigt den Stoff und bewertet Wissensantworten. Zum eigenen Programmieren eine Datei `main.py` speichern und `python3 main.py` ausführen; unter Windows je nach Installation `python` oder `py`. Das input-Beispiel benötigt die Eingabe `7` plus Enter, was auch in der Frage und Startnotiz steht.
+
+Unter **Projekte → Python** ergänzen zwei vollständige neue Projekte das vorhandene Zahlenratespiel:
+
+1. **Python: Aufgabenverwaltung mit JSON** — ein echtes Package aus `model.py`, `storage.py`, `__main__.py` und `__init__.py`, dazu `test_tasks.py` und `BAUPLAN.md`. Dataclass-Modell und Fachfunktionen sind von Terminalargumenten und Speicherung getrennt. Hinzufügen, Fertig-Umschalten, Anzeigen und Löschen funktionieren über Unterbefehle. JSON-Dateien besitzen ein Versionsfeld; Felder, Typen, eindeutige positive IDs und Titel werden vor Übernahme geprüft. Speichern schreibt zunächst eine temporäre Datei im selben Ordner und ersetzt erst danach das Ziel. Zwölf Testmethoden prüfen unter anderem UTF-8, fehlerhafte Daten, Prozessaktionen und Erhalt der alten Datei bei einem simulierten Schreibfehler. Das Modell unterstützt einen gleichzeitig schreibenden Prozess und benötigt keine externen Pakete.
+2. **Python: Wörterbericht mit CSV-Export** — UTF-8-Text lesen, Wörter nach einer erklärten Regel normalisieren, mit Counter zählen, reproduzierbar sortieren und mit csv.writer exportieren. Acht Testmethoden decken leere Eingaben, Umlaute, Gleichstände, CSV und Fehlerfälle ab. `--top` begrenzt die Terminalanzeige, der CSV-Export enthält alle Ergebnisse. `BAUPLAN.md` erklärt die Verarbeitungskette und eigene Erweiterungsaufgaben. Vorhandene CSV-Ziele werden überschrieben; bewusst einen passenden Ausgabepfad wählen.
+
+Beispiele im jeweiligen entpackten Projektordner:
+
+```sh
+python3 -m unittest -v
+python3 -m codeklar_tasks --file aufgaben.json add "Python lernen"
+python3 -m codeklar_tasks --file aufgaben.json list
+python3 -m codeklar_tasks --file aufgaben.json done 1
+```
+
+```sh
+python3 -m unittest -v
+python3 report.py beispiel.txt --top 5 --csv bericht.csv
+```
+
+Die Baupläne verbinden die Idee mit Datenmodell, Aktionen, Eingabe, Speicherung, Ausgabe und Tests. Neue Lektionen verlinken direkt das passende Projekt; ZIPs bewahren Package-Verzeichnisse und enthalten den jeweiligen Bauplan. Alle Inhalte und Projekte sind nach dem ersten vollständigen Laden auch offline zugänglich.
+
+`npm run test:python` führt die tatsächlichen 42 Beispielprogramme und 14 Übungslösungen mit CPython aus und vergleicht stdout. Anschließend laufen die 20 Projekt-Testmethoden sowie zusätzliche echte Prozessstarts für Aufgabenpersistenz, ungültige IDs ohne Dateiänderung und einen tatsächlichen CSV-Export. Die Prüfung arbeitet ausschließlich mit eigenen temporären Dateien. Der vorhandene Java-Prüfer und die Java-Lerninhalte bleiben getrennt davon nutzbar.

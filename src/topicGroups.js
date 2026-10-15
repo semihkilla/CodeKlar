@@ -1,5 +1,13 @@
 // Navigation groups only: lesson IDs, grading and the learning sequence stay stable.
 const groups = {
+  python: [
+    ["start", "Einstieg & Sprache", ["Grundlagen", "Operatoren & Entscheidungen", "Schleifen"]],
+    ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings"]],
+    ["functions", "Funktionen", ["Funktionen"]],
+    ["objects", "Klassen & Datenmodelle", ["Klassen & Datenmodelle"]],
+    ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate"]],
+    ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen"]],
+  ],
   java: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Methoden"]],
     ["data", "Strings, Arrays & Collections", ["Arrays", "Strings", "Collections", "Lambdas & Streams", "Reguläre Ausdrücke"]],

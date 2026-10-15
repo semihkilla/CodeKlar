@@ -1,0 +1,690 @@
+[
+  {
+    "id": "swing-frame",
+    "category": "Oberflächen & Swing",
+    "name": "JFrame: das äußere Fenster",
+    "introduction": "JFrame ist ein Desktop-Fenster mit Titel, Rahmen und einem Inhaltsbereich. Swing gehört zum JDK-Modul java.desktop.",
+    "steps": [
+      "Ein JFrame erbt von Window.",
+      "JPanel ist kein eigenes Fenster.",
+      "DISPOSE_ON_CLOSE schließt das Fenster und gibt seine nativen Ressourcen frei."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    System.out.println(Window.class.isAssignableFrom(JFrame.class));\n    System.out.println(Window.class.isAssignableFrom(JPanel.class));\n    System.out.println(JFrame.DISPOSE_ON_CLOSE);\n});",
+    "output": "true\nfalse\n2",
+    "choices": [
+      "true\nfalse\n2",
+      "true\ntrue\n2",
+      "false\ntrue\n0"
+    ],
+    "explanation": "Das Beispiel untersucht nur Klassen und eine Konstante; es öffnet absichtlich kein Fenster. Ein echtes JFrame wird im Projekt auf dem EDT erzeugt, bekommt ein JPanel als Inhalt, wird mit pack() dimensioniert und mit setVisible(true) angezeigt. DISPOSE_ON_CLOSE beendet nicht pauschal alle anderen Fenster oder Threads.",
+    "declarations": "",
+    "imports": "import java.awt.Window;\nimport javax.swing.JFrame;\nimport javax.swing.JPanel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "new JFrame(titel); frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)",
+      "parameters": [
+        [
+          "titel",
+          "Text in der Titelleiste."
+        ]
+      ],
+      "returns": "Der Konstruktor erzeugt eine JFrame-Instanz; setDefaultCloseOperation liefert void.",
+      "effect": "Ein echtes JFrame erzeugt ein natives Fenster; der Beispielcode erzeugt keines."
+    },
+    "useCase": "Eine Taschenrechner- oder Verwaltungsoberfläche als Desktop-Fenster starten.",
+    "pitfall": "Auf einem Server ohne grafische Umgebung löst new JFrame eine HeadlessException aus.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-panel",
+    "category": "Oberflächen & Swing",
+    "name": "JPanel: Bausteine zusammenfassen",
+    "introduction": "Ein JPanel ist ein Container innerhalb einer Oberfläche. add fügt eine Komponente hinzu; es öffnet kein Fenster.",
+    "steps": [
+      "Erzeuge ein leeres Panel.",
+      "Füge ein Label und einen Button hinzu.",
+      "Zähle die zwei direkten Kinder."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var panel = new JPanel();\n    panel.add(new JLabel(\"Hallo\"));\n    panel.add(new JButton(\"Start\"));\n    System.out.println(panel.getComponentCount());\n});",
+    "output": "2",
+    "choices": [
+      "2",
+      "0",
+      "1"
+    ],
+    "explanation": "Ein Panel ist selbst eine Komponente und kann in einem anderen Panel liegen. So entstehen Bereiche wie Werkzeugleiste, Eingabeformular und Statuszeile. Das Standardlayout von JPanel ist FlowLayout.",
+    "declarations": "",
+    "imports": "import javax.swing.JButton;\nimport javax.swing.JLabel;\nimport javax.swing.JPanel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "panel.add(komponente); panel.getComponentCount()",
+      "parameters": [
+        [
+          "komponente",
+          "Ein Swing-Baustein wie JLabel, JButton oder ein weiteres JPanel."
+        ]
+      ],
+      "returns": "add liefert die hinzugefügte Component; getComponentCount liefert int.",
+      "effect": "add verändert die Kinderliste des Panels."
+    },
+    "useCase": "Ein Formular aus mehreren wiederverwendbaren Bereichen zusammensetzen.",
+    "pitfall": "getComponentCount zählt nur direkte Kinder und durchsucht keine verschachtelten Panels.",
+    "practice": {
+      "task": "Baue ein Panel mit drei beschrifteten Buttons und gib die Anzahl seiner direkten Kinder aus.",
+      "hint": "Füge jeden JButton mit einem eigenen add-Aufruf hinzu.",
+      "code": "SwingUtilities.invokeAndWait(() -> {\n    var p = new JPanel();\n    p.add(new JButton(\"A\"));\n    p.add(new JButton(\"B\"));\n    p.add(new JButton(\"C\"));\n    System.out.println(p.getComponentCount());\n});",
+      "output": "3"
+    },
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-label",
+    "category": "Oberflächen & Swing",
+    "name": "JLabel: Werte sichtbar darstellen",
+    "introduction": "JLabel zeigt Text an. Mit setText ersetzt du den angezeigten Text, mit getText liest du ihn.",
+    "steps": [
+      "Beginne mit dem Text Punkte: 0.",
+      "Ersetze ihn durch Punkte: 5.",
+      "Lies den aktuellen Text aus."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var label = new JLabel(\"Punkte: 0\");\n    label.setText(\"Punkte: 5\");\n    System.out.println(label.getText());\n});",
+    "output": "Punkte: 5",
+    "choices": [
+      "Punkte: 5",
+      "Punkte: 0",
+      "5"
+    ],
+    "explanation": "Der Text ist die Darstellung eines Wertes, nicht die ganze Fachlogik. Speichere Punkte als Zahl im Modell und aktualisiere anschließend die Anzeige. Das vermeidet Rechnungen durch Zerlegen von Labeltexten.",
+    "declarations": "",
+    "imports": "import javax.swing.JLabel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "label.setText(text); label.getText()",
+      "parameters": [
+        [
+          "text",
+          "Der neu anzuzeigende String."
+        ]
+      ],
+      "returns": "setText liefert void; getText liefert String.",
+      "effect": "Der Textzustand des Labels wird ersetzt."
+    },
+    "useCase": "Ergebnisse, Punktestände oder Statusmeldungen anzeigen.",
+    "pitfall": "setText(\"5\") erhöht keine gespeicherte Zahl; Anzeige und Datenmodell sind verschiedene Aufgaben.",
+    "practice": {
+      "task": "Speichere 12 Punkte in einer int-Variablen und stelle sie als \"Punkte: 12\" in einem JLabel dar.",
+      "hint": "Verbinde den festen Text mit dem Zahlenwert.",
+      "code": "SwingUtilities.invokeAndWait(() -> {\n    int punkte = 12;\n    var label = new JLabel();\n    label.setText(\"Punkte: \" + punkte);\n    System.out.println(label.getText());\n});",
+      "output": "Punkte: 12"
+    },
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-button",
+    "category": "Oberflächen & Swing",
+    "name": "JButton: auf einen Klick reagieren",
+    "introduction": "Ein ActionListener beschreibt, was beim Auslösen eines Buttons passieren soll. Die Funktion wird registriert und später aufgerufen.",
+    "steps": [
+      "Das Label beginnt bei Bereit.",
+      "Registriere die Aktion mit addActionListener.",
+      "doClick(0) löst hier den Button programmgesteuert aus."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var label = new JLabel(\"Bereit\");\n    var button = new JButton(\"Start\");\n    button.addActionListener(event -> label.setText(\"Gestartet\"));\n    button.doClick(0);\n    System.out.println(label.getText());\n});",
+    "output": "Gestartet",
+    "choices": [
+      "Gestartet",
+      "Bereit",
+      "Start"
+    ],
+    "explanation": "addActionListener führt den Funktionsrumpf beim Registrieren noch nicht aus. Erst das Ereignis löst ihn aus. doClick(0) ist hier ein reproduzierbarer Test ohne Mausklick; bei einer sichtbaren Oberfläche klickt die Person den Button an.",
+    "declarations": "",
+    "imports": "import javax.swing.JButton;\nimport javax.swing.JLabel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "button.addActionListener(event -> aktion); button.doClick(0)",
+      "parameters": [
+        [
+          "event",
+          "Informationen über das ausgelöste ActionEvent."
+        ],
+        [
+          "0",
+          "Keine künstliche Dauer für den gedrückten Zustand in Millisekunden."
+        ]
+      ],
+      "returns": "Die beiden Methoden liefern void.",
+      "effect": "Die registrierte Aktion verändert in diesem Beispiel das Label."
+    },
+    "useCase": "Einen Speichern-, Rechnen- oder Start-Button mit Verhalten verbinden.",
+    "pitfall": "Lange Dateizugriffe oder Netzwerkanfragen im Listener blockieren den EDT und damit die Oberfläche.",
+    "practice": {
+      "task": "Ein Label zeigt \"Aus\". Registriere einen Button, der es auf \"An\" setzt, und teste ihn mit doClick(0).",
+      "hint": "Die Änderung gehört in den Listener und nicht vor dessen Registrierung.",
+      "code": "SwingUtilities.invokeAndWait(() -> {\n    var label = new JLabel(\"Aus\");\n    var button = new JButton(\"Licht\");\n    button.addActionListener(e -> label.setText(\"An\"));\n    button.doClick(0);\n    System.out.println(label.getText());\n});",
+      "output": "An"
+    },
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-textfield",
+    "category": "Oberflächen & Swing",
+    "name": "JTextField: Eingaben lesen",
+    "introduction": "JTextField enthält eine einzeilige Texteingabe. getText liefert immer Text, auch wenn die Eingabe wie eine Zahl aussieht.",
+    "steps": [
+      "Lies den Inhalt des Feldes.",
+      "Entferne Rand-Leerzeichen mit strip.",
+      "Wandle erst danach die Zahl mit parseInt um."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var feld = new JTextField(\" 7 \");\n    int schritt = Integer.parseInt(feld.getText().strip());\n    System.out.println(schritt + 1);\n});",
+    "output": "8",
+    "choices": [
+      "8",
+      "71",
+      "7"
+    ],
+    "explanation": "Eine Eingabe wie sieben verursacht NumberFormatException. Das vollständige Zähler-Projekt zeigt dafür eine verständliche Meldung und lässt den alten Zählerstand erhalten. Die Spaltenzahl im Konstruktor ist eine Größenempfehlung, keine maximale Textlänge.",
+    "declarations": "",
+    "imports": "import javax.swing.JTextField;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "feld.getText(); Integer.parseInt(text)",
+      "parameters": [
+        [
+          "text",
+          "Bereinigte Darstellung einer ganzen Zahl."
+        ]
+      ],
+      "returns": "getText liefert String; parseInt liefert int oder wirft NumberFormatException.",
+      "effect": "Lesen verändert das Feld nicht."
+    },
+    "useCase": "Zahlen, Namen oder Suchbegriffe aus einem Formular übernehmen.",
+    "pitfall": "Leere Eingaben, ungültiger Text und Zahlen außerhalb des int-Bereichs müssen behandelt werden.",
+    "practice": {
+      "task": "Lies \" 15 \" aus einem JTextField und gib das Doppelte als Zahl aus.",
+      "hint": "Erst strip, dann Integer.parseInt, anschließend rechnen.",
+      "code": "SwingUtilities.invokeAndWait(() -> {\n    var feld = new JTextField(\" 15 \");\n    int n = Integer.parseInt(feld.getText().strip());\n    System.out.println(n * 2);\n});",
+      "output": "30"
+    },
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-checkbox",
+    "category": "Oberflächen & Swing",
+    "name": "JCheckBox: Ja oder Nein auswählen",
+    "introduction": "JCheckBox speichert einen Auswahlzustand. Der sichtbare Text ist eine Beschriftung, der Zustand ein boolean.",
+    "steps": [
+      "Erzeuge die Checkbox zunächst ohne Auswahl.",
+      "Setze ihre Auswahl auf true.",
+      "Lies isSelected aus."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var box = new JCheckBox(\"Ton\");\n    System.out.println(box.isSelected());\n    box.setSelected(true);\n    System.out.println(box.isSelected());\n});",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "setSelected ändert den Auswahlzustand; ein ActionListener ist kein allgemeiner Beobachter jeder programmgesteuerten Zustandsänderung. Für solche Änderungen kann ein ItemListener passend sein. Lies zum Verarbeiten den tatsächlichen Zustand.",
+    "declarations": "",
+    "imports": "import javax.swing.JCheckBox;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "box.setSelected(wert); box.isSelected()",
+      "parameters": [
+        [
+          "wert",
+          "true für ausgewählt, false für nicht ausgewählt."
+        ]
+      ],
+      "returns": "setSelected liefert void; isSelected liefert boolean.",
+      "effect": "Der Auswahlzustand der Checkbox ändert sich."
+    },
+    "useCase": "Optionen wie Ton, Dark Mode oder Benachrichtigungen im Desktop-Programm anbieten.",
+    "pitfall": "Beschriftung und Auswahl sind unabhängig: getText liefert nicht den boolean-Zustand.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-combo",
+    "category": "Oberflächen & Swing",
+    "name": "JComboBox: eine Option wählen",
+    "introduction": "Eine JComboBox bietet eine Auswahlliste. Der generische Typ beschreibt den Typ der enthaltenen Einträge.",
+    "steps": [
+      "Füge zwei String-Optionen ein.",
+      "Wähle die zweite Option mit Index 1.",
+      "Lies den gewählten Eintrag."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var auswahl = new JComboBox<String>(new String[]{\"Leicht\", \"Schwer\"});\n    auswahl.setSelectedIndex(1);\n    System.out.println(auswahl.getSelectedItem());\n});",
+    "output": "Schwer",
+    "choices": [
+      "Schwer",
+      "Leicht",
+      "1"
+    ],
+    "explanation": "Indizes beginnen bei null. getSelectedItem ist historisch als Object typisiert; prüfe oder wandle den Wert passend um, wenn du ihn als String weiterverarbeiten möchtest. Ohne Auswahl kann null zurückkommen.",
+    "declarations": "",
+    "imports": "import javax.swing.JComboBox;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "auswahl.setSelectedIndex(index); auswahl.getSelectedItem()",
+      "parameters": [
+        [
+          "index",
+          "Nullbasierter Index; -1 hebt die Auswahl auf."
+        ]
+      ],
+      "returns": "setSelectedIndex liefert void; getSelectedItem liefert Object oder null.",
+      "effect": "Die ausgewählte Option wird geändert."
+    },
+    "useCase": "Schwierigkeit oder einen Modus aus fest vorgegebenen Möglichkeiten wählen.",
+    "pitfall": "Ein Index außerhalb der vorhandenen Einträge führt zu IllegalArgumentException.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-list",
+    "category": "Oberflächen & Swing",
+    "name": "JList und DefaultListModel: Listen anzeigen",
+    "introduction": "Eine JList zeigt die Einträge ihres Modells an. DefaultListModel ermöglicht das nachträgliche Hinzufügen und Entfernen.",
+    "steps": [
+      "Erzeuge das Modell und füge zwei Namen hinzu.",
+      "Übergebe das Modell an die JList.",
+      "Wähle Index 1 und lies den Eintrag."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var modell = new DefaultListModel<String>();\n    modell.addElement(\"Ada\");\n    modell.addElement(\"Linus\");\n    var liste = new JList<String>(modell);\n    liste.setSelectedIndex(1);\n    System.out.println(liste.getSelectedValue());\n});",
+    "output": "Linus",
+    "choices": [
+      "Linus",
+      "Ada",
+      "null"
+    ],
+    "explanation": "Eine Änderung am DefaultListModel benachrichtigt die zugehörige Ansicht. Für viele Einträge wird die JList normalerweise in eine JScrollPane gesetzt. getSelectedValue liefert bei fehlender Auswahl null.",
+    "declarations": "",
+    "imports": "import javax.swing.DefaultListModel;\nimport javax.swing.JList;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "modell.addElement(wert); liste.getSelectedValue()",
+      "parameters": [
+        [
+          "wert",
+          "Neuer Eintrag mit dem vereinbarten generischen Typ."
+        ]
+      ],
+      "returns": "addElement liefert void; getSelectedValue liefert hier String oder null.",
+      "effect": "Das Modell und gegebenenfalls die Auswahl der Liste ändern sich."
+    },
+    "useCase": "Aufgaben, Kontakte oder Suchergebnisse als auswählbare Liste darstellen.",
+    "pitfall": "JList ist eine Ansicht, keine java.util.List; verwende für ihre Daten ein passendes ListModel.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-border",
+    "category": "Oberflächen & Swing",
+    "name": "BorderLayout: Bereiche statt Pixel",
+    "introduction": "BorderLayout ordnet Komponenten in fünf Bereichen an: oben, unten, links, rechts und Mitte.",
+    "steps": [
+      "Setze BorderLayout als Layout des Panels.",
+      "Füge den Button im Bereich NORTH hinzu.",
+      "Prüfe die Zuordnung im Layout."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var layout = new BorderLayout();\n    var panel = new JPanel(layout);\n    var button = new JButton(\"Start\");\n    panel.add(button, BorderLayout.NORTH);\n    System.out.println(layout.getConstraints(button));\n});",
+    "output": "North",
+    "choices": [
+      "North",
+      "Center",
+      "0"
+    ],
+    "explanation": "Die Mitte bekommt den übrigen Platz. Pro Bereich verwaltet BorderLayout eine Komponente; mehrere Buttons im selben Bereich gruppierst du vorher in einem eigenen JPanel. Das ist robuster als feste Pixelpositionen.",
+    "declarations": "",
+    "imports": "import java.awt.BorderLayout;\nimport javax.swing.JButton;\nimport javax.swing.JPanel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "panel.add(komponente, BorderLayout.NORTH)",
+      "parameters": [
+        [
+          "komponente",
+          "Ein Baustein oder ein verschachteltes Panel."
+        ],
+        [
+          "BorderLayout.NORTH",
+          "Layout-Regel für den oberen Bereich."
+        ]
+      ],
+      "returns": "add mit Layout-Regel liefert void; getConstraints liefert hier den Bereich als Object.",
+      "effect": "Der Container und seine Layout-Zuordnung werden geändert."
+    },
+    "useCase": "Kopfzeile, Inhalt und Statuszeile eines Fensters anordnen.",
+    "pitfall": "Mehrere Elemente mit derselben Bereichsregel werden nicht automatisch untereinander angezeigt.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-grid",
+    "category": "Oberflächen & Swing",
+    "name": "GridLayout: gleich große Felder",
+    "introduction": "GridLayout verteilt Komponenten auf gleich große Zellen. Damit eignet es sich beispielsweise für ein Tastenfeld.",
+    "steps": [
+      "Erzeuge ein Raster mit zwei Zeilen und drei Spalten.",
+      "Füge sechs Buttons hinzu.",
+      "Lies die konfigurierte Zeilenzahl und die Kinderzahl."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var layout = new GridLayout(2, 3);\n    var panel = new JPanel(layout);\n    for (int i = 1; i <= 6; i++) panel.add(new JButton(\"\" + i));\n    System.out.println(layout.getRows());\n    System.out.println(panel.getComponentCount());\n});",
+    "output": "2\n6",
+    "choices": [
+      "2\n6",
+      "3\n6",
+      "2\n3"
+    ],
+    "explanation": "Die Anzahl der Komponenten beeinflusst das tatsächliche Raster. Ist rows ungleich null, bestimmt rows die Zeilenzahl und die notwendige Spaltenzahl wird daraus berechnet. Für unterschiedlich große Formularfelder eignen sich andere Layouts, etwa GridBagLayout.",
+    "declarations": "",
+    "imports": "import java.awt.GridLayout;\nimport javax.swing.JButton;\nimport javax.swing.JPanel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "new GridLayout(zeilen, spalten)",
+      "parameters": [
+        [
+          "zeilen",
+          "Gewünschte Zeilenzahl; 0 erlaubt eine variable Zahl."
+        ],
+        [
+          "spalten",
+          "Spaltenvorgabe; nicht beide Werte dürfen 0 sein."
+        ]
+      ],
+      "returns": "Ein neues GridLayout.",
+      "effect": "add fügt Komponenten in der Reihenfolge des Rasters hinzu."
+    },
+    "useCase": "Ein Taschenrechner-Tastenfeld oder ein einfaches Spielbrett bauen.",
+    "pitfall": "GridLayout macht alle Zellen gleich groß; es eignet sich nicht für jede Formularanordnung.",
+    "practice": {
+      "task": "Baue ein Raster mit einer Zeile und vier Buttons. Gib anschließend Zeilenzahl und Kinderzahl aus.",
+      "hint": "Verwende GridLayout(1, 4) und füge vier Komponenten hinzu.",
+      "code": "SwingUtilities.invokeAndWait(() -> {\n    var layout = new GridLayout(1, 4);\n    var panel = new JPanel(layout);\n    for (int i = 0; i < 4; i++) panel.add(new JButton(\"\" + i));\n    System.out.println(layout.getRows());\n    System.out.println(panel.getComponentCount());\n});",
+      "output": "1\n4"
+    },
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-edt",
+    "category": "Oberflächen & Swing",
+    "name": "Der EDT: Oberflächen auf dem richtigen Thread",
+    "introduction": "Swing-Komponenten werden im Regelfall auf dem Event Dispatch Thread erzeugt und geändert. Er verarbeitet auch Klick-Ereignisse.",
+    "steps": [
+      "main läuft hier nicht auf dem EDT.",
+      "invokeAndWait führt die Aktion auf dem EDT aus.",
+      "main wartet, bis die Aktion abgeschlossen ist."
+    ],
+    "code": "System.out.println(SwingUtilities.isEventDispatchThread());\nSwingUtilities.invokeAndWait(() ->\n    System.out.println(SwingUtilities.isEventDispatchThread()));",
+    "output": "false\ntrue",
+    "choices": [
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "explanation": "invokeAndWait eignet sich hier, damit die Ausgabe vorhersagbar bleibt. Für den normalen Programmstart verwendet das Projekt invokeLater: Die Aktion wird eingeplant, ohne auf ihr Ende zu warten. invokeAndWait darf nicht vom EDT selbst aufgerufen werden.",
+    "declarations": "",
+    "imports": "import javax.swing.SwingUtilities;",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "SwingUtilities.invokeAndWait(aktion)",
+      "parameters": [
+        [
+          "aktion",
+          "Runnable, das auf dem EDT ausgeführt wird."
+        ]
+      ],
+      "returns": "void; Fehler beim Ausführen werden an den aufrufenden Thread gemeldet.",
+      "effect": "Die Aktion läuft auf einem anderen Thread; main wartet auf ihren Abschluss."
+    },
+    "useCase": "Oberflächen kontrolliert starten und Komponenten in Tests sicher prüfen.",
+    "pitfall": "Langsame Aufgaben gehören beispielsweise in einen SwingWorker; dessen done-Methode kann die Anzeige auf dem EDT aktualisieren.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "swing-nested",
+    "category": "Oberflächen & Swing",
+    "name": "Panels verschachteln: Oberfläche zerlegen",
+    "introduction": "Ein großes Formular wird verständlicher, wenn jeder Bereich ein eigenes Panel bekommt. Ein Container zählt nur seine direkten Kinder.",
+    "steps": [
+      "Die Werkzeugleiste enthält zwei Buttons.",
+      "Das äußere Panel enthält diese Werkzeugleiste und ein Label.",
+      "Beide Panels haben je zwei direkte Kinder."
+    ],
+    "code": "SwingUtilities.invokeAndWait(() -> {\n    var leiste = new JPanel();\n    leiste.add(new JButton(\"Neu\"));\n    leiste.add(new JButton(\"Speichern\"));\n    var aussen = new JPanel(new BorderLayout());\n    aussen.add(leiste, BorderLayout.NORTH);\n    aussen.add(new JLabel(\"Inhalt\"), BorderLayout.CENTER);\n    System.out.println(aussen.getComponentCount());\n    System.out.println(leiste.getComponentCount());\n});",
+    "output": "2\n2",
+    "choices": [
+      "2\n2",
+      "3\n2",
+      "4\n2"
+    ],
+    "explanation": "Das äußere Panel kennt die Leiste als eine Komponente. Deren Buttons liegen eine Ebene tiefer. Im Fenster-Zähler übernimmt CounterPanel die Ansicht, CounterModel die Daten und App den Fensterstart.",
+    "declarations": "",
+    "imports": "import java.awt.BorderLayout;\nimport javax.swing.JButton;\nimport javax.swing.JLabel;\nimport javax.swing.JPanel;\nimport javax.swing.SwingUtilities;",
+    "note": "Java 17+: Als Main.java speichern und mit java Main.java ausführen. Dieses Beispiel prüft Swing-Bausteine ohne sichtbares Fenster auf dem Event Dispatch Thread. Ein vollständiges Fenster findest du unter Projekte → Java: Fenster-Zähler mit Swing. Swing ist für Desktop-Programme, nicht für Webseiten.",
+    "methodProfile": {
+      "signature": "aussen.add(inneresPanel, bereich)",
+      "parameters": [
+        [
+          "inneresPanel",
+          "Ein Container mit eigenen Komponenten und eigenem Layout."
+        ],
+        [
+          "bereich",
+          "Anordnung im äußeren Layout."
+        ]
+      ],
+      "returns": "Der verwendete add-Aufruf liefert void.",
+      "effect": "Die Komponentenhierarchie bekommt eine weitere Ebene."
+    },
+    "useCase": "Eine große Oberfläche in wiederverwendbare und testbare Teilansichten zerlegen.",
+    "pitfall": "Eine Swing-Komponente kann nur einen direkten Elterncontainer haben; zweimaliges Einfügen erstellt keine Kopie.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "packages-lang",
+    "category": "Packages & Bibliotheken",
+    "name": "Packages: zusammengehörige Klassen benennen",
+    "introduction": "Ein Package ist ein Namensraum für Klassen. String gehört beispielsweise zu java.lang.",
+    "steps": [
+      "String ist der kurze Klassenname.",
+      "java.lang ist sein Package.",
+      "java.lang wird implizit importiert."
+    ],
+    "code": "System.out.println(String.class.getSimpleName());\nSystem.out.println(String.class.getPackageName());",
+    "output": "String\njava.lang",
+    "choices": [
+      "String\njava.lang",
+      "String\njava",
+      "java.lang.String\nString"
+    ],
+    "explanation": "In einer eigenen Datei steht beispielsweise package de.codeklar.desktop; vor den Imports. Eine öffentliche Klasse CounterModel liegt üblicherweise in CounterModel.java. Ein Package ist keine zusätzliche Datei, die alle Klassen enthalten muss.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "package de.codeklar.desktop; import javax.swing.JPanel;",
+      "parameters": [
+        [
+          "package",
+          "Namensraum der aktuellen Datei."
+        ],
+        [
+          "import",
+          "Erlaubt die Kurzschreibweise einer zugänglichen Klasse."
+        ]
+      ],
+      "returns": "Deklarationen, keine Methodenaufrufe mit Rückgabewert.",
+      "effect": "Package und Imports legen die Namensauflösung des Quellcodes fest."
+    },
+    "useCase": "Eigene Klassen übersichtlich strukturieren und fremde Klassen gezielt verwenden.",
+    "pitfall": "Ein import installiert und lädt keine Bibliothek herunter; diese muss bereits im JDK oder im Projekt verfügbar sein.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "packages-collision",
+    "category": "Packages & Bibliotheken",
+    "name": "Gleicher Klassenname, anderes Package",
+    "introduction": "java.util.Date und java.sql.Date heißen beide Date. Der vollständige Name unterscheidet sie.",
+    "steps": [
+      "Das Package ist ein Teil des vollständigen Namens.",
+      "Beide Klassen können im selben Programm vorkommen.",
+      "Mit vollständigen Namen bleibt die Zuordnung eindeutig."
+    ],
+    "code": "System.out.println(java.util.Date.class.getName());\nSystem.out.println(java.sql.Date.class.getName());",
+    "output": "java.util.Date\njava.sql.Date",
+    "choices": [
+      "java.util.Date\njava.sql.Date",
+      "Date\nDate",
+      "java.sql.Date\njava.util.Date"
+    ],
+    "explanation": "Importiere nicht beide Date-Klassen mit demselben einfachen Namen. Eine kann kurz importiert werden, die andere wird dann vollständig geschrieben. Für neue Datumslogik ist oft java.time geeigneter; hier geht es um Namenskonflikte.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "java.util.Date; java.sql.Date",
+      "parameters": [],
+      "returns": "Die Ausdrücke Class.getName liefern jeweils einen String.",
+      "effect": "Es werden nur Klasseninformationen gelesen, keine Datumseinträge angelegt."
+    },
+    "useCase": "Namenskonflikte zwischen eigenen Klassen und Bibliotheksklassen verstehen.",
+    "pitfall": "Ein gleicher kurzer Name bedeutet weder gleiche Klasse noch gleiches Verhalten.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "packages-sub",
+    "category": "Packages & Bibliotheken",
+    "name": "Unterpackages werden nicht mitimportiert",
+    "introduction": "import java.util.* erlaubt zugängliche Typnamen aus java.util. Klassen aus java.util.concurrent benötigen einen eigenen Import.",
+    "steps": [
+      "ArrayList liegt in java.util.",
+      "ExecutorService liegt in java.util.concurrent.",
+      "Das zweite Package ist ein eigener Namensraum."
+    ],
+    "code": "System.out.println(java.util.ArrayList.class.getPackageName());\nSystem.out.println(java.util.concurrent.ExecutorService.class.getPackageName());",
+    "output": "java.util\njava.util.concurrent",
+    "choices": [
+      "java.util\njava.util.concurrent",
+      "java.util\njava.util",
+      "java\njava.concurrent"
+    ],
+    "explanation": "Der Stern ist kein rekursiver Dateisuchlauf. Ebenso gewährt ein Package de.app seinen Unterpackages keinen package-private Zugriff. Explizite Imports wie import java.util.ArrayList; machen verwendete Typen leichter sichtbar.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "import java.util.*; import java.util.concurrent.ExecutorService;",
+      "parameters": [],
+      "returns": "Import-Deklarationen haben keinen Rückgabewert.",
+      "effect": "Imports beeinflussen die Schreibweise von Typnamen, nicht ihre Sichtbarkeit."
+    },
+    "useCase": "Compilerfehler bei scheinbar schon importierten Klassen richtig zuordnen.",
+    "pitfall": "Unterpackages sind eigene Packages; gemeinsame Namenspräfixe verleihen keine zusätzlichen Zugriffsrechte.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "packages-module",
+    "category": "Packages & Bibliotheken",
+    "name": "Package, JDK-Modul und Bibliothek unterscheiden",
+    "introduction": "Ein JDK-Modul kann viele Packages enthalten. JPanel liegt im Package javax.swing und im Modul java.desktop.",
+    "steps": [
+      "Lies zuerst das Package von JPanel.",
+      "Lies danach das JDK-Modul.",
+      "Vergleiche mit dem Modul von List."
+    ],
+    "code": "System.out.println(javax.swing.JPanel.class.getPackageName());\nSystem.out.println(javax.swing.JPanel.class.getModule().getName());\nSystem.out.println(java.util.List.class.getModule().getName());",
+    "output": "javax.swing\njava.desktop\njava.base",
+    "choices": [
+      "javax.swing\njava.desktop\njava.base",
+      "javax.swing\njavax.swing\njava.util",
+      "java.desktop\njava.desktop\njava.base"
+    ],
+    "explanation": "Swing ist im üblichen vollständigen Desktop-JDK enthalten. java.io bietet Ein-/Ausgabe, java.nio.file moderne Dateipfade, java.net.http einen HTTP-Client und java.time Datum/Zeit. JavaFX ist eine separate Oberflächenbibliothek und wird üblicherweise zusätzlich eingebunden. Bei einem benannten JPMS-Modul deklariert module-info.java für Swing requires java.desktop;. Das Beispielprojekt startet einfacher über den Classpath ohne module-info.java.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "Klasse.class.getModule().getName()",
+      "parameters": [],
+      "returns": "String mit dem Modulnamen; bei unbenannten Modulen kann er null sein.",
+      "effect": "Liest Metadaten der geladenen Klasse."
+    },
+    "useCase": "Verstehen, welche Bausteine das JDK liefert und welche Abhängigkeiten zusätzlich gebraucht werden.",
+    "pitfall": "Maven-Abhängigkeit, Java-Package und JPMS-Modul sind verschiedene Begriffe und keine austauschbaren Dateinamen.",
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "packages-files",
+    "category": "Packages & Bibliotheken",
+    "name": ".java, .class und der Classpath",
+    "introduction": "Quellcode liegt in .java-Dateien. javac übersetzt ihn in .class-Dateien. Der Java-Launcher startet den vollständigen Klassennamen.",
+    "steps": [
+      "src enthält im Projekt den Quellcode.",
+      "-d out legt kompilierte Klassen unter out ab.",
+      "Der Startname folgt dem Package, ohne .java oder .class."
+    ],
+    "code": "var quelle = java.nio.file.Path.of(\"src\", \"de\", \"codeklar\", \"desktop\", \"App.java\");\nSystem.out.println(quelle.getFileName());\nSystem.out.println(\"java -cp out de.codeklar.desktop.App\");",
+    "output": "App.java\njava -cp out de.codeklar.desktop.App",
+    "choices": [
+      "App.java\njava -cp out de.codeklar.desktop.App",
+      "App.class\njava App",
+      "App.java\njava -cp out App.java"
+    ],
+    "explanation": "Im Projekt lautet die Deklaration package de.codeklar.desktop;. javac -d out erzeugt out/de/codeklar/desktop/App.class. Der Classpath zeigt auf out, also auf die Wurzel oberhalb von de. Das Beispiel liest nur einen Pfadnamen; es kompiliert keine Datei. Unter Projekte findest du alle Dateien und den vollständigen Kompilierbefehl.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "javac -d out src/de/codeklar/desktop/App.java …\njava -cp out de.codeklar.desktop.App",
+      "parameters": [
+        [
+          "-d out",
+          "Zielwurzel für kompilierte Klassen."
+        ],
+        [
+          "-cp out",
+          "Wurzel, unter der Java die Package-Verzeichnisse sucht."
+        ]
+      ],
+      "returns": "Terminalbefehle; der Beispielcode selbst gibt nur Text aus.",
+      "effect": "javac erzeugt .class-Dateien, ohne den Quelltext zu ersetzen."
+    },
+    "useCase": "Ein Projekt mit mehreren Klassen außerhalb der IDE bauen und starten.",
+    "pitfall": "-cp out/de/codeklar/desktop ist zu tief: Java würde dort erneut nach de/codeklar/desktop suchen.",
+    "practice": {
+      "task": "Erzeuge einen Pfad aus src, de, beispiel und Rechner.java. Gib nur den Dateinamen aus, ohne eine Datei anzulegen.",
+      "hint": "Path.of baut den Pfad; getFileName liest das letzte Element.",
+      "code": "var pfad = java.nio.file.Path.of(\"src\", \"de\", \"beispiel\", \"Rechner.java\");\nSystem.out.println(pfad.getFileName());",
+      "output": "Rechner.java"
+    },
+    "projectId": "java-swing-counter"
+  },
+  {
+    "id": "packages-nested",
+    "category": "Packages & Bibliotheken",
+    "name": "Innere Klassen und das Dollarzeichen",
+    "introduction": "Eine verschachtelte Klasse hat im Quellcode einen Namen mit Punkt. Im binären Namen steht zwischen äußerer und innerer Klasse ein Dollarzeichen.",
+    "steps": [
+      "Map.Entry ist in Map deklariert.",
+      "getCanonicalName zeigt den Quellcode-Namen.",
+      "getName zeigt hier den binären Namen."
+    ],
+    "code": "System.out.println(java.util.Map.Entry.class.getCanonicalName());\nSystem.out.println(java.util.Map.Entry.class.getName());",
+    "output": "java.util.Map.Entry\njava.util.Map$Entry",
+    "choices": [
+      "java.util.Map.Entry\njava.util.Map$Entry",
+      "java.util.Map.Entry\njava.util.Map.Entry",
+      "java.util.Entry\njava.util.Entry"
+    ],
+    "explanation": "Beim Kompilieren kann beispielsweise CounterPanel$Aktion.class entstehen, wenn eine benannte innere Klasse Aktion existiert. Das ist nicht automatisch eine weitere Quelldatei. Eine JAR-Datei ist ein Archiv, das solche .class-Dateien und Ressourcen mit ihren Package-Pfaden bündeln kann.",
+    "declarations": "",
+    "imports": "",
+    "note": "Java 17+: Den vollständigen Code als Main.java speichern und mit java Main.java starten. Die App prüft deine Wissensantwort; die Programme und eigenen Übungen führst du lokal aus.",
+    "methodProfile": {
+      "signature": "typ.class.getCanonicalName(); typ.class.getName()",
+      "parameters": [],
+      "returns": "Die beiden Methoden liefern hier unterschiedliche String-Namen.",
+      "effect": "Es werden Klassennamen gelesen; keine Dateien werden erzeugt."
+    },
+    "useCase": "Dateien im Build-Verzeichnis und Klassennamen in Fehlermeldungen einordnen.",
+    "pitfall": "Schreibe im Java-Quellcode Map.Entry statt des binären Namens Map$Entry.",
+    "projectId": "java-swing-counter"
+  }
+]

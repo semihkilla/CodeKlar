@@ -1,3 +1,4 @@
+import swingCurriculum from './javaSwingCurriculum.json' with { type: 'json' };
 import practicePack from './javaPracticePack.json' with { type: 'json' };
 import conceptCurriculum from './javaConceptCurriculum.json' with { type: 'json' };
 import curriculum from './javaCurriculum.json' with { type: 'json' };
@@ -35,7 +36,7 @@ export function buildJavaSource(code, declarations = '', imports = '') {
   return `${imports ? imports + '\n\n' : ''}public class Main {\n${declarations ? declarations.split('\n').map(line => '    ' + line).join('\n') + '\n\n' : ''}    public static void main(String[] args) throws Exception {\n${code.split('\n').map(line => '        ' + line).join('\n')}\n    }\n}`;
 }
 
-export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum, ...dataCurriculum, ...conceptCurriculum].map((definition, index) => {
+export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum, ...dataCurriculum, ...conceptCurriculum, ...swingCurriculum].map((definition, index) => {
   const row = { ...javaMethodProfiles[definition.id], ...definition, practice: definition.practice ?? (Object.hasOwn(practicePack, definition.id) ? practicePack[definition.id] : undefined) };
   const answer = index % row.choices.length;
   const options = row.choices.slice(1);
@@ -53,7 +54,7 @@ export const javaLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurri
     task: 'Lies das Beispiel, verfolge die Werte und wähle die passende Ausgabe. Probiere anschließend eine eigene Änderung lokal mit Java aus.',
     options, answer, explanation: row.explanation, hints: [row.steps[0], row.steps[1]],
     solution: row.explanation, expectedOutput: row.output,
-    methodProfile: row.methodProfile, useCase: row.useCase, pitfall: row.pitfall,
+    projectId: row.projectId, methodProfile: row.methodProfile, useCase: row.useCase, pitfall: row.pitfall,
     practice: row.practice ? { ...row.practice, example: buildJavaSource(row.practice.code, row.practice.declarations ?? row.declarations, row.practice.imports ?? row.imports) } : undefined,
   };
 });

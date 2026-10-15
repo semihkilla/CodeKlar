@@ -2226,11 +2226,11 @@ test('mobile topic field opens the selected bottom-sheet design and keeps lesson
 
 test('Java curriculum preserves old progress IDs and puts every lesson in a chapter',async()=>{
  const {javaLessonPack}=await import('../src/javaLessons.js');const {javaProjects}=await import('../src/javaProjects.js');
- expect(javaLessonPack).toHaveLength(300);expect(javaLessons).toHaveLength(301);expect(lessons.filter(x=>x.id==='java-equals')).toHaveLength(1);expect(javaLessons[0].id).toBe('java-hello');
+ expect(javaLessonPack).toHaveLength(318);expect(javaLessons).toHaveLength(319);expect(lessons.filter(x=>x.id==='java-equals')).toHaveLength(1);expect(javaLessons[0].id).toBe('java-hello');
  expect(new Set(lessons.map(x=>x.id)).size).toBe(lessons.length);
  const groups=groupTopics('java',javaLessons);expect(groups).toHaveLength(6);expect(groups.some(x=>x.id==='more')).toBe(false);expect(groups.flatMap(x=>x.lessons.map(l=>l.id)).sort()).toEqual(javaLessons.map(x=>x.id).sort());
  for(const lesson of javaLessonPack){expect(lesson.guide[1]).toHaveLength(3);expect(lesson.example).toContain('public static void main');expect(lesson.options[lesson.answer]).toBe(lesson.expectedOutput);expect(new Set(lesson.options).size).toBe(3);expect(lesson.explanation.length).toBeGreaterThan(50);}
- expect(javaProjects).toHaveLength(11);for(const p of javaProjects){for(const id of p.lessonIds)expect(javaLessons.find(x=>x.id===id)).toBeTruthy();expect(p.files[Object.keys(p.files)[0]]).toContain('static void tests()');}
+ expect(javaProjects).toHaveLength(12);for(const p of javaProjects){for(const id of p.lessonIds)expect(javaLessons.find(x=>x.id===id)).toBeTruthy();expect(p.files[Object.keys(p.files)[0]]).toContain('static void tests()');}
 });
 
 test('all Java lessons render and grade real output questions with persistent progress',async({page})=>{
@@ -2256,7 +2256,7 @@ test('Java mobile chapters, multiline answers and reference search remain readab
 });
 
 test('Java projects download complete source and link back to their own lessons',async({page})=>{
- const {javaProjects}=await import('../src/javaProjects.js');const {unzipSync,strFromU8}=await import('fflate');await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:/Projektideen für alle Lernbereiche/}).click();await page.getByLabel('Lernbereich',{exact:true}).selectOption('java');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(12);
+ const {javaProjects}=await import('../src/javaProjects.js');const {unzipSync,strFromU8}=await import('fflate');await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:/Projektideen für alle Lernbereiche/}).click();await page.getByLabel('Lernbereich',{exact:true}).selectOption('java');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(13);
  for(const project of javaProjects){await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').filter({hasText:project.title}).click();const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen',exact:true}).click();const download=await pending;const files=unzipSync(await readFile(await download.path()));for(const [name,code] of Object.entries(project.files))expect(strFromU8(files[name])).toBe(code);expect(strFromU8(files['README.md'])).toContain('JDK ab Version 17');}
  await page.getByRole('region',{name:'Passende Übungen'}).getByRole('button').first().click();await expect(page.locator('.learning-page')).toHaveAttribute('data-course','java');await expect(page.getByRole('tab',{name:'Aufgabe',exact:true})).toHaveAttribute('aria-selected','true');
 });
@@ -2276,14 +2276,14 @@ test('Java method contracts and independent exercises stay collapsed and readabl
 test('new Java teaching material includes complete contracts, applications and twelve local solutions',async()=>{
  const {default:rows}=await import('../src/javaFurtherCurriculum.json',{with:{type:'json'}});expect(rows).toHaveLength(60);expect(rows.filter(x=>x.practice)).toHaveLength(12);
  for(const row of rows){expect(row.steps).toHaveLength(3);expect(row.methodProfile.signature.length).toBeGreaterThan(5);expect(row.methodProfile.returns.length).toBeGreaterThan(10);expect(row.methodProfile.effect.length).toBeGreaterThan(10);expect(row.useCase.length).toBeGreaterThan(20);expect(row.pitfall.length).toBeGreaterThan(30);expect(row.choices[0]).toBe(row.output);expect(new Set(row.choices).size).toBe(3);}
- const {javaLessonPack}=await import('../src/javaLessons.js');expect(javaLessonPack.filter(x=>x.methodProfile)).toHaveLength(186);for(const lesson of javaLessonPack.filter(x=>x.practice)){expect(lesson.practice.example).toContain('public static void main');expect(lesson.practice.hint.length).toBeGreaterThan(20);}
+ const {javaLessonPack}=await import('../src/javaLessons.js');expect(javaLessonPack.filter(x=>x.methodProfile)).toHaveLength(204);for(const lesson of javaLessonPack.filter(x=>x.practice)){expect(lesson.practice.example).toContain('public static void main');expect(lesson.practice.hint.length).toBeGreaterThan(20);}
 });
 
 test('next Java lessons preserve prior answers and supply twelve tested advanced exercises',async()=>{
  const {default:rows}=await import('../src/javaNextCurriculum.json',{with:{type:'json'}});const {default:old}=await import('../src/javaCurriculum.json',{with:{type:'json'}});const {javaLessonPack}=await import('../src/javaLessons.js');
  expect(rows).toHaveLength(40);expect(rows.filter(x=>x.practice)).toHaveLength(12);for(const row of rows){const lesson=javaLessonPack.find(x=>x.id==='java-'+row.id);expect(lesson.difficulty).toBe('Vertiefung');expect(lesson.methodProfile.signature).toBe(row.methodProfile.signature);expect(row.steps).toHaveLength(3);expect(new Set(row.choices).size).toBe(3);expect(row.pitfall.length).toBeGreaterThan(30);}
  for(const [index,row] of old.entries()){const lesson=javaLessonPack.find(x=>x.id==='java-'+row.id);expect(lesson.answer).toBe(index%3);expect(lesson.expectedOutput).toBe(row.output);}
- expect(javaLessonPack.filter(x=>x.practice)).toHaveLength(84);
+ expect(javaLessonPack.filter(x=>x.practice)).toHaveLength(90);
 });
 
 test('Java route and dependency tutorials retain readable help and challenge solutions',async({page})=>{
@@ -2396,7 +2396,7 @@ test('study review keeps language boundaries, handles empty queues and corrupted
 });
 
 test('twenty additional Java practices preserve examples and support complete local solutions',async()=>{
- const {default:pack}=await import('../src/javaPracticePack.json',{with:{type:'json'}});const {javaLessonPack}=await import('../src/javaLessons.js');expect(Object.keys(pack)).toHaveLength(35);expect(javaLessonPack.filter(l=>l.practice)).toHaveLength(84);for(const id of Object.keys(pack)){const lesson=javaLessonPack.find(l=>l.id==='java-'+id);expect(lesson.practice.example).toContain('public class Main');expect(lesson.practice.output).toBe(pack[id].output);expect(lesson.practice.task.length).toBeGreaterThan(50);}
+ const {default:pack}=await import('../src/javaPracticePack.json',{with:{type:'json'}});const {javaLessonPack}=await import('../src/javaLessons.js');expect(Object.keys(pack)).toHaveLength(35);expect(javaLessonPack.filter(l=>l.practice)).toHaveLength(90);for(const id of Object.keys(pack)){const lesson=javaLessonPack.find(l=>l.id==='java-'+id);expect(lesson.practice.example).toContain('public class Main');expect(lesson.practice.output).toBe(pack[id].output);expect(lesson.practice.task.length).toBeGreaterThan(50);}
  expect(javaLessonPack.find(l=>l.id==='java-constructor').practice).toBeUndefined();expect(javaLessonPack.find(l=>l.id==='java-method').practice.example).toContain('static int sumThree');
 });
 
@@ -2418,5 +2418,17 @@ test('study result exports chapter feedback and starts only unresolved errors',a
 });
 
 test('combined Java practices extend local tasks while keeping prior examples',async()=>{
- const {default:pack}=await import('../src/javaPracticePack.json',{with:{type:'json'}});const {javaLessonPack}=await import('../src/javaLessons.js');expect(Object.keys(pack)).toHaveLength(35);expect(javaLessonPack.filter(l=>l.practice)).toHaveLength(84);for(const id of ['array-sort','brackets','two-sum','file-lines','file-write','record','enum','generic','comparator','grouping','bfs']){const lesson=javaLessonPack.find(l=>l.id==='java-'+id);expect(lesson.practice.example).toContain('public class Main');expect(lesson.practice.output).toBe(pack[id].output);}
+ const {default:pack}=await import('../src/javaPracticePack.json',{with:{type:'json'}});const {javaLessonPack}=await import('../src/javaLessons.js');expect(Object.keys(pack)).toHaveLength(35);expect(javaLessonPack.filter(l=>l.practice)).toHaveLength(90);for(const id of ['array-sort','brackets','two-sum','file-lines','file-write','record','enum','generic','comparator','grouping','bfs']){const lesson=javaLessonPack.find(l=>l.id==='java-'+id);expect(lesson.practice.example).toContain('public class Main');expect(lesson.practice.output).toBe(pack[id].output);}
+});
+
+test('Swing lessons explain packages and open the complete multi-file desktop project',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('java');await page.getByRole('row').filter({has:page.getByText('JButton: auf einen Klick reagieren',{exact:true})}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();
+ await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);await expect(page.locator('.syntax-strip').first()).toContainText('import javax.swing.JButton;');await expect(page.locator('.java-project-help')).not.toHaveAttribute('open','');
+ await page.locator('.java-api-help summary').click();await expect(page.locator('.java-api-help')).toContainText('addActionListener');await page.locator('.java-self-practice > summary').click();await page.getByText('Musterlösung mit erwarteter Ausgabe',{exact:true}).click();await expect(page.locator('.java-self-practice .syntax-strip').last()).toHaveText('An');
+ for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ await page.setViewportSize({width:390,height:844});await page.locator('.java-project-help > summary').click();await page.locator('.java-project-help').scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-swing-mobile.png',animations:'disabled'});await page.getByRole('button',{name:'Fenster-Zähler als Projekt öffnen →',exact:true}).click();
+ await expect(page.getByLabel('Quellcode src/de/codeklar/desktop/App.java')).toContainText('package de.codeklar.desktop;');await expect(page.getByLabel('Quellcode src/de/codeklar/desktop/App.java')).toContainText('setContentPane');await page.getByRole('button',{name:'src/de/codeklar/desktop/CounterPanel.java',exact:true}).click();await expect(page.getByLabel('Quellcode src/de/codeklar/desktop/CounterPanel.java')).toContainText('addActionListener');
+ const {unzipSync,strFromU8}=await import('fflate');const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen',exact:true}).click();const zip=unzipSync(await readFile(await (await pending).path()));expect(Object.keys(zip).filter(n=>n.endsWith('.java'))).toHaveLength(4);expect(strFromU8(zip['README.md'])).toContain('java -cp out de.codeklar.desktop.App');
+ for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('java');await page.getByRole('row').filter({has:page.getByText('.java, .class und der Classpath',{exact:true})}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.lesson-panel')).toContainText('Wurzel oberhalb von de');expect(errors).toEqual([]);
 });

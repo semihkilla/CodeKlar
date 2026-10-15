@@ -3,7 +3,7 @@ import { javaLessonPack } from '../src/javaLessons.js';
 import { javaProjects } from '../src/javaProjects.js';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 const exec = promisify(execFile);
@@ -48,11 +48,11 @@ try {
   for (const project of javaProjects) {
     const dir = join(root, project.id); await mkdir(dir);
     for (const [name, source] of Object.entries(project.files)) {
-      const file = join(dir, name); await writeFile(file, source); if (name.endsWith('.java')) projectFiles.push(file);
+      const file = join(dir, name); await mkdir(dirname(file), { recursive: true }); await writeFile(file, source); if (name.endsWith('.java')) projectFiles.push(file);
     }
   }
   const projectClasses = join(root, 'project-classes'); await compile(projectFiles, projectClasses);
-  for (const name of javaProjects.flatMap(project => Object.keys(project.files).filter(file => file.endsWith('.java')).map(file => file.slice(0, -5)))) {
+  for (const name of javaProjects.flatMap(project => project.javaMainClass ? [project.javaMainClass] : Object.keys(project.files).filter(file => file.endsWith('.java')).map(file => file.slice(0, -5)))) {
     const result = await run(['-cp', projectClasses, name, 'test']);
     require(result.stdout.includes('Tests') || result.stdout.includes('tests bestanden'), `${name}: test success missing`);
     console.log(normalized(result.stdout));

@@ -1,7 +1,13 @@
-export function JavaLessonHelp({ lesson, includePractice = true }) {
+export function JavaLessonHelp({ lesson, includePractice = true, openProject }) {
   const profile = lesson.methodProfile;
   const practice = includePractice ? lesson.practice : undefined;
   return <>
+    {includePractice && lesson.projectId && openProject && <details className="reading-more java-project-help">
+      <summary>Vom Baustein zum eigenen Fenster</summary>
+      <p>JFrame ist das Fenster. Darin liegt ein JPanel mit Labels, Eingabefeld und Buttons. Das Modell speichert den Zählerstand; Listener verbinden Klicks mit der Berechnung.</p>
+      <p>Das vollständige Projekt zeigt vier Dateien im Package de.codeklar.desktop, die Kompilierbefehle und zwölf Tests. Lade es als ZIP herunter und starte das Fenster auf deinem Computer.</p>
+      <button className="project-action" onClick={() => openProject(lesson.projectId)}>Fenster-Zähler als Projekt öffnen →</button>
+    </details>}
     {profile && <details className="reading-more java-api-help">
       <summary>Syntax, Parameter &amp; Rückgabewert</summary>
       <pre className="syntax-strip">{profile.signature}</pre>

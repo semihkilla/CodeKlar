@@ -115,6 +115,7 @@ export default function App() {
                 setLessonId(id);
                 setInitialTab("explanation");
               }}
+              openProject={id => { setProjectId(id); navigate("projects"); }}
               initialTab={initialTab}
               progress={progress}
               record={record}

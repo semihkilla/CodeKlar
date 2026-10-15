@@ -639,3 +639,25 @@ Frühe erfolgreiche Lernrunden verschieben einen bereits zukünftigen Wiederholu
 Java hat weitere **15 kombinierte Programmieraufgaben** erhalten: höchste Werte ohne Eingabemutation, tiefer Matrixvergleich, Klammerprüfung, Two Sum mit unterschiedlichen Indizes, sichere temporäre Dateiarbeit, getrennte Eingabefehler, Grenzvalidierung, record-Invarianten, enum-Zustandsübergänge, generische Suche, Aktualisierung nach ID, mehrstufige Sortierung, Dezimal-Gruppensummen und kürzeste Wege in ungewichteten Graphen. Insgesamt bleiben es **301 Lektionen mit 300 vollständigen Lernprogrammen**, dazu jetzt **84 eigene Übungen mit vollständigen Lösungen**.
 
 Verifikation: Alle 300 Beispiele und 84 Lösungen laufen mit ihrer erwarteten Ausgabe; die elf Projektsuiten bestehen weiterhin 107 Prüfungen. Zehn fokussierte Browserprüfungen bestehen, inklusive begrenzter Wiederholungen, Prüfungsfristen, bestehender Fragen, Kapiteldiagnose, früher Wiederholung und exaktem Exportinhalt. Der neue Diagnoseablauf wurde nach Anpassung der schmalen Buttons erneut bei 320/390/768/1505 Pixeln geprüft. Zwei final gebaute PWA-Prüfungen bestätigen die bestehende Offline-Runde und das direkte Starten einer Kapitel-Fehlerrunde ohne Netz. Die dokumentierten Java-21-/source-target-17- und Chromium-/Safari-Grenzen gelten weiterhin.
+
+### Java: Swing-Oberflächen, Packages und mehrere Dateien
+
+18 neue Lektionen erweitern Java auf **319 Lektionen insgesamt** (318 generierte Beispiele und die bestehende equals-Lektion), **90 lokale Programmierübungen** und **204 Syntax-/Methodenhilfen**. Bestehende IDs und Antwortreihenfolgen bleiben erhalten. Die sechs Hauptbereiche bleiben bestehen:
+
+- **Objektorientierung → Oberflächen & Swing:** JFrame und JPanel unterscheiden, JLabel, JButton und ActionListener, JTextField, JCheckBox, JComboBox, JList mit DefaultListModel, BorderLayout, GridLayout, der Event Dispatch Thread und verschachtelte Panels.
+- **Werkzeuge, Tests & Zahlen → Packages & Bibliotheken:** Package-Deklaration und Import, implizites java.lang, Namenskonflikte, Unterpackages, JDK-Module, Quell-/Klassendateien, Classpath und binäre Namen verschachtelter Klassen. Die Lektionen ordnen auch JAR-Dateien und zusätzliche Bibliotheken ein.
+- Sechs Zusatzübungen mit Hinweisen, vollständigen Main.java-Lösungen und erwarteter Ausgabe. Die vorhandenen Lernrunden, Prüfungen und Wiederholungen erfassen die neuen Wissensfragen ebenfalls.
+
+**Projekte → Java: Fenster-Zähler mit Swing** zeigt ein vollständiges Desktop-Projekt aus vier Dateien im Package `de.codeklar.desktop`. `App` startet das JFrame, `CounterModel` speichert und validiert den Zählerstand, `CounterPanel` verbindet Eingabefeld und Buttons mit dem Modell, und `CounterPanelTests` prüft die echten Komponenten auf dem EDT. Jede neue Lektion verlinkt das Projekt über den aufklappbaren Abschnitt **Vom Baustein zum eigenen Fenster**. Das ZIP bewahrt die Ordnerstruktur und enthält alle Kompilier-/Startbefehle in seiner README.
+
+Das Projekt benötigt ein JDK ab Version 17. Swing läuft als Desktop-Oberfläche auf einem Computer mit grafischer Umgebung. CodeKlar bietet auf dem Handy die Lerninhalte und Downloads; der Browser führt diese Java-Programme nicht aus. Zum Kompilieren im entpackten Projektordner:
+
+```sh
+javac -encoding UTF-8 -d out src/de/codeklar/desktop/App.java src/de/codeklar/desktop/CounterModel.java src/de/codeklar/desktop/CounterPanel.java src/de/codeklar/desktop/CounterPanelTests.java
+java -Djava.awt.headless=true -cp out de.codeklar.desktop.App test
+java -cp out de.codeklar.desktop.App
+```
+
+Die zwölf Swing-Tests prüfen Initialzustand, Addition, Reset, ungültige/leer gelassene Eingaben, Grenzen, Rand-Leerzeichen, Enter-Aktion und Überlauf. Der Projektprüfer unterstützt nun verschachtelte Quellpfade und einen vollständigen Startklassennamen. `npm run test:java` prüft sämtliche 318 generierten Beispielprogramme, 90 Übungslösungen und nun zwölf getestete Java-Projekte mit insgesamt 119 eingebauten Testprüfungen. Dazu kommen die bestehenden Interaktions-, Datei- und HTTP-Prüfungen. Unter Projekte gibt es einschließlich des älteren Zahlenratespiels jetzt 13 Java-Projektangebote.
+
+Die native Prüfung lief unter OpenJDK 21 mit Quell-/Bytecode-Level 17; die API-Signaturen für einen echten `--release 17`-Lauf fehlen in dieser Umgebung. Die Swing-Komponententests benötigen kein sichtbares Fenster. Ein echtes JFrame-Fenster wurde hier mangels grafischer Desktop-Sitzung nicht visuell geprüft. Browserprüfungen decken mobile Lesbarkeit, vollständige ZIP-Inhalte, Lektion-/Projektverknüpfung sowie die nach dem ersten Laden offline verfügbaren Lerninhalte ab.

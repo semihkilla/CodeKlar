@@ -96,6 +96,7 @@ function LessonPanel({
   solved,
   index,
   openPlayground,
+  openProject,
 }) {
   const [hintCount, setHintCount] = useState(0);
   const sample = lesson.challenge?.sample || lesson.tests?.[0];
@@ -156,7 +157,7 @@ function LessonPanel({
               {science ? <ScienceExample lesson={lesson} /> : technology ? <KnowledgeExample lesson={lesson} /> : <pre className="syntax-strip">{lesson.example}</pre>}
               {science && <FormulaWorkshop key={lesson.id} course={lesson.course} lessonId={lesson.id} />}
               {lesson.pitfall && <div className="learning-pitfall"><strong>Typischer Stolperstein</strong><p>{lesson.pitfall}</p></div>}
-              {lesson.course === 'java' && <JavaLessonHelp lesson={lesson} />}
+              {lesson.course === 'java' && <JavaLessonHelp lesson={lesson} openProject={openProject} />}
               {lesson.terms?.length > 0 && <details className="reading-more learning-vocabulary"><summary>Begriffe einfach erklärt</summary><dl>{lesson.terms.map(([name,meaning]) => <div key={name}><dt>{name}</dt><dd>{meaning}</dd></div>)}</dl></details>}
               <details className="reading-more"><summary>Genauer verstehen: Begriffe und Details</summary>
                 {!technology && <><p>{lesson.description}</p>
@@ -284,6 +285,7 @@ export function Learning({
   lessonId,
   setLessonId,
   initialTab,
+  openProject,
   progress,
   record,
 }) {
@@ -451,6 +453,7 @@ export function Learning({
           record={record}
           solved={!!progress.solved[lesson.id]}
           index={available.indexOf(lesson)}
+          openProject={openProject}
           openPlayground={() => setMobilePane("playground")}
         />
         {course === "js" ? (

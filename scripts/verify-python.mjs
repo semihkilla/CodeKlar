@@ -131,5 +131,14 @@ try {
     try { await run(['client.py', '--base', base, 'get', String(apiId)], { cwd: api }); throw new Error('Deleted API task found'); }
     catch (error) { require(error.code === 1 && error.stderr.includes('HTTP 404'), 'API missing-task response missing'); }
   });
-  console.log('Separate-process persistence, CSV, maze, logs and real HTTP client/server restart checks passed.');
+  const expenses = join(root, 'python-expense-report');
+  const exportResult = await run(['report.py', 'beispiel.csv', '--output', 'ausgaben.html'], { cwd: expenses });
+  require(exportResult.stdout.includes('3 Buchungen: 10,00 €'), 'Expense report terminal output failed');
+  const html = await readFile(join(expenses, 'ausgaben.html'), 'utf8');
+  require(html.includes('7,00 €') && html.includes('2026-01-01'), 'Expense report HTML totals or date range missing');
+  const inputBefore = await readFile(join(expenses, 'beispiel.csv'), 'utf8');
+  try { await run(['report.py', 'beispiel.csv', '--output', 'beispiel.csv'], { cwd: expenses }); throw new Error('Expense input overwrite accepted'); }
+  catch (error) { require(error.code === 1 && error.stderr.includes('Fehler:'), 'Expense overwrite refusal missing'); }
+  require(await readFile(join(expenses, 'beispiel.csv'), 'utf8') === inputBefore, 'Expense input changed');
+  console.log('Separate-process persistence, CSV, maze, logs, expense export and real HTTP client/server restart checks passed.');
 } finally { await rm(root, { recursive: true, force: true }); }

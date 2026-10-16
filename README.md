@@ -868,3 +868,32 @@ CODEKLAR_PYTHON=/tmp/codeklar-python-check/bin/python npm run test:python
 Ohne `CODEKLAR_PYTHON` verwendet der Prüfer `python3`. Die TCP-Verbindungen der vorhandenen API-Prüfungen bleiben lokal. Windows-/macOS-Laufzeiten und Python 3.10 wurden in dieser Änderung nicht separat nativ getestet.
 
 Browserprüfungen decken alle 145 Wissensfragen, Fortschritt, Lern-/Prüfungsrunden, die Starthilfe, eigene Übungen, Referenzsuche, sämtliche Projektdateien und vollständige ZIP-Inhalte ab. Das neue Projekt ist einschließlich Anleitung und Template offline erreichbar. Zusätzlich wurde der tatsächlich erzeugte HTML-Bericht im Browser bei 320, 390 und 1505 Pixeln geöffnet und das Aufklappen der Antworten geprüft. Die bestehende Hell-/Dunkelgestaltung bleibt erhalten. Einschließlich des älteren Zahlenratespiels stehen jetzt sieben Python-Projektangebote zur Verfügung.
+
+### Python mit Requests, NumPy und pandas praktisch einsetzen
+
+**24 weitere Lektionen und acht lokale Übungen** erweitern Python auf **169 Lektionen insgesamt** und **52 Programmierübungen**. Die bisherigen 144 ausführbaren Beispiele und ihre Antwortpositionen bleiben erhalten; die sechs Hauptbereiche bleiben bestehen. **NumPy & Zahlen** und **pandas & Tabellen** liegen bei den Datenthemen, **Requests & HTTP** bei Eingaben/Dateien/APIs.
+
+Requests-Inhalte zeigen vorbereitete POST-JSON-Anfragen sowie tatsächlich ausgeführte lokale GETs, Query-Kodierung, Timeout und HTTP-Statusprüfung. Die Beispiele starten eigene kurzlebige Server auf 127.0.0.1 und brauchen keine externe API. NumPy behandelt Arrays versus Listen, Form/reshape, Broadcasting, Masken, Achsen, Views/Kopien, where und NaN. pandas ergänzt DataFrames, loc, fehlende Werte, Konvertierung, Gruppierung, stabile fachliche Sortierschlüssel, merge/Schlüsselprüfung, Datumskonvertierung, kontrolliertes CSV-Einlesen, Duplikaterkennung, Pivot-Tabellen und berechnete Spalten. Jede Lektion enthält Erklärungsschritte, Parameter-/Rückgabewert-Hilfe, Anwendung, Stolperstein und Ausgabe-Frage; acht Aufgaben ergänzen eigenes Programmieren mit Hinweis und vollständiger Lösung.
+
+Die Starthilfen verwenden den geprüften Lernstand **Requests 2.32.5, NumPy 2.2.6 und pandas 2.3.3** mit Python 3.10+. Die Pakete werden lokal in einer eigenen virtuellen Umgebung installiert. CodeKlar führt diese Bibliotheken nicht im Browser aus. Die erstmalige Paketinstallation braucht üblicherweise Netz; Lerntexte, Wissensfragen, Quellen und ZIP-Downloads bleiben nach dem vollständigen ersten Laden offline nutzbar.
+
+**Projekte → Python: CSV-Ausgabenbericht mit pandas** enthält `report.py`, sechzehn Testmethoden, eine HTML-Vorlage, CSV-Beispiel, Requirements und `BAUPLAN.md`. Der Datenweg lautet CSV → Textprüfung → ganze Centwerte → pandas-Gruppen/NumPy-Statistik → Jinja2-HTML. Das Programm prüft genau die Spalten datum/bereich/cent, gültige ISO-Kalenderdaten, nichtleere Kategorien, 0 bis 100000000 Cent je Buchung sowie höchstens 10000 Datensätze und 1 MB Eingabe. Gleiche gültige Zeilen werden gezählt und nicht automatisch gelöscht. Ein exakter Kategorienfilter mit leerem Ergebnis meldet einen Fehler.
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m unittest -v
+.venv/bin/python report.py beispiel.csv --output bericht.html
+.venv/bin/python report.py beispiel.csv --bereich Essen --output essen.html
+```
+
+Windows-Befehle stehen vollständig im Bauplan. Die Beispieldaten ergeben drei Buchungen mit insgesamt 10,00 €, davon Essen 7,00 € und Fahrt 3,00 €. Die Datumsspanne wird unabhängig von der Dateireihenfolge ermittelt. Summen bleiben innerhalb der festgelegten Grenzen ganze int64-Centwerte. Der Median pro Buchung wird als statistischer Centwert ausgewiesen und kann bei gerader Anzahl halbe Cent enthalten. Negative Rückerstattungen und Euro-Dezimalstrings sind in diesem Lernformat nicht vorgesehen. Bestehende Ausgabedateien und die Eingabe werden nicht überschrieben; ein Schreibfehler kann eine neu angelegte Datei unvollständig hinterlassen.
+
+Die native Prüfung besteht mit CPython 3.12.14: **168 Beispielprogramme, 52 Übungslösungen und 92 Testmethoden über sieben neue Projekte**. Der Ausgaben-CLI wird zusätzlich als eigener Prozess gestartet; Terminalsumme, HTML-Gruppensumme, Datum und unveränderte Eingabe bei verweigertem Überschreiben werden geprüft. Für `npm run test:python` braucht die über `CODEKLAR_PYTHON` gewählte Prüfumgebung zusätzlich zum bisherigen Jinja2-/setuptools-Lernstand:
+
+```sh
+.venv/bin/python -m pip install requests==2.32.5 numpy==2.2.6 pandas==2.3.3
+CODEKLAR_PYTHON="$PWD/.venv/bin/python" npm run test:python
+```
+
+Installationen wurden in einer eigenen temporären Umgebung durchgeführt. Die Lern-Requirements pinnen die genannten Pakete; sie sperren nicht jede transitive Abhängigkeit mit Hashes. Python 3.10 und echte Windows-/macOS-Laufzeiten wurden nicht separat nativ getestet. Browserprüfungen decken sämtliche Wissensantworten, Fortschritt, Lernrunden, mobile Starthilfen/Übungen, Referenzsuche und vollständige Projekt-ZIPs ab. Drei PWA-Prüfungen kontrollieren zusätzlich neue Inhalte und bestehende Design-/Package-Funktionen offline. Der tatsächlich erzeugte Ausgabenbericht ist bei 320, 390 und 1505 Pixeln auf lesbare Tabellen und passende Summen geprüft. Mit dem älteren Zahlenratespiel gibt es acht Python-Projektangebote.

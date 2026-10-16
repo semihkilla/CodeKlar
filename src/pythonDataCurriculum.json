@@ -1,0 +1,1113 @@
+[
+  {
+    "id": "requests-prepared",
+    "category": "Requests & HTTP",
+    "name": "Requests: JSON-Body und Header vorbereiten",
+    "introduction": "requests ist ein externes HTTP-Paket. Request.prepare beschreibt die Nachricht, ohne sie schon zu senden.",
+    "steps": [
+      "Erzeuge eine POST-Beschreibung.",
+      "json serialisiert das Dictionary.",
+      "Prüfe den vorbereiteten Body."
+    ],
+    "code": "import json\nimport requests\n\nr = requests.Request(\"POST\", \"http://127.0.0.1/tasks\", json={\"title\": \"Lernen\"}).prepare()\nprint(r.method)\nprint(r.headers[\"Content-Type\"])\nprint(json.loads(r.body)[\"title\"])",
+    "output": "POST\napplication/json\nLernen",
+    "choices": [
+      "POST\napplication/json\nLernen",
+      "GET\napplication/json\nLernen",
+      "POST\ntext/plain\nLernen"
+    ],
+    "explanation": "json= ist nicht dasselbe wie data= mit einem beliebigen Dictionary. prepare erzeugt eine Anfragebeschreibung. Erst ein send oder ein Session-Aufruf führt den Netzwerkverkehr aus.",
+    "methodProfile": {
+      "signature": "requests.Request(method, url, json=data).prepare()",
+      "parameters": [
+        [
+          "json",
+          "JSON-kompatible Python-Daten."
+        ]
+      ],
+      "returns": "PreparedRequest; hier keine Antwort.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Daten zwischen einem Python-Programm und einer API austauschen.",
+    "pitfall": "Eine vorbereitete Anfrage beweist nicht, dass ein Server erreichbar ist.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "requests==2.32.5"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install requests==2.32.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install requests==2.32.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "requests-local-get",
+    "category": "Requests & HTTP",
+    "name": "Requests: eine echte lokale JSON-Antwort lesen",
+    "introduction": "Ein Client erhält Status und Antwortbody. Dieses Beispiel startet dafür tatsächlich einen kurzlebigen lokalen Server.",
+    "steps": [
+      "Der Server wählt einen freien Port.",
+      "Die Session ruft GET mit Timeout auf.",
+      "json liest die strukturierte Antwort."
+    ],
+    "code": "import json\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\nfrom threading import Thread\nfrom urllib.parse import urlsplit, parse_qs\nimport requests\n\nclass Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        path = urlsplit(self.path)\n        body = json.dumps({\"query\": parse_qs(path.query), \"ok\": True}).encode(\"utf-8\")\n        self.send_response(404 if path.path == \"/missing\" else 200)\n        self.send_header(\"Content-Type\", \"application/json\")\n        self.send_header(\"Content-Length\", str(len(body)))\n        self.end_headers()\n        self.wfile.write(body)\n    def log_message(self, *args):\n        pass\n\nwith HTTPServer((\"127.0.0.1\", 0), Handler) as server:\n    server.timeout = 3\n    thread = Thread(target=server.handle_request)\n    thread.start()\n    try:\n        with requests.Session() as session:\n            session.trust_env = False\n            base = f\"http://127.0.0.1:{server.server_port}\"\n            response = session.get(base, timeout=2)\n            print(response.status_code)\n            print(response.json()[\"ok\"])\n    finally:\n        thread.join(timeout=4)\n",
+    "output": "200\nTrue",
+    "choices": [
+      "200\nTrue",
+      "201\nTrue",
+      "200\ntrue"
+    ],
+    "explanation": "Der Server läuft nur auf 127.0.0.1. trust_env=False ignoriert für diesen lokalen Test Proxy-Umgebungsvariablen. In echten Anwendungen müssen Proxy-, Zertifikats- und Timeoutregeln bewusst festgelegt werden.",
+    "methodProfile": {
+      "signature": "session.get(url, timeout=2); response.json()",
+      "parameters": [
+        [
+          "timeout",
+          "Wartegrenze für die Netzwerkoperation."
+        ]
+      ],
+      "returns": "Response; json liefert hier ein Dictionary.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Daten zwischen einem Python-Programm und einer API austauschen.",
+    "pitfall": "Ein Timeout ist bei Requests keine allgemeine maximale Gesamtlaufzeit des gesamten Programms.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "requests==2.32.5"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install requests==2.32.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install requests==2.32.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "requests-status",
+    "category": "Requests & HTTP",
+    "name": "raise_for_status(): HTTP-Fehler sichtbar machen",
+    "introduction": "Ein erfolgreich empfangener Body kann zu einem HTTP-Fehlerstatus gehören. raise_for_status prüft den Status.",
+    "steps": [
+      "Der lokale Server antwortet bei /missing mit 404.",
+      "raise_for_status löst HTTPError aus.",
+      "Die zugehörige Antwort enthält den Status."
+    ],
+    "code": "import json\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\nfrom threading import Thread\nfrom urllib.parse import urlsplit, parse_qs\nimport requests\n\nclass Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        path = urlsplit(self.path)\n        body = json.dumps({\"query\": parse_qs(path.query), \"ok\": True}).encode(\"utf-8\")\n        self.send_response(404 if path.path == \"/missing\" else 200)\n        self.send_header(\"Content-Type\", \"application/json\")\n        self.send_header(\"Content-Length\", str(len(body)))\n        self.end_headers()\n        self.wfile.write(body)\n    def log_message(self, *args):\n        pass\n\nwith HTTPServer((\"127.0.0.1\", 0), Handler) as server:\n    server.timeout = 3\n    thread = Thread(target=server.handle_request)\n    thread.start()\n    try:\n        with requests.Session() as session:\n            session.trust_env = False\n            base = f\"http://127.0.0.1:{server.server_port}\"\n            response = session.get(base + \"/missing\", timeout=2)\n            try:\n                response.raise_for_status()\n            except requests.HTTPError as error:\n                print(error.response.status_code)\n    finally:\n        thread.join(timeout=4)\n",
+    "output": "404",
+    "choices": [
+      "404",
+      "200",
+      "None"
+    ],
+    "explanation": "json() und raise_for_status() prüfen verschiedene Dinge. Verbindungsfehler, Timeouts, ungültiges JSON und fachlich falsche Felder brauchen zusätzlich eigene Behandlung.",
+    "methodProfile": {
+      "signature": "response.raise_for_status()",
+      "parameters": [],
+      "returns": "None bei passendem Status, sonst HTTPError.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Daten zwischen einem Python-Programm und einer API austauschen.",
+    "pitfall": "Automatisches Wiederholen jeder schreibenden Anfrage kann dieselbe Operation mehrfach auslösen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "requests==2.32.5"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install requests==2.32.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install requests==2.32.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "requests-params",
+    "category": "Requests & HTTP",
+    "name": "params: Suchwerte korrekt an eine URL übergeben",
+    "introduction": "params übernimmt die Query-Kodierung. Sonderzeichen werden nicht per Hand an die URL gehängt.",
+    "steps": [
+      "Der Suchwert enthält Plus und Und.",
+      "Requests kodiert den Wert.",
+      "Der lokale Server liest den ursprünglichen Text."
+    ],
+    "code": "import json\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\nfrom threading import Thread\nfrom urllib.parse import urlsplit, parse_qs\nimport requests\n\nclass Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        path = urlsplit(self.path)\n        body = json.dumps({\"query\": parse_qs(path.query), \"ok\": True}).encode(\"utf-8\")\n        self.send_response(404 if path.path == \"/missing\" else 200)\n        self.send_header(\"Content-Type\", \"application/json\")\n        self.send_header(\"Content-Length\", str(len(body)))\n        self.end_headers()\n        self.wfile.write(body)\n    def log_message(self, *args):\n        pass\n\nwith HTTPServer((\"127.0.0.1\", 0), Handler) as server:\n    server.timeout = 3\n    thread = Thread(target=server.handle_request)\n    thread.start()\n    try:\n        with requests.Session() as session:\n            session.trust_env = False\n            base = f\"http://127.0.0.1:{server.server_port}\"\n            response = session.get(base, params={\"q\": \"a+b & c\"}, timeout=2)\n            response.raise_for_status()\n            print(response.json()[\"query\"][\"q\"][0])\n    finally:\n        thread.join(timeout=4)\n",
+    "output": "a+b & c",
+    "choices": [
+      "a+b & c",
+      "a b & c",
+      "a%2Bb+%26+c"
+    ],
+    "explanation": "Eine Query besteht aus Textwerten und kann Schlüssel mehrfach enthalten. Das Projekt mit lokaler Aufgaben-API zeigt, wie ein Server erlaubte Felder und Zahlenbereiche prüft.",
+    "methodProfile": {
+      "signature": "session.get(url, params=mapping, timeout=2)",
+      "parameters": [
+        [
+          "params",
+          "Query-Namen und Werte."
+        ]
+      ],
+      "returns": "Response mit serverseitig gelesenem Wert.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Daten zwischen einem Python-Programm und einer API austauschen.",
+    "pitfall": "URL-Kodierung ersetzt keine Prüfung, ob ein Ziel oder ein Suchwert fachlich erlaubt ist.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "requests==2.32.5"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install requests==2.32.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install requests==2.32.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-array",
+    "category": "NumPy & Zahlen",
+    "name": "ndarray statt Liste: elementweise rechnen",
+    "introduction": "Ein NumPy-Array besitzt einen gemeinsamen Datentyp. Multiplikation wirkt elementweise statt die Liste zu wiederholen.",
+    "steps": [
+      "Erzeuge ein Array aus drei Zahlen.",
+      "Multipliziere jeden Wert mit 2.",
+      "tolist macht die Ausgabe zur normalen Python-Liste."
+    ],
+    "code": "import numpy as np\n\na = np.array([1, 2, 3], dtype=np.int64)\nprint((a * 2).tolist())\nprint(([1, 2, 3] * 2))",
+    "output": "[2, 4, 6]\n[1, 2, 3, 1, 2, 3]",
+    "choices": [
+      "[2, 4, 6]\n[1, 2, 3, 1, 2, 3]",
+      "[1, 2, 3, 1, 2, 3]\n[2, 4, 6]",
+      "[2, 4, 6]\n[2, 4, 6]"
+    ],
+    "explanation": "Arrays eignen sich für viele gleichartig verarbeitete Zahlen. Ein fester Integer-Typ hat jedoch einen begrenzten Wertebereich, anders als Pythons beliebig große int-Werte.",
+    "methodProfile": {
+      "signature": "np.array(values, dtype=np.int64)",
+      "parameters": [
+        [
+          "dtype",
+          "Gemeinsamer numerischer Datentyp."
+        ]
+      ],
+      "returns": "ndarray, danach neue Rechenergebnisse.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "Vektorisierung bedeutet nicht, dass jede Rechenoperation automatisch schneller oder speichersparender ist.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Addiere 5 zu allen Werten [2,4,6] und gib eine Python-Liste aus.",
+      "hint": "Die Addition erfolgt direkt am Array.",
+      "code": "import numpy as np\n\nprint((np.array([2, 4, 6]) + 5).tolist())",
+      "output": "[7, 9, 11]"
+    },
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-shape",
+    "category": "NumPy & Zahlen",
+    "name": "shape und reshape: die Form gehört zu den Daten",
+    "introduction": "shape beschreibt die Länge jeder Achse. reshape ordnet dieselbe Elementanzahl in eine andere Form.",
+    "steps": [
+      "arange erzeugt sechs Werte.",
+      "reshape bildet zwei Zeilen und drei Spalten.",
+      "Lies die zweite Zeile."
+    ],
+    "code": "import numpy as np\n\na = np.arange(6).reshape(2, 3)\nprint(a.shape)\nprint(a[1].tolist())",
+    "output": "(2, 3)\n[3, 4, 5]",
+    "choices": [
+      "(2, 3)\n[3, 4, 5]",
+      "(3, 2)\n[2, 3]",
+      "(6,)\n[1]"
+    ],
+    "explanation": "Die Form ist Teil des fachlichen Modells, etwa Messungen pro Tag und Sensor. reshape kann eine View oder eine Kopie liefern; es garantiert keine unabhängigen Daten.",
+    "methodProfile": {
+      "signature": "array.reshape(rows, columns)",
+      "parameters": [
+        [
+          "rows und columns",
+          "Neue Form mit derselben Elementanzahl."
+        ]
+      ],
+      "returns": "Array in der angeforderten Form.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "Sechs Werte passen nicht in eine Form mit acht Plätzen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-broadcast",
+    "category": "NumPy & Zahlen",
+    "name": "Broadcasting: eine passende Achse erweitern",
+    "introduction": "NumPy vergleicht Formen von rechts. Eine Achse mit Länge 1 kann für eine Operation passend erweitert werden.",
+    "steps": [
+      "Die Matrix hat Form 2 mal 3.",
+      "Die Zusatzwerte haben Form 3.",
+      "Jede Zeile bekommt dieselben Spaltenzuschläge."
+    ],
+    "code": "import numpy as np\n\na = np.array([[1, 2, 3], [4, 5, 6]])\nprint((a + np.array([10, 20, 30])).tolist())",
+    "output": "[[11, 22, 33], [14, 25, 36]]",
+    "choices": [
+      "[[11, 22, 33], [14, 25, 36]]",
+      "[[11, 12, 13], [24, 25, 26]]",
+      "[[11, 22, 33], [4, 5, 6]]"
+    ],
+    "explanation": "Broadcasting beschreibt Formregeln, keine beliebige automatische Auffüllung fehlender Daten. Für einen Zuschlag pro Zeile kann beispielsweise eine Form (2, 1) nötig sein.",
+    "methodProfile": {
+      "signature": "matrix + vector",
+      "parameters": [
+        [
+          "vector",
+          "Form, die nach Broadcasting-Regeln passt."
+        ]
+      ],
+      "returns": "Neues Ergebnisarray.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "Ein Vektor mit zwei Werten passt nicht automatisch als Spaltenvektor zu einer 2-mal-3-Matrix.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-mask",
+    "category": "NumPy & Zahlen",
+    "name": "Boolesche Masken: passende Zahlen auswählen",
+    "introduction": "Ein Vergleich erzeugt ein boolesches Array. Dieses kann die passenden Elemente auswählen.",
+    "steps": [
+      "Vergleiche alle Werte mit 5.",
+      "Die Maske enthält je ein bool.",
+      "Wähle die wahren Positionen."
+    ],
+    "code": "import numpy as np\n\na = np.array([2, 5, 8])\nprint((a >= 5).tolist())\nprint(a[a >= 5].tolist())",
+    "output": "[False, True, True]\n[5, 8]",
+    "choices": [
+      "[False, True, True]\n[5, 8]",
+      "[False, False, True]\n[8]",
+      "[2, 5, 8]\n[True]"
+    ],
+    "explanation": "Eine boolesche Auswahl ist typischerweise eine Kopie. Für mehrere Bedingungen brauchst du elementweise Operatoren und Klammern, etwa (a > 2) & (a < 8).",
+    "methodProfile": {
+      "signature": "array[mask]",
+      "parameters": [
+        [
+          "mask",
+          "Boolesche Auswahl mit passender Form."
+        ]
+      ],
+      "returns": "Ausgewählte Werte als Array.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "and/or sind nicht der Ersatz für elementweise & und |.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Wähle aus [1,4,7,10] nur Werte größer als 3 und kleiner als 9.",
+      "hint": "Verbinde geklammerte Vergleiche mit &.",
+      "code": "import numpy as np\n\na = np.array([1, 4, 7, 10])\nprint(a[(a > 3) & (a < 9)].tolist())",
+      "output": "[4, 7]"
+    },
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-axis",
+    "category": "NumPy & Zahlen",
+    "name": "axis: über Zeilen oder Spalten zusammenfassen",
+    "introduction": "Eine Reduktion entfernt die ausgewählte Achse. Bei einer Matrix ergibt axis=0 eine Summe je Spalte.",
+    "steps": [
+      "Die Matrix hat zwei Zeilen.",
+      "Summiere entlang der Zeilenachse.",
+      "Vergleiche mit einer Summe pro Zeile."
+    ],
+    "code": "import numpy as np\n\na = np.array([[1, 2], [3, 4]])\nprint(a.sum(axis=0).tolist())\nprint(a.sum(axis=1).tolist())",
+    "output": "[4, 6]\n[3, 7]",
+    "choices": [
+      "[4, 6]\n[3, 7]",
+      "[3, 7]\n[4, 6]",
+      "[10]\n[10]"
+    ],
+    "explanation": "Überlege vor der Berechnung, welche Bedeutung jede Achse hat. In einer Tages-/Messwerttabelle kann dieselbe Zahl je nach Achse eine andere fachliche Aussage darstellen.",
+    "methodProfile": {
+      "signature": "array.sum(axis=0)",
+      "parameters": [
+        [
+          "axis",
+          "Zu reduzierende Achse."
+        ]
+      ],
+      "returns": "Reduziertes Array oder einzelner Wert.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "axis=0 bedeutet nicht schlicht „die erste Zeile auswählen“.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Berechne für [[2,4],[6,8]] die Mittelwerte jeder Spalte.",
+      "hint": "mean(axis=0) reduziert die Zeilenachse.",
+      "code": "import numpy as np\n\na = np.array([[2, 4], [6, 8]])\nprint(a.mean(axis=0).tolist())",
+      "output": "[4.0, 6.0]"
+    },
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-copy",
+    "category": "NumPy & Zahlen",
+    "name": "Views und copy(): Änderungen bewusst trennen",
+    "introduction": "Ein einfacher Array-Slice ist häufig eine View auf vorhandenen Speicher. copy erzeugt unabhängige Daten.",
+    "steps": [
+      "Ein Slice verweist auf den Anfang des Arrays.",
+      "Die Änderung wirkt auf das Original.",
+      "Die Kopie bleibt unabhängig."
+    ],
+    "code": "import numpy as np\n\na = np.array([1, 2, 3])\nview = a[:2]\ncopy = a.copy()\nview[0] = 9\nprint(a.tolist())\nprint(copy.tolist())",
+    "output": "[9, 2, 3]\n[1, 2, 3]",
+    "choices": [
+      "[9, 2, 3]\n[1, 2, 3]",
+      "[1, 2, 3]\n[1, 2, 3]",
+      "[9, 2, 3]\n[9, 2, 3]"
+    ],
+    "explanation": "Speicherteilung ist nützlich, kann aber ungewollte Seiteneffekte verursachen. Nicht jede Auswahl hat dieselben Kopierregeln; insbesondere boolesches oder fortgeschrittenes Indexieren unterscheidet sich vom einfachen Slice.",
+    "methodProfile": {
+      "signature": "array[start:end]; array.copy()",
+      "parameters": [
+        [
+          "copy",
+          "Unabhängiges Ergebnisarray."
+        ]
+      ],
+      "returns": "View oder Kopie je nach Operation.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "Eine neue Python-Variable garantiert keine neue unabhängige Datenkopie.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-where",
+    "category": "NumPy & Zahlen",
+    "name": "where: Werte abhängig von einer Bedingung ersetzen",
+    "introduction": "np.where wählt an jeder Position einen von zwei Werten. Die Bedingung ist elementweise.",
+    "steps": [
+      "Prüfe, welche Werte negativ sind.",
+      "Ersetze nur diese durch 0.",
+      "Das ursprüngliche Array bleibt erhalten."
+    ],
+    "code": "import numpy as np\n\na = np.array([-2, 3, -1])\nprint(np.where(a < 0, 0, a).tolist())\nprint(a.tolist())",
+    "output": "[0, 3, 0]\n[-2, 3, -1]",
+    "choices": [
+      "[0, 3, 0]\n[-2, 3, -1]",
+      "[0, 3, 0]\n[0, 3, 0]",
+      "[-2, 3, -1]\n[-2, 3, -1]"
+    ],
+    "explanation": "Ersetzen ist eine fachliche Regel. Negative Werte können beispielsweise korrekte Rückerstattungen sein; sie sollten nicht ohne Begründung entfernt werden.",
+    "methodProfile": {
+      "signature": "np.where(condition, yes, no)",
+      "parameters": [
+        [
+          "condition",
+          "Boolesche Bedingung."
+        ],
+        [
+          "yes und no",
+          "Passende Werte oder Arrays."
+        ]
+      ],
+      "returns": "Neues Auswahlarray.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "Beide übergebenen Ausdrücke werden vorher berechnet; where verhindert keine Division durch null in einem Argument.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "numpy-nan",
+    "category": "NumPy & Zahlen",
+    "name": "NaN: fehlende Zahlen erkennen und gezielt behandeln",
+    "introduction": "NaN ist ein besonderer Gleitkommawert. Ein normaler Mittelwert wird dadurch ebenfalls NaN.",
+    "steps": [
+      "Die Messreihe enthält einen fehlenden Wert.",
+      "isnan erkennt ihn.",
+      "nanmean ignoriert ihn bei dieser Berechnung."
+    ],
+    "code": "import numpy as np\n\na = np.array([2.0, np.nan, 6.0])\nprint(np.isnan(a).tolist())\nprint(float(np.nanmean(a)))",
+    "output": "[False, True, False]\n4.0",
+    "choices": [
+      "[False, True, False]\n4.0",
+      "[False, False, False]\n4.0",
+      "[False, True, False]\n0.0"
+    ],
+    "explanation": "Fehlende Werte sind nicht automatisch null. Eine ausschließlich fehlende oder leere Auswahl besitzt keinen sinnvoll berechenbaren Mittelwert; dafür muss die Anwendung eine Regel festlegen.",
+    "methodProfile": {
+      "signature": "np.isnan(array); np.nanmean(array)",
+      "parameters": [
+        [
+          "array",
+          "Numerische Messwerte mit möglichen NaN."
+        ]
+      ],
+      "returns": "Boolesche Maske beziehungsweise Mittelwert.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Viele Zahlen als zusammenhängende Daten mit klarer Form verarbeiten.",
+    "pitfall": "NaN wird nicht mit == np.nan erkannt.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Berechne den Mittelwert gültiger Werte in [1, NaN, 5].",
+      "hint": "Nutze nanmean und gib den Python-float aus.",
+      "code": "import numpy as np\n\nprint(float(np.nanmean([1, np.nan, 5])))",
+      "output": "3.0"
+    },
+    "dependencies": [
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-frame",
+    "category": "pandas & Tabellen",
+    "name": "DataFrame: benannte Spalten statt einzelner Listen",
+    "introduction": "Ein DataFrame ist eine zweidimensionale Tabelle mit Spaltennamen und Index.",
+    "steps": [
+      "Erzeuge zwei Datensätze.",
+      "Lies die Tabellenform.",
+      "Eine einzelne Spalte ist eine Series."
+    ],
+    "code": "import pandas as pd\n\ndf = pd.DataFrame({\"name\": [\"A\", \"B\"], \"punkte\": [3, 5]})\nprint(df.shape)\nprint(df[\"punkte\"].tolist())",
+    "output": "(2, 2)\n[3, 5]",
+    "choices": [
+      "(2, 2)\n[3, 5]",
+      "(2,)\n[3, 5]",
+      "(2, 2)\n[\"A\", \"B\"]"
+    ],
+    "explanation": "Spalten können verschiedene Datentypen besitzen. Der Index bezeichnet Zeilen, ist aber nicht zwingend eine lückenlose Folge von Zahlen und nicht automatisch ein fachlicher Primärschlüssel.",
+    "methodProfile": {
+      "signature": "pd.DataFrame(mapping)",
+      "parameters": [
+        [
+          "mapping",
+          "Spaltennamen und gleich lange Wertefolgen."
+        ]
+      ],
+      "returns": "DataFrame; eine einzelne Spalte liefert eine Series.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Eine doppelte eckige Klammer df[[\"punkte\"]] liefert eine Tabelle statt einer Series.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-loc",
+    "category": "pandas & Tabellen",
+    "name": "loc: Zeilen filtern und Spalten gezielt auswählen",
+    "introduction": "loc wählt über Labels und boolesche Bedingungen. Eine Filterung verändert den ursprünglichen Index nicht automatisch.",
+    "steps": [
+      "Erzeuge eine Punktebedingung.",
+      "Wähle nur die passende Namensspalte.",
+      "Gib die gewählten Namen als Liste aus."
+    ],
+    "code": "import pandas as pd\n\ndf = pd.DataFrame({\"name\": [\"A\", \"B\", \"C\"], \"punkte\": [2, 8, 6]})\nprint(df.loc[df[\"punkte\"] >= 6, \"name\"].tolist())",
+    "output": "['B', 'C']",
+    "choices": [
+      "['B', 'C']",
+      "['A', 'B', 'C']",
+      "[8, 6]"
+    ],
+    "explanation": "Nutze .loc auch für bewusst zugewiesene Teilbereiche. Verkettete Auswahl und Zuweisung kann Kopierfragen oder Warnungen erzeugen und ist weniger eindeutig.",
+    "methodProfile": {
+      "signature": "df.loc[row_condition, columns]",
+      "parameters": [
+        [
+          "row_condition",
+          "Boolesche Auswahl."
+        ],
+        [
+          "columns",
+          "Spaltenname oder Liste von Namen."
+        ]
+      ],
+      "returns": "Series oder DataFrame abhängig von der Spaltenauswahl.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "loc arbeitet mit Labels; iloc verwendet numerische Positionen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Wähle aus namen A/B mit punkte 3/9 nur den Namen mit mindestens 5 Punkten.",
+      "hint": "Nutze .loc mit einer booleschen Punktebedingung.",
+      "code": "import pandas as pd\n\ndf = pd.DataFrame({\"name\": [\"A\", \"B\"], \"punkte\": [3, 9]})\nprint(df.loc[df[\"punkte\"] >= 5, \"name\"].tolist())",
+      "output": "['B']"
+    },
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-missing",
+    "category": "pandas & Tabellen",
+    "name": "isna und fillna: fehlende Werte bewusst ergänzen",
+    "introduction": "Fehlende Tabellenwerte brauchen eine fachliche Regel. fillna ersetzt sie im zurückgegebenen Ergebnis.",
+    "steps": [
+      "Die Series enthält None.",
+      "isna markiert die fehlende Stelle.",
+      "Ersetze sie für diese Anzeige durch 0."
+    ],
+    "code": "import pandas as pd\n\ns = pd.Series([2, None, 6])\nprint(s.isna().tolist())\nprint(s.fillna(0).tolist())",
+    "output": "[False, True, False]\n[2.0, 0.0, 6.0]",
+    "choices": [
+      "[False, True, False]\n[2.0, 0.0, 6.0]",
+      "[False, False, False]\n[2, None, 6]",
+      "[False, True, False]\n[2.0, 6.0]"
+    ],
+    "explanation": "Durch fehlende Werte kann pandas einen anderen Datentyp wählen. Fehlend und gemessene null sind unterschiedliche Bedeutungen; im Projekt werden ungültige Geldwerte abgelehnt statt erfunden.",
+    "methodProfile": {
+      "signature": "series.isna(); series.fillna(value)",
+      "parameters": [
+        [
+          "value",
+          "Bewusst festgelegter Ersatzwert."
+        ]
+      ],
+      "returns": "Maske beziehungsweise neue Series.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Eine automatische Null-Ersetzung kann Auswertungen verfälschen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-numeric",
+    "category": "pandas & Tabellen",
+    "name": "to_numeric: Zahlen aus Text prüfen",
+    "introduction": "CSV-Felder können zunächst Text sein. to_numeric mit errors=\"raise\" meldet ungültige Werte.",
+    "steps": [
+      "Die Strings enthalten gültige Zahlen.",
+      "to_numeric wandelt sie um.",
+      "Summiere erst anschließend."
+    ],
+    "code": "import pandas as pd\n\ns = pd.to_numeric(pd.Series([\"3\", \"7\"]), errors=\"raise\")\nprint(int(s.sum()))",
+    "output": "10",
+    "choices": [
+      "10",
+      "37",
+      "0"
+    ],
+    "explanation": "errors=\"coerce\" wandelt ungültige Werte in fehlende Werte um; das kann nützlich sein, muss aber gezählt und fachlich behandelt werden. Der Ausgabenbericht verlangt ausdrücklich nichtnegative Ganzzahl-Cents.",
+    "methodProfile": {
+      "signature": "pd.to_numeric(values, errors=\"raise\")",
+      "parameters": [
+        [
+          "errors",
+          "Umgang mit ungültigen Werten."
+        ]
+      ],
+      "returns": "Numerische Series oder andere numerische Eingabeform.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Eine erfolgreiche Zahlenkonvertierung prüft nicht automatisch erlaubte Wertebereiche oder Ganzzahligkeit.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-group",
+    "category": "pandas & Tabellen",
+    "name": "groupby und agg: Summen pro Kategorie berechnen",
+    "introduction": "groupby bildet Gruppen. Eine Aggregation erzeugt daraus eine kleinere Ergebnistabelle.",
+    "steps": [
+      "Ordne Beträge ihren Bereichen zu.",
+      "Summiere je Bereich.",
+      "Sortiere die Gruppennamen für eine feste Ausgabe."
+    ],
+    "code": "import pandas as pd\n\ndf = pd.DataFrame({\"bereich\": [\"Essen\", \"Fahrt\", \"Essen\"], \"cent\": [200, 150, 300]})\nsums = df.groupby(\"bereich\", sort=True)[\"cent\"].sum()\nprint(sums.to_dict())",
+    "output": "{'Essen': 500, 'Fahrt': 150}",
+    "choices": [
+      "{'Essen': 500, 'Fahrt': 150}",
+      "{'Essen': 300, 'Fahrt': 150}",
+      "{'Essen': 650}"
+    ],
+    "explanation": "Nach der Aggregation bedeutet eine Zeile eine Gruppe, nicht mehr einen ursprünglichen Datensatz. Bei einer Kennzahl muss klar sein, ob beispielsweise pro Buchung oder pro Kategorie gemittelt wird.",
+    "methodProfile": {
+      "signature": "df.groupby(column)[value].sum()",
+      "parameters": [
+        [
+          "column",
+          "Gruppenschlüssel."
+        ],
+        [
+          "value",
+          "Zu aggregierende Zahlenspalte."
+        ]
+      ],
+      "returns": "Aggregierte Series mit Gruppenindex.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Gruppieren beseitigt nicht automatisch doppelte oder fehlerhafte Buchungen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Summiere Werte 2/5/4 für Kategorien A/B/A und gib das Dictionary aus.",
+      "hint": "groupby gruppiert die gleich benannten Zeilen.",
+      "code": "import pandas as pd\n\ndf = pd.DataFrame({\"k\": [\"A\", \"B\", \"A\"], \"v\": [2, 5, 4]})\nprint(df.groupby(\"k\")[\"v\"].sum().to_dict())",
+      "output": "{'A': 6, 'B': 5}"
+    },
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-sort",
+    "category": "pandas & Tabellen",
+    "name": "sort_values: die größten Werte zuerst anzeigen",
+    "introduction": "sort_values ordnet nach Spaltenwerten, nicht nach dem bisherigen Index.",
+    "steps": [
+      "Sortiere Punkte absteigend.",
+      "Bei Gleichstand sortiere Namen aufsteigend.",
+      "Wähle die ersten zwei Namen."
+    ],
+    "code": "import pandas as pd\n\ndf = pd.DataFrame({\"name\": [\"B\", \"A\", \"C\"], \"punkte\": [7, 7, 2]})\nprint(df.sort_values([\"punkte\", \"name\"], ascending=[False, True]).head(2)[\"name\"].tolist())",
+    "output": "['A', 'B']",
+    "choices": [
+      "['A', 'B']",
+      "['B', 'A']",
+      "['C', 'A']"
+    ],
+    "explanation": "Ein expliziter zweiter Schlüssel macht eine Rangfolge bei Gleichstand nachvollziehbar. Der ursprüngliche Index bleibt erhalten, bis er bewusst zurückgesetzt wird.",
+    "methodProfile": {
+      "signature": "df.sort_values(columns, ascending=...)",
+      "parameters": [
+        [
+          "columns",
+          "Sortierschlüssel in Reihenfolge."
+        ]
+      ],
+      "returns": "Sortierter DataFrame.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "head(2) wählt nur zwei Zeilen und ist keine Bedingung „alle mit Höchstpunktzahl“.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-merge",
+    "category": "pandas & Tabellen",
+    "name": "merge: Tabellen über Schlüssel verbinden",
+    "introduction": "merge kombiniert passende Zeilen zweier Tabellen. validate kann erwartete Schlüsselbeziehungen prüfen.",
+    "steps": [
+      "Punkte und Namen liegen in getrennten Tabellen.",
+      "id ist der gemeinsame Schlüssel.",
+      "one_to_one verlangt auf beiden Seiten eindeutige Schlüssel."
+    ],
+    "code": "import pandas as pd\n\na = pd.DataFrame({\"id\": [2, 1], \"punkte\": [8, 3]})\nb = pd.DataFrame({\"id\": [1, 2], \"name\": [\"A\", \"B\"]})\nprint(a.merge(b, on=\"id\", validate=\"one_to_one\")[\"name\"].tolist())",
+    "output": "['B', 'A']",
+    "choices": [
+      "['B', 'A']",
+      "['A', 'B']",
+      "[8, 3]"
+    ],
+    "explanation": "Der Standard ist ein innerer Join: Nur passende Schlüssel bleiben. Für Vollständigkeitsfragen brauchst du gegebenenfalls einen anderen Join und eine Prüfung nicht zugeordneter Einträge.",
+    "methodProfile": {
+      "signature": "left.merge(right, on=key, validate=\"one_to_one\")",
+      "parameters": [
+        [
+          "key",
+          "Gemeinsame Schlüsselspalte."
+        ],
+        [
+          "validate",
+          "Erwartete Zuordnungsregel."
+        ]
+      ],
+      "returns": "Verbundener DataFrame.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Doppelte Schlüssel können bei einem many-to-many-Join die Zeilenzahl stark vervielfachen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-dates",
+    "category": "pandas & Tabellen",
+    "name": "to_datetime: Datumstext in Datumswerte überführen",
+    "introduction": "Datumsoperationen brauchen ein passendes Format. Ein parserseitig ungültiger Kalenderwert soll nicht still als Text weiterlaufen.",
+    "steps": [
+      "Lies ein ausdrücklich vorgegebenes Format.",
+      "Erzeuge pandas-Datumswerte.",
+      "Lies die Monatsnummern."
+    ],
+    "code": "import pandas as pd\n\ns = pd.to_datetime(pd.Series([\"2026-01-03\", \"2026-02-04\"]), format=\"%Y-%m-%d\", errors=\"raise\")\nprint(s.dt.month.tolist())",
+    "output": "[1, 2]",
+    "choices": [
+      "[1, 2]",
+      "[3, 4]",
+      "[2026, 2026]"
+    ],
+    "explanation": "Ein Datum ohne Uhrzeit hat nicht automatisch eine Zeitzone. Strenge Dateiverträge können zusätzlich eine exakte Zeichenform prüfen, bevor sie den Kalenderwert validieren.",
+    "methodProfile": {
+      "signature": "pd.to_datetime(values, format=..., errors=\"raise\")",
+      "parameters": [
+        [
+          "format",
+          "Bekanntes Eingabeformat."
+        ]
+      ],
+      "returns": "Datums-/Zeitwerte für weitere Operationen.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Mehrdeutige Formate wie 03/04/2026 sollten nicht ohne Regel geraten werden.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-csv",
+    "category": "pandas & Tabellen",
+    "name": "read_csv: Trennzeichen und Datentypen festlegen",
+    "introduction": "read_csv liest Tabellen. dtype und keep_default_na bestimmen mit, wie Eingabetext behandelt wird.",
+    "steps": [
+      "Lies eine kleine CSV aus einem String.",
+      "Behalte alle Werte zunächst als Text.",
+      "NA soll hier ein echter Name bleiben."
+    ],
+    "code": "from io import StringIO\nimport pandas as pd\n\ndf = pd.read_csv(StringIO(\"name,cent\\nNA,120\\nA,80\\n\"), dtype=str, keep_default_na=False)\nprint(df[\"name\"].tolist())\nprint(df[\"cent\"].tolist())",
+    "output": "['NA', 'A']\n['120', '80']",
+    "choices": [
+      "['NA', 'A']\n['120', '80']",
+      "[None, 'A']\n[120, 80]",
+      "['NA', 'A']\n[120, 80]"
+    ],
+    "explanation": "Das Beispiel verwendet Kommas. Ein anderer Export kann Semikolon, andere Kodierung oder Dezimalkommas verwenden; diese Regeln müssen zur Quelle passen. Danach werden Felder und Typen geprüft.",
+    "methodProfile": {
+      "signature": "pd.read_csv(source, dtype=str, keep_default_na=False)",
+      "parameters": [
+        [
+          "source",
+          "CSV-Datei oder Textstream."
+        ]
+      ],
+      "returns": "DataFrame mit den festgelegten Einleseregeln.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Standardregeln für fehlende Werte können fachlich gültige Namen wie NA als fehlend interpretieren.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Lies die CSV k,v mit einer Zeile A,007 als Text und gib v aus.",
+      "hint": "dtype=str erhält führende Nullen.",
+      "code": "from io import StringIO\nimport pandas as pd\n\ndf = pd.read_csv(StringIO(\"k,v\\nA,007\\n\"), dtype=str)\nprint(df.loc[0, \"v\"])",
+      "output": "007"
+    },
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-duplicates",
+    "category": "pandas & Tabellen",
+    "name": "duplicated: doppelte Schlüssel erkennen",
+    "introduction": "Doppelte Werte können auf fehlerhafte Daten oder gültige Wiederholungen hinweisen. duplicated prüft anhand der gewählten Spalten.",
+    "steps": [
+      "Zwei Zeilen besitzen dieselbe ID.",
+      "keep=False markiert beide Vorkommen.",
+      "Die dritte ID bleibt eindeutig."
+    ],
+    "code": "import pandas as pd\n\ndf = pd.DataFrame({\"id\": [1, 1, 2], \"wert\": [5, 6, 7]})\nprint(df.duplicated(subset=[\"id\"], keep=False).tolist())",
+    "output": "[True, True, False]",
+    "choices": [
+      "[True, True, False]",
+      "[False, True, False]",
+      "[False, False, False]"
+    ],
+    "explanation": "Die passende Eindeutigkeit ist fachlich zu bestimmen. Zwei gleiche Geldbeträge sind nicht automatisch dieselbe Buchung. Das Projekt zählt alle gültigen Eingabezeilen und entfernt keine vermeintlichen Duplikate.",
+    "methodProfile": {
+      "signature": "df.duplicated(subset=columns, keep=False)",
+      "parameters": [
+        [
+          "subset",
+          "Zu vergleichende Schlüsselspalten."
+        ]
+      ],
+      "returns": "Boolesche Series.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "drop_duplicates ohne vorherige Regel kann echte Daten verlieren.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-pivot",
+    "category": "pandas & Tabellen",
+    "name": "pivot_table: Gruppen in Zeilen und Spalten darstellen",
+    "introduction": "pivot_table erstellt aus Datensätzen eine Übersicht. Eine explizite Aggregation legt fest, wie mehrere passende Werte zusammengefasst werden.",
+    "steps": [
+      "Tage werden Zeilen, Kategorien Spalten.",
+      "Summiere die Werte je Kombination.",
+      "Fehlende Kombinationen erhalten hier 0."
+    ],
+    "code": "import pandas as pd\n\ndf = pd.DataFrame({\"tag\": [\"Mo\", \"Mo\", \"Di\"], \"k\": [\"A\", \"B\", \"A\"], \"v\": [2, 3, 4]})\ntable = df.pivot_table(index=\"tag\", columns=\"k\", values=\"v\", aggfunc=\"sum\", fill_value=0)\nprint(int(table.loc[\"Mo\", \"B\"]))\nprint(int(table.loc[\"Di\", \"B\"]))",
+    "output": "3\n0",
+    "choices": [
+      "3\n0",
+      "3\n3",
+      "2\n4"
+    ],
+    "explanation": "fill_value=0 ist nur dann passend, wenn eine nicht vorhandene Kombination fachlich eine Null bedeutet. Der Standard-Aggregator ist nicht automatisch sum; lege ihn ausdrücklich fest.",
+    "methodProfile": {
+      "signature": "df.pivot_table(index=..., columns=..., values=..., aggfunc=\"sum\")",
+      "parameters": [
+        [
+          "index",
+          "Zeilengruppen."
+        ],
+        [
+          "columns",
+          "Spaltengruppen."
+        ],
+        [
+          "values",
+          "Aggregierte Werte."
+        ]
+      ],
+      "returns": "DataFrame mit Gruppen auf beiden Achsen.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "pivot und pivot_table haben unterschiedliche Regeln für mehrfache Werte pro Kombination.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "practice": {
+      "task": "Erstelle eine Summentabelle für k=A/A, tag=Mo/Mo und v=2/3. Gib die Summe Mo/A aus.",
+      "hint": "Die doppelte Kombination wird durch aggfunc=\"sum\" zusammengefasst.",
+      "code": "import pandas as pd\n\ndf = pd.DataFrame({\"tag\": [\"Mo\", \"Mo\"], \"k\": [\"A\", \"A\"], \"v\": [2, 3]})\nt = df.pivot_table(index=\"tag\", columns=\"k\", values=\"v\", aggfunc=\"sum\")\nprint(int(t.loc[\"Mo\", \"A\"]))",
+      "output": "5"
+    },
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pandas-assign",
+    "category": "pandas & Tabellen",
+    "name": "assign: eine berechnete Spalte ergänzen",
+    "introduction": "assign liefert einen DataFrame mit zusätzlichen oder ersetzten Spalten. Eine Berechnung kann auf vorhandene Spalten zugreifen.",
+    "steps": [
+      "Die Tabelle enthält Stückzahl und Einzelpreis in Cent.",
+      "Berechne den Zeilenbetrag durch Multiplikation.",
+      "Das Original erhält keine neue Spalte."
+    ],
+    "code": "import pandas as pd\n\ndf = pd.DataFrame({\"anzahl\": [2, 3], \"preis_cent\": [100, 50]})\nresult = df.assign(summe_cent=df[\"anzahl\"] * df[\"preis_cent\"])\nprint(result[\"summe_cent\"].tolist())\nprint(\"summe_cent\" in df.columns)",
+    "output": "[200, 150]\nFalse",
+    "choices": [
+      "[200, 150]\nFalse",
+      "[200, 150]\nTrue",
+      "[102, 53]\nFalse"
+    ],
+    "explanation": "Spaltenoperationen richten sich an Indexlabels aus. Prüfe vor dem Rechnen Datentypen, fehlende Werte und erlaubte Größen. Das Ergebnis einer Multiplikation kann bei festen Integer-Typen überlaufen.",
+    "methodProfile": {
+      "signature": "df.assign(new_column=values)",
+      "parameters": [
+        [
+          "values",
+          "Passende Spaltenwerte oder Berechnung."
+        ]
+      ],
+      "returns": "Neuer DataFrame mit berechneter Spalte.",
+      "effect": "Erzeugt die gezeigten Ergebnisse; Seiteneffekte und Änderungen werden in den Schritten ausdrücklich erklärt."
+    },
+    "useCase": "Dateidaten prüfen, auswählen und zu einer verständlichen Auswertung zusammenfassen.",
+    "pitfall": "Eine angezeigte Euro-Gleitkommazahl ersetzt keine sauber definierte Geldrepräsentation.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-expense-report",
+    "projectTitle": "CSV-Ausgabenbericht mit pandas",
+    "dependencies": [
+      "pandas==2.3.3",
+      "numpy==2.2.6"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ und einer eigenen virtuellen Umgebung starten. CodeKlar zeigt und prüft die Wissensantwort, führt diese Pakete aber nicht im Browser aus. Netzwerkbeispiele verwenden einen eigenen kurzlebigen Server auf 127.0.0.1; externe APIs sind für sie nicht nötig.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pandas==2.3.3 numpy==2.2.6\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pandas==2.3.3 numpy==2.2.6\n.venv\\Scripts\\python.exe main.py"
+    }
+  }
+]

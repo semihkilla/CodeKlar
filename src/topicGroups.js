@@ -2,10 +2,10 @@
 const groups = {
   python: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Operatoren & Entscheidungen", "Schleifen"]],
-    ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings", "Zahlen & Zeit", "Reguläre Ausdrücke"]],
+    ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings", "Zahlen & Zeit", "Reguläre Ausdrücke", "NumPy & Zahlen", "pandas & Tabellen"]],
     ["functions", "Funktionen", ["Funktionen"]],
     ["objects", "Klassen & Datenmodelle", ["Klassen & Datenmodelle"]],
-    ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate", "HTTP & APIs", "SQLite & Transaktionen"]],
+    ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate", "HTTP & APIs", "Requests & HTTP", "SQLite & Transaktionen"]],
     ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Umgebungen & Installation", "Externe Bibliotheken", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen", "Nebenläufigkeit"]],
   ],
   java: [

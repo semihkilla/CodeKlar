@@ -83,7 +83,7 @@ export default function App() {
             )}
           </div>
           <div className="topbar-actions">
-            <span className={`save-status ${saved ? "" : "not-saved"}`}>
+            <span className={`save-status ${saved ? "" : "not-saved"}`} role="status" aria-label={saved ? (webApp.online ? "Lokal gespeichert" : "Offline · gespeichert") : "Speichern nicht möglich"} title={saved ? (webApp.online ? "Lokal gespeichert" : "Offline · gespeichert") : "Speichern nicht möglich"}>
               <i />
               {saved
                 ? webApp.online
@@ -91,6 +91,9 @@ export default function App() {
                   : "Offline · gespeichert"
                 : "Speichern nicht möglich"}
             </span>
+            <select className="header-course-select" aria-label="Lernbereich wählen" value={course} onChange={event => openLesson(lessons.find(item => item.course === event.target.value).id)}>
+              {courses.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+            </select>
             <Appearance webApp={webApp} />
           </div>
         </header>

@@ -102,7 +102,7 @@ test("ordered learning path resumes after a solved foundation and remains usable
   await page.locator(".path-chapter > summary").filter({ hasText: "Projekte & Werkzeuge" }).click();
   await page.getByRole("region", { name: "Projekte-Lektionen", exact: true }).getByRole("button", { name: /Miniprojekt: Deinen Budget-Rechner bauen/ }).click();
   await expect(page.getByRole("heading", { name: "Miniprojekt: Deinen Budget-Rechner bauen" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Nächste Lektion" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Nächste Lektion", exact: true })).toBeDisabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "/tmp/codeklar-learning-path-mobile.png", fullPage: false });
   expect(errors).toEqual([]);
@@ -2490,4 +2490,113 @@ test('Python HTTP SQLite and concurrency lessons open the complete local API pro
  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
  await page.setViewportSize({width:390,height:844});await page.locator('.python-project-help > summary').click();await page.getByRole('button',{name:'Lokale Aufgaben-API als Projekt öffnen →',exact:true}).click();await expect(page.getByLabel('Quellcode server.py')).toContainText('ThreadingHTTPServer');await page.getByRole('button',{name:'store.py',exact:true}).click();await expect(page.getByLabel('Quellcode store.py')).toContainText('BEGIN IMMEDIATE');await page.getByRole('button',{name:'client.py',exact:true}).click();await expect(page.getByLabel('Quellcode client.py')).toContainText('HTTPConnection');await page.getByRole('button',{name:'BAUPLAN.md',exact:true}).click();await expect(page.getByLabel('Quellcode BAUPLAN.md')).toContainText('Terminal 1');await expect(page.getByLabel('Quellcode BAUPLAN.md')).toContainText('Terminal 2');await expect(page.locator('vite-error-overlay')).toHaveCount(0);
  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}expect(errors).toEqual([]);
+});
+
+test('Mint Focus appearance offers readable light dark palettes and keyboard persistence', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page).toHaveTitle('codeklar – Verstehe deinen Code');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'green');
+  await expect(page.getByLabel('Schnellnavigation').getByRole('button', { name: 'Lernen', exact: true })).toHaveAttribute('aria-current', 'page');
+  await page.getByRole('button', { name: 'Design und Webapp' }).click();
+  for (const [mode, label] of [['light', 'Hell'], ['dark', 'Dunkel']]) {
+    await page.getByRole('radio', { name: label, exact: true }).click();
+    for (const [accent, name] of [['green', 'Mint'], ['blue', 'Blau'], ['purple', 'Lila'], ['amber', 'Amber'], ['rose', 'Rosé']]) {
+      await page.getByRole('radio', { name, exact: true }).click();
+      await expect(page.locator('html')).toHaveAttribute('data-accent', accent);
+      await expect(page.locator('html')).toHaveAttribute('data-theme', mode);
+      const contrasts = await page.evaluate(() => {
+        const css = getComputedStyle(document.documentElement);
+        const rgb = token => {
+          const el = document.createElement('span'); el.style.color = `var(${token})`; document.body.append(el);
+          const values = getComputedStyle(el).color.match(/[\d.]+/g).slice(0, 3).map(Number); el.remove(); return values;
+        };
+        const luminance = values => values.map(v => { v /= 255; return v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }).reduce((sum, v, i) => sum + v * [.2126, .7152, .0722][i], 0);
+        const ratio = (a, b) => { const x = luminance(rgb(a)), y = luminance(rgb(b)); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+        return { body: ratio('--text', '--background'), muted: ratio('--muted', '--background'), accent: ratio('--accent', '--surface'), button: ratio('--on-accent', '--accent'), scheme: css.colorScheme };
+      });
+      expect(contrasts.scheme).toBe(mode);
+      for (const key of ['body', 'muted', 'accent', 'button']) expect(contrasts[key], `${mode}/${accent}/${key}`).toBeGreaterThanOrEqual(4.5);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+  }
+  await page.getByRole('radio', { name: 'Hell', exact: true }).focus();
+  await page.keyboard.press('End');
+  await expect(page.getByRole('radio', { name: 'System', exact: true })).toBeChecked();
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.getByRole('radio', { name: 'Hell', exact: true }).click();
+  await page.getByRole('radio', { name: 'Blau', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
+  await page.getByRole('button', { name: 'Design und Webapp' }).click();
+  await expect(page.getByRole('radio', { name: 'Hell', exact: true })).toBeChecked();
+  await expect(page.getByRole('radio', { name: 'Blau', exact: true })).toBeChecked();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('vite-error-overlay')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('Mint Focus compact lesson navigation and every main view fit light and dark screens', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByLabel('Lernbereich wählen', { exact: true }).selectOption('python');
+  await page.getByLabel('Hauptbereich', { exact: true }).selectOption('io');
+  await page.getByRole('button', { name: 'Thema wählen', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Thema wählen', exact: true }).getByRole('button', { name: 'HTTP & APIs', exact: true }).click();
+  await page.getByRole('button', { name: 'Lektion wählen', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Lektion wählen', exact: true }).getByRole('button', { name: /^JSON als Request-Body/ }).click();
+  for (const [mode, label] of [['dark', 'Dunkel'], ['light', 'Hell']]) {
+    await page.getByRole('button', { name: 'Design und Webapp' }).click();
+    await page.getByRole('radio', { name: label, exact: true }).click();
+    await page.getByRole('radio', { name: 'Mint', exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', mode);
+    await page.keyboard.press('Escape');
+    for (const width of [320, 390, 768, 1505]) {
+      await page.setViewportSize({ width, height: 844 });
+      await expect(page.locator('.lesson-panel h2')).toContainText('JSON als Request-Body');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.getByRole('tab', { name: 'Aufgabe', exact: true }).click();
+    await expect(page.getByRole('radiogroup', { name: 'Antwort auswählen' })).toBeVisible();
+    await page.getByRole('tab', { name: 'Erklärung', exact: true }).click();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: `/tmp/codeklar-mint-focus-${mode}-390.png`, animations: 'disabled' });
+    await page.locator('.computer-reading-steps').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `/tmp/codeklar-mint-focus-${mode}-reading.png`, animations: 'disabled' });
+    await page.setViewportSize({ width: 1505, height: 1045 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: `/tmp/codeklar-mint-focus-${mode}-desktop.png`, animations: 'disabled' });
+    await page.setViewportSize({ width: 390, height: 844 });
+  }
+  for (const name of ['Übungen', 'Nachschlagen', 'Fortschritt', 'Lernen']) {
+    const button = page.getByLabel('Schnellnavigation').getByRole('button', { name, exact: true });
+    await button.click(); await expect(button).toHaveAttribute('aria-current', 'page');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  expect(errors).toEqual([]);
+});
+
+test('appearance keeps legacy colors and works when design storage is blocked', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('codeklar-accent-v1', 'purple');
+    Object.defineProperty(Storage.prototype, 'setItem', { value() { throw new Error('blocked'); } });
+  });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'purple');
+  await page.getByRole('button', { name: 'Design und Webapp' }).click();
+  await page.getByRole('radio', { name: 'Hell', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.getByText('Dein Design gilt für diese Sitzung', { exact: false })).toBeVisible();
 });

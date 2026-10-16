@@ -106,22 +106,6 @@ function LessonPanel({
   const technology = isTechnologyCourse(lesson.course);
   return (
     <section className="lesson-panel">
-      <div className="lesson-title">
-        <span className="lesson-number">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <h2>{lesson.title}</h2>
-        <span className="difficulty">
-          {solved ? (
-            <>
-              <Check size={14} />
-              Gelöst
-            </>
-          ) : (
-            lesson.challenge ? lesson.challenge.level : lesson.difficulty ? lesson.difficulty : lesson.debugging ? "Fehlerlabor" : lesson.category === "Projektbausteine" ? "Praxis" : "Einfach"
-          )}
-        </span>
-      </div>
       <div className="lesson-tabs" role="tablist" aria-label="Lektionsansicht">
         {[
           ["explanation", "Erklärung"],
@@ -140,6 +124,22 @@ function LessonPanel({
             {text}
           </button>
         ))}
+      </div>
+      <div className="lesson-title">
+        <span className="lesson-number">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <h2>{lesson.title}</h2>
+        <span className="difficulty">
+          {solved ? (
+            <>
+              <Check size={14} />
+              Gelöst
+            </>
+          ) : (
+            lesson.challenge ? lesson.challenge.level : lesson.difficulty ? lesson.difficulty : lesson.debugging ? "Fehlerlabor" : lesson.category === "Projektbausteine" ? "Praxis" : "Einfach"
+          )}
+        </span>
       </div>
       <div
         id="lesson-content"
@@ -192,7 +192,7 @@ function LessonPanel({
             </div>
             </>}
             <button
-              className="text-button go-task"
+              className="button primary go-task"
               onClick={() => setTab("task")}
             >
               Zur Aufgabe
@@ -269,7 +269,7 @@ function LessonPanel({
               </span>
             </div>
             <button
-              className="text-button go-task"
+              className="button primary go-task"
               onClick={() => setTab("task")}
             >
               Selbst ausprobieren
@@ -336,9 +336,8 @@ export function Learning({
   const guided = course === "computer" || activeCourse.guided;
   return (
     <div className={`learning-page ${isTechnologyCourse(course) ? "technology-learning" : ""}`} data-mobile-pane={mobilePane} data-course={course}>
-      <div className="page-intro">
-        <h1>{activeCourse.headline || (course === "computer" ? "Verstehe, wie dein Computer arbeitet." : "Verstehe, was dein Code tut.")}</h1>
-        <p>{activeCourse.headline ? activeCourse.description : course === "computer" ? "Von einzelnen Bits bis zu CPU, Speicher und laufenden Programmen." : "Lerne Methoden, probiere sie aus und wende sie direkt an."}</p>
+      <div className="page-intro learning-intro">
+        <h1>{courseName}</h1>
       </div>
       {(
         <div className="learning-path">
@@ -371,6 +370,7 @@ export function Learning({
                 ))}
               </details>
             ))}
+            <details className="course-about"><summary>Über diesen Lernbereich</summary><p>{activeCourse.description || "Lerne Methoden, probiere sie aus und wende sie direkt an."}</p></details>
           </details>
         </div>
       )}

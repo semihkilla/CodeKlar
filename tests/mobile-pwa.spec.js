@@ -32,7 +32,7 @@ test("mobile playground, dark theme, accent persistence and touch navigation", a
   await page.getByRole("button", { name: "Lösung prüfen" }).click();
   await expect(page.getByText(`1 von ${jsLessons.length} Aufgaben gelöst`)).toBeVisible();
   await page.getByRole("button", { name: "Design und Webapp" }).click();
-  await page.getByRole("radio", { name: "Grün", exact: true }).click();
+  await page.getByRole("radio", { name: "Mint", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-accent", "green");
   await page.getByRole("button", { name: "Einstellungen schließen" }).click();
   await page.reload();
@@ -626,4 +626,35 @@ test('Python split curriculum regex lessons and log project are fully available 
 
 test('Python API lessons sources and ZIP remain available offline',async({page,context})=>{
  const lesson=pythonLessons.find(l=>l.id==='python-http-local-get');await page.goto('/');await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await context.setOffline(true);await page.reload();await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('python');await page.getByRole('row').filter({has:page.getByText(lesson.title,{exact:true})}).click();await page.getByRole('radio').nth(lesson.answer).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.locator('.quiz-feedback')).toContainText('Richtig!');await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.syntax-strip').first()).toContainText('HTTPConnection');await page.locator('.python-project-help > summary').click();await page.getByRole('button',{name:'Lokale Aufgaben-API als Projekt öffnen →',exact:true}).click();await expect(page.getByLabel('Quellcode server.py')).toContainText('127.0.0.1');await page.getByRole('button',{name:'test_api.py',exact:true}).click();await expect(page.getByLabel('Quellcode test_api.py')).toContainText('test_parallel_requests');const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen',exact:true}).click();expect((await pending).suggestedFilename()).toBe('codeklar-python-local-api.zip');await page.reload();await page.getByRole('button',{name:'Navigation öffnen',exact:true}).click();await page.getByRole('button',{name:'Python',exact:true}).click();await expect(page.getByText('1 von 121 Aufgaben gelöst',{exact:true})).toBeVisible();
+});
+
+test('Mint Focus light dark and accent selection stay usable offline', async ({ page, context }) => {
+  await page.goto('/');
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await page.reload();
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await page.getByRole('button', { name: 'Design und Webapp' }).click();
+  await page.getByRole('radio', { name: 'Hell', exact: true }).click();
+  await page.getByRole('radio', { name: 'Rosé', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'rose');
+  await page.keyboard.press('Escape');
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'rose');
+  await page.getByRole('button', { name: 'Design und Webapp' }).click();
+  await page.getByRole('radio', { name: 'Dunkel', exact: true }).click();
+  await page.getByRole('radio', { name: 'Mint', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.keyboard.press('Escape');
+  await page.getByLabel('Lernbereich wählen', { exact: true }).selectOption('python');
+  await expect(page.locator('.lesson-panel')).toContainText('Variablen');
+  await page.getByRole('button', { name: 'Thema wählen', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Thema wählen', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'green');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

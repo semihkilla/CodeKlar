@@ -1,33 +1,70 @@
 import { useEffect, useRef, useState } from "react";
-import { Palette, X, Download, Check, WifiOff } from "lucide-react";
+import { Palette, X, Download, Check, WifiOff, Sun, Moon, Monitor } from "lucide-react";
 
 const accents = [
   { id: "purple", label: "Lila", color: "#9b87ff" },
   { id: "blue", label: "Blau", color: "#77b7ff" },
-  { id: "green", label: "Grün", color: "#66d4a2" },
+  { id: "green", label: "Mint", color: "#78dca8" },
+  { id: "amber", label: "Amber", color: "#efbf70" },
+  { id: "rose", label: "Rosé", color: "#efa0bb" },
 ];
 function readAccent() {
   try {
     const value = localStorage.getItem("codeklar-accent-v1");
-    return accents.some((item) => item.id === value) ? value : "purple";
+    return accents.some((item) => item.id === value) ? value : "green";
   } catch {
-    return "purple";
+    return "green";
   }
+}
+
+const modes = [
+  { id: "light", label: "Hell", icon: Sun },
+  { id: "dark", label: "Dunkel", icon: Moon },
+  { id: "system", label: "System", icon: Monitor },
+];
+function readMode() {
+  try {
+    const value = localStorage.getItem("codeklar-theme-v1");
+    return modes.some(item => item.id === value) ? value : "dark";
+  } catch { return "dark"; }
+}
+function moveRadio(event) {
+  const buttons = [...event.currentTarget.querySelectorAll('[role="radio"]')];
+  const index = buttons.indexOf(document.activeElement);
+  if (index < 0) return;
+  let next;
+  if (["ArrowRight", "ArrowDown"].includes(event.key)) next = (index + 1) % buttons.length;
+  else if (["ArrowLeft", "ArrowUp"].includes(event.key)) next = (index + buttons.length - 1) % buttons.length;
+  else if (event.key === "Home") next = 0;
+  else if (event.key === "End") next = buttons.length - 1;
+  else return;
+  event.preventDefault(); buttons[next].focus(); buttons[next].click();
 }
 
 export function Appearance({ webApp }) {
   const [accent, setAccent] = useState(readAccent);
+  const [mode, setMode] = useState(readMode);
   const [saveError, setSaveError] = useState(false);
   const dialog = useRef(null);
   useEffect(() => {
-    document.documentElement.dataset.accent = accent;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    function applyTheme() {
+      const resolved = mode === "system" ? (media.matches ? "dark" : "light") : mode;
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.dataset.accent = accent;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", resolved === "light" ? "#f5f8f6" : "#0e1514");
+    }
+    applyTheme();
+    media.addEventListener("change", applyTheme);
     try {
       localStorage.setItem("codeklar-accent-v1", accent);
+      localStorage.setItem("codeklar-theme-v1", mode);
       setSaveError(false);
     } catch {
       setSaveError(true);
     }
-  }, [accent]);
+    return () => media.removeEventListener("change", applyTheme);
+  }, [accent, mode]);
   return (
     <>
       <button
@@ -56,9 +93,18 @@ export function Appearance({ webApp }) {
           </button>
         </div>
         <p className="dialog-description">
-          Dunkles Design. Deine Lieblingsfarbe.
+          Dein Licht. Deine Farbe. Deine Lernumgebung.
         </p>
+        <h3 className="appearance-label">Darstellung</h3>
+        <div className="mode-options" role="radiogroup" aria-label="Darstellung" onKeyDown={moveRadio}>
+          {modes.map(({id, label, icon: Icon}) => <button key={id} type="button" role="radio" aria-checked={mode === id}
+            tabIndex={mode === id ? 0 : -1} className={`mode-option ${mode === id ? "selected" : ""}`} onClick={() => setMode(id)}>
+            <Icon size={20} aria-hidden="true" />{label}
+          </button>)}
+        </div>
+        <h3 className="appearance-label">Akzentfarbe</h3>
         <div
+          onKeyDown={moveRadio}
           className="accent-options"
           role="radiogroup"
           aria-label="Akzentfarbe"
@@ -67,6 +113,8 @@ export function Appearance({ webApp }) {
             <button
               key={item.id}
               className={`accent-option ${accent === item.id ? "selected" : ""}`}
+              type="button"
+              tabIndex={accent === item.id ? 0 : -1}
               role="radio"
               aria-checked={accent === item.id}
               onClick={() => setAccent(item.id)}
@@ -80,7 +128,7 @@ export function Appearance({ webApp }) {
         </div>
         {saveError && (
           <p className="settings-note" role="status">
-            Deine Farbe gilt für diese Sitzung; der Browser erlaubt kein
+            Dein Design gilt für diese Sitzung; der Browser erlaubt kein
             Speichern.
           </p>
         )}

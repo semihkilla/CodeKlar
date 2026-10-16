@@ -4,7 +4,7 @@ import { pythonProjects } from '../src/pythonProjects.js';
 import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 const root = await mkdtemp(join(tmpdir(), 'codeklar-python-'));
 const normalized = value => value.replaceAll('\r\n', '\n').trimEnd();
 const run = (args, { input = '', cwd = root } = {}) => new Promise((resolve, reject) => {
@@ -69,5 +69,47 @@ try {
   try { await run(['log_report.py', 'beispiel.log', '--json', 'beispiel.log'], { cwd: logs }); throw new Error('Log overwrite accepted'); }
   catch (error) { require(error.code === 1 && error.stderr.includes('Fehler:'), 'Log export refusal missing'); }
   require(await readFile(join(logs, 'beispiel.log'), 'utf8') === sourceLog, 'Log input changed');
-  console.log('Separate-process persistence, CSV, maze and log parsing/filter/UTC/export checks passed.');
+  const api = join(root, 'python-local-api');
+  async function withApi(action) {
+    const child = spawn('python3', ['server.py', '--database', 'live-api.db', '--port', '0'], { cwd: api });
+    const exited = new Promise(resolve => child.once('exit', resolve));
+    let diagnostics = '';
+    child.stderr.on('data', data => { diagnostics = (diagnostics + data).slice(-2000); });
+    try {
+      const base = await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('API startup timed out: ' + diagnostics)), 5000);
+        let output = '';
+        child.once('error', error => { clearTimeout(timeout); reject(error); });
+        child.once('exit', () => { clearTimeout(timeout); reject(new Error('API exited before ready: ' + diagnostics)); });
+        child.stdout.on('data', data => {
+          output += data;
+          const found = output.match(/Listening on (http:\/\/127\.0\.0\.1:\d+)/);
+          if (found) { clearTimeout(timeout); resolve(found[1]); }
+        });
+      });
+      await action(base);
+    } finally {
+      child.kill('SIGTERM');
+      await exited;
+    }
+  }
+  let apiId;
+  await withApi(async base => {
+    const created = JSON.parse((await run(['client.py', '--base', base, 'add', 'HTTP Grüße'], { cwd: api })).stdout);
+    apiId = created.id;
+    require(created.title === 'HTTP Grüße' && created.done === false, 'API client create failed');
+    const changed = JSON.parse((await run(['client.py', '--base', base, 'done', String(apiId)], { cwd: api })).stdout);
+    require(changed.done === true, 'API client update failed');
+    try { await run(['client.py', '--base', base, 'add', 'HTTP Grüße'], { cwd: api }); throw new Error('Duplicate API title accepted'); }
+    catch (error) { require(error.code === 1 && error.stderr.includes('HTTP 409'), 'API conflict response missing'); }
+  });
+  await withApi(async base => {
+    const task = JSON.parse((await run(['client.py', '--base', base, 'get', String(apiId)], { cwd: api })).stdout);
+    require(task.title === 'HTTP Grüße' && task.done === true, 'API data lost after server restart');
+    const removed = await run(['client.py', '--base', base, 'delete', String(apiId)], { cwd: api });
+    require(normalized(removed.stdout) === 'null', 'API 204 client handling failed');
+    try { await run(['client.py', '--base', base, 'get', String(apiId)], { cwd: api }); throw new Error('Deleted API task found'); }
+    catch (error) { require(error.code === 1 && error.stderr.includes('HTTP 404'), 'API missing-task response missing'); }
+  });
+  console.log('Separate-process persistence, CSV, maze, logs and real HTTP client/server restart checks passed.');
 } finally { await rm(root, { recursive: true, force: true }); }

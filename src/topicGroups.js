@@ -5,8 +5,8 @@ const groups = {
     ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings", "Zahlen & Zeit", "Reguläre Ausdrücke"]],
     ["functions", "Funktionen", ["Funktionen"]],
     ["objects", "Klassen & Datenmodelle", ["Klassen & Datenmodelle"]],
-    ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate"]],
-    ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen"]],
+    ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate", "HTTP & APIs", "SQLite & Transaktionen"]],
+    ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen", "Nebenläufigkeit"]],
   ],
   java: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Methoden"]],

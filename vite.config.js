@@ -8,7 +8,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           // Keep growing lesson data below the service worker per-file cache limit.
-          if (/\/src\/python(?:Further|Next)?Curriculum\.json$/.test(id)) return "python-curriculum";
+          if (/\/src\/python(?:Further|Next|Web)?Curriculum\.json$/.test(id)) return "python-curriculum";
           if (["/node_modules/react/", "/node_modules/react-dom/", "/node_modules/scheduler/"].some(path => id.includes(path))) return "react-runtime";
         },
       },

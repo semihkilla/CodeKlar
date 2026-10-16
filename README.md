@@ -793,3 +793,32 @@ python3 log_report.py mit_fehler.log --skip-invalid
 Zwölf neue Testmethoden prüfen Felder, UTF-8, UTC-Gleichheit, ungültige Kalender-/Offsetangaben, Level/Dauer, leere Auswertungen, nicht sortierte Zeiten, inklusive Filtergrenzen, striktes/überspringendes Einlesen, JSON, Dateigrenzen und Überschreibschutz. Der Python-Prüfer führt zusätzlich das reale Terminalprogramm als getrennte Prozesse aus und prüft Statistik, UTC, Filter, Fehler in Zeile 4, Skip-Modus sowie erhaltene Eingaben bei gescheitertem Export. Insgesamt laufen jetzt **96 Beispielprogramme, 32 Übungslösungen und 44 Projekt-Testmethoden** mit CPython 3.12.14. Einschließlich des älteren Zahlenratespiels gibt es fünf Python-Projektangebote.
 
 Der Produktionsbuild legt die drei Python-Curriculum-JSON-Dateien nun gemeinsam in einen eigenen `python-curriculum`-Chunk. Das hält den wachsenden Hauptcode unter dem bestehenden Service-Worker-Limit pro Datei, ohne dessen Grenze zu erhöhen. Beide Dateien bleiben Teil des Precache; die Anwendung lädt weiterhin alle Lerninhalte vollständig und bietet sie nach dem ersten Laden offline an. Mobilansicht, Wissensantworten, gespeicherter Fortschritt, Projektdateien und ZIP-Downloads werden im Browser geprüft. Python-Programme und Kindprozesse laufen weiterhin lokal auf dem Computer, nicht im Browser.
+
+### Python: HTTP, SQLite und eine eigene Aufgaben-API
+
+**24 weitere Lektionen und fünf lokale Übungen** erweitern Python auf **121 Lektionen insgesamt** und **37 Programmierübungen**. Die bisherigen Beispiele, IDs und Antwortpositionen bleiben erhalten. Drei zusätzliche Themen liegen innerhalb der sechs vorhandenen Hauptbereiche: **HTTP & APIs**, **SQLite & Transaktionen** und **Nebenläufigkeit**.
+
+Die Lektionen erklären URL-Abfragen und Pfadsegmente, relative URLs, Requests, HTTP-Statuscodes, JSON als UTF-8-Bytes, Fehlerantworten und Datenprüfung. SQLite wird um gebundene Filter, Sortierung, Seiten, Row-Zugriff, UPDATE/DELETE, Rollback und UNIQUE ergänzt. ThreadPoolExecutor, Future-Fehler, Lock, Queue, Semaphore und asyncio-Timeouts zeigen unterschiedliche Formen der Zusammenarbeit. Ein HTTP-Beispiel startet tatsächlich einen lokalen Server; andere Request-Beispiele erklären ausdrücklich nur den Aufbau. Jede Lektion enthält Erklärungsschritte, Ausgabe-Frage, Parameter-/Rückgabewert-Hilfe, Anwendung und Stolperstein.
+
+**Projekte → Python: Lokale Aufgaben-API mit SQLite** verbindet die Teile zu einem vollständigen Projekt: `store.py` speichert Aufgaben, `server.py` verarbeitet HTTP und `client.py` sendet echte JSON-Anfragen. `test_api.py` und `BAUPLAN.md` erklären und prüfen den Datenfluss von der Idee über Datenmodell und API-Vertrag bis zur gespeicherten Antwort. Start im entpackten Projektordner mit Python 3.10 oder neuer; keine zusätzlichen Pakete nötig:
+
+```sh
+# Terminal 1
+python3 server.py --database tasks.db --port 8765
+```
+
+```sh
+# Terminal 2
+python3 client.py add "HTTP verstehen"
+python3 client.py list
+python3 client.py get 1
+python3 client.py done 1
+python3 client.py delete 1
+python3 -m unittest -v
+```
+
+Der Server bindet ausschließlich an `127.0.0.1`. Dieses lokale Lernprojekt enthält keine Anmeldung oder öffentliche Bereitstellung. GET liest einzelne Aufgaben oder Seiten, POST legt an, PATCH ändert den Erledigt-Status und DELETE entfernt. `done` setzt den Status auf wahr. IDs sind positiv; Titel werden getrimmt, sind eindeutig und höchstens 200 Zeichen lang. Pro Datenbank sind höchstens 1000 Aufgaben erlaubt. Seiten enthalten 1–50 Einträge, JSON-Request-Bodies höchstens 16 KB. Die Bauanleitung beschreibt die genauen Routen, Fehlerantworten und Grenzen. SQLite erhält die Aufgaben über einen Serverneustart hinweg.
+
+Die 16 neuen Testmethoden prüfen echte lokale HTTP-Anfragen, UTF-8, CRUD, Seiten, JSON-/Feldprüfung, Statuscodes, Rollback, paralleles Anlegen, Kapazität und den Client. Zusätzlich startet der Python-Prüfer Server und Client als getrennte Prozesse und prüft Speichern, Statusänderung, Konflikt, Serverneustart, Löschen und die anschließende 404-Antwort. `npm run test:python` benötigt daher lokale TCP-Verbindungen, verwendet freie Ports und eigene temporäre Dateien; Internetzugriff ist dafür nicht nötig. Insgesamt bestehen **120 Beispielprogramme, 37 Übungslösungen und 60 Testmethoden über fünf neue Projekte** mit CPython 3.12.14. Mit dem älteren Zahlenratespiel sind sechs Python-Projektangebote vorhanden.
+
+Mobile Browserprüfungen decken alle 121 Wissensfragen, Fortschritt, Lern-/Prüfungsrunden, Übungshilfe, Projektdateien und ZIP-Inhalte ab. Der Produktionsbuild nimmt auch die vierte Curriculum-Datei in den Python-Datenchunk und den Service-Worker-Precache auf. API-Lektionen, Quelltexte und ZIP-Download sind nach dem vollständigen ersten Laden offline verfügbar. Die eigentlichen Python-Programme werden auf dem eigenen Computer ausgeführt.

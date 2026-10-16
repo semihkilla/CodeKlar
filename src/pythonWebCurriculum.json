@@ -1,0 +1,906 @@
+[
+  {
+    "id": "url-query",
+    "category": "HTTP & APIs",
+    "name": "urlencode und parse_qs: Query-Parameter übertragen",
+    "introduction": "Query-Parameter sind Textpaare hinter dem Fragezeichen. urlencode übernimmt passende Kodierung; parse_qs liest Werte als Listen zurück.",
+    "steps": [
+      "Der Suchtext enthält ein Leerzeichen und einen Umlaut.",
+      "urlencode kodiert beides.",
+      "parse_qs stellt den ursprünglichen Wert wieder her."
+    ],
+    "code": "from urllib.parse import urlencode, parse_qs\n\nquery = urlencode({\"q\": \"Grüße Welt\", \"limit\": 5})\nprint(parse_qs(query)[\"q\"][0])\nprint(parse_qs(query)[\"limit\"][0])",
+    "output": "Grüße Welt\n5",
+    "choices": [
+      "Grüße Welt\n5",
+      "Gr%C3%BC%C3%9Fe+Welt\n5",
+      "Grüße Welt\n[5]"
+    ],
+    "explanation": "URL-Parameter haben nach dem Lesen zunächst Stringwerte. Eine Liste ermöglicht mehrfach vorkommende Schlüssel. Ein Server muss festlegen, welche Parameter, Mehrfachwerte und Zahlenbereiche erlaubt sind.",
+    "methodProfile": {
+      "signature": "urlencode(mapping); parse_qs(query)",
+      "parameters": [
+        [
+          "mapping",
+          "Zu kodierende Namen/Werte."
+        ],
+        [
+          "query",
+          "Query-Text ohne führendes Fragezeichen."
+        ]
+      ],
+      "returns": "String beziehungsweise dict[str, list[str]].",
+      "effect": "Kodiert und liest Text, ohne eine Anfrage zu senden."
+    },
+    "useCase": "Suchbegriffe und Seitengrößen an eine API übermitteln.",
+    "pitfall": "Die Zeichenfolge \"5\" ist noch keine validierte Ganzzahl.",
+    "practice": {
+      "task": "Kodier den Suchwert \"a+b & c\" und lies ihn anschließend wieder als ursprünglichen String aus.",
+      "hint": "Nicht selbst Plus- und Und-Zeichen ersetzen; nutze urlencode und parse_qs.",
+      "code": "from urllib.parse import urlencode, parse_qs\n\ntext = \"a+b & c\"\nprint(parse_qs(urlencode({\"q\": text}))[\"q\"][0])",
+      "output": "a+b & c"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "url-quote",
+    "category": "HTTP & APIs",
+    "name": "quote(): ein einzelnes Pfadsegment kodieren",
+    "introduction": "Ein Pfadsegment kann Zeichen enthalten, die in einer URL besondere Bedeutung haben. quote mit safe=\"\" maskiert auch einen Schrägstrich innerhalb des Segments.",
+    "steps": [
+      "Der Name enthält einen Schrägstrich und ein Leerzeichen.",
+      "Beide sollen zu einem einzigen Segment gehören.",
+      "unquote liest den ursprünglichen Namen zurück."
+    ],
+    "code": "from urllib.parse import quote, unquote\n\nsegment = quote(\"a/b c\", safe=\"\")\nprint(segment)\nprint(unquote(segment))",
+    "output": "a%2Fb%20c\na/b c",
+    "choices": [
+      "a%2Fb%20c\na/b c",
+      "a/b%20c\na/b c",
+      "a%2Fb+c\na/b c"
+    ],
+    "explanation": "quote ist für URL-Bestandteile gedacht. Ein ganzer Pfad und ein einzelnes Segment haben verschiedene Trennregeln. Der empfangende Server kann kodierte Schrägstriche zusätzlich einschränken; das Encoding garantiert keine beliebige Routingregel.",
+    "methodProfile": {
+      "signature": "quote(text, safe=\"\"); unquote(text)",
+      "parameters": [
+        [
+          "text",
+          "Zu kodierendes Segment."
+        ],
+        [
+          "safe",
+          "Zeichen, die unverändert bleiben dürfen."
+        ]
+      ],
+      "returns": "String.",
+      "effect": "Verändert keine Datei und sendet keine Anfrage."
+    },
+    "useCase": "Dateinamen oder Bezeichner bewusst als URL-Bestandteil übertragen.",
+    "pitfall": "URL-Kodierung ist weder Dateisystem-Zugriffsschutz noch HTML-Escaping.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "url-split",
+    "category": "HTTP & APIs",
+    "name": "urlsplit(): Schema, Host, Pfad und Query unterscheiden",
+    "introduction": "urlsplit zerlegt eine URL in benannte Bestandteile. Ein Parser entscheidet damit noch nicht, ob die Adresse für die Anwendung erlaubt ist.",
+    "steps": [
+      "Zerlege die vorbereitete HTTPS-Adresse.",
+      "Lies Schema und Hostname.",
+      "Die Query steht getrennt vom Pfad."
+    ],
+    "code": "from urllib.parse import urlsplit\n\nu = urlsplit(\"https://example.test:8443/tasks?limit=5\")\nprint(u.scheme)\nprint(u.hostname)\nprint(u.path)\nprint(u.query)",
+    "output": "https\nexample.test\n/tasks\nlimit=5",
+    "choices": [
+      "https\nexample.test\n/tasks\nlimit=5",
+      "https\nexample.test:8443\n/tasks?limit=5\n",
+      "http\nexample.test\n/tasks\nlimit=5"
+    ],
+    "explanation": "example.test ist hier nur ein Textbeispiel; es wird nichts abgerufen. Der lokale API-Client prüft zusätzlich Schema, Host, Port und unerwünschte Bestandteile, bevor er eine Verbindung aufbaut.",
+    "methodProfile": {
+      "signature": "urlsplit(url)",
+      "parameters": [
+        [
+          "url",
+          "Zu zerlegender URL-String."
+        ]
+      ],
+      "returns": "SplitResult mit benannten Feldern.",
+      "effect": "Liest den String ohne Netzwerkzugriff."
+    },
+    "useCase": "Client-Konfiguration und angefragte Routen klar auseinanderhalten.",
+    "pitfall": "Eine geparste URL ist nicht automatisch eine erlaubte oder erreichbare URL.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "url-join",
+    "category": "HTTP & APIs",
+    "name": "urljoin(): eine relative Adresse auflösen",
+    "introduction": "urljoin verbindet nach URL-Regeln. Ein führender Schrägstrich beginnt an der Hostwurzel; ein relativer Name beginnt im Verzeichnis der Basis.",
+    "steps": [
+      "Die Basis endet mit /api/v1/.",
+      "tasks bleibt innerhalb dieses Pfades.",
+      "/tasks beginnt dagegen an der Hostwurzel."
+    ],
+    "code": "from urllib.parse import urljoin\n\nbasis = \"https://example.test/api/v1/\"\nprint(urljoin(basis, \"tasks\"))\nprint(urljoin(basis, \"/tasks\"))",
+    "output": "https://example.test/api/v1/tasks\nhttps://example.test/tasks",
+    "choices": [
+      "https://example.test/api/v1/tasks\nhttps://example.test/tasks",
+      "https://example.test/api/v1/tasks\nhttps://example.test/api/v1/tasks",
+      "https://example.test/tasks\nhttps://example.test/tasks"
+    ],
+    "explanation": "Ein absoluter zweiter URL-Wert kann den Host ersetzen. Deshalb ist urljoin keine Prüfung, dass eine Adresse innerhalb desselben Dienstes bleibt. Ein fehlender abschließender Schrägstrich der Basis verändert ebenfalls die Auflösung.",
+    "methodProfile": {
+      "signature": "urljoin(basis, ziel)",
+      "parameters": [
+        [
+          "basis",
+          "Basis-URL."
+        ],
+        [
+          "ziel",
+          "Relativer oder absoluter URL-Verweis."
+        ]
+      ],
+      "returns": "Neu aufgelöster URL-String.",
+      "effect": "Kein Netzwerkzugriff."
+    },
+    "useCase": "Relative API-Routen oder Links richtig auflösen.",
+    "pitfall": "Verkette URLs nicht einfach mit Dateipfadregeln; URL und Betriebssystempfad sind unterschiedliche Modelle.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "request-object",
+    "category": "HTTP & APIs",
+    "name": "Request: Methode und Header gehören zur Anfrage",
+    "introduction": "Ein Request-Objekt beschreibt eine HTTP-Anfrage. Das Erzeugen dieses Objekts sendet noch keine Daten.",
+    "steps": [
+      "Lege die Methode GET fest.",
+      "Der Accept-Header nennt das gewünschte Antwortformat.",
+      "Lies die Beschreibung wieder aus."
+    ],
+    "code": "from urllib.request import Request\n\nr = Request(\"http://127.0.0.1:8765/tasks\", headers={\"Accept\": \"application/json\"}, method=\"GET\")\nprint(r.get_method())\nprint(r.get_header(\"Accept\"))",
+    "output": "GET\napplication/json",
+    "choices": [
+      "GET\napplication/json",
+      "POST\napplication/json",
+      "GET\ntext/html"
+    ],
+    "explanation": "Methode, Ziel, Header und optionaler Body sind getrennte Teile. Accept beschreibt das gewünschte Antwortformat; Content-Type beschreibt das Format eines mitgesendeten Bodys. Ein tatsächlicher Aufruf benötigt zusätzlich einen HTTP-Client und Fehlerbehandlung.",
+    "methodProfile": {
+      "signature": "Request(url, headers=..., method=...)",
+      "parameters": [
+        [
+          "url",
+          "Zieladresse."
+        ],
+        [
+          "headers",
+          "Textwerte der Anfrageheader."
+        ],
+        [
+          "method",
+          "HTTP-Methode."
+        ]
+      ],
+      "returns": "Request-Objekt.",
+      "effect": "Erzeugt eine Beschreibung ohne Netzwerkanfrage."
+    },
+    "useCase": "Vor dem Senden klar festlegen, welche Operation und welches Datenformat gemeint sind.",
+    "pitfall": "Accept und Content-Type bedeuten nicht dasselbe.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "http-status",
+    "category": "HTTP & APIs",
+    "name": "HTTPStatus: Ergebnis und Fehlerklasse einordnen",
+    "introduction": "Statuscodes beschreiben das Ergebnis der HTTP-Verarbeitung. Ein erfolgreicher Transport allein beweist nicht, dass die fachliche Operation erfolgreich war.",
+    "steps": [
+      "201 bedeutet Created.",
+      "404 bedeutet Not Found.",
+      "Statuscodes ab 400 beschreiben einen Fehlerfall."
+    ],
+    "code": "from http import HTTPStatus\n\nprint(HTTPStatus.CREATED.value)\nprint(HTTPStatus.NOT_FOUND.phrase)\nprint(HTTPStatus.BAD_REQUEST >= 400)",
+    "output": "201\nNot Found\nTrue",
+    "choices": [
+      "201\nNot Found\nTrue",
+      "200\nNot Found\nTrue",
+      "201\nBad Request\nFalse"
+    ],
+    "explanation": "Eine API legt ihre konkreten Antworten fest. Im Projekt liefert Anlegen 201, Lesen/Ändern 200, erfolgreiches Löschen 204, ungültige Eingaben 400 und ein unbekannter Eintrag 404. Der Client muss auch fehlerhafte Antworten behandeln.",
+    "methodProfile": {
+      "signature": "HTTPStatus.CREATED; antwort.status",
+      "parameters": [],
+      "returns": "IntEnum-Wert beziehungsweise numerischer Statuscode.",
+      "effect": "Liest Metadaten, ohne eine Anfrage auszuführen."
+    },
+    "useCase": "Normale Antworten von fehlenden Daten und ungültigen Anfragen unterscheiden.",
+    "pitfall": "Eine 204-Antwort besitzt keinen JSON-Body, den man trotzdem parsen könnte.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "http-local-get",
+    "category": "HTTP & APIs",
+    "name": "HTTP wirklich ausführen: lokaler Server und JSON-Antwort",
+    "introduction": "Ein HTTP-Client sendet eine Anfrage; ein Server antwortet mit Status, Headern und Body. Dieses Beispiel startet kurz einen eigenen lokalen Testserver.",
+    "steps": [
+      "Der Server lauscht nur auf 127.0.0.1 an einem freien Port.",
+      "Der Client sendet GET /.",
+      "Er liest den Body als UTF-8-JSON."
+    ],
+    "code": "import json\nfrom http.client import HTTPConnection\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\nfrom threading import Thread\n\nclass Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        data = b'{\"ok\": true}'\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"application/json\")\n        self.send_header(\"Content-Length\", str(len(data)))\n        self.end_headers()\n        self.wfile.write(data)\n    def log_message(self, *args):\n        pass\n\nwith HTTPServer((\"127.0.0.1\", 0), Handler) as server:\n    server.timeout = 3\n    thread = Thread(target=server.handle_request)\n    thread.start()\n    connection = HTTPConnection(\"127.0.0.1\", server.server_port, timeout=3)\n    try:\n        connection.request(\"GET\", \"/\")\n        response = connection.getresponse()\n        print(response.status)\n        print(json.loads(response.read().decode(\"utf-8\"))[\"ok\"])\n    finally:\n        connection.close()\n        thread.join(timeout=4)",
+    "output": "200\nTrue",
+    "choices": [
+      "200\nTrue",
+      "200\ntrue",
+      "201\nTrue"
+    ],
+    "explanation": "Der Port 0 lässt das Betriebssystem einen freien Port wählen. Das ist ein echter lokaler HTTP-Austausch, kein Browser-Simulator. Der vollständige Aufgaben-Server ergänzt Routen, Datenprüfung und dauerhafte SQLite-Speicherung.",
+    "methodProfile": {
+      "signature": "connection.request(methode, pfad); connection.getresponse()",
+      "parameters": [
+        [
+          "methode",
+          "HTTP-Methode."
+        ],
+        [
+          "pfad",
+          "Pfad und optionale Query."
+        ]
+      ],
+      "returns": "HTTPResponse mit Status, Headern und lesbarem Body.",
+      "effect": "Startet einen kurzlebigen lokalen Server und baut eine lokale TCP-Verbindung auf."
+    },
+    "useCase": "Den vollständigen Weg Anfrage → Server → Antwort → Python-Daten nachvollziehen.",
+    "pitfall": "Netzwerkoperationen benötigen Timeouts und Aufräumen; dieses Beispiel läuft lokal auf deinem Computer.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "json-request-body",
+    "category": "HTTP & APIs",
+    "name": "JSON als Request-Body: Text muss zu Bytes werden",
+    "introduction": "JSON-Serialisierung und Byte-Kodierung sind zwei Schritte. Ein HTTP-Body wird als Bytes übertragen.",
+    "steps": [
+      "Serialisiere einen Titel als JSON.",
+      "Kodiere den Text ausdrücklich als UTF-8.",
+      "Ein Request mit diesen Daten erhält eine POST-Methode."
+    ],
+    "code": "import json\nfrom urllib.request import Request\n\nbody = json.dumps({\"title\": \"Üben\"}, ensure_ascii=False).encode(\"utf-8\")\nr = Request(\"http://127.0.0.1:8765/tasks\", data=body, headers={\"Content-Type\": \"application/json\"}, method=\"POST\")\nprint(r.get_method())\nprint(json.loads(r.data.decode(\"utf-8\"))[\"title\"])",
+    "output": "POST\nÜben",
+    "choices": [
+      "POST\nÜben",
+      "GET\nÜben",
+      "POST\n\\u00dcben"
+    ],
+    "explanation": "Das Beispiel beschreibt die Anfrage, sendet sie aber noch nicht. Im API-Projekt wird derselbe Datenweg tatsächlich über eine lokale Verbindung verwendet. Der Server prüft sowohl das Format als auch den Titel.",
+    "methodProfile": {
+      "signature": "json.dumps(daten).encode(\"utf-8\")",
+      "parameters": [
+        [
+          "daten",
+          "JSON-kompatible Python-Werte."
+        ]
+      ],
+      "returns": "Bytes für den Request-Body.",
+      "effect": "Erzeugt neue Text-/Bytewerte ohne Änderung der Quelldaten."
+    },
+    "useCase": "Ein Formular oder Terminalargument als strukturierte Daten an einen Server senden.",
+    "pitfall": "Content-Type zu setzen serialisiert Daten nicht automatisch.",
+    "practice": {
+      "task": "Erzeuge aus {\"title\":\"Grüße\"} UTF-8-JSON-Bytes und lies den Titel daraus wieder ein.",
+      "hint": "Serialisieren, kodieren, dekodieren und parsen sind getrennte Schritte.",
+      "code": "import json\n\nbody = json.dumps({\"title\": \"Grüße\"}, ensure_ascii=False).encode(\"utf-8\")\nprint(json.loads(body.decode(\"utf-8\"))[\"title\"])",
+      "output": "Grüße"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "http-error-body",
+    "category": "HTTP & APIs",
+    "name": "HTTP-Fehler: auch der Fehlerbody ist eine Antwort",
+    "introduction": "HTTPError aus urllib enthält Status und gegebenenfalls einen lesbaren Antwortbody. Die Fehlermeldung einer API kann zusätzliche strukturierte Informationen enthalten.",
+    "steps": [
+      "Erzeuge hier ausdrücklich ein vorbereitetes Fehlerobjekt.",
+      "Sein Status ist 404.",
+      "Der JSON-Body erklärt den fehlenden Eintrag."
+    ],
+    "code": "import json\nfrom io import BytesIO\nfrom urllib.error import HTTPError\n\nerror = HTTPError(\"http://127.0.0.1/tasks/9\", 404, \"Not Found\", {}, BytesIO(b'{\"error\":\"Nicht gefunden\"}'))\ntry:\n    print(error.code)\n    print(json.loads(error.read().decode(\"utf-8\"))[\"error\"])\nfinally:\n    error.close()",
+    "output": "404\nNicht gefunden",
+    "choices": [
+      "404\nNicht gefunden",
+      "200\nNicht gefunden",
+      "404\nNot Found"
+    ],
+    "explanation": "Dieses Beispiel wertet ein vorbereitetes Fehlerobjekt aus, ohne Netzwerkaufruf. Bei einem echten urlopen kann ein 4xx/5xx-Status HTTPError auslösen; Verbindungsfehler sind davon zu unterscheiden. Der API-Client des Projekts prüft echte Statuscodes und Fehlerbodys.",
+    "methodProfile": {
+      "signature": "except HTTPError as error: …",
+      "parameters": [
+        [
+          "error",
+          "Antwort mit Fehlerstatus und optionalem Body."
+        ]
+      ],
+      "returns": "Fehlerdaten; read liefert Bytes.",
+      "effect": "Lesen verbraucht den Body; close gibt Ressourcen frei."
+    },
+    "useCase": "Eine verständliche API-Fehlermeldung statt eines unklaren Abbruchs anzeigen.",
+    "pitfall": "Nicht jede Fehlerantwort ist gültiges JSON; auch den Fehlerbody defensiv lesen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "response-validation",
+    "category": "HTTP & APIs",
+    "name": "JSON-Daten prüfen: Syntax ist noch kein Vertrag",
+    "introduction": "json.loads prüft JSON-Syntax, aber nicht den erwarteten Vertrag deiner Anwendung. Felder und Typen müssen danach kontrolliert werden.",
+    "steps": [
+      "Die Antwort enthält eine ID und einen Fertig-Status.",
+      "bool ist ein eigener fachlicher Feldtyp.",
+      "Eine strenge int-Prüfung schließt True als ID aus."
+    ],
+    "code": "import json\n\ndata = json.loads('{\"id\":1,\"done\":false}')\nprint(type(data[\"id\"]) is int)\nprint(type(data[\"done\"]) is bool)\nprint(type(True) is int)",
+    "output": "True\nTrue\nFalse",
+    "choices": [
+      "True\nTrue\nFalse",
+      "True\nTrue\nTrue",
+      "True\nFalse\nFalse"
+    ],
+    "explanation": "isinstance(True, int) ist in Python True, weil bool von int erbt. Wenn eine API einen echten Ganzzahlwert statt bool verlangt, kann type(value) is int die passende explizite Regel sein. Auch erlaubte Felder, Bereiche und fehlende Werte gehören zum Vertrag.",
+    "methodProfile": {
+      "signature": "type(wert) is int; type(wert) is bool",
+      "parameters": [
+        [
+          "wert",
+          "Nach dem JSON-Parsen entstandener Python-Wert."
+        ]
+      ],
+      "returns": "bool.",
+      "effect": "Prüft Daten ohne sie zu ändern."
+    },
+    "useCase": "Unpassende API-Antworten erkennen, bevor sie im Datenmodell landen.",
+    "pitfall": "Ein erfolgreicher JSON-Parserlauf beweist nicht, dass ID, Titel oder Status fachlich gültig sind.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sql-where",
+    "category": "SQLite & Transaktionen",
+    "name": "SQL WHERE mit Parametern: Werte getrennt übergeben",
+    "introduction": "WHERE schränkt die gelesenen Zeilen ein. Platzhalter halten Datenwerte von der SQL-Befehlsstruktur getrennt.",
+    "steps": [
+      "Erzeuge eine Tabelle im Speicher.",
+      "Füge zwei Namen als Parameter ein.",
+      "Lies genau den Namen mit einem Apostroph."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE people(name TEXT)\")\n    db.executemany(\"INSERT INTO people VALUES (?)\", [(\"Ada\",), (\"O'Neil\",)])\n    row = db.execute(\"SELECT name FROM people WHERE name = ?\", (\"O'Neil\",)).fetchone()\n    print(row[0])",
+    "output": "O'Neil",
+    "choices": [
+      "O'Neil",
+      "Ada",
+      "None"
+    ],
+    "explanation": "Das Apostroph ist Teil des Datenwertes und muss nicht in den SQL-Text eingebaut werden. Platzhalter stehen für Werte, nicht für beliebige Tabellen- oder Spaltennamen. Eine echte Datei benötigt zusätzlich bewusste Transaktions- und Schließregeln.",
+    "methodProfile": {
+      "signature": "db.execute(\"SELECT ... WHERE feld = ?\", (wert,))",
+      "parameters": [
+        [
+          "wert",
+          "Unverändert gebundener Suchwert."
+        ]
+      ],
+      "returns": "Cursor; fetchone liefert eine Zeile oder None.",
+      "effect": "Liest die Datenbank ohne Änderung der Tabelle."
+    },
+    "useCase": "Aufgaben anhand einer ID oder eines Namens finden.",
+    "pitfall": "Ein Tuple mit einem Parameter benötigt das Komma: (wert,).",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sql-order-limit",
+    "category": "SQLite & Transaktionen",
+    "name": "ORDER BY und LIMIT: Ergebnisse gezielt auswählen",
+    "introduction": "Eine Datenbankabfrage besitzt ohne ORDER BY keine zugesicherte Reihenfolge. LIMIT beschränkt danach die Zahl der zurückgegebenen Zeilen.",
+    "steps": [
+      "Die Punkte sind nicht sortiert eingefügt.",
+      "ORDER BY wert DESC ordnet absteigend.",
+      "LIMIT 2 behält die zwei höchsten Werte."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE punkte(wert INTEGER)\")\n    db.executemany(\"INSERT INTO punkte VALUES (?)\", [(3,), (9,), (5,)])\n    print([r[0] for r in db.execute(\"SELECT wert FROM punkte ORDER BY wert DESC LIMIT ?\", (2,))])",
+    "output": "[9, 5]",
+    "choices": [
+      "[9, 5]",
+      "[3, 9]",
+      "[3, 5]"
+    ],
+    "explanation": "Bei gleichen Sortierwerten brauchst du für eine vollständig bestimmte Reihenfolge einen weiteren Schlüssel, etwa die eindeutige ID. LIMIT macht eine unsortierte Abfrage nicht automatisch zu den besten oder neuesten Einträgen.",
+    "methodProfile": {
+      "signature": "SELECT ... ORDER BY feld DESC LIMIT ?",
+      "parameters": [
+        [
+          "feld",
+          "Gewünschter Sortierschlüssel."
+        ],
+        [
+          "LIMIT",
+          "Maximale Ergebnisanzahl."
+        ]
+      ],
+      "returns": "Ergebniszeilen in der angegebenen Ordnung.",
+      "effect": "Liest die Datenbank."
+    },
+    "useCase": "Ranglisten oder kleine API-Ergebnisse kontrolliert liefern.",
+    "pitfall": "Ein SQL-Parameter kann die Limitzahl binden, aber nicht frei einen Spaltennamen ersetzen.",
+    "practice": {
+      "task": "Lies aus den Werten 8,2,6 den kleinsten Wert mit ORDER BY und LIMIT 1.",
+      "hint": "Sortiere aufsteigend und lies die erste Ergebniszeile.",
+      "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE n(wert INTEGER)\")\n    db.executemany(\"INSERT INTO n VALUES (?)\", [(8,), (2,), (6,)])\n    print(db.execute(\"SELECT wert FROM n ORDER BY wert LIMIT 1\").fetchone()[0])",
+      "output": "2"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sqlite-row",
+    "category": "SQLite & Transaktionen",
+    "name": "sqlite3.Row: Spalten mit Namen lesen",
+    "introduction": "Eine Row-Factory legt fest, wie Ergebniszeilen dargestellt werden. sqlite3.Row erlaubt Zugriff sowohl per Index als auch per Spaltenname.",
+    "steps": [
+      "Setze row_factory auf sqlite3.Row.",
+      "Die Abfrage benennt ihre Spalten.",
+      "Lies den Titel über seinen Namen."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.row_factory = sqlite3.Row\n    row = db.execute(\"SELECT 7 AS id, 'Lernen' AS title\").fetchone()\n    print(row[\"title\"])\n    print(dict(row)[\"id\"])",
+    "output": "Lernen\n7",
+    "choices": [
+      "Lernen\n7",
+      "7\nLernen",
+      "title\nid"
+    ],
+    "explanation": "Spaltennamen machen die Zuordnung zu JSON-Feldern leichter lesbar. Verwende bei mehrdeutigen Abfragen eindeutige Aliasse. Eine Row ist trotzdem nicht automatisch dein validiertes Fachmodell.",
+    "methodProfile": {
+      "signature": "db.row_factory = sqlite3.Row; row[\"spalte\"]",
+      "parameters": [
+        [
+          "spalte",
+          "Name einer zurückgegebenen Spalte."
+        ]
+      ],
+      "returns": "Der Zellwert; dict(row) erzeugt ein Dictionary.",
+      "effect": "Ändert die Darstellung später gelesener Zeilen, nicht die gespeicherten Daten."
+    },
+    "useCase": "SQL-Ergebnisse eindeutig in API-Datensätze übersetzen.",
+    "pitfall": "Prüfe auf None, wenn fetchone auch keinen Treffer liefern kann.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sql-update",
+    "category": "SQLite & Transaktionen",
+    "name": "UPDATE: vorhandene Zeilen kontrolliert ändern",
+    "introduction": "UPDATE verändert passende Zeilen. WHERE begrenzt die Änderung; rowcount zeigt, wie viele Zeilen die Anweisung betroffen hat.",
+    "steps": [
+      "Die Tabelle enthält eine offene Aufgabe.",
+      "Ändere nur die Aufgabe mit ID 1.",
+      "Lies den neuen Wert und die betroffene Zeilenzahl."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE tasks(id INTEGER PRIMARY KEY, done INTEGER)\")\n    db.execute(\"INSERT INTO tasks VALUES (1, 0)\")\n    cursor = db.execute(\"UPDATE tasks SET done = ? WHERE id = ?\", (1, 1))\n    print(cursor.rowcount)\n    print(db.execute(\"SELECT done FROM tasks WHERE id=1\").fetchone()[0])",
+    "output": "1\n1",
+    "choices": [
+      "1\n1",
+      "0\n1",
+      "1\n0"
+    ],
+    "explanation": "rowcount=0 kann bedeuten, dass kein passender Datensatz existierte. Das API-Projekt übersetzt diesen Fall in 404. Eine Dateiänderung muss am Ende bestätigt werden; das Speicherbeispiel hier braucht keine dauerhafte Datei.",
+    "methodProfile": {
+      "signature": "UPDATE tabelle SET feld = ? WHERE id = ?",
+      "parameters": [
+        [
+          "feldwert",
+          "Neuer Datenwert."
+        ],
+        [
+          "id",
+          "Ziel des Updates."
+        ]
+      ],
+      "returns": "Cursor mit rowcount.",
+      "effect": "Verändert passende Datenbankzeilen."
+    },
+    "useCase": "Den Fertig-Status einer Aufgabe speichern.",
+    "pitfall": "Ohne WHERE kann ein UPDATE alle Zeilen verändern; prüfe die Zielbedingung.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sql-delete",
+    "category": "SQLite & Transaktionen",
+    "name": "DELETE: einen Datensatz entfernen",
+    "introduction": "DELETE entfernt Zeilen anhand einer Bedingung. Die Spaltenstruktur der Tabelle bleibt dabei bestehen.",
+    "steps": [
+      "Die Tabelle enthält zwei IDs.",
+      "Entferne nur ID 1.",
+      "Eine Zeile bleibt erhalten."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE tasks(id INTEGER PRIMARY KEY)\")\n    db.executemany(\"INSERT INTO tasks VALUES (?)\", [(1,), (2,)])\n    db.execute(\"DELETE FROM tasks WHERE id = ?\", (1,))\n    print(db.execute(\"SELECT COUNT(*) FROM tasks\").fetchone()[0])",
+    "output": "1",
+    "choices": [
+      "1",
+      "0",
+      "2"
+    ],
+    "explanation": "DELETE FROM tasks ohne WHERE entfernt alle Tabellenzeilen. DROP TABLE wäre eine andere Operation und entfernt die Tabelle selbst. Im Projekt liefert erfolgreiches Löschen eine Antwort ohne Body und ein unbekannter Eintrag einen Fehler.",
+    "methodProfile": {
+      "signature": "DELETE FROM tabelle WHERE id = ?",
+      "parameters": [
+        [
+          "id",
+          "Zu entfernender Datensatz."
+        ]
+      ],
+      "returns": "Cursor mit betroffener Zeilenzahl.",
+      "effect": "Entfernt Datenzeilen innerhalb der aktuellen Transaktion."
+    },
+    "useCase": "Eine ausdrücklich ausgewählte Aufgabe dauerhaft löschen.",
+    "pitfall": "Verwechsle das Löschen einer Zeile nicht mit dem Löschen der Tabellenstruktur.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sqlite-rollback",
+    "category": "SQLite & Transaktionen",
+    "name": "Transaktionen: bei Fehlern gemeinsam zurückrollen",
+    "introduction": "Zusammengehörige Änderungen können in einer Transaktion bestätigt oder zurückgerollt werden. Der Connection-Kontextmanager behandelt commit beziehungsweise rollback.",
+    "steps": [
+      "Die erste Zeile ist bereits bestätigt.",
+      "Die nächste Transaktion fügt erst 2 ein und verletzt dann einen eindeutigen Schlüssel.",
+      "Die gesamte neue Transaktion wird zurückgerollt."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE t(id INTEGER PRIMARY KEY)\")\n    db.execute(\"INSERT INTO t VALUES (1)\")\n    db.commit()\n    try:\n        with db:\n            db.execute(\"INSERT INTO t VALUES (2)\")\n            db.execute(\"INSERT INTO t VALUES (1)\")\n    except sqlite3.IntegrityError:\n        print(\"Rollback\")\n    print([r[0] for r in db.execute(\"SELECT id FROM t ORDER BY id\")])",
+    "output": "Rollback\n[1]",
+    "choices": [
+      "Rollback\n[1]",
+      "Rollback\n[1, 2]",
+      "Rollback\n[]"
+    ],
+    "explanation": "with db schließt die Connection nicht automatisch. Deshalb umschließt closing die gesamte Verbindung. Die Transaktion verhindert hier einen halb übernommenen neuen Zustand; vorher bestätigte Zeilen bleiben erhalten.",
+    "methodProfile": {
+      "signature": "with db: …; db.commit(); db.rollback()",
+      "parameters": [],
+      "returns": "Transaktionssteuerung; bei Fehlern wird die Exception weitergereicht.",
+      "effect": "Bestätigt oder verwirft zusammengehörige Änderungen."
+    },
+    "useCase": "Mehrere zusammengehörige Schreibschritte konsistent halten.",
+    "pitfall": "Ein abgefangener Fehler innerhalb des with-Blocks kann die automatische Fehlererkennung verändern; Transaktionsgrenzen bewusst setzen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sql-unique",
+    "category": "SQLite & Transaktionen",
+    "name": "UNIQUE und CHECK: Regeln auch in der Datenbank sichern",
+    "introduction": "Datenbank-Constraints verhindern bestimmte ungültige Zustände auch dann, wenn eine andere Code-Stelle schreibt. Sie ergänzen die verständliche Eingabeprüfung.",
+    "steps": [
+      "Der Titel muss eindeutig sein.",
+      "Ein zweiter gleicher Titel verletzt UNIQUE.",
+      "SQLite meldet IntegrityError."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE tasks(title TEXT UNIQUE, done INTEGER CHECK(done IN (0,1)))\")\n    db.execute(\"INSERT INTO tasks VALUES (?, ?)\", (\"Lernen\", 0))\n    try:\n        db.execute(\"INSERT INTO tasks VALUES (?, ?)\", (\"Lernen\", 1))\n    except sqlite3.IntegrityError:\n        print(\"Titel schon vorhanden\")",
+    "output": "Titel schon vorhanden",
+    "choices": [
+      "Titel schon vorhanden",
+      "Lernen",
+      "True"
+    ],
+    "explanation": "Der Standardvergleich für diese UNIQUE-Spalte ist hier case-sensitive. Anwendungen müssen bewusst festlegen, ob Lernen und lernen verschiedene Titel sein dürfen. NOT NULL wäre eine weitere eigene Regel.",
+    "methodProfile": {
+      "signature": "UNIQUE; CHECK(bedingung)",
+      "parameters": [
+        [
+          "bedingung",
+          "Regel für den gespeicherten Wert."
+        ]
+      ],
+      "returns": "Ein Constraint-Verstoß meldet eine Datenbankexception.",
+      "effect": "Verhindert eine unzulässige Schreibänderung."
+    },
+    "useCase": "Doppelte Einträge oder ungültige Statuswerte zuverlässig erkennen.",
+    "pitfall": "Die Datenbankregel ersetzt keine verständliche Fehlermeldung an den Client.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "sql-pages",
+    "category": "SQLite & Transaktionen",
+    "name": "Seiten lesen: stabile Ordnung, LIMIT und OFFSET",
+    "introduction": "Eine API kann nur einen Ausschnitt ihrer Daten liefern. LIMIT begrenzt die Seite; OFFSET überspringt Einträge in einer festgelegten Reihenfolge.",
+    "steps": [
+      "Die IDs sind 1 bis 5.",
+      "OFFSET 2 überspringt ID 1 und 2.",
+      "LIMIT 2 liefert anschließend ID 3 und 4."
+    ],
+    "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE t(id INTEGER PRIMARY KEY)\")\n    db.executemany(\"INSERT INTO t VALUES (?)\", [(n,) for n in range(1, 6)])\n    print([r[0] for r in db.execute(\"SELECT id FROM t ORDER BY id LIMIT ? OFFSET ?\", (2, 2))])",
+    "output": "[3, 4]",
+    "choices": [
+      "[3, 4]",
+      "[2, 3]",
+      "[1, 2]"
+    ],
+    "explanation": "Eine eindeutige Sortierordnung ist für nachvollziehbare Seiten wichtig. Gleichzeitige Einfügungen oder Löschungen können OFFSET-Seiten trotzdem verschieben; für große bewegliche Datenmengen kann Schlüssel-/Cursor-Paginierung geeigneter sein.",
+    "methodProfile": {
+      "signature": "ORDER BY id LIMIT ? OFFSET ?",
+      "parameters": [
+        [
+          "LIMIT",
+          "Maximale Seitengröße."
+        ],
+        [
+          "OFFSET",
+          "Zahl zuvor übersprungener Zeilen."
+        ]
+      ],
+      "returns": "Begrenzte Ergebnisfolge.",
+      "effect": "Liest Daten ohne sie zu verändern."
+    },
+    "useCase": "Lange Aufgabenlisten in kleinen Antworten übertragen.",
+    "pitfall": "Eine Seite ist kein dauerhafter Schnappschuss, wenn zwischen Anfragen Daten verändert werden.",
+    "practice": {
+      "task": "Lies aus den IDs 1 bis 4 die zweite Seite mit Seitengröße 2. Gib ihre IDs aus.",
+      "hint": "Die zweite Seite beginnt nach zwei übersprungenen Einträgen.",
+      "code": "import sqlite3\nfrom contextlib import closing\n\nwith closing(sqlite3.connect(\":memory:\")) as db:\n    db.execute(\"CREATE TABLE t(id INTEGER PRIMARY KEY)\")\n    db.executemany(\"INSERT INTO t VALUES (?)\", [(1,), (2,), (3,), (4,)])\n    print([r[0] for r in db.execute(\"SELECT id FROM t ORDER BY id LIMIT 2 OFFSET 2\")])",
+      "output": "[3, 4]"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "threadpool",
+    "category": "Nebenläufigkeit",
+    "name": "ThreadPoolExecutor: mehrere wartende Aufgaben ausführen",
+    "introduction": "Ein Threadpool verwaltet eine begrenzte Zahl von Threads. map liefert Ergebnisse in der Reihenfolge der Eingabe.",
+    "steps": [
+      "Die Funktion verdoppelt jeden Wert.",
+      "Zwei Worker bearbeiten die Aufrufe.",
+      "list konsumiert alle Ergebnisse in Eingabereihenfolge."
+    ],
+    "code": "from concurrent.futures import ThreadPoolExecutor\n\ndef doppelt(n):\n    return n * 2\n\nwith ThreadPoolExecutor(max_workers=2) as pool:\n    print(list(pool.map(doppelt, [1, 2, 3])))",
+    "output": "[2, 4, 6]",
+    "choices": [
+      "[2, 4, 6]",
+      "[6, 4, 2]",
+      "None"
+    ],
+    "explanation": "Das kleine Rechenbeispiel zeigt die Schnittstelle, nicht einen Geschwindigkeitsgewinn. Threads helfen häufig bei blockierendem I/O; reine Python-CPU-Arbeit wird damit unter üblichen CPython-Bedingungen nicht automatisch parallel schneller.",
+    "methodProfile": {
+      "signature": "ThreadPoolExecutor(max_workers=n); pool.map(funktion, quelle)",
+      "parameters": [
+        [
+          "max_workers",
+          "Obergrenze gleichzeitig verwalteter Worker."
+        ],
+        [
+          "quelle",
+          "Zu verarbeitende Argumente."
+        ]
+      ],
+      "returns": "Iterator über Ergebnisse.",
+      "effect": "Plant Arbeit in Threads und wartet beim Verlassen des Kontexts auf sie."
+    },
+    "useCase": "Mehrere unabhängige Datei- oder Netzwerkarbeiten mit einer Grenze koordinieren.",
+    "pitfall": "Unbegrenztes Starten von Threads ist kein Ersatz für eine bewusst begrenzte Arbeitsmenge.",
+    "practice": {
+      "task": "Verarbeite [2,3,4] mit zwei Workern, die jeweils quadrieren. Gib die geordnete Ergebnisliste aus.",
+      "hint": "Definiere eine kleine reine Funktion und nutze pool.map.",
+      "code": "from concurrent.futures import ThreadPoolExecutor\n\ndef quadrat(n):\n    return n * n\n\nwith ThreadPoolExecutor(max_workers=2) as pool:\n    print(list(pool.map(quadrat, [2, 3, 4])))",
+      "output": "[4, 9, 16]"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "future-error",
+    "category": "Nebenläufigkeit",
+    "name": "Future.result(): Fehler aus dem Worker abholen",
+    "introduction": "submit gibt ein Future zurück. result liefert später das Ergebnis oder löst die im Worker entstandene Exception beim Aufrufer aus.",
+    "steps": [
+      "Der Worker versucht durch null zu teilen.",
+      "submit selbst liefert zunächst das Future.",
+      "result meldet den Rechenfehler."
+    ],
+    "code": "from concurrent.futures import ThreadPoolExecutor\n\ndef rechnen():\n    return 1 / 0\n\nwith ThreadPoolExecutor(max_workers=1) as pool:\n    future = pool.submit(rechnen)\n    try:\n        future.result(timeout=2)\n    except ZeroDivisionError:\n        print(\"Worker fehlgeschlagen\")",
+    "output": "Worker fehlgeschlagen",
+    "choices": [
+      "Worker fehlgeschlagen",
+      "None",
+      "0"
+    ],
+    "explanation": "Wenn Futures nie ausgewertet werden, können Fehler leicht unbeachtet bleiben. Ein result-Timeout beendet nicht automatisch die bereits laufende Funktion; für Abbruch braucht die Arbeit passende kooperative Regeln.",
+    "methodProfile": {
+      "signature": "future.result(timeout=sekunden)",
+      "parameters": [
+        [
+          "timeout",
+          "Maximale Wartezeit dieses result-Aufrufs."
+        ]
+      ],
+      "returns": "Ergebnis oder die im Worker entstandene Exception.",
+      "effect": "Wartet gegebenenfalls; wertet das Future aus."
+    },
+    "useCase": "Fehler paralleler Aufträge an einer klaren Stelle behandeln.",
+    "pitfall": "Ein abgelaufener Timeout ist kein garantierter Stopp des Worker-Threads.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "lock",
+    "category": "Nebenläufigkeit",
+    "name": "Lock: eine zusammengehörige Zustandsänderung schützen",
+    "introduction": "Ein Lock ermöglicht exklusiven Zugriff auf einen geschützten Abschnitt. Alle beteiligten Schreibwege müssen dieselbe Schutzregel verwenden.",
+    "steps": [
+      "Vier Worker erhöhen denselben Zähler.",
+      "Jede Erhöhung liegt innerhalb desselben Locks.",
+      "Am Ende sind 80 Erhöhungen verarbeitet."
+    ],
+    "code": "from concurrent.futures import ThreadPoolExecutor\nfrom threading import Lock\n\nlock = Lock()\nzaehler = {\"wert\": 0}\ndef arbeiten(_):\n    for _ in range(20):\n        with lock:\n            zaehler[\"wert\"] += 1\n\nwith ThreadPoolExecutor(max_workers=4) as pool:\n    list(pool.map(arbeiten, range(4)))\nprint(zaehler[\"wert\"])",
+    "output": "80",
+    "choices": [
+      "80",
+      "20",
+      "4"
+    ],
+    "explanation": "Ein einzelner Python-Ausdruck ist kein allgemeiner Vertrag für nebenläufige Sicherheit. Datenbanktransaktionen haben eine andere Aufgabe als ein Lock um Python-Objekte. Im API-Projekt werden pro Anfrage eigene SQLite-Verbindungen verwendet.",
+    "methodProfile": {
+      "signature": "with lock: geschuetzte_aktion",
+      "parameters": [
+        [
+          "lock",
+          "Von allen beteiligten Zugriffen gemeinsam verwendetes Lock."
+        ]
+      ],
+      "returns": "Kontextmanager ohne fachlichen Ergebniswert.",
+      "effect": "Serialisiert den geschützten Abschnitt."
+    },
+    "useCase": "Gemeinsam veränderte Zähler oder Zustandsgruppen konsistent halten.",
+    "pitfall": "Unterschiedliche Locks pro Worker schützen keinen gemeinsamen Zustand gegeneinander.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "queue-tasks",
+    "category": "Nebenläufigkeit",
+    "name": "queue.Queue: Aufträge und Fertigmeldungen zählen",
+    "introduction": "Queue ist für den Austausch zwischen Threads geeignet. get entnimmt einen Auftrag; task_done meldet seine Verarbeitung, join wartet auf alle Fertigmeldungen.",
+    "steps": [
+      "Lege A und B in die Queue.",
+      "Verarbeite jeden entnommenen Auftrag.",
+      "Melde beide fertig, damit join zurückkehrt."
+    ],
+    "code": "from queue import Queue\n\nqueue = Queue()\nqueue.put(\"A\")\nqueue.put(\"B\")\nfor _ in range(2):\n    wert = queue.get()\n    try:\n        print(wert)\n    finally:\n        queue.task_done()\nqueue.join()\nprint(\"Fertig\")",
+    "output": "A\nB\nFertig",
+    "choices": [
+      "A\nB\nFertig",
+      "B\nA\nFertig",
+      "A\nB"
+    ],
+    "explanation": "Das Beispiel verarbeitet bewusst in einem Thread, um die Zustandsfolge sichtbar zu machen. Mehrere Worker können dieselbe Queue verwenden. Für get ohne verfügbaren Auftrag brauchst du bei Bedarf einen Timeout oder ein bewusstes Stopp-Signal.",
+    "methodProfile": {
+      "signature": "queue.put(wert); queue.get(); queue.task_done(); queue.join()",
+      "parameters": [
+        [
+          "wert",
+          "Neuer Auftrag."
+        ]
+      ],
+      "returns": "get liefert den Auftrag; andere Aufrufe normalerweise None.",
+      "effect": "Verändert Queue und Zähler noch nicht fertig gemeldeter Aufträge."
+    },
+    "useCase": "Arbeit zwischen Produzenten und Workern koordinieren.",
+    "pitfall": "Ohne passende task_done-Aufrufe kann join dauerhaft warten; qsize/empty sind keine allgemeine Synchronisationsgarantie.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "async-semaphore",
+    "category": "Nebenläufigkeit",
+    "name": "asyncio.Semaphore: gleichzeitige Coroutinen begrenzen",
+    "introduction": "Ein Semaphore begrenzt, wie viele Coroutinen einen Abschnitt gleichzeitig betreten. Das ist hilfreich, wenn ein Dienst nur begrenzte parallele Anfragen verträgt.",
+    "steps": [
+      "Erlaube höchstens zwei aktive Aufgaben.",
+      "Jede Aufgabe gibt mit await die Kontrolle ab.",
+      "Die beobachtete Spitze liegt bei zwei."
+    ],
+    "code": "import asyncio\n\nasync def main():\n    semaphore = asyncio.Semaphore(2)\n    stand = {\"aktiv\": 0, \"spitze\": 0}\n    async def arbeit():\n        async with semaphore:\n            stand[\"aktiv\"] += 1\n            stand[\"spitze\"] = max(stand[\"spitze\"], stand[\"aktiv\"])\n            try:\n                await asyncio.sleep(0)\n            finally:\n                stand[\"aktiv\"] -= 1\n    await asyncio.gather(*(arbeit() for _ in range(6)))\n    print(stand[\"spitze\"])\n\nasyncio.run(main())",
+    "output": "2",
+    "choices": [
+      "2",
+      "6",
+      "1"
+    ],
+    "explanation": "Das Semaphore begrenzt aktive Abschnitte, nicht automatisch die insgesamt angelegte Zahl von Tasks. Für sehr große Datenströme kann zusätzlich eine begrenzte Arbeitsqueue erforderlich sein. Es ist für eine Event Loop gedacht, nicht als Ersatz für threading.Lock zwischen Threads.",
+    "methodProfile": {
+      "signature": "async with asyncio.Semaphore(grenze): …",
+      "parameters": [
+        [
+          "grenze",
+          "Maximale gleichzeitig zugelassene Abschnitte."
+        ]
+      ],
+      "returns": "Asynchroner Kontextmanager.",
+      "effect": "Begrenzt den Zugang und gibt die Zulassung beim Verlassen zurück."
+    },
+    "useCase": "Kooperative I/O-Aufgaben in kontrollierter Zahl gleichzeitig ausführen.",
+    "pitfall": "Ein Semaphore schützt nicht automatisch jeden außerhalb des Abschnitts veränderten Zustand.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  },
+  {
+    "id": "async-timeout",
+    "category": "Nebenläufigkeit",
+    "name": "asyncio.wait_for(): eine Wartezeit begrenzen",
+    "introduction": "wait_for wartet höchstens für die angegebene Zeit. Bei Überschreitung wird der wartende Aufruf mit einer Timeout-Ausnahme beendet und die verwaltete Coroutine normalerweise abgebrochen.",
+    "steps": [
+      "Die Beispielarbeit wäre eine lange asynchrone Wartephase.",
+      "Timeout 0 erlaubt ihr keine Wartezeit.",
+      "Der Fehlerzweig wird sofort ausgeführt."
+    ],
+    "code": "import asyncio\n\nasync def main():\n    try:\n        await asyncio.wait_for(asyncio.sleep(60), timeout=0)\n    except asyncio.TimeoutError:\n        print(\"Zeitlimit\")\n\nasyncio.run(main())",
+    "output": "Zeitlimit",
+    "choices": [
+      "Zeitlimit",
+      "60",
+      "None"
+    ],
+    "explanation": "Die 60 Sekunden werden hier nicht wirklich abgewartet. Abbruch ist kooperativ; eine Coroutine kann in finally aufräumen. Das ist von einem Timeout beim Warten auf einen bereits laufenden Thread zu unterscheiden.",
+    "methodProfile": {
+      "signature": "await asyncio.wait_for(coroutine, timeout=sekunden)",
+      "parameters": [
+        [
+          "coroutine",
+          "Zu verwaltende asynchrone Arbeit."
+        ],
+        [
+          "timeout",
+          "Maximale gewünschte Wartezeit."
+        ]
+      ],
+      "returns": "Ergebnis oder Timeout-Ausnahme.",
+      "effect": "Kann die verwaltete Aufgabe abbrechen und deren Aufräumen auslösen."
+    },
+    "useCase": "Eine API-Abfrage oder andere asynchrone Wartephase begrenzen.",
+    "pitfall": "Ein Timeout ist keine Garantie, dass entfernte Serverarbeit oder beliebiger blockierender Code bereits gestoppt wurde.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-local-api",
+    "projectTitle": "Lokale Aufgaben-API"
+  }
+]

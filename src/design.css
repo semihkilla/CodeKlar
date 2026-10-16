@@ -189,3 +189,7 @@ body { background: var(--background); color: var(--text); }
   .topbar .appearance-button { width: 44px; }
   .topic-group-select select { font-size: 16px; }
 }
+
+.python-result-preview figure { margin: 12px 0 20px; min-width: 0; }
+.python-result-preview img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; }
+.python-result-preview figcaption { margin-top: 10px; color: var(--muted); font-size: 13px; line-height: 1.6; }

@@ -1,3 +1,4 @@
+import { pythonVisualProjects } from './pythonVisualProjects.js';
 import { pythonDataProjects } from './pythonDataProjects.js';
 import { pythonPackageProjects } from './pythonPackageProjects.js';
 import { pythonApiProjects } from './pythonApiProjects.js';
@@ -125,4 +126,4 @@ const originalPythonProjects = [
   }
 ];
 
-export const pythonProjects = [...originalPythonProjects, ...pythonFurtherProjects, ...pythonNextProjects, ...pythonApiProjects, ...pythonPackageProjects, ...pythonDataProjects];
+export const pythonProjects = [...originalPythonProjects, ...pythonFurtherProjects, ...pythonNextProjects, ...pythonApiProjects, ...pythonPackageProjects, ...pythonDataProjects, ...pythonVisualProjects];

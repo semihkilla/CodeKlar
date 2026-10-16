@@ -7,14 +7,19 @@ import { join, dirname } from 'node:path';
 import { execFile, spawn } from 'node:child_process';
 const python = process.env.CODEKLAR_PYTHON || 'python3';
 const root = await mkdtemp(join(tmpdir(), 'codeklar-python-'));
+const runtimeEnv = { ...process.env, XDG_CACHE_HOME: join(root, 'cache'), MPLCONFIGDIR: join(root, 'matplotlib') };
 const normalized = value => value.replaceAll('\r\n', '\n').trimEnd();
-const run = (args, { input = '', cwd = root, env = process.env } = {}) => new Promise((resolve, reject) => {
-  const child = execFile(python, args, { cwd, env, timeout: 15000, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => error ? reject(Object.assign(error, { stdout, stderr })) : resolve({ stdout, stderr }));
+const run = (args, { input = '', cwd = root, env = runtimeEnv, timeout = 15000 } = {}) => new Promise((resolve, reject) => {
+  const child = execFile(python, args, { cwd, env, timeout, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => error ? reject(Object.assign(error, { stdout, stderr })) : resolve({ stdout, stderr }));
   child.stdin.on('error', error => { if (error.code !== 'EPIPE') reject(error); });
   child.stdin.end(input);
 });
 function require(ok, message) { if (!ok) throw new Error(message); }
 try {
+  await mkdir(runtimeEnv.XDG_CACHE_HOME, { recursive: true });
+  await mkdir(runtimeEnv.MPLCONFIGDIR, { recursive: true });
+  // Build the shared font cache once, before parallel examples import Matplotlib.
+  await run(['-I', '-c', 'import matplotlib; matplotlib.use("Agg"); from matplotlib import font_manager'], { timeout: 60000 });
   console.log(normalized((await run(['--version'])).stdout));
   const programs = pythonLessonPack.flatMap(lesson => [{ id: lesson.id, source: lesson.example, output: lesson.expectedOutput, stdin: lesson.stdin }, ...(lesson.practice ? [{ id: lesson.id + '-practice', source: lesson.practice.example, output: lesson.practice.output }] : [])]);
   let next = 0;
@@ -30,7 +35,7 @@ try {
   for (const project of pythonProjects) {
     const cwd = join(root, project.id); await mkdir(cwd);
     for (const [name, source] of Object.entries(project.files)) { const file = join(cwd, name); await mkdir(dirname(file), { recursive: true }); await writeFile(file, source); }
-    let env = process.env;
+    let env = runtimeEnv;
     if (project.pythonWheel) {
       const wheels = join(cwd, 'wheels'), site = join(cwd, 'installed');
       await run(['-m', 'pip', 'wheel', '--disable-pip-version-check', '--no-build-isolation', '--no-deps', '--no-index', '--wheel-dir', wheels, '.'], { cwd });
@@ -38,7 +43,7 @@ try {
       const archives = (await readdir(wheels)).filter(name => name.endsWith('.whl'));
       require(archives.length === 1, 'Expected one package wheel');
       await run(['-m', 'pip', 'install', '--disable-pip-version-check', '--no-deps', '--no-index', '--target', site, join(wheels, archives[0])], { cwd });
-      env = { ...process.env, PYTHONPATH: site };
+      env = { ...runtimeEnv, PYTHONPATH: site };
       const outside = await run(['-m', 'lernkarten', join(cwd, 'beispiel.json'), '--output', join(root, 'karten.html')], { cwd: root, env });
       require(outside.stdout.includes('3 Karten exportiert.'), 'Installed wheel CLI failed outside source tree');
       require((await readFile(join(root, 'karten.html'), 'utf8')).includes('Package'), 'Installed template resource missing');
@@ -140,5 +145,14 @@ try {
   try { await run(['report.py', 'beispiel.csv', '--output', 'beispiel.csv'], { cwd: expenses }); throw new Error('Expense input overwrite accepted'); }
   catch (error) { require(error.code === 1 && error.stderr.includes('Fehler:'), 'Expense overwrite refusal missing'); }
   require(await readFile(join(expenses, 'beispiel.csv'), 'utf8') === inputBefore, 'Expense input changed');
-  console.log('Separate-process persistence, CSV, maze, logs, expense export and real HTTP client/server restart checks passed.');
+  const contact = join(root, 'python-contact-sheet');
+  await run(['examples.py'], { cwd: contact });
+  const samplePath = join(contact, 'beispielbilder', '01-breit.png');
+  const sampleBefore = await readFile(samplePath);
+  const contactRun = await run(['contact.py', 'beispielbilder', '--columns', '2', '--output', 'bogen.png'], { cwd: contact });
+  require(contactRun.stdout.includes('3 Bilder: 448 x 408 Pixel'), 'Contact sheet terminal output failed');
+  const png = await readFile(join(contact, 'bogen.png'));
+  require(png.readUInt32BE(16) === 448 && png.readUInt32BE(20) === 408, 'Contact sheet PNG dimensions failed');
+  require((await readFile(samplePath)).equals(sampleBefore), 'Contact sheet changed its input');
+  console.log('Separate-process persistence, CSV, maze, logs, expense export, contact PNG and real HTTP client/server restart checks passed.');
 } finally { await rm(root, { recursive: true, force: true }); }

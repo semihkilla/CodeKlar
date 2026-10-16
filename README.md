@@ -897,3 +897,38 @@ CODEKLAR_PYTHON="$PWD/.venv/bin/python" npm run test:python
 ```
 
 Installationen wurden in einer eigenen temporären Umgebung durchgeführt. Die Lern-Requirements pinnen die genannten Pakete; sie sperren nicht jede transitive Abhängigkeit mit Hashes. Python 3.10 und echte Windows-/macOS-Laufzeiten wurden nicht separat nativ getestet. Browserprüfungen decken sämtliche Wissensantworten, Fortschritt, Lernrunden, mobile Starthilfen/Übungen, Referenzsuche und vollständige Projekt-ZIPs ab. Drei PWA-Prüfungen kontrollieren zusätzlich neue Inhalte und bestehende Design-/Package-Funktionen offline. Der tatsächlich erzeugte Ausgabenbericht ist bei 320, 390 und 1505 Pixeln auf lesbare Tabellen und passende Summen geprüft. Mit dem älteren Zahlenratespiel gibt es acht Python-Projektangebote.
+
+### Python: Pillow-Bilder, Matplotlib-Diagramme und ein Kontaktbogen
+
+**24 neue Lektionen und acht eigene Programmierübungen** erweitern Python auf **193 Lektionen insgesamt** und **60 lokale Übungen**. Die bisherigen 168 Beispielprogramme, IDs und Antwortpositionen bleiben erhalten. Die sechs Hauptbereiche bleiben bestehen: **Matplotlib & Diagramme** ergänzt die Datenthemen, **Pillow & Bilder** ergänzt Eingaben/Dateien.
+
+Pillow behandelt Farbmodus und Pixelkoordinaten, PNG-Dekodierung, resize, thumbnail, Crop-Grenzen, contain versus fit, EXIF-Ausrichtung, Transparenz, paste, ImageDraw, Graustufen und Histogramme. Matplotlib erklärt Figure/Axes, Linien, Streupunkte, Balken, Histogramm-Bins, mehrere Diagrammbereiche, Achsenlimits, Annotationen, Legenden, Tickpositionen, PNG-Export und das Schließen von Figures. Die Lektionen erklären auch Darstellungsentscheidungen wie eine Nullbasis bei Balken, die Reihenfolge verbundener Punkte und die Bedeutung von Einheiten.
+
+Zwei **echte, mit Matplotlib erzeugte PNG-Vorschauen** zeigen die Daten der Linien- und Balkenlektion. Sie sind unter „So sieht das Ergebnis aus“ aufklappbar, haben beschreibende Alternativtexte und gehören zum Service-Worker-Precache. Sie werden nicht aus fremden Beispielen oder generierten Mockups übernommen. Die native Vorschauerzeugung ergänzt eine lesbare Formatierung zu den gezeigten Daten. Alle Lernprogramme verwenden für Diagramme den Backend Agg; sie benötigen kein grafisches Fenster. Die Starthilfe erklärt die lokale Installation von **Pillow 11.3.0** beziehungsweise **Matplotlib 3.10.7**, NumPy 2.2.6 und Pillow. Zum dauerhaften Ansehen kann lokal ein Dateipfad anstelle des gezeigten BytesIO-Streams an savefig übergeben werden.
+
+**Projekte → Python: Bilder als Kontaktbogen** enthält `contact.py`, `examples.py`, sechzehn Testmethoden, Requirements und `BAUPLAN.md`. examples.py erzeugt drei echte Beispielbilder; contact.py stellt sie zu einer beschrifteten PNG-Übersicht zusammen. Er liest EXIF-Orientierung, erhält das Seitenverhältnis, vergrößert kleine Bilder nicht, verrechnet Transparenz auf Weiß und zeichnet feste Kacheln mit gekürzten Dateinamen.
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m unittest -v
+.venv/bin/python examples.py
+.venv/bin/python contact.py beispielbilder --columns 2 --output kontaktbogen.png
+```
+
+Windows-Befehle stehen im Bauplan. Verarbeitet werden die direkten PNG/JPG/JPEG/WEBP-Dateien eines Ordners, 1 bis 40 Bilder, höchstens 10 MB und 20 Millionen Pixel je Bild. Bei Animationen wird Frame 0 verwendet. Die Ausgabe hat RGB-Pixel und übernimmt keine EXIF-Daten. Eine Vorschau passt in 200 × 160 Pixel; Kacheln sind 224 × 204 Pixel groß, bei 1 bis 6 Spalten. Die Beispieldaten ergeben mit zwei Spalten 448 × 408 Pixel. Die eingebettete Standardschrift braucht keine lokal installierte Schriftdatei, kann aber nicht jedes beliebige Unicode-Zeichen darstellen.
+
+Vorhandene Ausgaben und Eingabedateien werden nicht überschrieben. Alle gewählten Bilder müssen verarbeitet werden können, bevor die neue Ausgabedatei geöffnet wird. Ein Schreibfehler kann eine neu angelegte Datei unvollständig hinterlassen. examples.py erzeugt ausschließlich neue Dateien und kann bei erneutem Aufruf wegen bereits vorhandener Beispiele abbrechen. Die genaue Auswahl, Grenzen, Fehler und sinnvolle Erweiterungen sind im Bauplan beschrieben.
+
+Native Prüfung mit CPython 3.12.14: **192 Beispielprogramme, 60 Übungslösungen und 108 Projekt-Testmethoden über acht neue Projekte** bestehen. Zusätzlich startet der Prüfer Beispielerzeugung und Kontaktbogen als getrennte Prozesse und kontrolliert Terminalausgabe, tatsächliche PNG-Abmessungen und unveränderte Originaldateien. Die Matplotlib-Prüfung bereitet ihren Schriftcache einmal vor dem parallelen Start vor und verwendet eigene temporäre Cache-Verzeichnisse.
+
+Für die vorhandene native Prüfumgebung zusätzlich installieren:
+
+```sh
+.venv/bin/python -m pip install Pillow==11.3.0 matplotlib==3.10.7
+CODEKLAR_PYTHON="$PWD/.venv/bin/python" npm run test:python
+```
+
+Die vorherigen Requirements für Requests, NumPy, pandas, Jinja2 und setuptools werden weiterhin benötigt. Geprüft wurde die Linux-Umgebung mit CPython 3.12.14; Python 3.10 und echte Windows-/macOS-Laufzeiten wurden nicht separat nativ getestet. Der Produktionsbuild enthält beide PNGs im Precache. Browserprüfungen decken Wissensfragen, gespeicherten Fortschritt, Lernrunden, mobile Vorschauen, Quellen und sämtliche Projekt-ZIPs ab. Offline wurden neue PNG-Vorschauen und Kontaktbogen-Dateien sowie bestehende Design- und pandas-Funktionen geprüft. Einschließlich des älteren Zahlenratespiels gibt es neun Python-Projektangebote.
+
+Die beiden Diagrammbilder lassen sich mit dem vorbereiteten Umgebungs-Python und `scripts/render-python-previews.py` aus den festgelegten Beispieldaten neu erzeugen. Größere Achsenbeschriftungen halten sie auch in der schmalen mobilen Vorschau lesbar.

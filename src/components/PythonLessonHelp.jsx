@@ -2,6 +2,10 @@ export function PythonLessonHelp({ lesson, includePractice = true, openProject }
   const profile = lesson.methodProfile;
   const practice = includePractice ? lesson.practice : undefined;
   return <>
+    {lesson.preview && <details className="reading-more python-result-preview">
+      <summary>So sieht das Ergebnis aus</summary>
+      <figure><img src={lesson.preview.src} alt={lesson.preview.alt} width="800" height="450" loading="lazy" /><figcaption>{lesson.preview.caption}</figcaption></figure>
+    </details>}
     {lesson.setup && <details className="reading-more python-package-setup">
       <summary>Lokaler Start &amp; benötigte Pakete</summary>
       <p>{lesson.setup.description}</p>

@@ -1,0 +1,1138 @@
+[
+  {
+    "id": "pillow-pixels",
+    "category": "Pillow & Bilder",
+    "name": "Pillow: Pixel, Größe und Farbmodus",
+    "introduction": "Pillow wird als PIL importiert. Ein RGB-Pixel besitzt drei Farbkanäle, die Bildgröße besteht aus Breite und Höhe.",
+    "steps": [
+      "Erzeuge ein rotes RGB-Bild.",
+      "Lies seine Größe.",
+      "Lies einen Pixel links oben."
+    ],
+    "code": "from PIL import Image\n\nimage = Image.new(\"RGB\", (4, 2), (255, 0, 0))\nprint(image.size)\nprint(image.getpixel((0, 0)))",
+    "output": "(4, 2)\n(255, 0, 0)",
+    "choices": [
+      "(4, 2)\n(255, 0, 0)",
+      "(2, 4)\n(255, 0, 0)",
+      "(4, 2)\n(0, 0, 255)"
+    ],
+    "explanation": "Koordinaten beginnen links oben. x wächst nach rechts, y nach unten. Der letzte gültige Pixel eines 4-mal-2-Bildes liegt bei (3,1). Ein Dateiformat wie PNG ist etwas anderes als ein Farbmodus wie RGB.",
+    "methodProfile": {
+      "signature": "Image.new(mode, size, color)",
+      "parameters": [
+        [
+          "mode",
+          "Farbmodus."
+        ],
+        [
+          "size",
+          "Breite und Höhe."
+        ],
+        [
+          "color",
+          "Farbe passend zum Modus."
+        ]
+      ],
+      "returns": "Neues Image-Objekt.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Pixel außerhalb des Bildbereichs können nicht einfach gelesen werden.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Erzeuge ein blaues 3-mal-2-Bild und gib den Pixel bei (2,1) aus.",
+      "hint": "Blau ist in RGB (0,0,255).",
+      "code": "from PIL import Image\n\nimage = Image.new(\"RGB\", (3, 2), \"blue\")\nprint(image.getpixel((2, 1)))",
+      "output": "(0, 0, 255)"
+    }
+  },
+  {
+    "id": "pillow-open",
+    "category": "Pillow & Bilder",
+    "name": "open und load: eine echte PNG-Datei dekodieren",
+    "introduction": "Image.open liest Bildmetadaten zunächst verzögert. load fordert die Pixel an; with schließt die Quelle anschließend.",
+    "steps": [
+      "Speichere ein PNG im Arbeitsspeicher.",
+      "Öffne diese Bytes erneut.",
+      "Prüfe Format und Größe."
+    ],
+    "code": "from io import BytesIO\nfrom PIL import Image\n\nstream = BytesIO()\nImage.new(\"RGB\", (6, 3), \"green\").save(stream, format=\"PNG\")\nwith Image.open(BytesIO(stream.getvalue())) as image:\n    image.load()\n    print(image.format)\n    print(image.size)",
+    "output": "PNG\n(6, 3)",
+    "choices": [
+      "PNG\n(6, 3)",
+      "RGB\n(6, 3)",
+      "PNG\n(3, 6)"
+    ],
+    "explanation": "Eine Endung allein beweist kein gültiges Bild. Beim Öffnen oder Dekodieren können Fehler auftreten. Das Projekt prüft Dateigröße und Pixelanzahl und bricht bei einer fehlerhaften ausgewählten Bilddatei ab.",
+    "methodProfile": {
+      "signature": "Image.open(source); image.load()",
+      "parameters": [
+        [
+          "source",
+          "Dateipfad oder geeigneter binärer Stream."
+        ]
+      ],
+      "returns": "Image-Objekt; load dekodiert Pixel.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Eine geschlossene Quelle kann späteres verzögertes Laden unmöglich machen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-resize",
+    "category": "Pillow & Bilder",
+    "name": "resize: eine neue Größe fest vorgeben",
+    "introduction": "resize erzeugt ein neues Bild mit genau der angegebenen Größe. Ein anderes Seitenverhältnis verzerrt das Motiv.",
+    "steps": [
+      "Das Original ist doppelt so breit wie hoch.",
+      "resize erzeugt hier ein Quadrat.",
+      "Die Originalgröße bleibt erhalten."
+    ],
+    "code": "from PIL import Image\n\nimage = Image.new(\"RGB\", (8, 4))\nresult = image.resize((3, 3), Image.Resampling.LANCZOS)\nprint(result.size)\nprint(image.size)",
+    "output": "(3, 3)\n(8, 4)",
+    "choices": [
+      "(3, 3)\n(8, 4)",
+      "(3, 3)\n(3, 3)",
+      "(6, 3)\n(8, 4)"
+    ],
+    "explanation": "LANCZOS eignet sich häufig zum Verkleinern von Fotos, ist aber keine Regel für jede Art von Pixelgrafik. Für ein unverzerrtes Vorschaubild sind thumbnail oder contain oft geeigneter.",
+    "methodProfile": {
+      "signature": "image.resize(size, resample)",
+      "parameters": [
+        [
+          "size",
+          "Exakte Zielgröße."
+        ],
+        [
+          "resample",
+          "Abtastverfahren."
+        ]
+      ],
+      "returns": "Neues Image-Objekt.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Mehr Pixel erzeugen keine fehlenden Originaldetails zurück.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-thumbnail",
+    "category": "Pillow & Bilder",
+    "name": "thumbnail: proportional verkleinern und das Bild ändern",
+    "introduction": "thumbnail passt ein Bild innerhalb einer Begrenzung ein. Es verändert das vorhandene Image und liefert None.",
+    "steps": [
+      "Das Original ist 8 mal 4 Pixel groß.",
+      "Begrenze es auf höchstens 4 mal 4.",
+      "Die Proportion bleibt erhalten."
+    ],
+    "code": "from PIL import Image\n\nimage = Image.new(\"RGB\", (8, 4))\nresult = image.thumbnail((4, 4))\nprint(image.size)\nprint(result)",
+    "output": "(4, 2)\nNone",
+    "choices": [
+      "(4, 2)\nNone",
+      "(4, 4)\nNone",
+      "(8, 4)\n(4, 2)"
+    ],
+    "explanation": "thumbnail vergrößert kleine Bilder normalerweise nicht. Falls du das Original im Speicher weiter brauchst, arbeite auf image.copy(). Ein neues Ergebnis zuzuweisen ist bei dieser Methode ein häufiger Fehler.",
+    "methodProfile": {
+      "signature": "image.thumbnail(bounds)",
+      "parameters": [
+        [
+          "bounds",
+          "Maximale Breite und Höhe."
+        ]
+      ],
+      "returns": "None; das Image selbst wird verändert.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "image = image.thumbnail(...) bindet image an None.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Verkleinere ein 12-mal-6-Bild auf maximal 6 mal 6 und gib die Größe aus.",
+      "hint": "Die längere Seite bestimmt hier den Verkleinerungsfaktor.",
+      "code": "from PIL import Image\n\nimage = Image.new(\"RGB\", (12, 6))\nimage.thumbnail((6, 6))\nprint(image.size)",
+      "output": "(6, 3)"
+    }
+  },
+  {
+    "id": "pillow-crop",
+    "category": "Pillow & Bilder",
+    "name": "crop: rechte und untere Grenze sind exklusiv",
+    "introduction": "Ein Ausschnitt wird als left, upper, right, lower beschrieben. Seine Breite ist right minus left.",
+    "steps": [
+      "Erzeuge ein 8-mal-6-Bild.",
+      "Wähle die Box (1,2,5,5).",
+      "Der Ausschnitt ist 4 mal 3 Pixel groß."
+    ],
+    "code": "from PIL import Image\n\nimage = Image.new(\"RGB\", (8, 6))\nprint(image.crop((1, 2, 5, 5)).size)",
+    "output": "(4, 3)",
+    "choices": [
+      "(4, 3)",
+      "(5, 4)",
+      "(8, 6)"
+    ],
+    "explanation": "Ein Crop kann Motivteile entfernen. Bei Anwendungen sollte klar sein, ob ein fester Mittelpunkt, ein ausgewählter Bereich oder eine erkannte Motivposition die Box bestimmt.",
+    "methodProfile": {
+      "signature": "image.crop((left, upper, right, lower))",
+      "parameters": [
+        [
+          "box",
+          "Ausschnittgrenzen."
+        ]
+      ],
+      "returns": "Neues Bild des Ausschnitts.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Crop-Box und draw.rectangle verwenden nicht dieselbe Regel für den rechten Rand.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-fit",
+    "category": "Pillow & Bilder",
+    "name": "contain und fit: Ränder oder Beschnitt entscheiden",
+    "introduction": "contain erhält das gesamte Motiv innerhalb der Zielgröße. fit füllt die Zielgröße durch passenden Beschnitt.",
+    "steps": [
+      "Das Bild hat Seitenverhältnis 2 zu 1.",
+      "contain passt es in ein Quadrat ein.",
+      "fit erzeugt das volle Quadrat."
+    ],
+    "code": "from PIL import Image, ImageOps\n\nimage = Image.new(\"RGB\", (8, 4))\nprint(ImageOps.contain(image, (4, 4)).size)\nprint(ImageOps.fit(image, (4, 4)).size)",
+    "output": "(4, 2)\n(4, 4)",
+    "choices": [
+      "(4, 2)\n(4, 4)",
+      "(4, 4)\n(4, 2)",
+      "(8, 4)\n(4, 4)"
+    ],
+    "explanation": "Der Kontaktbogen verwendet bewusst ein vollständig sichtbares Motiv mit freien Rändern statt stillen Zuschnitt. Das ist für sehr unterschiedlich formatierte Fotos besser nachvollziehbar.",
+    "methodProfile": {
+      "signature": "ImageOps.contain(image, bounds); ImageOps.fit(image, size)",
+      "parameters": [
+        [
+          "bounds beziehungsweise size",
+          "Zielbegrenzung oder feste Ausgabegröße."
+        ]
+      ],
+      "returns": "Neue Image-Objekte.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Eine voll gefüllte Kachel kann abgeschnittene Bildteile bedeuten.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-exif",
+    "category": "Pillow & Bilder",
+    "name": "EXIF-Ausrichtung: gedrehte Fotos richtig übernehmen",
+    "introduction": "Kamerafotos können ihre Ausrichtung als EXIF-Metadatum speichern. exif_transpose überträgt die Orientierung in die Pixel.",
+    "steps": [
+      "Das Bild trägt hier Orientierung 6.",
+      "Die Korrektur dreht die Pixel passend.",
+      "Breite und Höhe tauschen sich."
+    ],
+    "code": "from PIL import Image, ImageOps\n\nimage = Image.new(\"RGB\", (6, 3))\nimage.getexif()[274] = 6\nresult = ImageOps.exif_transpose(image)\nprint(result.size)\nprint(result.getexif().get(274))",
+    "output": "(3, 6)\nNone",
+    "choices": [
+      "(3, 6)\nNone",
+      "(6, 3)\n6",
+      "(3, 6)\n6"
+    ],
+    "explanation": "Die Ausrichtung sollte vor der Größenberechnung korrigiert werden. Das Projekt berechnet seinen Vorschaubereich aus den korrigierten Pixeln und übernimmt keine EXIF-Daten in die erzeugte PNG-Datei.",
+    "methodProfile": {
+      "signature": "ImageOps.exif_transpose(image)",
+      "parameters": [
+        [
+          "image",
+          "Bild mit möglicher EXIF-Orientierung."
+        ]
+      ],
+      "returns": "Orientiertes Bild ohne weiterhin anzuwendenden Orientierungswert.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Nur width und height zu lesen berücksichtigt die EXIF-Drehung noch nicht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-alpha",
+    "category": "Pillow & Bilder",
+    "name": "Transparenz: RGBA auf einen Hintergrund setzen",
+    "introduction": "RGBA ergänzt einen Alphakanal. Vor dem Export in ein Format ohne Transparenz brauchst du einen passenden Hintergrund.",
+    "steps": [
+      "Erzeuge ein vollständig transparentes rotes Vordergrundbild.",
+      "Lege es auf Weiß.",
+      "Nach dem Zusammensetzen ist der Pixel weiß."
+    ],
+    "code": "from PIL import Image\n\nbackground = Image.new(\"RGBA\", (2, 2), \"white\")\nforeground = Image.new(\"RGBA\", (2, 2), (255, 0, 0, 0))\nresult = Image.alpha_composite(background, foreground).convert(\"RGB\")\nprint(result.getpixel((0, 0)))",
+    "output": "(255, 255, 255)",
+    "choices": [
+      "(255, 255, 255)",
+      "(255, 0, 0)",
+      "(0, 0, 0)"
+    ],
+    "explanation": "convert(\"RGB\") allein bedeutet nicht, dass Transparenz mit deinem gewünschten Hintergrund korrekt verrechnet wurde. Der Kontaktbogen setzt transparente Bilder ausdrücklich auf weißen Grund.",
+    "methodProfile": {
+      "signature": "Image.alpha_composite(background, foreground)",
+      "parameters": [
+        [
+          "Bilder",
+          "Gleiche Größe im RGBA-Modus."
+        ]
+      ],
+      "returns": "Neu zusammengesetztes RGBA-Bild.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Vollständig transparente Pixel können trotzdem beliebige unsichtbare RGB-Kanalwerte enthalten.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Setze ein transparentes 1-mal-1-Bild auf einen schwarzen Hintergrund und gib RGB aus.",
+      "hint": "Zuerst alpha_composite, danach bei Bedarf RGB erzeugen.",
+      "code": "from PIL import Image\n\na = Image.new(\"RGBA\", (1, 1), \"black\")\nb = Image.new(\"RGBA\", (1, 1), (255, 0, 0, 0))\nprint(Image.alpha_composite(a, b).convert(\"RGB\").getpixel((0, 0)))",
+      "output": "(0, 0, 0)"
+    }
+  },
+  {
+    "id": "pillow-paste",
+    "category": "Pillow & Bilder",
+    "name": "paste: ein Bild auf eine Zeichenfläche setzen",
+    "introduction": "paste verändert die Zielzeichenfläche. Die Position ist die linke obere Ecke des eingefügten Bildes.",
+    "steps": [
+      "Erzeuge einen weißen Hintergrund.",
+      "Setze ein kleines blaues Bild bei (2,1).",
+      "Vergleiche einen Pixel außerhalb und innerhalb."
+    ],
+    "code": "from PIL import Image\n\ncanvas = Image.new(\"RGB\", (5, 3), \"white\")\ncanvas.paste(Image.new(\"RGB\", (2, 1), \"blue\"), (2, 1))\nprint(canvas.getpixel((0, 0)))\nprint(canvas.getpixel((2, 1)))",
+    "output": "(255, 255, 255)\n(0, 0, 255)",
+    "choices": [
+      "(255, 255, 255)\n(0, 0, 255)",
+      "(0, 0, 255)\n(0, 0, 255)",
+      "(255, 255, 255)\n(255, 255, 255)"
+    ],
+    "explanation": "Positionen und Kachelgrößen lassen sich aus Zeilen- und Spaltennummer berechnen. Genau daraus entsteht ein Kontaktbogen mit gleichmäßiger Anordnung.",
+    "methodProfile": {
+      "signature": "canvas.paste(image, position)",
+      "parameters": [
+        [
+          "position",
+          "Linke obere Zielkoordinate."
+        ]
+      ],
+      "returns": "None; verändert canvas.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Ohne passende Transparenzmaske oder vorheriges Zusammensetzen werden Alpha-Werte nicht automatisch so behandelt wie gewünscht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-draw",
+    "category": "Pillow & Bilder",
+    "name": "ImageDraw: einfache Markierungen zeichnen",
+    "introduction": "ImageDraw zeichnet auf ein vorhandenes Bild. Eine Rechteckbox schließt hier auch den rechten und unteren Rand ein.",
+    "steps": [
+      "Erzeuge ein weißes Bild.",
+      "Zeichne ein rotes Rechteck von 0 bis 1.",
+      "Pixel (1,1) gehört noch dazu."
+    ],
+    "code": "from PIL import Image, ImageDraw\n\nimage = Image.new(\"RGB\", (3, 3), \"white\")\nImageDraw.Draw(image).rectangle((0, 0, 1, 1), fill=\"red\")\nprint(image.getpixel((1, 1)))\nprint(image.getpixel((2, 2)))",
+    "output": "(255, 0, 0)\n(255, 255, 255)",
+    "choices": [
+      "(255, 0, 0)\n(255, 255, 255)",
+      "(255, 255, 255)\n(255, 255, 255)",
+      "(255, 0, 0)\n(255, 0, 0)"
+    ],
+    "explanation": "Für Beschriftungen existiert draw.text. Schriftdatei, Größe und darstellbare Zeichen sind Teil der Darstellung; bei verteilten Programmen darfst du nicht still eine bestimmte lokal installierte Schrift voraussetzen.",
+    "methodProfile": {
+      "signature": "ImageDraw.Draw(image).rectangle(box, fill=color)",
+      "parameters": [
+        [
+          "box",
+          "Einschließende Rechteckkoordinaten."
+        ],
+        [
+          "fill",
+          "Füllfarbe."
+        ]
+      ],
+      "returns": "Zeichnet direkt in das Bild.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Die inklusive Zeichenbox ist eine häufige Quelle für einen zusätzlichen Pixel.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-grayscale",
+    "category": "Pillow & Bilder",
+    "name": "Graustufen: RGB-Kanäle in Helligkeit umwandeln",
+    "introduction": "Der Modus L enthält einen Helligkeitskanal. Ein Pixel ist dann eine Zahl statt eines RGB-Tupels.",
+    "steps": [
+      "Erzeuge ein weißes RGB-Bild.",
+      "Wandle es in L um.",
+      "Lies Modus und Helligkeitswert."
+    ],
+    "code": "from PIL import Image\n\nresult = Image.new(\"RGB\", (2, 2), \"white\").convert(\"L\")\nprint(result.mode)\nprint(result.getpixel((0, 0)))",
+    "output": "L\n255",
+    "choices": [
+      "L\n255",
+      "RGB\n(255, 255, 255)",
+      "L\n0"
+    ],
+    "explanation": "Die Umrechnung verwendet eine definierte Gewichtung der Farbkanäle; sie ist nicht einfach das Entfernen zweier Kanäle. Für ein binäres Schwarz-Weiß-Bild ist zusätzlich eine Schwellenregel nötig.",
+    "methodProfile": {
+      "signature": "image.convert(\"L\")",
+      "parameters": [
+        [
+          "L",
+          "8-Bit-Graustufenmodus."
+        ]
+      ],
+      "returns": "Neues Graustufenbild.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Graustufen und ein Bild mit nur zwei möglichen Farben sind nicht dasselbe.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pillow-histogram",
+    "category": "Pillow & Bilder",
+    "name": "Histogramm: Helligkeitswerte zählen",
+    "introduction": "Ein Histogramm zählt, wie oft ein Kanalwert vorkommt. Bei L enthält es 256 Einträge.",
+    "steps": [
+      "Zwei Pixel sind zunächst schwarz.",
+      "Setze einen davon auf Weiß.",
+      "Prüfe die Häufigkeiten von 0 und 255."
+    ],
+    "code": "from PIL import Image\n\nimage = Image.new(\"L\", (2, 1), 0)\nimage.putpixel((1, 0), 255)\nhistogram = image.histogram()\nprint(len(histogram))\nprint(histogram[0], histogram[255])",
+    "output": "256\n1 1",
+    "choices": [
+      "256\n1 1",
+      "2\n1 1",
+      "256\n2 0"
+    ],
+    "explanation": "Bei RGB werden mehrere Kanalhistogramme hintereinander geliefert. Der Modus bestimmt deshalb, wie du die Zahlen interpretieren musst. Ein Histogramm enthält keine Positionen der Pixel mehr.",
+    "methodProfile": {
+      "signature": "image.histogram()",
+      "parameters": [],
+      "returns": "Liste mit Häufigkeiten je Kanalwert.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Bilder für eine übersichtliche Galerie aufbereiten.",
+    "pitfall": "Die gleiche Helligkeitsverteilung bedeutet nicht, dass zwei Bilder dasselbe Motiv zeigen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Zähle die schwarzen Pixel eines 3-mal-1-L-Bildes, dessen letzter Pixel weiß ist.",
+      "hint": "Das Histogramm an Position 0 zählt Schwarz.",
+      "code": "from PIL import Image\n\na = Image.new(\"L\", (3, 1), 0)\na.putpixel((2, 0), 255)\nprint(a.histogram()[0])",
+      "output": "2"
+    }
+  },
+  {
+    "id": "mpl-figure",
+    "category": "Matplotlib & Diagramme",
+    "name": "Figure und Axes: Zeichenfläche und Diagramm unterscheiden",
+    "introduction": "Eine Figure ist die gesamte Abbildung. Ein Axes-Objekt enthält hier ein einzelnes Diagramm mit Achsen.",
+    "steps": [
+      "subplots erzeugt beides.",
+      "Ein Linienaufruf ergänzt eine Datenreihe.",
+      "Lies die Anzahl der Axes und Linien."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        ax.plot([1, 2], [3, 4])\n        print(len(fig.axes))\n        print(len(ax.lines))\n    finally:\n        plt.close(\"all\")",
+    "output": "1\n1",
+    "choices": [
+      "1\n1",
+      "2\n1",
+      "1\n2"
+    ],
+    "explanation": "Die objektorientierte Form ax.plot macht klar, welches Diagramm verändert wird. Agg rendert ohne grafisches Fenster; zum Anzeigen kannst du lokal fig.savefig(\"diagramm.png\") ergänzen und die Datei öffnen.",
+    "methodProfile": {
+      "signature": "fig, ax = plt.subplots()",
+      "parameters": [],
+      "returns": "Figure und Axes-Objekt.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Ein Axes ist nicht eine einzelne x- oder y-Achse, sondern ein Diagrammbereich.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-line",
+    "category": "Matplotlib & Diagramme",
+    "name": "Linien: zusammengehörige Messwerte darstellen",
+    "introduction": "Eine Linie verbindet Punkte in der angegebenen Reihenfolge. x- und y-Werte müssen zusammenpassen.",
+    "steps": [
+      "Drei Tage besitzen je einen Punktestand.",
+      "plot erzeugt eine Linie mit Markern.",
+      "Lies die tatsächlich gesetzten Werte und Beschriftung."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        line, = ax.plot([1, 2, 3], [2, 4, 3], marker=\"o\")\n        ax.set_xlabel(\"Tag\")\n        ax.set_ylabel(\"Punkte\")\n        print(line.get_ydata().tolist())\n        print(ax.get_xlabel())\n    finally:\n        plt.close(\"all\")",
+    "output": "[2, 4, 3]\nTag",
+    "choices": [
+      "[2, 4, 3]\nTag",
+      "[1, 2, 3]\nPunkte",
+      "[2, 4, 3]\nPunkte"
+    ],
+    "explanation": "Eine Linie eignet sich für sinnvoll geordnete Werte wie Zeitverläufe. Die Verbindung ist eine Darstellung, kein Beweis über nicht gemessene Zwischenwerte. Die aufklappbare Vorschau zeigt die Beispielwerte.",
+    "methodProfile": {
+      "signature": "ax.plot(x, y, marker=\"o\")",
+      "parameters": [
+        [
+          "x und y",
+          "Zusammengehörige Koordinatenfolgen."
+        ]
+      ],
+      "returns": "Liste von Line2D-Objekten.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Unsortierte x-Werte werden nicht automatisch in zeitliche Reihenfolge gebracht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Zeichne x=[1,2] und y=[5,8] und gib die Anzahl der Linien aus.",
+      "hint": "Ein plot-Aufruf erzeugt hier eine Datenreihe.",
+      "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        ax.plot([1, 2], [5, 8])\n        print(len(ax.lines))\n    finally:\n        plt.close(\"all\")",
+      "output": "1"
+    },
+    "preview": {
+      "src": "/examples/python-mpl-line.png",
+      "alt": "Liniendiagramm: Tag 1 hat 2 Punkte, Tag 2 hat 4 Punkte, Tag 3 hat 3 Punkte.",
+      "caption": "Mit Matplotlib aus den Daten dieser Lektion erzeugt."
+    }
+  },
+  {
+    "id": "mpl-scatter",
+    "category": "Matplotlib & Diagramme",
+    "name": "scatter: Beziehungen ohne verbindende Linie zeigen",
+    "introduction": "Ein Streudiagramm zeigt einzelne Wertepaarungen. Es verbindet sie nicht automatisch zu einer Reihenfolge.",
+    "steps": [
+      "Lege drei x/y-Paare fest.",
+      "scatter erzeugt eine Sammlung von Punkten.",
+      "Lies die Form der gespeicherten Koordinaten."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        points = ax.scatter([1, 2, 3], [4, 2, 5])\n        print(points.get_offsets().shape)\n    finally:\n        plt.close(\"all\")",
+    "output": "(3, 2)",
+    "choices": [
+      "(3, 2)",
+      "(2, 3)",
+      "(3,)"
+    ],
+    "explanation": "Ein Zusammenhang im Streudiagramm beweist keine Ursache. Bei überlagernden Punkten helfen gegebenenfalls Transparenz oder eine andere Darstellungsform, ohne Werte still zu entfernen.",
+    "methodProfile": {
+      "signature": "ax.scatter(x, y)",
+      "parameters": [
+        [
+          "x und y",
+          "Koordinaten der Punkte."
+        ]
+      ],
+      "returns": "PathCollection mit Punktpositionen.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Eine Liniengrafik kann bei ungeordneten Einzelbeobachtungen einen nicht vorhandenen Verlauf suggerieren.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-bar",
+    "category": "Matplotlib & Diagramme",
+    "name": "Balken: Kategorien auf einer gemeinsamen Skala vergleichen",
+    "introduction": "Balkenlängen können Kategorien vergleichen. Für einen unverzerrten Längenvergleich beginnt die Wertachse üblicherweise bei null.",
+    "steps": [
+      "Erzeuge zwei Kategorien.",
+      "Ihre Balkenhöhen sind 7 und 3.",
+      "Setze die untere y-Grenze auf 0."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        bars = ax.bar([\"Essen\", \"Fahrt\"], [7, 3])\n        ax.set_ylabel(\"Euro\")\n        ax.set_ylim(bottom=0)\n        print([int(bar.get_height()) for bar in bars])\n    finally:\n        plt.close(\"all\")",
+    "output": "[7, 3]",
+    "choices": [
+      "[7, 3]",
+      "[3, 7]",
+      "[0, 0]"
+    ],
+    "explanation": "Die Vorschau zeigt die beiden Beträge auf derselben Achse. Einheiten gehören an die Achse oder in die Beschriftung. Balken sind für wenige Kategorien oft leichter zu lesen als ein Kreisdiagramm.",
+    "methodProfile": {
+      "signature": "ax.bar(categories, values)",
+      "parameters": [
+        [
+          "categories",
+          "Kategoriebezeichnungen."
+        ],
+        [
+          "values",
+          "Verglichene Werte."
+        ]
+      ],
+      "returns": "BarContainer mit Rechteckobjekten.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Eine abgeschnittene Balkenachse kann Größenunterschiede übertreiben.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Zeichne Balken A=2 und B=5 und gib deren Höhen als Ganzzahlen aus.",
+      "hint": "Die Höhe steht an jedem Rechteck.",
+      "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        bars = ax.bar([\"A\", \"B\"], [2, 5])\n        print([int(bar.get_height()) for bar in bars])\n    finally:\n        plt.close(\"all\")",
+      "output": "[2, 5]"
+    },
+    "preview": {
+      "src": "/examples/python-mpl-bar.png",
+      "alt": "Balkendiagramm: Essen 7 Euro und Fahrt 3 Euro auf einer gemeinsamen Skala ab null.",
+      "caption": "Mit Matplotlib aus den Daten dieser Lektion erzeugt."
+    }
+  },
+  {
+    "id": "mpl-hist",
+    "category": "Matplotlib & Diagramme",
+    "name": "hist: Beobachtungen in Zahlenintervalle einordnen",
+    "introduction": "Ein Histogramm zählt Werte je Zahlenintervall. Das ist etwas anderes als ein Balkendiagramm frei benannter Kategorien.",
+    "steps": [
+      "Verteile vier Werte auf zwei feste Intervalle.",
+      "Das erste Intervall endet vor 2.",
+      "Das letzte Intervall schließt seinen rechten Rand ein."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        counts, edges, patches = ax.hist([0, 1, 2, 3], bins=[0, 2, 4])\n        print(counts.astype(int).tolist())\n        print(edges.astype(int).tolist())\n    finally:\n        plt.close(\"all\")",
+    "output": "[2, 2]\n[0, 2, 4]",
+    "choices": [
+      "[2, 2]\n[0, 2, 4]",
+      "[3, 1]\n[0, 2, 4]",
+      "[2, 2]\n[0, 1, 2]"
+    ],
+    "explanation": "Andere Intervallgrenzen können dieselbe Verteilung anders erscheinen lassen. Entscheide bewusst über Anzahl und Breite der Bins. density=True zeigt keine einfachen absoluten Häufigkeiten mehr.",
+    "methodProfile": {
+      "signature": "ax.hist(values, bins=edges)",
+      "parameters": [
+        [
+          "bins",
+          "Intervallgrenzen."
+        ]
+      ],
+      "returns": "Häufigkeiten, Grenzen und Zeichenobjekte.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Histogramm-Bins sind nicht automatisch die Kategorien eines vorhandenen Summenberichts.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-subplots",
+    "category": "Matplotlib & Diagramme",
+    "name": "subplots: mehrere Diagramme übersichtlich anordnen",
+    "introduction": "Mehrere Axes können in derselben Figure liegen. Ihre Anordnung wird über Zeilen und Spalten beschrieben.",
+    "steps": [
+      "Erzeuge eine Zeile mit zwei Diagrammen.",
+      "Beschrifte die Titel getrennt.",
+      "Lies beide Titel."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, axes = plt.subplots(1, 2, layout=\"constrained\")\n        axes[0].set_title(\"A\")\n        axes[1].set_title(\"B\")\n        print([ax.get_title() for ax in axes])\n    finally:\n        plt.close(\"all\")",
+    "output": "['A', 'B']",
+    "choices": [
+      "['A', 'B']",
+      "['B', 'A']",
+      "['A']"
+    ],
+    "explanation": "Bei einer einzelnen Achse kann Matplotlib statt eines Arrays ein einzelnes Axes-Objekt liefern. squeeze=False hält bei Bedarf eine zweidimensionale Array-Struktur stabil.",
+    "methodProfile": {
+      "signature": "plt.subplots(rows, columns, layout=\"constrained\")",
+      "parameters": [
+        [
+          "rows und columns",
+          "Anordnung der Diagrammbereiche."
+        ]
+      ],
+      "returns": "Figure und Axes beziehungsweise Axes-Array.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Zwei Diagramme mit unterschiedlichen Skalen sind nicht automatisch direkt vergleichbar.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-limits",
+    "category": "Matplotlib & Diagramme",
+    "name": "Achsenlimits: der sichtbare Ausschnitt ist eine Entscheidung",
+    "introduction": "set_xlim und set_ylim verändern den sichtbaren Bereich. Die zugrunde liegenden Messwerte bleiben erhalten.",
+    "steps": [
+      "Zeichne zwei Werte.",
+      "Begrenze die sichtbare y-Achse auf 0 bis 10.",
+      "Lies die Grenzen zurück."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        ax.plot([1, 2], [4, 8])\n        ax.set_ylim(0, 10)\n        print(tuple(int(v) for v in ax.get_ylim()))\n    finally:\n        plt.close(\"all\")",
+    "output": "(0, 10)",
+    "choices": [
+      "(0, 10)",
+      "(4, 8)",
+      "(1, 2)"
+    ],
+    "explanation": "Ein enger Ausschnitt kann Details zeigen, muss aber erkennbar sein. Werte außerhalb der Grenzen verschwinden aus dem sichtbaren Bereich, nicht aus den Daten. Für Balkenlängen ist eine Nullbasis besonders relevant.",
+    "methodProfile": {
+      "signature": "ax.set_ylim(lower, upper)",
+      "parameters": [
+        [
+          "lower und upper",
+          "Sichtbare Grenzen."
+        ]
+      ],
+      "returns": "Neue Grenzen.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Eine passende Grafik darf keine für die Aussage wesentlichen Werte unbemerkt abschneiden.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-annotate",
+    "category": "Matplotlib & Diagramme",
+    "name": "annotate: einen wichtigen Messpunkt erklären",
+    "introduction": "Annotationen verbinden einen Text mit einer Datenposition. Sie sollen die Aussage unterstützen, ohne andere Daten zu verdecken.",
+    "steps": [
+      "Zeichne zwei Punkte.",
+      "Beschrifte den zweiten mit einem Pfeil.",
+      "Lies den gesetzten Text."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        ax.plot([1, 2], [3, 6])\n        label = ax.annotate(\"Maximum\", xy=(2, 6), xytext=(1.2, 7), arrowprops={\"arrowstyle\": \"->\"})\n        print(label.get_text())\n    finally:\n        plt.close(\"all\")",
+    "output": "Maximum",
+    "choices": [
+      "Maximum",
+      "6",
+      "None"
+    ],
+    "explanation": "Maximum ist hier die Bezeichnung innerhalb der gezeigten Werte. Eine automatische Maximalsuche wäre eine separate Datenberechnung. Bei vielen Punkten sind wenige gezielte Beschriftungen klarer als Text an jedem Punkt.",
+    "methodProfile": {
+      "signature": "ax.annotate(text, xy=point, xytext=label_position)",
+      "parameters": [
+        [
+          "xy",
+          "Datenpunkt."
+        ],
+        [
+          "xytext",
+          "Textposition."
+        ]
+      ],
+      "returns": "Annotation-Objekt.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Eine Annotation verändert die Messwerte nicht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-legend",
+    "category": "Matplotlib & Diagramme",
+    "name": "Legende: Datenreihen durch Namen unterscheiden",
+    "introduction": "Eine Legende übernimmt die Labels der gezeichneten Reihen. Namen sollten ihre Bedeutung statt nur ihre Farbe beschreiben.",
+    "steps": [
+      "Zeichne zwei benannte Linien.",
+      "Erzeuge eine Legende.",
+      "Lies ihre Texte."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        ax.plot([1, 2], [3, 4], label=\"Plan\")\n        ax.plot([1, 2], [2, 5], label=\"Ist\")\n        legend = ax.legend()\n        print([text.get_text() for text in legend.get_texts()])\n    finally:\n        plt.close(\"all\")",
+    "output": "['Plan', 'Ist']",
+    "choices": [
+      "['Plan', 'Ist']",
+      "['Blau', 'Orange']",
+      "['Ist', 'Plan']"
+    ],
+    "explanation": "Unterscheide Reihen zusätzlich mit Markern oder Linienstilen, damit Farbe nicht die einzige Information ist. Bei wenigen Reihen sind direkt platzierte Beschriftungen ebenfalls eine mögliche Alternative.",
+    "methodProfile": {
+      "signature": "ax.plot(..., label=name); ax.legend()",
+      "parameters": [
+        [
+          "label",
+          "Bedeutung einer Reihe."
+        ]
+      ],
+      "returns": "Legend-Objekt.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Eine Legende sollte nicht die wichtigen Messpunkte verdecken.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-ticks",
+    "category": "Matplotlib & Diagramme",
+    "name": "Ticks: Position und Beschriftung getrennt festlegen",
+    "introduction": "Tickpositionen gehören zur Skala, Ticklabels zur Anzeige. Beide müssen zusammenpassen.",
+    "steps": [
+      "Setze zwei x-Positionen.",
+      "Beschrifte sie als Mo und Di.",
+      "Lies die angezeigten Texte."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        ax.set_xticks([1, 2], labels=[\"Mo\", \"Di\"])\n        print([text.get_text() for text in ax.get_xticklabels()])\n    finally:\n        plt.close(\"all\")",
+    "output": "['Mo', 'Di']",
+    "choices": [
+      "['Mo', 'Di']",
+      "[1, 2]",
+      "['Di', 'Mo']"
+    ],
+    "explanation": "Bei echten Zeitachsen sind Datumsformatierer oft geeigneter als manuell feste Tagesnamen. Zu viele Labels machen eine Grafik unlesbar; eine sinnvolle Auswahl darf die Skala nicht verfälschen.",
+    "methodProfile": {
+      "signature": "ax.set_xticks(positions, labels=labels)",
+      "parameters": [
+        [
+          "positions",
+          "Koordinaten."
+        ],
+        [
+          "labels",
+          "Gleich viele Bezeichnungen."
+        ]
+      ],
+      "returns": "Liste der Tick-Objekte.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "Nur Textlabels zu ändern ohne passende Positionen kann eine falsche Zuordnung erzeugen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "mpl-save",
+    "category": "Matplotlib & Diagramme",
+    "name": "savefig: eine echte PNG-Abbildung erzeugen",
+    "introduction": "savefig rendert die Figure. Bildgröße in Zoll und dpi bestimmen bei diesem einfachen Export die Pixelgröße.",
+    "steps": [
+      "Erzeuge eine Figure mit 4 mal 2 Zoll.",
+      "Speichere sie mit 100 dpi als PNG-Bytes.",
+      "Pillow liest die tatsächlichen Pixelmaße."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        from io import BytesIO\n        from PIL import Image\n        fig, ax = plt.subplots(figsize=(4, 2), dpi=100)\n        ax.plot([1, 2], [3, 4])\n        stream = BytesIO()\n        fig.savefig(stream, format=\"png\", dpi=100)\n        with Image.open(BytesIO(stream.getvalue())) as image:\n            print(image.size)\n    finally:\n        plt.close(\"all\")",
+    "output": "(400, 200)",
+    "choices": [
+      "(400, 200)",
+      "(4, 2)",
+      "(200, 400)"
+    ],
+    "explanation": "Zum dauerhaften Ansehen kannst du den Stream lokal durch \"diagramm.png\" ersetzen. bbox_inches=\"tight\" kann den ausgegebenen Zuschnitt und damit die Pixelmaße verändern. Dieses Beispiel verwendet bewusst keinen solchen Zuschnitt.",
+    "methodProfile": {
+      "signature": "fig.savefig(target, format=\"png\", dpi=100)",
+      "parameters": [
+        [
+          "target",
+          "Dateipfad oder binärer Stream."
+        ],
+        [
+          "dpi",
+          "Pixel je Zoll."
+        ]
+      ],
+      "returns": "Schreibt die gerenderte Abbildung.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "dpi alleine macht schlecht lesbare Beschriftungen nicht gut gestaltet.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Erzeuge eine Figure mit 3 mal 2 Zoll und 100 dpi. Prüfe die PNG-Größe mit Pillow.",
+      "hint": "Breite und Höhe in Zoll werden mit dpi multipliziert.",
+      "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        from io import BytesIO\n        from PIL import Image\n        fig, ax = plt.subplots(figsize=(3, 2), dpi=100)\n        stream = BytesIO()\n        fig.savefig(stream, format=\"png\", dpi=100)\n        with Image.open(BytesIO(stream.getvalue())) as image:\n            print(image.size)\n    finally:\n        plt.close(\"all\")",
+      "output": "(300, 200)"
+    }
+  },
+  {
+    "id": "mpl-close",
+    "category": "Matplotlib & Diagramme",
+    "name": "close: Zeichenflächen nach dem Export freigeben",
+    "introduction": "Pyplot verwaltet offene Figures. Nach vielen Exporten sollen nicht alle Figuren weiter im Speicher gehalten werden.",
+    "steps": [
+      "Erzeuge zwei Figures.",
+      "Schließe eine davon.",
+      "Lies die Zahl verbleibender Figures."
+    ],
+    "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        first, _ = plt.subplots()\n        second, _ = plt.subplots()\n        plt.close(first)\n        print(len(plt.get_fignums()))\n    finally:\n        plt.close(\"all\")",
+    "output": "1",
+    "choices": [
+      "1",
+      "2",
+      "0"
+    ],
+    "explanation": "In automatischen Berichten gehört das Aufräumen zum Ablauf. Unsere Beispiele schließen am Ende alle erzeugten Figures. Ein gespeichertes PNG bleibt auch nach close erhalten.",
+    "methodProfile": {
+      "signature": "plt.close(figure)",
+      "parameters": [
+        [
+          "figure",
+          "Zu schließende Figure."
+        ]
+      ],
+      "returns": "None.",
+      "effect": "Die Schritte erklären, ob Bilddaten neu entstehen, geändert werden oder eine Zeichenfläche beschrieben wird."
+    },
+    "useCase": "Zahlen mit beschrifteten Diagrammen verständlich darstellen.",
+    "pitfall": "close entfernt nicht die gespeicherte Datei.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-contact-sheet",
+    "projectTitle": "Bilder als Kontaktbogen",
+    "dependencies": [
+      "matplotlib==3.10.7",
+      "numpy==2.2.6",
+      "Pillow==11.3.0"
+    ],
+    "setup": {
+      "description": "Lokal mit Python 3.10+ starten. Die Beispiele erzeugen beziehungsweise untersuchen echte Bilder und Zeichenflächen. Matplotlib verwendet Agg und braucht kein grafisches Fenster. CodeKlar prüft die Wissensantwort, nicht deine lokale Bilddatei.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install matplotlib==3.10.7 numpy==2.2.6 Pillow==11.3.0\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Erzeuge eine Figure, schließe sie und gib die Zahl offener Figures aus.",
+      "hint": "get_fignums listet die noch verwalteten Figuren.",
+      "code": "import os\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as config:\n    os.environ.setdefault(\"MPLCONFIGDIR\", config)\n    import matplotlib\n    matplotlib.use(\"Agg\")\n    import matplotlib.pyplot as plt\n    try:\n        fig, ax = plt.subplots()\n        plt.close(fig)\n        print(len(plt.get_fignums()))\n    finally:\n        plt.close(\"all\")",
+      "output": "0"
+    }
+  }
+]

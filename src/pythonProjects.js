@@ -1,3 +1,4 @@
+import { pythonNextProjects } from './pythonNextProjects.js';
 import { pythonFurtherProjects } from './pythonFurtherProjects.js';
 const originalPythonProjects = [
   {
@@ -121,4 +122,4 @@ const originalPythonProjects = [
   }
 ];
 
-export const pythonProjects = [...originalPythonProjects, ...pythonFurtherProjects];
+export const pythonProjects = [...originalPythonProjects, ...pythonFurtherProjects, ...pythonNextProjects];

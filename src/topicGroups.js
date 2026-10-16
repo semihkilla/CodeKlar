@@ -2,7 +2,7 @@
 const groups = {
   python: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Operatoren & Entscheidungen", "Schleifen"]],
-    ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings"]],
+    ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings", "Zahlen & Zeit", "Reguläre Ausdrücke"]],
     ["functions", "Funktionen", ["Funktionen"]],
     ["objects", "Klassen & Datenmodelle", ["Klassen & Datenmodelle"]],
     ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate"]],

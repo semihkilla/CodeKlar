@@ -1,0 +1,923 @@
+[
+  {
+    "id": "date-math",
+    "category": "Zahlen & Zeit",
+    "name": "date und timedelta: mit Tagen rechnen",
+    "introduction": "date beschreibt einen Kalendertag. timedelta beschreibt eine Dauer; du kannst damit Tage addieren oder Differenzen berechnen.",
+    "steps": [
+      "Starte am 28. Februar eines Schaltjahres.",
+      "Addiere zwei Tage.",
+      "Die Differenz zum Start beträgt zwei Tage."
+    ],
+    "code": "from datetime import date, timedelta\n\nstart = date(2024, 2, 28)\nende = start + timedelta(days=2)\nprint(ende.isoformat())\nprint((ende - start).days)",
+    "output": "2024-03-01\n2",
+    "choices": [
+      "2024-03-01\n2",
+      "2024-03-02\n2",
+      "2024-03-01\n3"
+    ],
+    "explanation": "date kennt Monatslängen und Schaltjahre. Ein Kalendertag besitzt hier keine Uhrzeit und keine Zeitzone. Verwende für Zeitpunkte datetime und eine bewusst gewählte Zeitzonenregel.",
+    "methodProfile": {
+      "signature": "date(jahr, monat, tag); timedelta(days=n)",
+      "parameters": [
+        [
+          "jahr, monat, tag",
+          "Gültiger Kalendertag."
+        ],
+        [
+          "days",
+          "Anzahl von Tagen in der Dauer."
+        ]
+      ],
+      "returns": "date beziehungsweise timedelta.",
+      "effect": "Erzeugt neue Werte, ohne den Ausgangstag zu verändern."
+    },
+    "useCase": "Fälligkeiten oder Abstände zwischen Kalendertagen berechnen.",
+    "pitfall": "Ein timedelta ist kein Kalendermonat; Monate haben unterschiedliche Längen.",
+    "practice": {
+      "task": "Addiere sieben Tage zum 29. Dezember 2024 und gib das neue ISO-Datum aus.",
+      "hint": "Die Jahresgrenze behandelt date automatisch.",
+      "code": "from datetime import date, timedelta\n\nprint((date(2024, 12, 29) + timedelta(days=7)).isoformat())",
+      "output": "2025-01-05"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "utc-offset",
+    "category": "Zahlen & Zeit",
+    "name": "datetime und UTC: denselben Zeitpunkt vergleichen",
+    "introduction": "Ein timezone-aware datetime enthält eine Zeitzoneninformation. astimezone ändert die Darstellung desselben Zeitpunkts.",
+    "steps": [
+      "12 Uhr mit festem Offset +02:00 entspricht 10 Uhr UTC.",
+      "Wandle den Zeitpunkt in UTC um.",
+      "Beide Werte bezeichnen denselben Zeitpunkt."
+    ],
+    "code": "from datetime import datetime, timedelta, timezone\n\nlokal = datetime(2026, 6, 1, 12, tzinfo=timezone(timedelta(hours=2)))\nutc = lokal.astimezone(timezone.utc)\nprint(utc.isoformat())\nprint(lokal == utc)",
+    "output": "2026-06-01T10:00:00+00:00\nTrue",
+    "choices": [
+      "2026-06-01T10:00:00+00:00\nTrue",
+      "2026-06-01T12:00:00+00:00\nTrue",
+      "2026-06-01T10:00:00+00:00\nFalse"
+    ],
+    "explanation": "Ein fester Offset ist keine vollständige Ortszeitzone mit Sommerzeitregeln. Dafür gibt es zoneinfo und passende Zeitzonendaten. Das Logprojekt normalisiert eingelesene Offsets auf UTC, damit unterschiedliche Darstellungen vergleichbar sind.",
+    "methodProfile": {
+      "signature": "zeitpunkt.astimezone(timezone.utc)",
+      "parameters": [
+        [
+          "zeitpunkt",
+          "Datetime mit bewusst gesetzter Zeitzoneninformation."
+        ]
+      ],
+      "returns": "Neues datetime, das denselben Zeitpunkt anders darstellt.",
+      "effect": "Der Ausgangswert bleibt unverändert."
+    },
+    "useCase": "Logs aus verschiedenen Zeitzonen zeitlich richtig einordnen.",
+    "pitfall": "replace(tzinfo=...) rechnet die Uhrzeit nicht um und ist kein Ersatz für astimezone.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "date-format",
+    "category": "Zahlen & Zeit",
+    "name": "strptime und strftime: Datum lesen und darstellen",
+    "introduction": "strptime liest einen Text nach einem Format. strftime stellt einen Datumswert nach einem Format dar.",
+    "steps": [
+      "Der Text verwendet Tag.Monat.Jahr.",
+      "%d, %m und %Y legen diese Teile fest.",
+      "Die Ausgabe verwendet anschließend Jahr-Monat-Tag."
+    ],
+    "code": "from datetime import datetime\n\nwert = datetime.strptime(\"16.10.2026\", \"%d.%m.%Y\")\nprint(wert.strftime(\"%Y-%m-%d\"))",
+    "output": "2026-10-16",
+    "choices": [
+      "2026-10-16",
+      "16-10-2026",
+      "2026-16-10"
+    ],
+    "explanation": "Ein Formatfehler oder ungültiger Kalendertag löst ValueError aus. Die Formatcodes unterscheiden sich zwischen Sprachen; sie sind nicht automatisch Java-, JavaScript- oder Tabellenprogramm-Formate.",
+    "methodProfile": {
+      "signature": "datetime.strptime(text, format); wert.strftime(format)",
+      "parameters": [
+        [
+          "text",
+          "Zu lesender String."
+        ],
+        [
+          "format",
+          "Python-Formatcodes für Datum und Uhrzeit."
+        ]
+      ],
+      "returns": "strptime liefert datetime; strftime liefert str.",
+      "effect": "Konvertiert zwischen Darstellung und Wert."
+    },
+    "useCase": "Datumsangaben aus Dateien kontrolliert übernehmen.",
+    "pitfall": "%m ist der Monat, %M die Minute; Groß-/Kleinschreibung ist entscheidend.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "total-seconds",
+    "category": "Zahlen & Zeit",
+    "name": "timedelta.total_seconds(): die ganze Dauer lesen",
+    "introduction": "Das Attribut seconds ist nur der Sekundenanteil ohne volle Tage. total_seconds berücksichtigt auch Tage und Teilsekunden.",
+    "steps": [
+      "Die Dauer enthält einen Tag und 90 Sekunden.",
+      "seconds liefert nur 90.",
+      "total_seconds liefert 86490.0."
+    ],
+    "code": "from datetime import timedelta\n\ndauer = timedelta(days=1, seconds=90)\nprint(dauer.seconds)\nprint(dauer.total_seconds())",
+    "output": "90\n86490.0",
+    "choices": [
+      "90\n86490.0",
+      "86490\n86490.0",
+      "90\n90.0"
+    ],
+    "explanation": "Für verstrichene Zeit einer Programmausführung ist time.perf_counter geeignet. datetime beschreibt dagegen reale Zeitpunkte; die Systemuhr kann korrigiert werden. Zeitangaben und Laufzeitmessungen erfüllen unterschiedliche Aufgaben.",
+    "methodProfile": {
+      "signature": "dauer.total_seconds()",
+      "parameters": [],
+      "returns": "float mit der gesamten Dauer in Sekunden.",
+      "effect": "Liest den Wert ohne Änderung."
+    },
+    "useCase": "Zeitspannen über Tagesgrenzen hinweg korrekt zusammenfassen.",
+    "pitfall": "dauer.seconds ist nicht die gesamte Dauer in Sekunden.",
+    "practice": {
+      "task": "Eine Dauer beträgt zwei Tage und 30 Minuten. Gib ihre gesamte Länge in Sekunden aus.",
+      "hint": "30 Minuten sind 1800 Sekunden; total_seconds nimmt alle Bestandteile mit.",
+      "code": "from datetime import timedelta\n\nprint(timedelta(days=2, minutes=30).total_seconds())",
+      "output": "174600.0"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "regex-fullmatch",
+    "category": "Reguläre Ausdrücke",
+    "name": "Regex: search() oder fullmatch()?",
+    "introduction": "search sucht einen Treffer irgendwo im Text. fullmatch verlangt, dass der gesamte Text zum Muster passt.",
+    "steps": [
+      "Das Muster erlaubt eine oder mehrere ASCII-Ziffern.",
+      "search findet 12 innerhalb von A12.",
+      "fullmatch lehnt A12 als reine Zahl ab."
+    ],
+    "code": "import re\n\nprint(re.search(r\"[0-9]+\", \"A12\") is not None)\nprint(re.fullmatch(r\"[0-9]+\", \"A12\") is not None)",
+    "output": "True\nFalse",
+    "choices": [
+      "True\nFalse",
+      "True\nTrue",
+      "False\nFalse"
+    ],
+    "explanation": "Ein Regex-Treffer ist ein Match-Objekt; ohne Treffer kommt None. [0-9] beschreibt bewusst ASCII-Ziffern. Für die numerische Verarbeitung folgt danach eine Konvertierung samt Bereichsprüfung.",
+    "methodProfile": {
+      "signature": "re.search(muster, text); re.fullmatch(muster, text)",
+      "parameters": [
+        [
+          "muster",
+          "Regulärer Ausdruck."
+        ],
+        [
+          "text",
+          "Zu prüfender String."
+        ]
+      ],
+      "returns": "Match oder None.",
+      "effect": "Liest den Text ohne Änderung."
+    },
+    "useCase": "Eine komplette ID validieren oder einen Teiltext suchen.",
+    "pitfall": "Ein Teiltreffer beweist nicht, dass die gesamte Eingabe gültig ist.",
+    "practice": {
+      "task": "Prüfe mit fullmatch, ob \"AB-123\" und \"AB-12x\" zum Format zwei Großbuchstaben, Bindestrich, drei ASCII-Ziffern passen.",
+      "hint": "Verwende feste Wiederholungszahlen mit {2} und {3}.",
+      "code": "import re\n\nmuster = r\"[A-Z]{2}-[0-9]{3}\"\nprint(re.fullmatch(muster, \"AB-123\") is not None)\nprint(re.fullmatch(muster, \"AB-12x\") is not None)",
+      "output": "True\nFalse"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "regex-groups",
+    "category": "Reguläre Ausdrücke",
+    "name": "Benannte Gruppen: Treffer in Felder zerlegen",
+    "introduction": "Regex-Gruppen können Teilbereiche eines Treffers benennen. groupdict liefert diese Bereiche als Dictionary aus Strings.",
+    "steps": [
+      "Das Muster enthält name und punkte.",
+      "Der ganze Text muss passen.",
+      "Der Punktetext wird erst anschließend mit int konvertiert."
+    ],
+    "code": "import re\n\ntreffer = re.fullmatch(r\"(?P<name>[A-Za-z]+):(?P<punkte>[0-9]+)\", \"Ada:17\")\nif treffer:\n    print(treffer.group(\"name\"))\n    print(int(treffer.group(\"punkte\")) + 1)",
+    "output": "Ada\n18",
+    "choices": [
+      "Ada\n18",
+      "Ada\n171",
+      "name\n18"
+    ],
+    "explanation": "Das Logprojekt verwendet benannte Gruppen für Zeitstempel, Level, Dauer und Nachricht. Ein passendes Textmuster ersetzt aber nicht die Kalenderprüfung des Datums oder eine Grenze für die Dauer.",
+    "methodProfile": {
+      "signature": "treffer.group(name); treffer.groupdict()",
+      "parameters": [
+        [
+          "name",
+          "Name einer im Muster definierten Gruppe."
+        ]
+      ],
+      "returns": "String eines Teiltreffers beziehungsweise Dictionary der Gruppen.",
+      "effect": "Der Match wird nur gelesen."
+    },
+    "useCase": "Strukturierte Textzeilen in benannte Datenfelder umwandeln.",
+    "pitfall": "Prüfe zuerst auf None, bevor du group aufrufst.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "regex-sub",
+    "category": "Reguläre Ausdrücke",
+    "name": "re.sub(): passende Textstellen ersetzen",
+    "introduction": "re.sub ersetzt Treffer eines regulären Ausdrucks. Für eine rein wörtliche Ersetzung ist str.replace oft leichter verständlich.",
+    "steps": [
+      "Das Muster findet jede zusammenhängende Leerraumgruppe.",
+      "Jede Gruppe wird durch einen Bindestrich ersetzt.",
+      "Der Originalstring wird nicht verändert."
+    ],
+    "code": "import re\n\ntext = \"Ada   lernt\\tPython\"\nprint(re.sub(r\"\\s+\", \"-\", text))",
+    "output": "Ada-lernt-Python",
+    "choices": [
+      "Ada-lernt-Python",
+      "Ada---lernt-Python",
+      "Ada lernt Python"
+    ],
+    "explanation": "Raw Strings wie r\"\\s+\" erleichtern die Schreibweise von Backslashes im Muster. Ersatzstrings haben eigene Regeln für Gruppenreferenzen; komplexe Ersetzungen können stattdessen eine Funktion verwenden.",
+    "methodProfile": {
+      "signature": "re.sub(muster, ersatz, text)",
+      "parameters": [
+        [
+          "muster",
+          "Regex für die zu ersetzenden Stellen."
+        ],
+        [
+          "ersatz",
+          "Ersatztext oder aufrufbare Funktion."
+        ]
+      ],
+      "returns": "Neuer String.",
+      "effect": "Verändert den Quellstring nicht."
+    },
+    "useCase": "Uneinheitliche Abstände für eine Anzeige vereinheitlichen.",
+    "pitfall": "Ein Punkt im Muster bedeutet normalerweise ein beliebiges Zeichen; für einen wörtlichen Punkt brauchst du eine passende Maskierung.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "regex-escape",
+    "category": "Reguläre Ausdrücke",
+    "name": "re.escape(): Benutzersuchtext wörtlich behandeln",
+    "introduction": "Wenn ein Suchtext aus einer Eingabe stammt, sollen Zeichen wie + oder . oft wörtlich gesucht werden. re.escape maskiert dafür Regex-Sonderzeichen.",
+    "steps": [
+      "Der Suchtext ist a+b.",
+      "escape macht das Plus zu einem wörtlichen Zeichen.",
+      "Gesucht wird deshalb der Text a+b."
+    ],
+    "code": "import re\n\nsuche = \"a+b\"\nprint(re.search(re.escape(suche), \"x a+b y\").group(0))",
+    "output": "a+b",
+    "choices": [
+      "a+b",
+      "ab",
+      "aaab"
+    ],
+    "explanation": "escape ist für Musterteile gedacht, nicht als allgemeine Maskierung für SQL, HTML oder Regex-Ersatzstrings. Für einfache reine Teilstring-Suche kann suche in text ganz ohne Regex ausreichen.",
+    "methodProfile": {
+      "signature": "re.escape(text)",
+      "parameters": [
+        [
+          "text",
+          "Wörtlich zu suchender Musterteil."
+        ]
+      ],
+      "returns": "String mit maskierten Regex-Sonderzeichen.",
+      "effect": "Der ursprüngliche Text bleibt unverändert."
+    },
+    "useCase": "Einen Suchbegriff in ein größeres Regex-Muster einsetzen.",
+    "pitfall": "Maskierung hängt vom Zielkontext ab; re.escape schützt keine SQL-Abfrage.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "decimal",
+    "category": "Zahlen & Zeit",
+    "name": "Decimal: Dezimalzahlen aus Text genau rechnen",
+    "introduction": "Decimal kann endliche Dezimalwerte aus Strings exakt darstellen. Der Rechenkontext legt die verfügbare Präzision fest.",
+    "steps": [
+      "Erzeuge 0.1 und 0.2 direkt aus Text.",
+      "Addiere die Dezimalwerte.",
+      "Die Summe ist genau 0.3."
+    ],
+    "code": "from decimal import Decimal\n\na = Decimal(\"0.1\")\nb = Decimal(\"0.2\")\nprint(a + b)\nprint(a + b == Decimal(\"0.3\"))",
+    "output": "0.3\nTrue",
+    "choices": [
+      "0.3\nTrue",
+      "0.30000000000000004\nFalse",
+      "0.3\nFalse"
+    ],
+    "explanation": "Decimal(0.1) übernimmt bereits die binäre float-Näherung. Für Geld brauchst du zusätzlich Regeln für Währung, Rundung und Skalierung. Decimal allein entscheidet diese Fachfragen nicht.",
+    "methodProfile": {
+      "signature": "Decimal(text)",
+      "parameters": [
+        [
+          "text",
+          "Dezimalzahl in kontrollierter Stringdarstellung."
+        ]
+      ],
+      "returns": "Decimal-Objekt.",
+      "effect": "Erzeugt neue Zahlenwerte."
+    },
+    "useCase": "Geldbeträge oder dezimale Messwerte ohne vorherigen float-Umweg verarbeiten.",
+    "pitfall": "Nicht Decimal und float unbedacht in derselben Rechnung mischen.",
+    "practice": {
+      "task": "Addiere 1.20 und 2.35 als Decimal aus Strings. Gib die Summe aus.",
+      "hint": "Die Literale gehören als Strings in Decimal.",
+      "code": "from decimal import Decimal\n\nprint(Decimal(\"1.20\") + Decimal(\"2.35\"))",
+      "output": "3.55"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "statistics",
+    "category": "Zahlen & Zeit",
+    "name": "mean() und median(): unterschiedliche Aussagen über Daten",
+    "introduction": "Der Mittelwert nutzt alle Zahlen in der Summe. Der Median beschreibt die Mitte der sortierten Daten und reagiert anders auf Ausreißer.",
+    "steps": [
+      "Die Werte sind 1, 2 und 99.",
+      "Der Mittelwert ist 34.",
+      "Der Median ist 2."
+    ],
+    "code": "from statistics import mean, median\n\nwerte = [1, 2, 99]\nprint(mean(werte))\nprint(median(werte))",
+    "output": "34\n2",
+    "choices": [
+      "34\n2",
+      "2\n34",
+      "34.0\n99"
+    ],
+    "explanation": "Für eine leere Datenfolge melden diese Funktionen StatisticsError. Ein Messbericht sollte deshalb vorab festlegen, wie leere Eingaben und fehlende Werte dargestellt werden. Im Logprojekt wird die mittlere Dauer nur bei vorhandenen Einträgen berechnet.",
+    "methodProfile": {
+      "signature": "mean(daten); median(daten)",
+      "parameters": [
+        [
+          "daten",
+          "Geeignete Folge numerischer Werte."
+        ]
+      ],
+      "returns": "Numerischer Mittelwert beziehungsweise Median.",
+      "effect": "Die Eingabewerte werden nicht verändert."
+    },
+    "useCase": "Messwerte oder Antwortzeiten zusammenfassen und Ausreißer erkennen.",
+    "pitfall": "Ein einzelner Durchschnitt erklärt nicht die Verteilung; prüfe auch Anzahl, Streuung und Ausreißer.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "defaultdict",
+    "category": "Dictionaries & Sets",
+    "name": "defaultdict: Gruppen beim ersten Zugriff anlegen",
+    "introduction": "defaultdict ruft für einen fehlenden Schlüssel eine Fabrik auf. Mit list als Fabrik kann es Werte in Gruppen sammeln.",
+    "steps": [
+      "Die Quelle enthält Namen mit einer Gruppe.",
+      "Der erste Zugriff erzeugt die jeweilige Liste.",
+      "Danach werden Namen an die passende Liste angehängt."
+    ],
+    "code": "from collections import defaultdict\n\ngruppen = defaultdict(list)\nfor gruppe, name in [(\"A\", \"Ada\"), (\"B\", \"Bo\"), (\"A\", \"Cem\")]:\n    gruppen[gruppe].append(name)\nprint(gruppen[\"A\"])",
+    "output": "['Ada', 'Cem']",
+    "choices": [
+      "['Ada', 'Cem']",
+      "['Ada']",
+      "['Cem']"
+    ],
+    "explanation": "Der Zugriff mit gruppen[fehlend] trägt einen neuen Standard ein. get verwendet diese Fabrik dagegen nicht. Wie bei default_factory gehört die Funktion list ohne Aufrufklammern in den Konstruktor.",
+    "methodProfile": {
+      "signature": "defaultdict(fabrik); mapping[schluessel]",
+      "parameters": [
+        [
+          "fabrik",
+          "Aufrufbare Funktion ohne nötige Argumente."
+        ]
+      ],
+      "returns": "Dictionary-Unterklasse mit Standardfabrik.",
+      "effect": "Fehlender Schlüsselzugriff per [] kann das Dictionary ändern."
+    },
+    "useCase": "Logs oder Aufgaben nach Level, Kategorie oder Tag gruppieren.",
+    "pitfall": "Ein bloßer Lesezugriff mit [] kann hier einen neuen Eintrag anlegen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "groupby",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "itertools.groupby: benachbarte Gruppen erkennen",
+    "introduction": "groupby fasst aufeinanderfolgende gleiche Schlüssel zusammen. Es gruppiert nicht automatisch alle gleichen Werte aus einer unsortierten Quelle.",
+    "steps": [
+      "A kommt zuerst zweimal direkt hintereinander.",
+      "Danach folgt B.",
+      "Das spätere A bildet eine neue Gruppe."
+    ],
+    "code": "from itertools import groupby\n\ndaten = [\"A\", \"A\", \"B\", \"A\"]\nprint([(schluessel, len(list(gruppe))) for schluessel, gruppe in groupby(daten)])",
+    "output": "[('A', 2), ('B', 1), ('A', 1)]",
+    "choices": [
+      "[('A', 2), ('B', 1), ('A', 1)]",
+      "[('A', 3), ('B', 1)]",
+      "[('A', 2), ('B', 2)]"
+    ],
+    "explanation": "Sollen alle gleichen Schlüssel zusammenkommen, kann vorher passend sortiert werden. Die Gruppeniteratoren teilen sich die Quelle; verarbeite eine Gruppe, bevor du die äußere Iteration fortsetzt. Für unabhängige Sammelgruppen ist defaultdict oft klarer.",
+    "methodProfile": {
+      "signature": "groupby(iterable, key=None)",
+      "parameters": [
+        [
+          "iterable",
+          "Quelle in der benötigten Gruppenreihenfolge."
+        ],
+        [
+          "key",
+          "Optionale Schlüsselfunktion."
+        ]
+      ],
+      "returns": "Iterator aus Schlüssel und Gruppeniterator.",
+      "effect": "Verbraucht die gemeinsame Quelle."
+    },
+    "useCase": "Bereits sortierte Daten in zusammenhängenden Blöcken verarbeiten.",
+    "pitfall": "groupby ist keine allgemeine SQL-GROUP-BY-Operation über unsortierte Daten.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "subtest",
+    "category": "Tests & Werkzeuge",
+    "name": "subTest(): mehrere Fälle nachvollziehbar prüfen",
+    "introduction": "subTest kennzeichnet einzelne Fälle innerhalb einer Testmethode. So ist bei einem Fehlschlag sichtbar, welche Eingabe betroffen war.",
+    "steps": [
+      "Eine Testmethode prüft zwei Fälle.",
+      "Jeder Fall bekommt eine eigene Beschriftung.",
+      "Das TestResult zählt trotzdem eine Testmethode."
+    ],
+    "code": "import unittest\n\nclass ZahlenTest(unittest.TestCase):\n    def test_faelle(self):\n        for n, erwartet in [(2, 4), (3, 6)]:\n            with self.subTest(n=n):\n                self.assertEqual(n * 2, erwartet)\n\nr = unittest.TestResult()\nZahlenTest(\"test_faelle\").run(r)\nprint(r.testsRun)\nprint(r.wasSuccessful())",
+    "output": "1\nTrue",
+    "choices": [
+      "1\nTrue",
+      "2\nTrue",
+      "1\nFalse"
+    ],
+    "explanation": "Subtests helfen bei tabellarischen Randfällen. Sie sind Teil einer Testmethode und sollten nicht mit eigenständigen entdeckten Testmethoden verwechselt werden. Ein sinnvolles erwartetes Ergebnis stammt aus der Anforderung, nicht aus derselben Berechnung wie der Ist-Wert.",
+    "methodProfile": {
+      "signature": "with self.subTest(eingabe=wert): …",
+      "parameters": [
+        [
+          "eingabe",
+          "Beschriftung des aktuellen Testfalls."
+        ]
+      ],
+      "returns": "Kontextmanager für einen Untertest.",
+      "effect": "Erfasst Fehlschläge mit Fallinformationen."
+    },
+    "useCase": "Leere Eingaben, Grenzen und mehrere gültige Werte übersichtlich prüfen.",
+    "pitfall": "Ein Selbstvergleich derselben Implementierung ist kein unabhängiger Nachweis der richtigen Regel.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "patch",
+    "category": "Tests & Werkzeuge",
+    "name": "patch(): eine externe Abhängigkeit im Test ersetzen",
+    "introduction": "patch ersetzt ein Objekt vorübergehend im Test. Damit lässt sich ein Fehler oder fester Rückgabewert auslösen, ohne wirklich auf eine externe Ressource zuzugreifen.",
+    "steps": [
+      "Die lokale Funktion fragt get_value ab.",
+      "patch ersetzt genau diesen verwendeten Namen.",
+      "Nach dem Block gilt wieder die ursprüngliche Funktion."
+    ],
+    "code": "from unittest.mock import patch\n\ndef get_value():\n    return 7\n\ndef rechnen():\n    return get_value() * 2\n\nwith patch(\"__main__.get_value\", return_value=3):\n    print(rechnen())\nprint(rechnen())",
+    "output": "6\n14",
+    "choices": [
+      "6\n14",
+      "14\n14",
+      "6\n6"
+    ],
+    "explanation": "Patche den Namen dort, wo der getestete Code ihn nachschlägt. Ein falsch gewählter Modulpfad kann dazu führen, dass die echte Abhängigkeit weiterverwendet wird. Das Aufgabenprojekt simuliert so einen fehlgeschlagenen Dateiaustausch.",
+    "methodProfile": {
+      "signature": "patch(\"modul.name\", return_value=wert)",
+      "parameters": [
+        [
+          "modul.name",
+          "Verwendeter Name im Testziel."
+        ],
+        [
+          "wert",
+          "Vorbereitete Rückgabe."
+        ]
+      ],
+      "returns": "Kontextmanager mit einem Mock-Objekt.",
+      "effect": "Ersetzt während des Blocks eine Namensbindung und stellt sie danach wieder her."
+    },
+    "useCase": "Fehlgeschlagene Dateiaktionen oder Antworten externer Dienste reproduzierbar prüfen.",
+    "pitfall": "Ein Mock beweist nicht, dass die echte externe Schnittstelle funktioniert; ergänze passende Integrationstests.",
+    "practice": {
+      "task": "Ersetze im Test die Funktion preis mit einer Rückgabe 4. Die Funktion betrag verdreifacht preis(). Gib das Ergebnis aus.",
+      "hint": "Patche __main__.preis innerhalb eines with-Blocks.",
+      "code": "from unittest.mock import patch\n\ndef preis():\n    return 9\n\ndef betrag():\n    return preis() * 3\n\nwith patch(\"__main__.preis\", return_value=4):\n    print(betrag())",
+      "output": "12"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "clock-injection",
+    "category": "Tests & Werkzeuge",
+    "name": "Eine Uhr übergeben: Zeitregeln ohne Warten testen",
+    "introduction": "Eine Funktion kann ihren aktuellen Zeitpunkt als Abhängigkeit erhalten. So lassen sich Ablaufregeln mit festen Daten prüfen.",
+    "steps": [
+      "Das Ablaufdatum ist bekannt.",
+      "Ein vorbereiteter Zeitpunkt liegt eine Minute später.",
+      "Die Prüfung braucht kein echtes Warten."
+    ],
+    "code": "from datetime import datetime, timezone\n\ndef abgelaufen(ende, jetzt):\n    return jetzt() >= ende\n\nende = datetime(2026, 1, 1, 12, tzinfo=timezone.utc)\nfix = datetime(2026, 1, 1, 12, 1, tzinfo=timezone.utc)\nprint(abgelaufen(ende, lambda: fix))",
+    "output": "True",
+    "choices": [
+      "True",
+      "False",
+      "60"
+    ],
+    "explanation": "Abhängigkeiten einzuspeisen macht Regeln oft einfacher testbar als globales Ersetzen. Die Funktion erhält hier eine Uhrfunktion, nicht bloß einen bereits versteckten Zugriff auf datetime.now. Achte auf vergleichbare aware-Zeitpunkte.",
+    "methodProfile": {
+      "signature": "abgelaufen(ende, jetzt)",
+      "parameters": [
+        [
+          "ende",
+          "Grenzzeitpunkt."
+        ],
+        [
+          "jetzt",
+          "Aufrufbare Uhr, die den aktuellen Zeitpunkt liefert."
+        ]
+      ],
+      "returns": "bool.",
+      "effect": "Liest vorbereitete Zeitwerte."
+    },
+    "useCase": "Ablaufzeiten, Wiederholungen oder Erinnerungen ohne langsame Schlafpausen testen.",
+    "pitfall": "Vergleiche naive und aware datetime-Werte nicht unbedacht; eine fehlende Zeitzonenregel ist ein Modellproblem.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "logging",
+    "category": "Tests & Werkzeuge",
+    "name": "logging: Ereignisse mit Level ausgeben",
+    "introduction": "logging trennt Ereignisinhalt, Schweregrad und Ausgabeziel. Für Diagnose sind strukturierte Meldungen hilfreicher als verstreute unbeschriftete print-Aufrufe.",
+    "steps": [
+      "Erzeuge einen eigenen Logger und Handler.",
+      "Formatiere Level und Nachricht.",
+      "INFO wird in einen vorbereiteten Textpuffer geschrieben."
+    ],
+    "code": "import logging\nfrom io import StringIO\n\npuffer = StringIO()\nlogger = logging.getLogger(\"codeklar.beispiel\")\nlogger.setLevel(logging.INFO)\nlogger.propagate = False\nhandler = logging.StreamHandler(puffer)\nhandler.setFormatter(logging.Formatter(\"%(levelname)s: %(message)s\"))\nlogger.addHandler(handler)\ntry:\n    logger.info(\"Gespeichert\")\n    print(puffer.getvalue().strip())\nfinally:\n    logger.removeHandler(handler)\n    handler.close()",
+    "output": "INFO: Gespeichert",
+    "choices": [
+      "INFO: Gespeichert",
+      "Gespeichert",
+      "DEBUG: Gespeichert"
+    ],
+    "explanation": "Logger und Handler können unabhängig filtern. Das Beispiel räumt seinen Handler wieder auf, damit bei erneutem Aufruf keine doppelten Ausgaben entstehen. Sensible Werte gehören nicht unbesehen in Lognachrichten.",
+    "methodProfile": {
+      "signature": "logger.info(nachricht); logger.error(nachricht)",
+      "parameters": [
+        [
+          "nachricht",
+          "Diagnoseereignis mit passendem Schweregrad."
+        ]
+      ],
+      "returns": "Normalerweise None.",
+      "effect": "Leitet Meldungen an die konfigurierten Handler weiter."
+    },
+    "useCase": "Speicheraktionen, Warnungen und Fehler nachvollziehbar protokollieren.",
+    "pitfall": "Mehrfach registrierte Handler können eine Meldung mehrfach ausgeben; Konfiguration bewusst einmalig verwalten.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "argparse",
+    "category": "Imports & Pakete",
+    "name": "argparse: Terminaloptionen statt eigener Stringrätsel",
+    "introduction": "argparse beschreibt erlaubte Argumente, erzeugt Hilfe und konvertiert vorbereitete Werte. Es beendet bei ungültigen Argumenten normalerweise mit Exit-Code 2.",
+    "steps": [
+      "Definiere --anzahl als ganze Zahl.",
+      "Lies eine vorbereitete Argumentliste.",
+      "Der Wert kann direkt als Zahl verwendet werden."
+    ],
+    "code": "import argparse\n\nparser = argparse.ArgumentParser()\nparser.add_argument(\"--anzahl\", type=int, default=1)\nargs = parser.parse_args([\"--anzahl\", \"3\"])\nprint(args.anzahl + 1)",
+    "output": "4",
+    "choices": [
+      "4",
+      "31",
+      "3"
+    ],
+    "explanation": "Ohne explizite Liste liest parse_args die wirklichen Terminalargumente. type=int prüft nur die Umwandlung; eine fachliche Grenze wie anzahl > 0 muss die Anwendung zusätzlich kontrollieren. Alle neuen Python-Projekte verwenden argparse für ihren Einstieg.",
+    "methodProfile": {
+      "signature": "parser.add_argument(...); parser.parse_args(argumente)",
+      "parameters": [
+        [
+          "argumente",
+          "Optionale Liste zu lesender Argumentstrings."
+        ]
+      ],
+      "returns": "Namespace mit den gelesenen Werten.",
+      "effect": "Liest Argumente und kann bei Fehlern Hilfe/Meldung auf stderr ausgeben."
+    },
+    "useCase": "Einen Bericht mit Dateipfad, Grenzen und optionalen Exportoptionen bedienbar machen.",
+    "pitfall": "Shell-Aufruf und Python-Argumentliste sind verschiedene Ebenen; Anführungszeichen im Terminal werden von der Shell verarbeitet.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "environ",
+    "category": "Imports & Pakete",
+    "name": "Umgebungsvariablen: Konfiguration außerhalb des Codes",
+    "introduction": "os.environ stellt Umgebungsvariablen als Strings bereit. Ein fehlender Wert kann einen Standard erhalten; der Inhalt muss anschließend passend geprüft werden.",
+    "steps": [
+      "Das Beispiel ersetzt die Umgebung nur während des Blocks.",
+      "TIMEOUT enthält den Text 5.",
+      "int macht daraus eine Zahl."
+    ],
+    "code": "import os\nfrom unittest.mock import patch\n\nwith patch.dict(os.environ, {\"CODEKLAR_TIMEOUT\": \"5\"}):\n    timeout = int(os.environ.get(\"CODEKLAR_TIMEOUT\", \"10\"))\n    print(timeout + 1)",
+    "output": "6",
+    "choices": [
+      "6",
+      "51",
+      "10"
+    ],
+    "explanation": "Die native Umgebung wird hier nicht ausgelesen oder ausgegeben, sondern gezielt mit einem Testwert überlagert. In echten Programmen können Umgebungsvariablen Konfiguration oder Geheimnisse enthalten; die ganze Umgebung zu protokollieren ist deshalb keine sinnvolle Diagnose.",
+    "methodProfile": {
+      "signature": "os.environ.get(name, standard)",
+      "parameters": [
+        [
+          "name",
+          "Name einer Umgebungsvariable."
+        ],
+        [
+          "standard",
+          "String bei fehlendem Wert."
+        ]
+      ],
+      "returns": "String oder der Standard.",
+      "effect": "get liest nur; patch.dict stellt seine Änderung nach dem Block zurück."
+    },
+    "useCase": "Timeouts, Datenpfade oder Betriebsmodi konfigurierbar machen.",
+    "pitfall": "Ein gesetzter leerer oder ungültiger String ist nicht automatisch ein gültiger Zahlenwert.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "subprocess",
+    "category": "Imports & Pakete",
+    "name": "subprocess.run(): ein anderes Programm starten",
+    "introduction": "subprocess.run startet einen Prozess und wartet auf sein Ende. Eine Argumentliste übergibt Programm und Argumente getrennt, ohne eine Shell zu benötigen.",
+    "steps": [
+      "sys.executable bezeichnet den aktuell verwendeten Python-Interpreter.",
+      "Das Kindprogramm gibt 7 aus.",
+      "capture_output sammelt seine Textausgabe."
+    ],
+    "code": "import subprocess\nimport sys\n\nergebnis = subprocess.run([sys.executable, \"-c\", \"print(7)\"], capture_output=True, text=True, check=True, timeout=5)\nprint(ergebnis.stdout.strip())\nprint(ergebnis.returncode)",
+    "output": "7\n0",
+    "choices": [
+      "7\n0",
+      "7\n7",
+      "None\n0"
+    ],
+    "explanation": "check=True meldet einen von null verschiedenen Exit-Code als CalledProcessError. timeout begrenzt die Wartezeit und kann TimeoutExpired auslösen. Die feste -c-Zeichenfolge dient hier nur dem Lernbeispiel; Benutzereingaben gehören nicht in zusammengesetzten auszuführenden Code.",
+    "methodProfile": {
+      "signature": "subprocess.run(argumentliste, check=True, timeout=sekunden)",
+      "parameters": [
+        [
+          "argumentliste",
+          "Programm und getrennte Argumente."
+        ],
+        [
+          "timeout",
+          "Maximale Wartezeit."
+        ]
+      ],
+      "returns": "CompletedProcess mit returncode und gegebenenfalls stdout/stderr.",
+      "effect": "Startet einen eigenständigen Prozess."
+    },
+    "useCase": "Ein vorhandenes Werkzeug aufrufen und seinen Erfolg prüfen.",
+    "pitfall": "shell=True ist für normale Argumentlisten unnötig und verändert die Regeln für die Interpretation von Eingaben.",
+    "practice": {
+      "task": "Starte denselben Python-Interpreter als Kindprozess, der \"Hallo\" ausgibt. Gib dessen gesammelte Ausgabe ohne zusätzlichen Leerabsatz aus.",
+      "hint": "Verwende sys.executable, capture_output=True und text=True.",
+      "code": "import subprocess\nimport sys\n\nr = subprocess.run([sys.executable, \"-c\", \"print('Hallo')\"], capture_output=True, text=True, check=True, timeout=5)\nprint(r.stdout.strip())",
+      "output": "Hallo"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "shutil",
+    "category": "Dateien & Datenformate",
+    "name": "shutil.copy2(): Dateien kopieren, Pfade prüfen",
+    "introduction": "shutil.copy2 kopiert eine Datei und versucht zusätzliche Metadaten zu übernehmen. Quelle und Ziel sind dabei bewusst zu wählen.",
+    "steps": [
+      "Lege eine temporäre Quelldatei an.",
+      "Kopiere sie unter neuem Namen.",
+      "Lies die Kopie und prüfe, dass auch die Quelle noch existiert."
+    ],
+    "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\nfrom shutil import copy2\n\nwith TemporaryDirectory() as ordner:\n    root = Path(ordner)\n    quelle = root / \"a.txt\"\n    ziel = root / \"b.txt\"\n    quelle.write_text(\"Hallo\", encoding=\"utf-8\")\n    copy2(quelle, ziel)\n    print(ziel.read_text(encoding=\"utf-8\"))\n    print(quelle.exists())",
+    "output": "Hallo\nTrue",
+    "choices": [
+      "Hallo\nTrue",
+      "Hallo\nFalse",
+      "b.txt\nTrue"
+    ],
+    "explanation": "copy2 ist keine vollständige Datensicherungsstrategie. Unterstützte Metadaten hängen vom Betriebssystem ab; eine vorhandene Zieldatei kann ersetzt werden. Beim automatischen Umbenennen/Kopieren zuerst einen Plan prüfen und die Schreibregeln explizit festlegen.",
+    "methodProfile": {
+      "signature": "shutil.copy2(quelle, ziel)",
+      "parameters": [
+        [
+          "quelle",
+          "Vorhandene Quelldatei."
+        ],
+        [
+          "ziel",
+          "Zieldatei oder Zielverzeichnis."
+        ]
+      ],
+      "returns": "Pfad zum Ziel.",
+      "effect": "Schreibt eine Kopie und kann vorhandenen Zielinhalt ersetzen."
+    },
+    "useCase": "Eine bewusst gewählte Arbeitskopie für einen Verarbeitungsschritt anlegen.",
+    "pitfall": "Eine Kopie erhält nicht automatisch alle Dateisystemeigenschaften auf jeder Plattform.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "contextmanager",
+    "category": "Funktionen",
+    "name": "contextmanager: eigenes Aufräumen als with-Block",
+    "introduction": "contextmanager macht einen Generator mit genau einem yield zu einem Kontextmanager. try/finally schützt den Aufräumteil.",
+    "steps": [
+      "Der Code vor yield bereitet vor.",
+      "Der with-Block erhält den bereitgestellten Wert.",
+      "Beim Verlassen läuft finally."
+    ],
+    "code": "from contextlib import contextmanager\n\n@contextmanager\ndef bereit():\n    print(\"Start\")\n    try:\n        yield \"Wert\"\n    finally:\n        print(\"Ende\")\n\nwith bereit() as wert:\n    print(wert)",
+    "output": "Start\nWert\nEnde",
+    "choices": [
+      "Start\nWert\nEnde",
+      "Start\nEnde\nWert",
+      "Wert\nEnde"
+    ],
+    "explanation": "Ein Fehler im with-Block wird an der yield-Stelle in den Generator zurückgegeben. Mit finally kann das Aufräumen trotzdem stattfinden. Ein versehentlich unterdrückter Fehler würde die Bedeutung des Kontexts verändern.",
+    "methodProfile": {
+      "signature": "@contextmanager\ndef manager(): … yield wert …",
+      "parameters": [
+        [
+          "wert",
+          "Im with-Block bereitgestellter Wert."
+        ]
+      ],
+      "returns": "Kontextmanager.",
+      "effect": "Führt Vorbereitung und Aufräumen um einen Block herum aus."
+    },
+    "useCase": "Temporäre Zustände oder eigene Ressourcenverwaltung lesbar kapseln.",
+    "pitfall": "Der Generator muss beim normalen Eintritt genau einmal yield erreichen und danach kontrolliert enden.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "cache",
+    "category": "Funktionen",
+    "name": "functools.cache: gleiche Funktionsaufrufe wiederverwenden",
+    "introduction": "cache merkt sich Ergebnisse anhand der Argumente. Das passt zu wiederholten reinen Berechnungen mit hashbaren Argumenten.",
+    "steps": [
+      "Der erste Aufruf berechnet das Quadrat.",
+      "Der zweite Aufruf nutzt den Cache.",
+      "Die Berechnungsnachricht erscheint nur einmal."
+    ],
+    "code": "from functools import cache\n\n@cache\ndef quadrat(n):\n    print(\"Berechnung\")\n    return n * n\n\nprint(quadrat(4))\nprint(quadrat(4))",
+    "output": "Berechnung\n16\n16",
+    "choices": [
+      "Berechnung\n16\n16",
+      "Berechnung\n16\nBerechnung\n16",
+      "16\n16"
+    ],
+    "explanation": "cache hat keine automatische Größenbegrenzung. Für begrenzte Eintragszahlen ist lru_cache mit maxsize geeignet. Nicht jeder Funktionsaufruf darf wiederverwendet werden: Aktuelle Uhrzeit, Zufall oder veränderliche äußere Zustände brauchen andere Regeln.",
+    "methodProfile": {
+      "signature": "@cache; funktion.cache_clear()",
+      "parameters": [
+        [
+          "argumente",
+          "Hashbare Werte als Schlüssel des Aufrufs."
+        ]
+      ],
+      "returns": "Gespeichertes oder neu berechnetes Ergebnis.",
+      "effect": "Hält zusätzliche Ergebnisse im Speicher."
+    },
+    "useCase": "Wiederholte Teilprobleme einer reinen Berechnung effizient lösen.",
+    "pitfall": "Cache-Ergebnisse können veralten oder Speicher ansammeln; verwende Caching nur mit passender Gültigkeitsregel.",
+    "practice": {
+      "task": "Eine gecachte Funktion soll n+1 liefern. Rufe sie zweimal mit 2 auf und gib anschließend cache_info().hits aus.",
+      "hint": "Beim zweiten gleichen Aufruf gibt es einen Cache-Treffer.",
+      "code": "from functools import cache\n\n@cache\ndef plus_eins(n):\n    return n + 1\n\nplus_eins(2)\nplus_eins(2)\nprint(plus_eins.cache_info().hits)",
+      "output": "1"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "heapq",
+    "category": "Algorithmen & Datenstrukturen",
+    "name": "heapq: das kleinste Element effizient entnehmen",
+    "introduction": "Ein Min-Heap hält das kleinste Element an Position 0 bereit. Die übrige interne Liste ist dadurch noch keine vollständig sortierte Folge.",
+    "steps": [
+      "Erzeuge einen Heap aus drei Werten.",
+      "Füge 2 hinzu.",
+      "heappop entnimmt die beiden kleinsten Werte."
+    ],
+    "code": "import heapq\n\nwerte = [5, 1, 3]\nheapq.heapify(werte)\nheapq.heappush(werte, 2)\nprint(heapq.heappop(werte))\nprint(heapq.heappop(werte))",
+    "output": "1\n2",
+    "choices": [
+      "1\n2",
+      "5\n1",
+      "1\n3"
+    ],
+    "explanation": "heapify baut den Heap in O(n) auf. Push und Pop benötigen O(log n). Prioritätswarteschlangen helfen etwa bei Dijkstra mit nichtnegativen Kantengewichten; eine vollständige Dijkstra-Implementierung benötigt zusätzlich Distanzregeln und Besuchslogik.",
+    "methodProfile": {
+      "signature": "heapq.heapify(liste); heapq.heappush(heap, wert); heapq.heappop(heap)",
+      "parameters": [
+        [
+          "heap",
+          "Liste, die bereits die Heap-Regel erfüllt."
+        ],
+        [
+          "wert",
+          "Vergleichbarer neuer Eintrag."
+        ]
+      ],
+      "returns": "heappop liefert das kleinste Element; Aufbau und Push liefern None.",
+      "effect": "Verändert die Heap-Liste."
+    },
+    "useCase": "Aufträge nach Priorität oder Suchzustände nach bisheriger Entfernung verarbeiten.",
+    "pitfall": "Entnimm über heappop; das Durchlaufen der internen Liste ergibt keine vollständige Sortierung.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  },
+  {
+    "id": "asyncio",
+    "category": "Imports & Pakete",
+    "name": "asyncio.gather(): mehrere Coroutinen koordinieren",
+    "introduction": "asyncio koordiniert kooperative asynchrone Arbeit. Eine Coroutine gibt bei await die Kontrolle ab; das erzeugt nicht automatisch parallele CPU-Ausführung.",
+    "steps": [
+      "Jede Coroutine wartet hier kooperativ einmal.",
+      "gather sammelt beide Ergebnisse.",
+      "Die Ergebnisreihenfolge folgt den übergebenen Aufrufen."
+    ],
+    "code": "import asyncio\n\nasync def doppelt(n):\n    await asyncio.sleep(0)\n    return n * 2\n\nasync def main():\n    print(await asyncio.gather(doppelt(3), doppelt(4)))\n\nasyncio.run(main())",
+    "output": "[6, 8]",
+    "choices": [
+      "[6, 8]",
+      "[8, 6]",
+      "None"
+    ],
+    "explanation": "asyncio.run ist ein typischer Einstieg eines eigenständigen Skripts. In einer bereits laufenden Event Loop, etwa manchen Notebooks, wird stattdessen passend await verwendet. Blockierendes time.sleep würde die Event Loop aufhalten.",
+    "methodProfile": {
+      "signature": "await asyncio.gather(*coroutinen)",
+      "parameters": [
+        [
+          "coroutinen",
+          "Gemeinsam zu koordinierende asynchrone Aufrufe."
+        ]
+      ],
+      "returns": "Ergebnisliste in Eingabereihenfolge; Fehler müssen behandelt werden.",
+      "effect": "Plant Aufgaben innerhalb einer Event Loop."
+    },
+    "useCase": "Viele wartende I/O-Aufgaben koordinieren, ohne pro Aufgabe einen eigenen Thread zu starten.",
+    "pitfall": "async macht rechenintensiven Code nicht automatisch schneller und blockierende Funktionen nicht automatisch nichtblockierend.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-log-report",
+    "projectTitle": "Logdateien auswerten"
+  }
+]

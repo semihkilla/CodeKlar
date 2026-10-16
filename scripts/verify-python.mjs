@@ -55,5 +55,19 @@ try {
   require(await readFile(join(maze, 'maps/einfach.txt'), 'utf8') === original, 'Maze input changed');
   try { await run(['maze.py', 'maps/gesperrt.txt'], { cwd: maze }); throw new Error('Unreachable map accepted'); }
   catch (error) { require(error.code === 1 && error.stdout.includes('Kein Weg'), 'Unreachable CLI result missing'); }
-  console.log('Separate-process task persistence, invalid-command preservation, real CSV export and maze CLI/export checks passed.');
+  const logs = join(root, 'python-log-report');
+  const sourceLog = await readFile(join(logs, 'beispiel.log'), 'utf8');
+  await run(['log_report.py', 'beispiel.log', '--json', 'report.json'], { cwd: logs });
+  const logReport = JSON.parse(await readFile(join(logs, 'report.json'), 'utf8'));
+  require(logReport.count === 3 && logReport.mean_ms === 40 && logReport.first_utc === '2026-01-02T10:00:00+00:00', 'Log report statistics/UTC failed');
+  const filtered = await run(['log_report.py', 'beispiel.log', '--level', 'ERROR'], { cwd: logs });
+  require(filtered.stdout.includes('Ausgewertete Einträge: 1') && filtered.stdout.includes('60.00 ms'), 'Log report filter failed');
+  try { await run(['log_report.py', 'mit_fehler.log'], { cwd: logs }); throw new Error('Bad log accepted'); }
+  catch (error) { require(error.code === 1 && error.stderr.includes('Zeile 4'), 'Strict log failure missing'); }
+  const skipped = await run(['log_report.py', 'mit_fehler.log', '--skip-invalid'], { cwd: logs });
+  require(skipped.stdout.includes('Ausgewertete Einträge: 3') && skipped.stdout.includes('Ungültige Zeilen: 1'), 'Skip-invalid result failed');
+  try { await run(['log_report.py', 'beispiel.log', '--json', 'beispiel.log'], { cwd: logs }); throw new Error('Log overwrite accepted'); }
+  catch (error) { require(error.code === 1 && error.stderr.includes('Fehler:'), 'Log export refusal missing'); }
+  require(await readFile(join(logs, 'beispiel.log'), 'utf8') === sourceLog, 'Log input changed');
+  console.log('Separate-process persistence, CSV, maze and log parsing/filter/UTC/export checks passed.');
 } finally { await rm(root, { recursive: true, force: true }); }

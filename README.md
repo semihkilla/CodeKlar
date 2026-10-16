@@ -761,3 +761,35 @@ BFS benötigt O(V+E) Zeit und O(V) zusätzlichen Suchspeicher und setzt für min
 Die zwölf Labyrinth-Testmethoden prüfen unter anderem Randgrenzen ohne negative Indexumklappung, Umwege, unlösbare Karten, Zyklen, Größenregeln, deterministische Auswahl, Export und Fehlerfälle. Alle 16 Wandbelegungen einer 2×3-Karte werden mit einer unabhängig implementierten Distanzrelaxation verglichen. `npm run test:python` prüft jetzt alle 72 Beispielprogramme und 25 Übungslösungen sowie 32 Testmethoden über die drei neuen Python-Projekte. Zusätzlich werden Terminalprogramme als getrennte Prozesse gestartet: Aufgabenpersistenz, Fehler ohne Datenänderung, CSV-Export und nun Labyrinth-Lösung/Export mit verweigertem Überschreiben. Native Verifikation: CPython 3.12.14.
 
 Unter Projekte stehen einschließlich des älteren Zahlenratespiels nun vier Python-Projektangebote zur Verfügung. Die vorhandenen Java-Inhalte und Projektangebote bleiben erreichbar. Die Produktions-Webapp wird weiterhin mit Service Worker und precache gebaut; die neuen Lektionen, Lösungen, Projektdateien und ZIP-Downloads sind nach dem ersten vollständigen Laden offline verfügbar.
+
+### Python: Zeit, Regex, Diagnose und ein vollständiger Logbericht
+
+Weitere **24 Lektionen und sieben lokale Übungen** erweitern Python auf **97 Lektionen insgesamt** und **32 eigene Programmierübungen**. Die bisherigen 72 generierten Beispiele, ihre IDs und Antwortpositionen bleiben erhalten. Die sechs Hauptbereiche bleiben bestehen; unter den Datenthemen kommen **Zahlen & Zeit** und **Reguläre Ausdrücke** hinzu.
+
+Neue Inhalte: date/timedelta, UTC und feste Offsets, strptime/strftime, total_seconds, search/fullmatch, benannte Regex-Gruppen, sub/escape, Decimal, Mittelwert/Median, defaultdict und groupby. Außerdem subTest, patch, injizierbare Uhren, logging, argparse, Umgebungsvariablen, subprocess.run, shutil.copy2, eigene Kontextmanager, functools.cache, heapq und asyncio.gather. Sieben Übungsaufgaben mit Hinweis, vollständiger Lösung und erwarteter Ausgabe begleiten unter anderem Kalenderrechnung, Regex-Validierung, Decimal, Mocks, Kindprozesse und Cache-Treffer.
+
+**Projekte → Python: Logdateien auswerten** verbindet diese Bausteine. Es enthält `log_report.py`, `test_log_report.py`, zwei Beispieldateien und `BAUPLAN.md`. Das bewusst festgelegte Lernformat lautet:
+
+```text
+2026-01-02T12:00:00+02:00 | INFO | 20 | Start
+2026-01-02T10:00:01Z | WARN | 40 | Langsame Antwort
+2026-01-02T10:00:02Z | ERROR | 60 | Grüße: Datei fehlt
+```
+
+Benannte Regex-Gruppen zerlegen die Zeile. Kalenderprüfung, Offsetregeln und Dauergrenzen prüfen ihre Bedeutung. Die dataclass `Entry` enthält UTC-Zeitpunkt, Level, Dauer und Nachricht. Counter/mean erzeugen Anzahl, Levelhäufigkeiten und Dauerstatistiken; Zeitgrenzen werden unabhängig von der Dateireihenfolge bestimmt. Leere Auswahlen haben `null` statt erfundener Mittelwerte. Das Beispiel ergibt drei Einträge, je einen pro Level und eine mittlere Dauer von 40 ms.
+
+Start im entpackten Projektordner mit Python 3.10 oder neuer; unter Windows je nach Installation `py` oder `python`. Keine zusätzlichen Pakete erforderlich:
+
+```sh
+python3 -m unittest -v
+python3 log_report.py beispiel.log
+python3 log_report.py beispiel.log --level ERROR --since 2026-01-02T10:00:00Z
+python3 log_report.py beispiel.log --json bericht.json
+python3 log_report.py mit_fehler.log --skip-invalid
+```
+
+`--since` ist eine inklusive Zeitgrenze mit explizitem Offset oder Z. `--level` wählt genau den angegebenen Level. Standardmäßig bricht eine ungültige Zeile mit einer Zeilennummer ab. `--skip-invalid` verarbeitet gültige Zeilen weiter und dokumentiert verworfene Zeilen; leere Zeilen werden ignoriert. Die Fehlerzahl bezieht sich auf die gesamte Eingabe vor den Filtern. Erlaubt sind INFO/WARN/ERROR, 0 bis 600000 ms, nichtleere Nachrichten, höchstens 1 MB Eingabe und 2048 Zeichen pro gelesener Zeile. Ortszeitzonen mit Sommerzeitregeln werden nicht geraten. `--json` erzeugt ausschließlich neue Dateien; ein vorhandenes Ziel oder die Eingabedatei wird nicht überschrieben. Ein Schreibfehler kann eine unvollständige neu angelegte Exportdatei hinterlassen, ersetzt aber keine vorhandene Datei.
+
+Zwölf neue Testmethoden prüfen Felder, UTF-8, UTC-Gleichheit, ungültige Kalender-/Offsetangaben, Level/Dauer, leere Auswertungen, nicht sortierte Zeiten, inklusive Filtergrenzen, striktes/überspringendes Einlesen, JSON, Dateigrenzen und Überschreibschutz. Der Python-Prüfer führt zusätzlich das reale Terminalprogramm als getrennte Prozesse aus und prüft Statistik, UTC, Filter, Fehler in Zeile 4, Skip-Modus sowie erhaltene Eingaben bei gescheitertem Export. Insgesamt laufen jetzt **96 Beispielprogramme, 32 Übungslösungen und 44 Projekt-Testmethoden** mit CPython 3.12.14. Einschließlich des älteren Zahlenratespiels gibt es fünf Python-Projektangebote.
+
+Der Produktionsbuild legt die drei Python-Curriculum-JSON-Dateien nun gemeinsam in einen eigenen `python-curriculum`-Chunk. Das hält den wachsenden Hauptcode unter dem bestehenden Service-Worker-Limit pro Datei, ohne dessen Grenze zu erhöhen. Beide Dateien bleiben Teil des Precache; die Anwendung lädt weiterhin alle Lerninhalte vollständig und bietet sie nach dem ersten Laden offline an. Mobilansicht, Wissensantworten, gespeicherter Fortschritt, Projektdateien und ZIP-Downloads werden im Browser geprüft. Python-Programme und Kindprozesse laufen weiterhin lokal auf dem Computer, nicht im Browser.

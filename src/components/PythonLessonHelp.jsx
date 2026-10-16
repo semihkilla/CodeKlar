@@ -2,6 +2,12 @@ export function PythonLessonHelp({ lesson, includePractice = true, openProject }
   const profile = lesson.methodProfile;
   const practice = includePractice ? lesson.practice : undefined;
   return <>
+    {lesson.setup && <details className="reading-more python-package-setup">
+      <summary>Lokaler Start &amp; benötigte Pakete</summary>
+      <p>{lesson.setup.description}</p>
+      <h3 className="reading-label">Linux &amp; macOS</h3><pre className="syntax-strip">{lesson.setup.commands}</pre>
+      <h3 className="reading-label">Windows</h3><pre className="syntax-strip">{lesson.setup.windowsCommands}</pre>
+    </details>}
     {includePractice && lesson.projectId && openProject && <details className="reading-more python-project-help">
       <summary>Von der Idee zum eigenen Programm</summary>
       <p>Das vollständige Projekt verbindet Eingaben, Daten, Verarbeitung und Ausgabe. Im ZIP findest du Quellcode, Startanleitung und Tests. Starte es mit Python auf deinem Computer.</p>

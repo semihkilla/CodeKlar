@@ -6,7 +6,7 @@ const groups = {
     ["functions", "Funktionen", ["Funktionen"]],
     ["objects", "Klassen & Datenmodelle", ["Klassen & Datenmodelle"]],
     ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate", "HTTP & APIs", "SQLite & Transaktionen"]],
-    ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen", "Nebenläufigkeit"]],
+    ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Umgebungen & Installation", "Externe Bibliotheken", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen", "Nebenläufigkeit"]],
   ],
   java: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Methoden"]],

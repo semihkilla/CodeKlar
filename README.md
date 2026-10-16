@@ -832,3 +832,39 @@ Die Lernansicht orientiert sich am gewählten Mint-Konzept: kompakte mobile Navi
 Die fünf Akzentfarben sind jeweils in heller und dunkler Darstellung geprüft: Text, Sekundärtext, Akzentbeschriftung und Text auf Primärschaltflächen erreichen mindestens 4,5:1 Kontrast. Die Design-Radiogruppen unterstützen Pfeiltasten sowie Pos1/Ende. Code-Editor und nachgeladene Projekt-, Lernrunden- und Bauplan-Codeflächen verwenden ebenfalls gemeinsame Farbvariablen. Auf kleinen Bildschirmen bleibt der Speicherstatus als Punkt mit zugänglicher Beschriftung und Tooltip vorhanden.
 
 Browserprüfung mit Chromium und Playwright: zehn UI-Prüfungen für Darstellung, Kontraste, Tastaturbedienung, Speicherung, Systemmodus, blockierten Speicher, Lernpfad, Auswahlfenster, Aufgaben, Referenz und Projekte. Viewports: 320, 390, 768 und 1505 Pixel. Zusätzlich sind Produktionsbuild und vier PWA-Prüfungen abgedeckt, darunter Hell-/Dunkelwechsel und gespeicherte Farben nach einem Offline-Neuladen sowie Offline-Projektdateien und ZIPs. Andere Browser und echte iOS-/Android-Geräte wurden in dieser Änderung nicht separat geprüft.
+
+### Python-Packages: eigene Module, Installation und echte externe Bibliotheken
+
+**24 neue Lektionen und sieben Programmierübungen** erweitern Python auf **145 Lektionen insgesamt** und **44 lokale Übungen**. Die bisherigen 120 Beispielprogramme, IDs und Antwortpositionen bleiben erhalten. Die sechs Hauptbereiche bleiben bestehen. Im Bereich „Module, Tests & Algorithmen“ kommen **Umgebungen & Installation** und **Externe Bibliotheken** hinzu; „Imports & Pakete“ wird weiter vertieft.
+
+Neue Inhalte: eigene Module, reguläre Packages mit `__init__.py`, relative Imports, `__main__.py`, öffentliche Package-APIs, Modul-Cache, Importfehler, `find_spec`, tatsächlich angelegte virtuelle Umgebungen, interpretergebundenes pip, Requirements, Distributionsnamen und Metadaten, transitive Abhängigkeiten, `pip check`, pyproject/Wheel-Grundlagen und Package-Ressourcen. Standardbibliotheksbeispiele zeigen außerdem configparser, gzip und zipfile. Jinja2 wird mit Platzhaltern, Schleifen, Filtern, HTML-Autoescaping, StrictUndefined und Loadern an echten ausführbaren Beispielen erklärt.
+
+Die acht Beispiele mit externen Abhängigkeiten verwenden den festgelegten Lernstand **Jinja2 3.1.6 und MarkupSafe 3.0.2**. Eine aufklappbare Starthilfe enthält Installations- und Startbefehle für Linux/macOS und Windows. Wissensfragen und Lösungen bleiben in der Webapp offline lesbar; die erstmalige Installation der externen Python-Pakete benötigt üblicherweise Netz. Python selbst läuft lokal. Die pip-/Wheel-Befehle einzelner Grundlagenlektionen werden ausdrücklich als Befehlsbeschreibung erklärt, statt eine Installation im Browser vorzutäuschen.
+
+**Projekte → Python: Lernkarten-Package mit HTML-Export** enthält elf Dateien mit `src/lernkarten`, JSON-Beispieldaten, Template, `pyproject.toml`, Requirements, Tests und `BAUPLAN.md`. Es liest Fragen/Antworten/Themen, prüft deren Felder und Grenzen und erzeugt mit Jinja2 eine HTML-Datei mit aufklappbaren Antworten. Die mitgelieferte Vorlage wird über `importlib.resources` geladen. HTML-Daten werden maskiert, fehlende Template-Werte werden sichtbar gemeldet. Bestehende Ausgabedateien und die Eingabedatei werden nicht überschrieben.
+
+Start im entpackten Projektordner (Linux/macOS; Windows-Befehle stehen im Bauplan):
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-lock.txt
+.venv/bin/python -m pip install -e .
+.venv/bin/python -m pip check
+.venv/bin/python -m unittest -v
+.venv/bin/python -m lernkarten beispiel.json --output bericht.html
+.venv/bin/codeklar-karten beispiel.json --output zweiter-bericht.html
+```
+
+`codeklar-lernkarten` ist der Distributionsname, `lernkarten` der Importname und `codeklar-karten` der Konsolenbefehl. Der Bauplan erklärt diese Unterscheidung, editierbare Installation, Build- versus Laufzeitabhängigkeiten sowie das Bauen und Installieren eines Wheels. Die erzeugte HTML-Datei funktioniert anschließend ohne Python und ohne Netz.
+
+Native Verifikation mit CPython 3.12.14: **144 Beispielprogramme, 44 Übungslösungen und 76 Testmethoden über sechs neue Projekte** bestehen. Der Prüfer baut das neue Wheel ohne Netzwerkzugriff, installiert es in ein eigenes temporäres Ziel und startet Modul sowie Konsoleneinstieg außerhalb des Quellordners. Dabei wird auch die tatsächlich mitgelieferte Template-Datei verwendet. Die externen Abhängigkeiten und das Build-Werkzeug müssen vorher in der gewählten Prüfumgebung installiert sein; der Prüfer installiert sie nicht automatisch auf dem Rechner:
+
+```sh
+python3 -m venv /tmp/codeklar-python-check
+/tmp/codeklar-python-check/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2 setuptools==80.9.0
+CODEKLAR_PYTHON=/tmp/codeklar-python-check/bin/python npm run test:python
+```
+
+Ohne `CODEKLAR_PYTHON` verwendet der Prüfer `python3`. Die TCP-Verbindungen der vorhandenen API-Prüfungen bleiben lokal. Windows-/macOS-Laufzeiten und Python 3.10 wurden in dieser Änderung nicht separat nativ getestet.
+
+Browserprüfungen decken alle 145 Wissensfragen, Fortschritt, Lern-/Prüfungsrunden, die Starthilfe, eigene Übungen, Referenzsuche, sämtliche Projektdateien und vollständige ZIP-Inhalte ab. Das neue Projekt ist einschließlich Anleitung und Template offline erreichbar. Zusätzlich wurde der tatsächlich erzeugte HTML-Bericht im Browser bei 320, 390 und 1505 Pixeln geöffnet und das Aufklappen der Antworten geprüft. Die bestehende Hell-/Dunkelgestaltung bleibt erhalten. Einschließlich des älteren Zahlenratespiels stehen jetzt sieben Python-Projektangebote zur Verfügung.

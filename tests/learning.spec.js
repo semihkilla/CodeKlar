@@ -2445,7 +2445,7 @@ test('Java desktop expansion covers all six areas and connects complete task and
 });
 
 test('Python curriculum preserves append progress and offers six structured chapters',async()=>{
- const {pythonLessonPack}=await import('../src/pythonLessons.js');const {pythonProjects}=await import('../src/pythonProjects.js');expect(pythonLessonPack).toHaveLength(120);expect(pythonLessons).toHaveLength(121);expect(pythonLessonPack.filter(l=>l.practice)).toHaveLength(37);expect(new Set(lessons.map(l=>l.id)).size).toBe(lessons.length);const old=pythonLessons.find(l=>l.id==='python-append');expect(old.answer).toBe(2);expect(old.options).toEqual(['[1, 2, 3]','3','None']);
+ const {pythonLessonPack}=await import('../src/pythonLessons.js');const {pythonProjects}=await import('../src/pythonProjects.js');expect(pythonLessonPack).toHaveLength(144);expect(pythonLessons).toHaveLength(145);expect(pythonLessonPack.filter(l=>l.practice)).toHaveLength(44);expect(new Set(lessons.map(l=>l.id)).size).toBe(lessons.length);const old=pythonLessons.find(l=>l.id==='python-append');expect(old.answer).toBe(2);expect(old.options).toEqual(['[1, 2, 3]','3','None']);
  const groups=groupTopics('python',pythonLessons);expect(groups).toHaveLength(6);expect(groups.some(g=>g.id==='more')).toBe(false);expect(groups.flatMap(g=>g.lessons).map(l=>l.id).sort()).toEqual(pythonLessons.map(l=>l.id).sort());
  for(const l of pythonLessonPack){expect(l.guide[1]).toHaveLength(3);expect(l.options[l.answer]).toBe(l.expectedOutput);expect(new Set(l.options).size).toBe(3);expect(l.explanation.length).toBeGreaterThan(50);expect(l.methodProfile.returns).toBeTruthy();expect(pythonProjects.some(p=>p.id===l.projectId)).toBe(true);}for(const p of pythonProjects)for(const id of p.lessonIds)expect(pythonLessons.some(l=>l.id===id)).toBe(true);
 });
@@ -2454,20 +2454,20 @@ test('all Python lessons grade, persist and retain readable multiline outputs',a
  test.setTimeout(120000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await expect(page).toHaveTitle(/codeklar/i);await page.getByRole('button',{name:'Python',exact:true}).click();let category;
  for(const lesson of pythonLessons){if(category!==lesson.category){const group=groupTopics('python',pythonLessons).find(g=>g.categories.includes(lesson.category));await page.getByLabel('Hauptbereich',{exact:true}).selectOption(group.id);await page.locator('.topic-tabs').getByRole('button',{name:lesson.category,exact:true}).click();category=lesson.category;}
  await page.locator('.desktop-lesson-picker').getByRole('button',{name:lesson.name,exact:true}).click();await page.getByRole('tab',{name:'Aufgabe',exact:true}).click();await page.getByRole('radio').nth(lesson.answer).click();await page.getByRole('button',{name:'Antwort prüfen',exact:true}).click();await expect(page.locator('.quiz-feedback')).toContainText('Richtig!');await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.computer-reading-steps li')).toHaveCount(3);}
- await expect(page.getByText(`121 von 121 Aufgaben gelöst`,{exact:true})).toBeVisible();await page.reload();await page.getByRole('button',{name:'Python',exact:true}).click();await expect(page.getByText(`121 von 121 Aufgaben gelöst`,{exact:true})).toBeVisible();expect(errors).toEqual([]);
+ await expect(page.getByText(`145 von 145 Aufgaben gelöst`,{exact:true})).toBeVisible();await page.reload();await page.getByRole('button',{name:'Python',exact:true}).click();await expect(page.getByText(`145 von 145 Aufgaben gelöst`,{exact:true})).toBeVisible();expect(errors).toEqual([]);
 });
 
 test('Python mobile practice, reference contracts and complete project downloads work',async({page})=>{
  const {pythonProjects}=await import('../src/pythonProjects.js');const {unzipSync,strFromU8}=await import('fflate');const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('python');await page.getByRole('row').filter({has:page.getByText('json.dumps() und loads(): Daten austauschen',{exact:true})}).click();await page.getByRole('tab',{name:'Erklärung',exact:true}).click();await expect(page.locator('.python-api-help')).not.toHaveAttribute('open','');await expect(page.locator('.python-self-practice')).not.toHaveAttribute('open','');await page.locator('.lesson-panel').scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/codeklar-python-mobile.png'});
  await page.locator('.python-api-help > summary').click();await expect(page.locator('.python-api-help')).toContainText('loads liefert');await page.locator('.python-self-practice > summary').click();await page.getByText('Musterlösung mit erwarteter Ausgabe',{exact:true}).click();await expect(page.locator('.python-self-practice .syntax-strip').last()).toHaveText('5');
  for(const width of [320,390,768,1505]){await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
- await page.setViewportSize({width:390,height:844});await page.locator('.python-project-help > summary').click();await page.getByRole('button',{name:'Aufgabenverwaltung als Projekt öffnen →',exact:true}).click();await expect(page.getByLabel('Quellcode codeklar_tasks/__init__.py')).toContainText('Modell');await page.getByLabel('Lernbereich',{exact:true}).selectOption('python');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(6);
+ await page.setViewportSize({width:390,height:844});await page.locator('.python-project-help > summary').click();await page.getByRole('button',{name:'Aufgabenverwaltung als Projekt öffnen →',exact:true}).click();await expect(page.getByLabel('Quellcode codeklar_tasks/__init__.py')).toContainText('Modell');await page.getByLabel('Lernbereich',{exact:true}).selectOption('python');await expect(page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button')).toHaveCount(7);
  for(const p of pythonProjects){await page.getByRole('navigation',{name:'Projektbeispiele'}).getByRole('button').filter({hasText:p.title}).click();const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Projekt als ZIP herunterladen',exact:true}).click();const zip=unzipSync(await readFile(await (await pending).path()));for(const[name,source]of Object.entries(p.files))expect(strFromU8(zip[name])).toBe(source);expect(strFromU8(zip['README.md'])).toContain('Python 3.10');}
  await page.getByRole('button',{name:'Nachschlagen',exact:true}).click();await page.getByLabel('Lernbereich filtern').selectOption('python');await page.getByRole('textbox').fill('dict.get');await expect(page.locator('.reference-entry')).toHaveCount(1);await page.locator('.python-api-help > summary').click();await expect(page.locator('.python-api-help')).toContainText('Keine Änderung am Dictionary');await expect(page.locator('.python-self-practice')).toHaveCount(0);expect(errors).toEqual([]);
 });
 
 test('Python sessions support structured learning exams and language-specific review',async({page})=>{
- const {sessionLessons}=await import('../src/sessionBank.js');expect(sessionLessons.filter(l=>l.course==='python')).toHaveLength(121);await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Lern- & Prüfungsmodus →',exact:true}).click();await page.getByLabel('Lernbereich der Runde').selectOption('python');await expect(page.getByLabel('Kapitel der Runde').locator('option')).toHaveCount(7);await page.getByLabel('Kapitel der Runde').selectOption('data');await page.getByLabel('Fragenzahl').selectOption('5');await page.getByRole('button',{name:'Runde starten',exact:true}).click();const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-study-session-v1')).session);const allowed=groupTopics('python',pythonLessons).find(g=>g.id==='data').lessons.map(l=>l.id);expect(session.items.every(i=>allowed.includes(i.id))).toBe(true);await expect(page.locator('vite-error-overlay')).toHaveCount(0);
+ const {sessionLessons}=await import('../src/sessionBank.js');expect(sessionLessons.filter(l=>l.course==='python')).toHaveLength(145);await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Übungen',exact:true}).click();await page.getByRole('button',{name:'Lern- & Prüfungsmodus →',exact:true}).click();await page.getByLabel('Lernbereich der Runde').selectOption('python');await expect(page.getByLabel('Kapitel der Runde').locator('option')).toHaveCount(7);await page.getByLabel('Kapitel der Runde').selectOption('data');await page.getByLabel('Fragenzahl').selectOption('5');await page.getByRole('button',{name:'Runde starten',exact:true}).click();const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('codeklar-study-session-v1')).session);const allowed=groupTopics('python',pythonLessons).find(g=>g.id==='data').lessons.map(l=>l.id);expect(session.items.every(i=>allowed.includes(i.id))).toBe(true);await expect(page.locator('vite-error-overlay')).toHaveCount(0);
 });
 
 test('Python advanced material preserves old answers and exposes the maze source on mobile',async({page})=>{
@@ -2599,4 +2599,58 @@ test('appearance keeps legacy colors and works when design storage is blocked', 
   await page.getByRole('radio', { name: 'Hell', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.getByText('Dein Design gilt für diese Sitzung', { exact: false })).toBeVisible();
+});
+
+test('Python packages explain real dependencies and open a complete installable project', async ({ page }) => {
+  const { default: additions } = await import('../src/pythonPackageCurriculum.json', { with: { type: 'json' } });
+  const { pythonLessonPack } = await import('../src/pythonLessons.js');
+  const { pythonPackageProjects } = await import('../src/pythonPackageProjects.js');
+  expect(additions).toHaveLength(24);
+  expect(additions.filter(row => row.practice)).toHaveLength(7);
+  const previous = (await Promise.all(['pythonCurriculum', 'pythonFurtherCurriculum', 'pythonNextCurriculum', 'pythonWebCurriculum'].map(name => import(`../src/${name}.json`, { with: { type: 'json' } })))).flatMap(module => module.default);
+  for (const [index, row] of previous.entries()) {
+    expect(pythonLessonPack[index].id).toBe(`python-${row.id}`);
+    expect(pythonLessonPack[index].answer).toBe(index % 3);
+    expect(pythonLessonPack[index].example).toBe(row.code);
+  }
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/');
+  await page.getByLabel('Lernbereich wählen', { exact: true }).selectOption('python');
+  await page.getByLabel('Hauptbereich', { exact: true }).selectOption('tools');
+  await page.getByRole('button', { name: 'Thema wählen', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Thema wählen', exact: true }).getByRole('button', { name: 'Externe Bibliotheken', exact: true }).click();
+  await expect(page.locator('.lesson-panel h2')).toContainText('Jinja2');
+  await page.locator('.python-package-setup > summary').click();
+  await expect(page.locator('.python-package-setup')).toContainText('Jinja2==3.1.6');
+  await expect(page.locator('.python-package-setup')).toContainText('.venv\\Scripts\\python.exe');
+  await page.locator('.python-self-practice > summary').click();
+  await page.getByText('Musterlösung mit erwarteter Ausgabe', { exact: true }).click();
+  await expect(page.locator('.python-self-practice .syntax-strip').last()).toHaveText('Punkte: 7');
+  for (const width of [320, 390, 768, 1505]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('.lesson-panel').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: '/tmp/codeklar-python-packages-mobile.png', animations: 'disabled' });
+  await page.locator('.python-project-help > summary').click();
+  await page.getByRole('button', { name: 'Lernkarten-Package mit HTML-Export als Projekt öffnen →', exact: true }).click();
+  await page.getByRole('button', { name: 'pyproject.toml', exact: true }).click();
+  await expect(page.getByLabel('Quellcode pyproject.toml')).toContainText('[project.scripts]');
+  await page.getByRole('button', { name: 'src/lernkarten/templates/site.html', exact: true }).click();
+  await expect(page.getByLabel('Quellcode src/lernkarten/templates/site.html')).toContainText('{% for card in cards %}');
+  const pending = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Projekt als ZIP herunterladen', exact: true }).click();
+  const download = await pending;
+  expect(download.suggestedFilename()).toBe('codeklar-python-package-cards.zip');
+  const { unzipSync, strFromU8 } = await import('fflate');
+  const zip = unzipSync(await readFile(await download.path()));
+  for (const [name, code] of Object.entries(pythonPackageProjects[0].files)) expect(strFromU8(zip[name])).toBe(code);
+  expect(strFromU8(zip['BAUPLAN.md'])).toContain('Windows');
+  await page.getByRole('button', { name: 'Nachschlagen', exact: true }).click();
+  await page.getByLabel('Lernbereich filtern').selectOption('python');
+  await page.getByRole('textbox').fill('StrictUndefined');
+  await expect(page.locator('.reference-entry').filter({ hasText: 'StrictUndefined:' })).toBeVisible();
+  await expect(page.locator('vite-error-overlay')).toHaveCount(0);
+  expect(errors).toEqual([]);
 });

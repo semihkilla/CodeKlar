@@ -1,0 +1,1012 @@
+[
+  {
+    "id": "own-module",
+    "category": "Imports & Pakete",
+    "name": "Eigene Module: eine Funktion aus einer Datei importieren",
+    "introduction": "Ein Modul ist hier eine Python-Datei. Der Dateiname wird zum Importnamen; die Dateiendung gehört nicht in den import.",
+    "steps": [
+      "Das Beispiel legt werkzeug.py in einem temporären Ordner an.",
+      "Der Ordner wird für diese Demonstration zum Suchpfad ergänzt.",
+      "Die importierte Funktion rechnet mit den übergebenen Werten."
+    ],
+    "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'werkzeug.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'werkzeug.py').write_text('def doppelt(n):\\n    return n * 2\\n', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        from werkzeug import doppelt\n        print(doppelt(7))\n    finally:\n        sys.path.remove(directory)",
+    "output": "14",
+    "choices": [
+      "14",
+      "7",
+      "werkzeug.doppelt"
+    ],
+    "explanation": "In einem echten kleinen Projekt liegen main.py und werkzeug.py nebeneinander; dann ist das manuelle sys.path.insert nicht erforderlich. Der zusätzliche Suchpfad dient hier nur dazu, mehrere Dateien in einem einzelnen ausführbaren Lernbeispiel aufzubauen.",
+    "methodProfile": {
+      "signature": "from werkzeug import doppelt",
+      "parameters": [
+        [
+          "doppelt",
+          "Name einer Funktion im Modul."
+        ]
+      ],
+      "returns": "Die Funktion wird an einen Namen gebunden; ihr Aufruf liefert eine Zahl.",
+      "effect": "Beim ersten Import wird Modulcode ausgeführt."
+    },
+    "useCase": "Eine Rechenregel in einer eigenen Datei wiederverwenden.",
+    "pitfall": "Dateien wie json.py oder random.py können echte Bibliotheken verdecken.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "package-init",
+    "category": "Imports & Pakete",
+    "name": "__init__.py: aus einem Ordner ein reguläres Package machen",
+    "introduction": "Ein reguläres Package enthält eine __init__.py. Unterdateien können dann über einen qualifizierten Namen importiert werden.",
+    "steps": [
+      "Erzeuge den Ordner lernpaket samt __init__.py.",
+      "preise.py enthält die Rechenregel.",
+      "Importiere gezielt aus lernpaket.preise."
+    ],
+    "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernpaket/__init__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernpaket/__init__.py').write_text('', encoding=\"utf-8\")\n    (root / 'lernpaket/preise.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernpaket/preise.py').write_text('def brutto(netto):\\n    return netto * 2\\n', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        from lernpaket.preise import brutto\n        print(brutto(6))\n    finally:\n        sys.path.remove(directory)",
+    "output": "12",
+    "choices": [
+      "12",
+      "6",
+      "lernpaket.preise"
+    ],
+    "explanation": "Das Beispiel verwendet absichtlich eine einfache Verdopplung statt einer Steuerberechnung. Es gibt auch Namespace-Packages ohne __init__.py; für dieses eigene Lernpackage verwenden wir die klare reguläre Struktur.",
+    "methodProfile": {
+      "signature": "from package.modul import name",
+      "parameters": [
+        [
+          "package",
+          "Package-Ordner."
+        ],
+        [
+          "modul",
+          "Python-Datei innerhalb des Packages."
+        ]
+      ],
+      "returns": "Importierter Name.",
+      "effect": "Initialisiert beim ersten Import das Package und das Modul."
+    },
+    "useCase": "Funktionen nach fachlichen Aufgaben statt in einer riesigen Datei sortieren.",
+    "pitfall": "Ein Package-Ordner ist nicht dasselbe wie eine ZIP-Datei oder eine installierte Distribution.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "relative-import",
+    "category": "Imports & Pakete",
+    "name": "Relative Imports: der Punkt meint das eigene Package",
+    "introduction": "from .model import name bezieht sich auf das aktuelle Package. Der Punkt ist kein Betriebssystempfad.",
+    "steps": [
+      "model.py enthält den Datenwert.",
+      "api.py importiert ihn mit einem führenden Punkt.",
+      "Von außen wird lernrel.api verwendet."
+    ],
+    "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernrel/__init__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernrel/__init__.py').write_text('', encoding=\"utf-8\")\n    (root / 'lernrel/model.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernrel/model.py').write_text('BASIS = 4\\n', encoding=\"utf-8\")\n    (root / 'lernrel/api.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernrel/api.py').write_text('from .model import BASIS\\ndef ergebnis():\\n    return BASIS + 3\\n', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        from lernrel.api import ergebnis\n        print(ergebnis())\n    finally:\n        sys.path.remove(directory)",
+    "output": "7",
+    "choices": [
+      "7",
+      "4",
+      "3"
+    ],
+    "explanation": "Relative Imports brauchen einen Package-Kontext. Starte eine Package-Anwendung mit python -m paket und nicht die innere Datei direkt per Dateipfad. Sonst kann attempted relative import with no known parent package entstehen.",
+    "methodProfile": {
+      "signature": "from .model import BASIS",
+      "parameters": [
+        [
+          "Punkt",
+          "Aktuelles Package."
+        ]
+      ],
+      "returns": "Bindet den importierten Namen.",
+      "effect": "Importiert das benötigte Geschwistermodul."
+    },
+    "useCase": "Modell, Dateizugriff und Oberfläche innerhalb eines Packages trennen.",
+    "pitfall": "python paket/api.py und python -m paket.api schaffen nicht denselben Importkontext.",
+    "practice": {
+      "task": "Lege ein Package lernsumme an. basis.py enthält WERT = 10, api.py importiert WERT relativ und liefert WERT + 5.",
+      "hint": "Der relative Import gehört in api.py, der äußere Aufruf importiert aus lernsumme.api.",
+      "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernsumme/__init__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernsumme/__init__.py').write_text('', encoding=\"utf-8\")\n    (root / 'lernsumme/basis.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernsumme/basis.py').write_text('WERT = 10\\n', encoding=\"utf-8\")\n    (root / 'lernsumme/api.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernsumme/api.py').write_text('from .basis import WERT\\ndef plus():\\n    return WERT + 5\\n', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        from lernsumme.api import plus\n        print(plus())\n    finally:\n        sys.path.remove(directory)",
+      "output": "15"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "package-main",
+    "category": "Imports & Pakete",
+    "name": "__main__.py: ein Package mit -m starten",
+    "introduction": "python -m paket führt dessen __main__.py aus. Diese Datei kann eine kleine Startfunktion aufrufen, während die Logik in anderen Modulen bleibt.",
+    "steps": [
+      "Das Package enthält eine cli.py mit main.",
+      "__main__.py ruft diese Funktion auf.",
+      "runpy führt das vorbereitete Package hier im selben Prozess als __main__ aus."
+    ],
+    "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernstart/__init__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernstart/__init__.py').write_text('', encoding=\"utf-8\")\n    (root / 'lernstart/cli.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernstart/cli.py').write_text('def main():\\n    print(\"Paket gestartet\")\\n', encoding=\"utf-8\")\n    (root / 'lernstart/__main__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernstart/__main__.py').write_text('from .cli import main\\nmain()\\n', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        import runpy\n        runpy.run_module(\"lernstart\", run_name=\"__main__\")\n    finally:\n        sys.path.remove(directory)",
+    "output": "Paket gestartet",
+    "choices": [
+      "Paket gestartet",
+      "__main__",
+      "cli.main"
+    ],
+    "explanation": "Für den normalen Terminalstart verwendest du python -m lernstart. runpy ist hier das Werkzeug, um denselben Einstieg im einzelnen Lernprogramm zu demonstrieren. Im Projekt wird main zusätzlich als installierter Konsolenbefehl angeboten.",
+    "methodProfile": {
+      "signature": "python -m paket; runpy.run_module(name, run_name=\"__main__\")",
+      "parameters": [
+        [
+          "name",
+          "Importierbarer Modul- oder Packagename."
+        ]
+      ],
+      "returns": "run_module liefert ein Namespace-Dictionary; die Beispielausgabe entsteht in main.",
+      "effect": "Führt den Startcode aus."
+    },
+    "useCase": "Ein Kommandozeilenprogramm klar vom wiederverwendbaren Modell trennen.",
+    "pitfall": "Code in __init__.py sollte nicht bei jedem normalen Import gleich das komplette Programm starten.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "package-public-api",
+    "category": "Imports & Pakete",
+    "name": "Öffentliche API: gezielt aus __init__.py exportieren",
+    "introduction": "Ein Package kann ausgewählte Namen aus Untermodulen weiterreichen. Nutzer müssen dann nicht jede interne Datei kennen.",
+    "steps": [
+      "regeln.py enthält die Funktion.",
+      "__init__.py importiert sie relativ.",
+      "Von außen genügt from lernapi import preis."
+    ],
+    "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernapi/__init__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernapi/__init__.py').write_text('from .regeln import preis\\n__all__ = [\"preis\"]\\n', encoding=\"utf-8\")\n    (root / 'lernapi/regeln.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernapi/regeln.py').write_text('def preis(anzahl):\\n    return anzahl * 3\\n', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        from lernapi import preis\n        print(preis(4))\n    finally:\n        sys.path.remove(directory)",
+    "output": "12",
+    "choices": [
+      "12",
+      "4",
+      "preis"
+    ],
+    "explanation": "__all__ steuert insbesondere, welche Namen ein Sternimport exportieren soll. Es ist keine Zugriffssperre. Die öffentliche API ist eine bewusste Vereinbarung; explizite Imports bleiben leichter nachvollziehbar als import *.",
+    "methodProfile": {
+      "signature": "from .regeln import preis; __all__ = [\"preis\"]",
+      "parameters": [
+        [
+          "__all__",
+          "Liste der exportierten Namen."
+        ]
+      ],
+      "returns": "Der importierte Funktionsname.",
+      "effect": "Bindet ausgewählte Namen im Package-Namespace."
+    },
+    "useCase": "Interne Dateien später ändern, ohne jeden Aufrufer umzuschreiben.",
+    "pitfall": "Ein Unterstrich oder __all__ macht Python-Namen nicht geheim oder unzugänglich.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "import-cache",
+    "category": "Imports & Pakete",
+    "name": "Import-Cache: dasselbe Modul wird wiederverwendet",
+    "introduction": "Python speichert geladene Module in sys.modules. Ein zweiter normaler Import benutzt normalerweise dasselbe Modulobjekt.",
+    "steps": [
+      "zustand.py legt eine Liste an.",
+      "Nach dem ersten Import wird ein Eintrag ergänzt.",
+      "Der zweite Import sieht dieselbe Liste."
+    ],
+    "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernzustand.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernzustand.py').write_text('werte = []\\n', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        import lernzustand\n        lernzustand.werte.append(3)\n        import lernzustand as nochmal\n        print(nochmal.werte)\n        print(lernzustand is nochmal)\n    finally:\n        sys.path.remove(directory)",
+    "output": "[3]\nTrue",
+    "choices": [
+      "[3]\nTrue",
+      "[]\nFalse",
+      "[3, 3]\nTrue"
+    ],
+    "explanation": "Import ist kein Funktionsaufruf, der bei jedem Mal eine neue Instanz erzeugt. Veränderlicher Modulzustand kann Aufrufer und Tests koppeln. Übergib Daten besser explizit, wenn mehrere unabhängige Zustände nötig sind.",
+    "methodProfile": {
+      "signature": "sys.modules; import modul as alias",
+      "parameters": [
+        [
+          "alias",
+          "Zweiter lokaler Name für das importierte Objekt."
+        ]
+      ],
+      "returns": "Bereits geladenes Modulobjekt.",
+      "effect": "Verwendet den Modul-Cache."
+    },
+    "useCase": "Verstehen, warum zwei Dateien dieselbe Modulvariable sehen.",
+    "pitfall": "importlib.reload ist kein allgemeiner Ersatz für sauberes Zustandsmanagement.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "missing-package",
+    "category": "Imports & Pakete",
+    "name": "ModuleNotFoundError: der richtige Interpreter zählt",
+    "introduction": "Ein fehlgeschlagener Import kann bedeuten, dass ein Paket im verwendeten Interpreter nicht installiert oder der Importname falsch ist.",
+    "steps": [
+      "Versuche einen absichtlich nicht vorhandenen Lernmodulnamen zu importieren.",
+      "Fange genau ModuleNotFoundError ab.",
+      "error.name nennt hier das fehlende Modul."
+    ],
+    "code": "import importlib\n\ntry:\n    importlib.import_module(\"codeklar_absichtlich_fehlend_48271\")\nexcept ModuleNotFoundError as error:\n    print(error.name)",
+    "output": "codeklar_absichtlich_fehlend_48271",
+    "choices": [
+      "codeklar_absichtlich_fehlend_48271",
+      "None",
+      "ImportError"
+    ],
+    "explanation": "Prüfe zuerst Tippfehler und den tatsächlichen Interpreter. Nutze dessen python -m pip show distributionsname. Eine ImportError-Ausnahme kann auch innerhalb eines vorhandenen Pakets entstehen; nicht jeder Importfehler wird durch blindes Neuinstallieren behoben.",
+    "methodProfile": {
+      "signature": "importlib.import_module(name)",
+      "parameters": [
+        [
+          "name",
+          "Importname als String."
+        ]
+      ],
+      "returns": "Modulobjekt oder Import-Ausnahme.",
+      "effect": "Kann Modulcode laden und ausführen."
+    },
+    "useCase": "Einen Startfehler systematisch statt mit zufälligen pip-Befehlen untersuchen.",
+    "pitfall": "Distributionsname und Importname können verschieden sein, etwa Jinja2 und jinja2.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "import-spec",
+    "category": "Imports & Pakete",
+    "name": "find_spec(): ein Modul finden, ohne es direkt aufzurufen",
+    "introduction": "find_spec beschreibt, wie Python ein Modul finden würde. Das ist eine Suchhilfe und kein Beweis, dass seine spätere Initialisierung gelingt.",
+    "steps": [
+      "Suche das Standardbibliotheksmodul json.",
+      "Prüfe, ob ein Spec vorhanden ist.",
+      "Lies den gefundenen Namen."
+    ],
+    "code": "from importlib.util import find_spec\n\nspec = find_spec(\"json\")\nprint(spec is not None)\nprint(spec.name)",
+    "output": "True\njson",
+    "choices": [
+      "True\njson",
+      "False\njson",
+      "True\nJSON"
+    ],
+    "explanation": "Bei Untermodulen kann find_spec das übergeordnete Package importieren. Auch vorhandene Dateien können beim Laden scheitern. Verwende find_spec nicht als Sicherheitsprüfung für beliebige, unbekannte Plugins.",
+    "methodProfile": {
+      "signature": "find_spec(name)",
+      "parameters": [
+        [
+          "name",
+          "Vollständiger Importname."
+        ]
+      ],
+      "returns": "ModuleSpec oder None; Suchfehler sind möglich.",
+      "effect": "Sucht über das Importsystem."
+    },
+    "useCase": "Optionale Funktionen abhängig von verfügbaren Modulen anbieten.",
+    "pitfall": "Ein gefundenes Spec sagt nichts über die fachliche Eignung oder Vertrauenswürdigkeit eines Pakets.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "venv-create",
+    "category": "Umgebungen & Installation",
+    "name": "venv wirklich anlegen: ein eigener Python-Kontext",
+    "introduction": "Eine virtuelle Umgebung trennt installierte Projektpakete. Dieses Beispiel erzeugt eine temporäre Umgebung ohne pip und startet ihren eigenen Interpreter.",
+    "steps": [
+      "EnvBuilder legt eine isolierte Umgebung an.",
+      "Der plattformabhängige Python-Pfad wird bestimmt.",
+      "Im Kindprozess unterscheiden sich prefix und base_prefix."
+    ],
+    "code": "import os\nimport subprocess\nimport venv\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory) / \"env\"\n    venv.EnvBuilder(with_pip=False).create(root)\n    executable = root / (\"Scripts/python.exe\" if os.name == \"nt\" else \"bin/python\")\n    result = subprocess.run([str(executable), \"-c\", \"import sys; print(sys.prefix != sys.base_prefix)\"], check=True, capture_output=True, text=True, timeout=5)\n    print((root / \"pyvenv.cfg\").is_file())\n    print(result.stdout.strip())",
+    "output": "True\nTrue",
+    "choices": [
+      "True\nTrue",
+      "False\nTrue",
+      "True\nFalse"
+    ],
+    "explanation": "Für eine normale Entwicklungsumgebung verwendest du python3 -m venv .venv; dabei wird pip normalerweise mit eingerichtet. Hier spart with_pip=False bewusst Installation und Zeit. Eine Umgebung ist kein Container und schränkt Dateizugriffe nicht wie eine Sandbox ein.",
+    "methodProfile": {
+      "signature": "venv.EnvBuilder(with_pip=False).create(path)",
+      "parameters": [
+        [
+          "path",
+          "Neuer Umgebungsordner."
+        ]
+      ],
+      "returns": "create liefert None; die Umgebung liegt auf dem Dateisystem.",
+      "effect": "Erzeugt temporäre Dateien und startet einen Python-Kindprozess."
+    },
+    "useCase": "Abhängigkeiten verschiedener Projekte voneinander trennen.",
+    "pitfall": "Bei fehlender venv-Unterstützung muss die Python-Installation ergänzt werden; kopiere nicht einfach fremde .venv-Ordner.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pip-interpreter",
+    "category": "Umgebungen & Installation",
+    "name": "python -m pip: Installation an den Interpreter binden",
+    "introduction": "python -m pip startet pip mit genau diesem Python. Ein alleinstehendes pip kann zu einer anderen Installation gehören.",
+    "steps": [
+      "sys.executable bezeichnet den laufenden Interpreter.",
+      "Eine Argumentliste beschreibt den Installationsbefehl.",
+      "Das Beispiel zeigt nur die Argumente, es installiert nichts."
+    ],
+    "code": "import sys\n\ncommand = [sys.executable, \"-m\", \"pip\", \"install\", \"Jinja2==3.1.6\"]\nprint(command[1:])\nprint(bool(command[0]))",
+    "output": "['-m', 'pip', 'install', 'Jinja2==3.1.6']\nTrue",
+    "choices": [
+      "['-m', 'pip', 'install', 'Jinja2==3.1.6']\nTrue",
+      "['pip', 'install', 'Jinja2']\nTrue",
+      "['-m', 'pip', 'install', 'Jinja2==3.1.6']\nFalse"
+    ],
+    "explanation": "Die tatsächlichen Startbefehle für Linux/macOS und Windows stehen in der aufklappbaren Starthilfe. Ein erfolgreicher pip-Aufruf in irgendeiner Umgebung behebt nicht automatisch einen Importfehler im Editor mit einem anderen Interpreter.",
+    "methodProfile": {
+      "signature": "python -m pip install paket",
+      "parameters": [
+        [
+          "python",
+          "Interpreter deiner Projektumgebung."
+        ],
+        [
+          "paket",
+          "Distributionsname mit optionaler Versionsangabe."
+        ]
+      ],
+      "returns": "Der echte Terminalbefehl installiert Pakete; dieses Lernprogramm gibt nur seine Beschreibung aus.",
+      "effect": "Im Beispiel keine Installation."
+    },
+    "useCase": "Editor, Terminal und Tests auf dieselbe Umgebung ausrichten.",
+    "pitfall": "Aktivierung ist eine Komfortfunktion; der vollständige Pfad zum Umgebungs-Python funktioniert auch ohne Aktivierung.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "requirements-file",
+    "category": "Umgebungen & Installation",
+    "name": "Requirements: direkte und transitive Abhängigkeiten festhalten",
+    "introduction": "Eine Requirements-Datei ist Eingabe für pip. Exakte Versionen helfen dabei, denselben getesteten Paketstand erneut zu installieren.",
+    "steps": [
+      "Das vorbereitete Dateibeispiel enthält zwei feste Versionen.",
+      "Leere Zeilen und Kommentare werden hier übersprungen.",
+      "Lies die tatsächlich aufgeführten Paketnamen."
+    ],
+    "code": "from io import StringIO\n\nsource = StringIO(\"# Lernstand\\nJinja2==3.1.6\\nMarkupSafe==3.0.2\\n\")\nfor line in source:\n    line = line.strip()\n    if line and not line.startswith(\"#\"):\n        print(line.split(\"==\", 1)[0])",
+    "output": "Jinja2\nMarkupSafe",
+    "choices": [
+      "Jinja2\nMarkupSafe",
+      "Jinja2==3.1.6\nMarkupSafe==3.0.2",
+      "Jinja2"
+    ],
+    "explanation": "Die kleine Schleife ist nur eine Anzeige für dieses feste Dateiformat, kein vollständiger Requirements-Parser. pip versteht wesentlich mehr Syntax. MarkupSafe ist hier eine transitive Abhängigkeit von Jinja2. Eine vollständig reproduzierbare Sperrdatei kann zusätzlich Plattformregeln und Hashes brauchen.",
+    "methodProfile": {
+      "signature": "python -m pip install -r requirements-lock.txt",
+      "parameters": [
+        [
+          "-r",
+          "Requirements-Datei einlesen."
+        ]
+      ],
+      "returns": "Der echte pip-Befehl installiert die aufgeführten Abhängigkeiten.",
+      "effect": "Das Beispiel liest vorbereiteten Text."
+    },
+    "useCase": "Ein Projekt auf einem zweiten Rechner mit dokumentiertem Paketstand aufsetzen.",
+    "pitfall": "pip freeze zeigt den installierten Umgebungsstand, nicht automatisch nur die direkten Abhängigkeiten deines Projekts.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "distribution-metadata",
+    "category": "Umgebungen & Installation",
+    "name": "Distribution und Importname: Jinja2 heißt im Code jinja2",
+    "introduction": "Die installierbare Distribution besitzt Metadaten mit Name und Version. Der Importname muss nicht gleich geschrieben sein.",
+    "steps": [
+      "Lies die Metadaten der tatsächlich installierten Jinja2-Distribution.",
+      "Vergleiche den Namen mit dem importierten Modul.",
+      "Die Version stammt aus dem hier festgelegten Lernstand."
+    ],
+    "code": "from importlib.metadata import metadata, version\nimport jinja2\n\nprint(metadata(\"Jinja2\")[\"Name\"])\nprint(jinja2.__name__)\nprint(version(\"Jinja2\"))",
+    "output": "Jinja2\njinja2\n3.1.6",
+    "choices": [
+      "Jinja2\njinja2\n3.1.6",
+      "jinja2\nJinja2\n3.1.6",
+      "Jinja2\njinja2\n0.1.0"
+    ],
+    "explanation": "Dieses Beispiel setzt die Version aus der Starthilfe voraus. Bei einer anderen installierten Version ändert sich die letzte Ausgabe. importlib.metadata kann PackageNotFoundError auslösen, wenn die Distribution in diesem Interpreter nicht vorhanden ist.",
+    "methodProfile": {
+      "signature": "metadata(distribution); version(distribution)",
+      "parameters": [
+        [
+          "distribution",
+          "Installierter Distributionsname."
+        ]
+      ],
+      "returns": "Metadaten beziehungsweise Versionsstring.",
+      "effect": "Liest installierte Paketmetadaten."
+    },
+    "useCase": "Versionen und fehlende Abhängigkeiten bei einem Fehlerbericht nachvollziehen.",
+    "pitfall": "Nicht jedes Modul besitzt ein __version__-Attribut; Metadaten und Importname sind unterschiedliche Konzepte.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  },
+  {
+    "id": "pyproject-wheel",
+    "category": "Umgebungen & Installation",
+    "name": "pyproject.toml und Wheel: Projektbeschreibung statt Python-Code",
+    "introduction": "pyproject.toml beschreibt hier Build-System, Projektname, Abhängigkeiten und einen Konsoleneinstieg. Ein Wheel ist ein installierbares Archiv.",
+    "steps": [
+      "Das Beispiel liest einen vorbereiteten Wheel-Dateinamen.",
+      "Die Endung ist .whl.",
+      "Der Distributionsname ist nicht automatisch der Importname."
+    ],
+    "code": "from pathlib import PurePath\n\nwheel = PurePath(\"codeklar_lernkarten-0.1.0-py3-none-any.whl\")\nprint(wheel.suffix)\nprint(\"-py3-none-any\" in wheel.stem)",
+    "output": ".whl\nTrue",
+    "choices": [
+      ".whl\nTrue",
+      ".zip\nTrue",
+      ".whl\nFalse"
+    ],
+    "explanation": "Der Dateiname wird hier nur untersucht; es wird kein Wheel gebaut. Im Projekt baust du es mit python -m pip wheel --no-deps --wheel-dir dist . und installierst das entstandene Archiv. py3-none-any beschreibt hier ein reines Python-Wheel, keine Garantie, dass jedes Python oder jede Abhängigkeit kompatibel ist.",
+    "methodProfile": {
+      "signature": "python -m pip wheel --no-deps --wheel-dir dist .",
+      "parameters": [
+        [
+          "Punkt",
+          "Lokales Projekt mit pyproject.toml."
+        ],
+        [
+          "--no-deps",
+          "Keine Abhängigkeits-Wheels mitbauen."
+        ]
+      ],
+      "returns": "Der echte Befehl schreibt ein Wheel in dist.",
+      "effect": "Das Beispiel liest nur einen Dateinamen."
+    },
+    "useCase": "Ein eigenes Package außerhalb seines Quellordners installieren und verwenden.",
+    "pitfall": "Build-Abhängigkeiten wie setuptools sind nicht dasselbe wie Laufzeitabhängigkeiten wie Jinja2.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "package-resources",
+    "category": "Imports & Pakete",
+    "name": "importlib.resources: Daten im installierten Package lesen",
+    "introduction": "Mitgelieferte Templates gehören zu den Package-Ressourcen. Sie sollten nicht vom aktuellen Arbeitsordner abhängen.",
+    "steps": [
+      "Das Lernpackage enthält eine Textdatei.",
+      "files findet sie relativ zum Package.",
+      "read_text liest den Inhalt ausdrücklich als UTF-8."
+    ],
+    "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernressource/__init__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernressource/__init__.py').write_text('', encoding=\"utf-8\")\n    (root / 'lernressource/hinweis.txt').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernressource/hinweis.txt').write_text('Grüße aus dem Package', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        from importlib.resources import files\n        print(files(\"lernressource\").joinpath(\"hinweis.txt\").read_text(encoding=\"utf-8\"))\n    finally:\n        sys.path.remove(directory)",
+    "output": "Grüße aus dem Package",
+    "choices": [
+      "Grüße aus dem Package",
+      "hinweis.txt",
+      "None"
+    ],
+    "explanation": "Im echten Projekt muss die Build-Konfiguration die Datei ebenfalls in das Wheel aufnehmen. Ein funktionierender Zugriff im Quellordner beweist das noch nicht. Der native Prüfer baut und installiert das Projekt-Wheel und prüft das Template außerhalb des Quellbaums.",
+    "methodProfile": {
+      "signature": "files(package).joinpath(name).read_text(encoding=\"utf-8\")",
+      "parameters": [
+        [
+          "package",
+          "Importierbares Package."
+        ],
+        [
+          "name",
+          "Mitgelieferte Ressource."
+        ]
+      ],
+      "returns": "Dateiinhalt als String.",
+      "effect": "Liest Package-Daten ohne Abhängigkeit vom aktuellen Arbeitsordner."
+    },
+    "useCase": "HTML-Templates oder Standardkonfigurationen mit dem eigenen Programm ausliefern.",
+    "pitfall": "files liefert ein Traversable, nicht zwingend einen normalen Dateisystempfad.",
+    "practice": {
+      "task": "Liefere eine Datei standard.txt mit dem Text 42 in einem Package lernwert aus und lies sie über files.",
+      "hint": "Nutze nicht Path(\"standard.txt\"), sondern den Bezug zum Package.",
+      "code": "import sys\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as directory:\n    root = Path(directory)\n    (root / 'lernwert/__init__.py').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernwert/__init__.py').write_text('', encoding=\"utf-8\")\n    (root / 'lernwert/standard.txt').parent.mkdir(parents=True, exist_ok=True)\n    (root / 'lernwert/standard.txt').write_text('42', encoding=\"utf-8\")\n    sys.path.insert(0, directory)\n    try:\n        from importlib.resources import files\n        print(files(\"lernwert\").joinpath(\"standard.txt\").read_text(encoding=\"utf-8\"))\n    finally:\n        sys.path.remove(directory)",
+      "output": "42"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "configparser",
+    "category": "Imports & Pakete",
+    "name": "configparser: eine einfache INI-Konfiguration lesen",
+    "introduction": "configparser gehört zur Standardbibliothek und liest Abschnitte mit Schlüssel-Wert-Paaren. Werte sind zunächst Text.",
+    "steps": [
+      "Lies den Abschnitt export aus einem vorbereiteten String.",
+      "getboolean liest ja/nein-artige Werte nach definierten Regeln.",
+      "getint wandelt eine Zahl um."
+    ],
+    "code": "from configparser import ConfigParser\n\nconfig = ConfigParser()\nconfig.read_string(\"[export]\\naktiv = yes\\nlimit = 5\")\nprint(config.getboolean(\"export\", \"aktiv\"))\nprint(config.getint(\"export\", \"limit\") + 2)",
+    "output": "True\n7",
+    "choices": [
+      "True\n7",
+      "yes\n52",
+      "True\n5"
+    ],
+    "explanation": "INI ist nicht JSON oder TOML. Konvertierung kann an ungültigem Text scheitern; fehlende Abschnitte und Schlüssel brauchen eine bewusste Regel oder einen fallback. Für Geheimnisse ist eine normale Konfigurationsdatei keine automatische Schutzlösung.",
+    "methodProfile": {
+      "signature": "ConfigParser.read_string(text); getint(section, option)",
+      "parameters": [
+        [
+          "section",
+          "Abschnittsname."
+        ],
+        [
+          "option",
+          "Schlüssel innerhalb des Abschnitts."
+        ]
+      ],
+      "returns": "Typabhängig bool, int oder String.",
+      "effect": "Liest und konvertiert Konfiguration."
+    },
+    "useCase": "Eine Ausgabegröße oder optionale Funktion ohne Codeänderung einstellen.",
+    "pitfall": "Mit config[\"export\"][\"limit\"] erhältst du weiter einen String.",
+    "practice": {
+      "task": "Lies aus [app] die Zahl versuche = 3 und gib den doppelten Wert aus.",
+      "hint": "getint übernimmt die Umwandlung.",
+      "code": "from configparser import ConfigParser\n\nc = ConfigParser()\nc.read_string(\"[app]\\nversuche = 3\")\nprint(c.getint(\"app\", \"versuche\") * 2)",
+      "output": "6"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "gzip-bytes",
+    "category": "Imports & Pakete",
+    "name": "gzip: Bytes komprimieren und wiederherstellen",
+    "introduction": "gzip ist ein Standardbibliotheksmodul für komprimierte Daten. Vor der Kompression muss Text in Bytes umgewandelt werden.",
+    "steps": [
+      "Kodiere den Text als UTF-8.",
+      "Komprimiere und dekomprimiere die Bytes.",
+      "Vergleiche die wiederhergestellten Daten."
+    ],
+    "code": "import gzip\n\nraw = \"Grüße\".encode(\"utf-8\")\npacked = gzip.compress(raw)\nprint(gzip.decompress(packed).decode(\"utf-8\"))\nprint(gzip.decompress(packed) == raw)",
+    "output": "Grüße\nTrue",
+    "choices": [
+      "Grüße\nTrue",
+      "Grüße\nFalse",
+      "gzip\nTrue"
+    ],
+    "explanation": "Das Beispiel vergleicht den Inhalt statt die komprimierten Bytes, weil Metadaten und Implementierungen die genaue Archivdarstellung beeinflussen können. Kompression verschlüsselt Daten nicht. Kleine Eingaben können komprimiert sogar größer werden.",
+    "methodProfile": {
+      "signature": "gzip.compress(data); gzip.decompress(data)",
+      "parameters": [
+        [
+          "data",
+          "Bytes statt str."
+        ]
+      ],
+      "returns": "Komprimierte beziehungsweise entpackte Bytes.",
+      "effect": "Erzeugt neue Bytewerte."
+    },
+    "useCase": "Textberichte für Speicherung oder Übertragung komprimieren.",
+    "pitfall": "Unbekannte komprimierte Daten können beim Entpacken sehr groß werden; Eingabegröße allein begrenzt die entpackte Größe nicht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "zipfile-read",
+    "category": "Imports & Pakete",
+    "name": "zipfile: mehrere Dateien in einem Archiv bündeln",
+    "introduction": "zipfile gehört zur Standardbibliothek. Ein ZIP enthält mehrere benannte Einträge, die du gezielt lesen kannst.",
+    "steps": [
+      "Erzeuge ein Archiv im Arbeitsspeicher.",
+      "Schreibe eine Textdatei hinein.",
+      "Lies genau diesen bekannten Eintrag zurück."
+    ],
+    "code": "from io import BytesIO\nfrom zipfile import ZipFile\n\nbuffer = BytesIO()\nwith ZipFile(buffer, \"w\") as archive:\n    archive.writestr(\"daten/hinweis.txt\", \"Python lernen\")\nwith ZipFile(BytesIO(buffer.getvalue())) as archive:\n    print(archive.namelist()[0])\n    print(archive.read(\"daten/hinweis.txt\").decode(\"utf-8\"))",
+    "output": "daten/hinweis.txt\nPython lernen",
+    "choices": [
+      "daten/hinweis.txt\nPython lernen",
+      "hinweis.txt\nPython lernen",
+      "daten/hinweis.txt\nNone"
+    ],
+    "explanation": "Dieses Beispiel liest einen selbst erzeugten Eintrag und entpackt nichts in ein Verzeichnis. Bei fremden Archiven sind Pfade, entpackte Größen und Anzahl der Einträge gesondert zu prüfen. Ein Wheel nutzt ebenfalls das ZIP-Format, enthält aber zusätzliche vorgeschriebene Metadaten.",
+    "methodProfile": {
+      "signature": "ZipFile(stream, mode); writestr(name, text); read(name)",
+      "parameters": [
+        [
+          "stream",
+          "Datei oder geeignetes binäres Dateiobjekt."
+        ],
+        [
+          "name",
+          "Archivinterner Name."
+        ]
+      ],
+      "returns": "read liefert Bytes.",
+      "effect": "Erzeugt hier nur ein Archiv im Arbeitsspeicher."
+    },
+    "useCase": "Mehrere Exportdateien gemeinsam weitergeben.",
+    "pitfall": "Ein beliebiges ZIP wird nicht allein durch Umbenennen zu einem gültigen installierbaren Wheel.",
+    "practice": {
+      "task": "Schreibe zwei Texte in ein In-Memory-ZIP und gib die Zahl der Einträge aus.",
+      "hint": "namelist liefert alle Namen im Archiv.",
+      "code": "from io import BytesIO\nfrom zipfile import ZipFile\n\nbuffer = BytesIO()\nwith ZipFile(buffer, \"w\") as z:\n    z.writestr(\"a.txt\", \"A\")\n    z.writestr(\"b.txt\", \"B\")\n    print(len(z.namelist()))",
+      "output": "2"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export"
+  },
+  {
+    "id": "jinja-values",
+    "category": "Externe Bibliotheken",
+    "name": "Jinja2: Daten in eine Vorlage einsetzen",
+    "introduction": "Jinja2 ist ein externes Template-Package. render setzt Daten in Platzhalter ein und erzeugt daraus Text.",
+    "steps": [
+      "Erzeuge eine kleine Textvorlage.",
+      "{{ name }} ist ein Platzhalter.",
+      "render übergibt dessen Wert."
+    ],
+    "code": "from jinja2 import Environment\n\ntemplate = Environment().from_string(\"Hallo {{ name }}!\")\nprint(template.render(name=\"Semih\"))",
+    "output": "Hallo Semih!",
+    "choices": [
+      "Hallo Semih!",
+      "Hallo {{ name }}!",
+      "Hallo name!"
+    ],
+    "explanation": "Diese erste Vorlage erzeugt reinen Text. Environment aktiviert Autoescaping standardmäßig nicht. Für HTML folgt deshalb eine eigene Lektion und das Projekt verwendet select_autoescape sowie StrictUndefined.",
+    "methodProfile": {
+      "signature": "Environment().from_string(source).render(**values)",
+      "parameters": [
+        [
+          "source",
+          "Vorlagentext."
+        ],
+        [
+          "values",
+          "Benannte Werte für die Vorlage."
+        ]
+      ],
+      "returns": "Gerenderter String.",
+      "effect": "Erzeugt Text; schreibt noch keine Datei."
+    },
+    "useCase": "Lernkarten, Berichte oder Nachrichten aus Daten zusammensetzen.",
+    "pitfall": "Ein Template-Platzhalter ist kein Python-f-String; seine Syntax gehört zur Template-Sprache.",
+    "practice": {
+      "task": "Gib mit einer Jinja2-Vorlage den Text Punkte: 7 aus.",
+      "hint": "Übergib punkte als benannten Wert an render.",
+      "code": "from jinja2 import Environment\n\nt = Environment().from_string(\"Punkte: {{ punkte }}\")\nprint(t.render(punkte=7))",
+      "output": "Punkte: 7"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  },
+  {
+    "id": "jinja-loops",
+    "category": "Externe Bibliotheken",
+    "name": "Jinja2-Schleifen: eine Liste als Ausgabe darstellen",
+    "introduction": "Eine Template-Schleife erzeugt für jeden Eintrag Text. loop.index beginnt bei 1.",
+    "steps": [
+      "Übergib zwei Themen als Liste.",
+      "Die Schleife wiederholt den Inhalt.",
+      "loop.index erzeugt die sichtbare Nummer."
+    ],
+    "code": "from jinja2 import Environment\n\nt = Environment().from_string(\"{% for name in namen %}{{ loop.index }}. {{ name }};{% endfor %}\")\nprint(t.render(namen=[\"Python\", \"SQL\"]))",
+    "output": "1. Python;2. SQL;",
+    "choices": [
+      "1. Python;2. SQL;",
+      "0. Python;1. SQL;",
+      "Python;SQL;"
+    ],
+    "explanation": "Die Template-Schleife übernimmt Darstellung. Daten prüfen, sortieren und fachliche Regeln berechnen sollte normalerweise Python vor dem Rendern erledigen. Das hält Vorlagen nachvollziehbar.",
+    "methodProfile": {
+      "signature": "{% for item in items %}...{% endfor %}",
+      "parameters": [
+        [
+          "items",
+          "Iterable für die Darstellung."
+        ],
+        [
+          "loop.index",
+          "Aktuelle Position ab 1."
+        ]
+      ],
+      "returns": "Text mit wiederholten Abschnitten.",
+      "effect": "Die übergebene Liste wird nicht verändert."
+    },
+    "useCase": "Jede Lernkarte als eigenen HTML-details-Abschnitt ausgeben.",
+    "pitfall": "loop.index ist nicht der nullbasierte Listenindex; dafür existiert loop.index0.",
+    "practice": {
+      "task": "Rendere die Werte A und B mit einer Jinja2-Schleife als A;B;.",
+      "hint": "Die Schleife steht im Template, die Liste kommt als Argument von render.",
+      "code": "from jinja2 import Environment\n\nt = Environment().from_string(\"{% for x in werte %}{{ x }};{% endfor %}\")\nprint(t.render(werte=[\"A\", \"B\"]))",
+      "output": "A;B;"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  },
+  {
+    "id": "jinja-filters",
+    "category": "Externe Bibliotheken",
+    "name": "Jinja2-Filter: length, join und default",
+    "introduction": "Filter formen Werte für die Darstellung um. Sie werden nach einem senkrechten Strich aufgeschrieben.",
+    "steps": [
+      "length zählt die Themen.",
+      "join verbindet sie mit einem Trenner.",
+      "default behandelt hier einen nicht übergebenen Namen."
+    ],
+    "code": "from jinja2 import Environment\n\nt = Environment().from_string('{{ themen|length }}: {{ themen|join(\", \") }} / {{ titel|default(\"Ohne Titel\") }}')\nprint(t.render(themen=[\"Python\", \"SQL\"]))",
+    "output": "2: Python, SQL / Ohne Titel",
+    "choices": [
+      "2: Python, SQL / Ohne Titel",
+      "2: PythonSQL / None",
+      "1: Python, SQL / Ohne Titel"
+    ],
+    "explanation": "default greift ohne Zusatzargument bei Undefined. Ein vorhandener leerer String bleibt deshalb normalerweise leer; default(\"Ersatz\", true) behandelt auch falsy Werte. Das ist eine fachliche Entscheidung, keine universelle Korrektur fehlender Daten.",
+    "methodProfile": {
+      "signature": "{{ value|filter(argument) }}",
+      "parameters": [
+        [
+          "value",
+          "Zu formatierender Vorlagenwert."
+        ]
+      ],
+      "returns": "Für die Ausgabe aufbereiteter Wert.",
+      "effect": "Verändert nicht automatisch die Quelldaten."
+    },
+    "useCase": "Themenüberschrift und Anzahl eines Berichts übersichtlich darstellen.",
+    "pitfall": "Formatierung ersetzt keine Validierung verpflichtender Felder.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  },
+  {
+    "id": "jinja-autoescape",
+    "category": "Externe Bibliotheken",
+    "name": "HTML-Autoescaping: Daten bleiben Text",
+    "introduction": "HTML interpretiert spitze Klammern als Markup. Autoescaping ersetzt bedeutungsvolle Zeichen, damit normale Daten als Text ausgegeben werden.",
+    "steps": [
+      "Die Umgebung aktiviert Autoescaping für Stringvorlagen.",
+      "Der Wert enthält ein b-Tag.",
+      "Die Ausgabe zeigt maskierte Klammern."
+    ],
+    "code": "from jinja2 import Environment, select_autoescape\n\nenv = Environment(autoescape=select_autoescape(default_for_string=True))\nt = env.from_string(\"<p>{{ text }}</p>\")\nprint(t.render(text=\"<b>Lernen</b>\"))",
+    "output": "<p>&lt;b&gt;Lernen&lt;/b&gt;</p>",
+    "choices": [
+      "<p>&lt;b&gt;Lernen&lt;/b&gt;</p>",
+      "<p><b>Lernen</b></p>",
+      "&lt;p&gt;Lernen&lt;/p&gt;"
+    ],
+    "explanation": "Die p-Tags gehören zur vertrauenswürdigen Vorlage, der b-Text zu den übergebenen Daten. HTML-Escaping ist kontextabhängig und prüft beispielsweise nicht automatisch, ob eine URL erlaubt ist. Das Projekt setzt Daten nur in Textpositionen ein und markiert sie nicht als safe.",
+    "methodProfile": {
+      "signature": "Environment(autoescape=select_autoescape(default_for_string=True))",
+      "parameters": [
+        [
+          "default_for_string",
+          "Autoescaping auch für from_string-Vorlagen einschalten."
+        ]
+      ],
+      "returns": "HTML-String mit maskierten Datenwerten.",
+      "effect": "Erzeugt Text, ohne einen Browser zu starten."
+    },
+    "useCase": "Lernkarten mit spitzen Klammern und Codebeispielen korrekt anzeigen.",
+    "pitfall": "|safe kann den Schutz für einen Wert aufheben; verwende es nicht für ungeprüfte Eingaben.",
+    "practice": {
+      "task": "Rendere A & B in einer HTML-p-Vorlage mit aktiviertem Autoescaping.",
+      "hint": "Das kaufmännische Und wird zu &amp;.",
+      "code": "from jinja2 import Environment, select_autoescape\n\nenv = Environment(autoescape=select_autoescape(default_for_string=True))\nprint(env.from_string(\"<p>{{ text }}</p>\").render(text=\"A & B\"))",
+      "output": "<p>A &amp; B</p>"
+    },
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  },
+  {
+    "id": "jinja-undefined",
+    "category": "Externe Bibliotheken",
+    "name": "StrictUndefined: vergessene Template-Daten erkennen",
+    "introduction": "StrictUndefined macht fehlende Vorlagenwerte zu einem sichtbaren Fehler statt einer stillen leeren Ausgabe.",
+    "steps": [
+      "Die Vorlage erwartet frage.",
+      "render übergibt frage nicht.",
+      "Der gezielte except-Zweig zeigt die Ausnahmeart."
+    ],
+    "code": "from jinja2 import Environment, StrictUndefined, UndefinedError\n\nt = Environment(undefined=StrictUndefined).from_string(\"{{ frage }}\")\ntry:\n    t.render()\nexcept UndefinedError as error:\n    print(type(error).__name__)",
+    "output": "UndefinedError",
+    "choices": [
+      "UndefinedError",
+      "None",
+      "frage"
+    ],
+    "explanation": "Ohne StrictUndefined kann ein fehlender einfacher Wert standardmäßig leer erscheinen. Strenge Vorlagen helfen, Fehler beim Umbau des Datenmodells schnell zu erkennen. Pflichtfelder werden im Projekt trotzdem schon beim Einlesen geprüft.",
+    "methodProfile": {
+      "signature": "Environment(undefined=StrictUndefined)",
+      "parameters": [
+        [
+          "undefined",
+          "Verhalten für fehlende Werte."
+        ]
+      ],
+      "returns": "render liefert Text oder wirft bei fehlenden Daten UndefinedError.",
+      "effect": "Bricht fehlerhafte Darstellung sichtbar ab."
+    },
+    "useCase": "Tippfehler wie card.frgae statt card.question in Tests erkennen.",
+    "pitfall": "Nur die Fehlermeldung zu unterdrücken repariert den fehlenden Wert nicht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  },
+  {
+    "id": "jinja-loader",
+    "category": "Externe Bibliotheken",
+    "name": "DictLoader: Vorlagenname und Daten trennen",
+    "introduction": "Ein Loader lädt Vorlagen anhand eines Namens. DictLoader eignet sich für kleine Beispiele und kontrollierte Tests.",
+    "steps": [
+      "Der Loader enthält eine benannte Vorlage.",
+      "get_template lädt sie.",
+      "render übergibt die Daten separat."
+    ],
+    "code": "from jinja2 import Environment, DictLoader\n\nenv = Environment(loader=DictLoader({\"karte.txt\": \"Frage: {{ frage }}\"}))\nt = env.get_template(\"karte.txt\")\nprint(t.render(frage=\"Was ist Python?\"))",
+    "output": "Frage: Was ist Python?",
+    "choices": [
+      "Frage: Was ist Python?",
+      "karte.txt",
+      "Frage: {{ frage }}"
+    ],
+    "explanation": "Für Dateien gibt es unter anderem FileSystemLoader und PackageLoader. Im Projekt wird die mitgelieferte HTML-Vorlage über importlib.resources gelesen. In allen Varianten bleiben Vorlagentext und zu prüfende Nutzdaten getrennt.",
+    "methodProfile": {
+      "signature": "Environment(loader=DictLoader(mapping)).get_template(name)",
+      "parameters": [
+        [
+          "mapping",
+          "Vorlagennamen und Texte."
+        ],
+        [
+          "name",
+          "Name einer vorhandenen Vorlage."
+        ]
+      ],
+      "returns": "Template-Objekt oder TemplateNotFound.",
+      "effect": "Lädt hier Text aus einem Dictionary."
+    },
+    "useCase": "Darstellung gezielt testen, ohne von einem Arbeitsverzeichnis abhängig zu sein.",
+    "pitfall": "Eine Vorlage aus unbekannter Quelle ist ausführbare Template-Logik und nicht dasselbe wie ein normaler Nutzdatenwert.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  },
+  {
+    "id": "package-dependencies",
+    "category": "Umgebungen & Installation",
+    "name": "Abhängigkeiten prüfen: ein Paket braucht weitere Pakete",
+    "introduction": "Eine Distribution kann weitere Distributionen voraussetzen. Metadaten beschreiben diese Anforderungen; pip check prüft den installierten Zustand.",
+    "steps": [
+      "Lies die Anforderungen der installierten Jinja2-Distribution.",
+      "Suche ihren Eintrag für MarkupSafe.",
+      "Das Ergebnis bestätigt nur den Metadateneintrag, noch keinen fehlerfreien Gesamtzustand."
+    ],
+    "code": "from importlib.metadata import requires\n\ndependencies = requires(\"Jinja2\") or []\nprint(any(line.lower().startswith(\"markupsafe\") for line in dependencies))",
+    "output": "True",
+    "choices": [
+      "True",
+      "False",
+      "None"
+    ],
+    "explanation": "Für die tatsächliche Umgebungsprüfung nutzt du python -m pip check. Sie kann unvereinbare oder fehlende installierte Abhängigkeiten melden, ersetzt aber weder Funktionstests noch eine Sicherheitsprüfung. Zusätzliche Extras und Versionsmarker können Anforderungen abhängig von der Umgebung machen.",
+    "methodProfile": {
+      "signature": "requires(distribution); python -m pip check",
+      "parameters": [
+        [
+          "distribution",
+          "Installierter Distributionsname."
+        ]
+      ],
+      "returns": "requires liefert Anforderungsstrings oder None.",
+      "effect": "Liest Metadaten, ohne neue Pakete zu installieren."
+    },
+    "useCase": "Verstehen, warum pip neben Jinja2 auch MarkupSafe installiert.",
+    "pitfall": "Eine Zeile in den Metadaten beweist nicht, dass diese Abhängigkeit in passender Version tatsächlich installiert ist.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-package-cards",
+    "projectTitle": "Lernkarten-Package mit HTML-Export",
+    "setup": {
+      "description": "Lokal mit Python 3.10+ in einer eigenen Umgebung starten. Die Befehle installieren die tatsächlichen externen Bibliotheken. Die Quizfrage in CodeKlar führt keine Installation aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Jinja2==3.1.6 MarkupSafe==3.0.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "dependencies": [
+      "Jinja2==3.1.6",
+      "MarkupSafe==3.0.2"
+    ]
+  }
+]

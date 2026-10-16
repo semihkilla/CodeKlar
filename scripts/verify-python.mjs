@@ -5,10 +5,11 @@ import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { execFile, spawn } from 'node:child_process';
+const python = process.env.CODEKLAR_PYTHON || 'python3';
 const root = await mkdtemp(join(tmpdir(), 'codeklar-python-'));
 const normalized = value => value.replaceAll('\r\n', '\n').trimEnd();
-const run = (args, { input = '', cwd = root } = {}) => new Promise((resolve, reject) => {
-  const child = execFile('python3', args, { cwd, timeout: 15000, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => error ? reject(Object.assign(error, { stdout, stderr })) : resolve({ stdout, stderr }));
+const run = (args, { input = '', cwd = root, env = process.env } = {}) => new Promise((resolve, reject) => {
+  const child = execFile(python, args, { cwd, env, timeout: 15000, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => error ? reject(Object.assign(error, { stdout, stderr })) : resolve({ stdout, stderr }));
   child.stdin.on('error', error => { if (error.code !== 'EPIPE') reject(error); });
   child.stdin.end(input);
 });
@@ -29,7 +30,26 @@ try {
   for (const project of pythonProjects) {
     const cwd = join(root, project.id); await mkdir(cwd);
     for (const [name, source] of Object.entries(project.files)) { const file = join(cwd, name); await mkdir(dirname(file), { recursive: true }); await writeFile(file, source); }
-    const result = await run(project.pythonTestCommand, { cwd });
+    let env = process.env;
+    if (project.pythonWheel) {
+      const wheels = join(cwd, 'wheels'), site = join(cwd, 'installed');
+      await run(['-m', 'pip', 'wheel', '--disable-pip-version-check', '--no-build-isolation', '--no-deps', '--no-index', '--wheel-dir', wheels, '.'], { cwd });
+      const { readdir } = await import('node:fs/promises');
+      const archives = (await readdir(wheels)).filter(name => name.endsWith('.whl'));
+      require(archives.length === 1, 'Expected one package wheel');
+      await run(['-m', 'pip', 'install', '--disable-pip-version-check', '--no-deps', '--no-index', '--target', site, join(wheels, archives[0])], { cwd });
+      env = { ...process.env, PYTHONPATH: site };
+      const outside = await run(['-m', 'lernkarten', join(cwd, 'beispiel.json'), '--output', join(root, 'karten.html')], { cwd: root, env });
+      require(outside.stdout.includes('3 Karten exportiert.'), 'Installed wheel CLI failed outside source tree');
+      require((await readFile(join(root, 'karten.html'), 'utf8')).includes('Package'), 'Installed template resource missing');
+      const consoleScript = join(site, process.platform === 'win32' ? 'Scripts' : 'bin', 'codeklar-karten');
+      if (process.platform !== 'win32') {
+        const entry = await run([consoleScript, join(cwd, 'beispiel.json'), '--output', join(root, 'entry.html')], { cwd: root, env });
+        require(entry.stdout.includes('3 Karten exportiert.'), 'Installed console entry failed');
+      }
+      console.log('Wheel built offline, installed and started outside the source tree, including its template and console entry.');
+    }
+    const result = await run(project.pythonTestCommand, { cwd, env });
     require(/Ran \d+ tests?/.test(result.stderr) && /\bOK\b/.test(result.stderr), `${project.id}: no successful test run`);
     console.log(`${project.id}: ${result.stderr.match(/Ran \d+ tests?/)[0]}, OK`);
   }
@@ -71,7 +91,7 @@ try {
   require(await readFile(join(logs, 'beispiel.log'), 'utf8') === sourceLog, 'Log input changed');
   const api = join(root, 'python-local-api');
   async function withApi(action) {
-    const child = spawn('python3', ['server.py', '--database', 'live-api.db', '--port', '0'], { cwd: api });
+    const child = spawn(python, ['server.py', '--database', 'live-api.db', '--port', '0'], { cwd: api });
     const exited = new Promise(resolve => child.once('exit', resolve));
     let diagnostics = '';
     child.stderr.on('data', data => { diagnostics = (diagnostics + data).slice(-2000); });

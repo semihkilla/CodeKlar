@@ -55,8 +55,9 @@ try {
       console.log('Wheel built offline, installed and started outside the source tree, including its template and console entry.');
     }
     const result = await run(project.pythonTestCommand, { cwd, env });
-    require(/Ran \d+ tests?/.test(result.stderr) && /\bOK\b/.test(result.stderr), `${project.id}: no successful test run`);
-    console.log(`${project.id}: ${result.stderr.match(/Ran \d+ tests?/)[0]}, OK`);
+    const proof = project.pythonPytest ? result.stdout.match(/\b\d+ passed\b/)?.[0] : result.stderr.match(/Ran \d+ tests?/)?.[0];
+    require(proof && (project.pythonPytest || /\bOK\b/.test(result.stderr)), `${project.id}: no successful test run`);
+    console.log(`${project.id}: ${proof}, OK`);
   }
   const tasks = join(root, 'python-task-cli');
   const file = join(tasks, 'cli-tasks.json');

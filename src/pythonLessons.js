@@ -1,3 +1,4 @@
+import applicationsCurriculum from './pythonApplicationsCurriculum.json' with { type: 'json' };
 import visualCurriculum from './pythonVisualCurriculum.json' with { type: 'json' };
 import dataCurriculum from './pythonDataCurriculum.json' with { type: 'json' };
 import packageCurriculum from './pythonPackageCurriculum.json' with { type: 'json' };
@@ -6,7 +7,7 @@ import nextCurriculum from './pythonNextCurriculum.json' with { type: 'json' };
 import furtherCurriculum from './pythonFurtherCurriculum.json' with { type: 'json' };
 import curriculum from './pythonCurriculum.json' with { type: 'json' };
 
-export const pythonLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum, ...webCurriculum, ...packageCurriculum, ...dataCurriculum, ...visualCurriculum].map((row, index) => {
+export const pythonLessonPack = [...curriculum, ...furtherCurriculum, ...nextCurriculum, ...webCurriculum, ...packageCurriculum, ...dataCurriculum, ...visualCurriculum, ...applicationsCurriculum].map((row, index) => {
   const answer = index % row.choices.length;
   const options = row.choices.slice(1);
   options.splice(answer, 0, row.choices[0]);

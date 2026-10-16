@@ -3,10 +3,10 @@ const groups = {
   python: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Operatoren & Entscheidungen", "Schleifen"]],
     ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings", "Zahlen & Zeit", "Reguläre Ausdrücke", "NumPy & Zahlen", "pandas & Tabellen", "Matplotlib & Diagramme"]],
-    ["functions", "Funktionen", ["Funktionen"]],
-    ["objects", "Klassen & Datenmodelle", ["Klassen & Datenmodelle"]],
-    ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate", "HTTP & APIs", "Requests & HTTP", "SQLite & Transaktionen", "Pillow & Bilder"]],
-    ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Umgebungen & Installation", "Externe Bibliotheken", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen", "Nebenläufigkeit"]],
+    ["functions", "Funktionen", ["Funktionen", "Fortgeschrittene Architektur"]],
+    ["objects", "Klassen & Datenmodelle", ["Klassen & Datenmodelle", "Spiele mit Pygame", "Oberflächen mit Tkinter"]],
+    ["io", "Eingaben, Dateien & Fehler", ["Eingaben & Fehler", "Dateien & Datenformate", "HTTP & APIs", "Requests & HTTP", "SQLite & Transaktionen", "Pillow & Bilder", "Webapps mit Flask & FastAPI", "Automatisierung & Excel"]],
+    ["tools", "Module, Tests & Algorithmen", ["Imports & Pakete", "Umgebungen & Installation", "Externe Bibliotheken", "Tests & Werkzeuge", "Algorithmen & Datenstrukturen", "Nebenläufigkeit", "pytest & Debugging"]],
   ],
   java: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Datentypen", "Operatoren", "Kontrollfluss", "Schleifen", "Methoden"]],

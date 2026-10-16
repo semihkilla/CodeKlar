@@ -1,0 +1,1580 @@
+[
+  {
+    "id": "flask-route",
+    "category": "Webapps mit Flask & FastAPI",
+    "name": "Flask: eine URL mit einer Funktion verbinden",
+    "introduction": "Eine Route legt fest, welche Funktion eine URL verarbeitet. Der Testclient ruft die Anwendung hier direkt im Prozess auf.",
+    "steps": [
+      "Erzeuge eine Flask-Anwendung.",
+      "Definiere GET /.",
+      "Lies Status und JSON-Feld."
+    ],
+    "code": "from flask import Flask\n\napp = Flask(__name__)\n@app.get(\"/\")\ndef index():\n    return {\"message\": \"Hallo Web\"}\n\nresponse = app.test_client().get(\"/\")\nprint(response.status_code)\nprint(response.json[\"message\"])",
+    "output": "200\nHallo Web",
+    "choices": [
+      "200\nHallo Web",
+      "201\nHallo Web",
+      "200\nmessage"
+    ],
+    "explanation": "Der Testclient nutzt keinen echten Netzwerkport. Für den Browser startet das Projekt einen eigenen lokalen Server. URL-Pfad, Python-Funktionsname und sichtbarer Seitentext sind getrennte Begriffe.",
+    "methodProfile": {
+      "signature": "@app.get(path)",
+      "parameters": [
+        [
+          "path",
+          "URL-Pfad."
+        ]
+      ],
+      "returns": "Die Funktion liefert Daten; Flask erzeugt eine HTTP-Antwort.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben einer Webseite mit Python verarbeiten und Ergebnisse zurückgeben.",
+    "pitfall": "Eine Funktion mit dem Namen index ist ohne registrierte Route noch keine erreichbare Webseite.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "Flask==3.1.2",
+      "fastapi==0.116.1",
+      "httpx==0.28.1"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Erzeuge GET /status mit JSON {\"ok\":True} und gib den gelesenen Wert aus.",
+      "hint": "Der Flask-Testclient hat eine .json-Eigenschaft.",
+      "code": "from flask import Flask\n\napp = Flask(__name__)\n@app.get(\"/status\")\ndef status():\n    return {\"ok\": True}\nprint(app.test_client().get(\"/status\").json[\"ok\"])",
+      "output": "True"
+    }
+  },
+  {
+    "id": "flask-form",
+    "category": "Webapps mit Flask & FastAPI",
+    "name": "Flask-Formulare: request.form enthält Eingabetext",
+    "introduction": "Ein HTML-Formular sendet benannte Werte. Diese sind noch keine geprüften Zahlen oder gültigen Datenmodelle.",
+    "steps": [
+      "Die Route akzeptiert POST.",
+      "Der Test sendet ein Formularfeld.",
+      "Die Funktion bereinigt den Namen."
+    ],
+    "code": "from flask import Flask, request\n\napp = Flask(__name__)\n@app.post(\"/hello\")\ndef hello():\n    return {\"name\": request.form.get(\"name\", \"\").strip()}\n\nprint(app.test_client().post(\"/hello\", data={\"name\": \" Semih \"}).json[\"name\"])",
+    "output": "Semih",
+    "choices": [
+      "Semih",
+      " Semih ",
+      "name"
+    ],
+    "explanation": "Im Notizprojekt werden zusätzlich Felder, Längen und die Request-Größe geprüft. Fehlende Werte brauchen eine Regel, bevor sie gespeichert werden. JSON-Anfragen werden nicht automatisch zu request.form.",
+    "methodProfile": {
+      "signature": "request.form.get(name, default)",
+      "parameters": [
+        [
+          "name",
+          "Feldname im Formular."
+        ]
+      ],
+      "returns": "String oder Defaultwert.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben einer Webseite mit Python verarbeiten und Ergebnisse zurückgeben.",
+    "pitfall": "Ein required-Attribut im Browser ersetzt keine serverseitige Validierung.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "Flask==3.1.2",
+      "fastapi==0.116.1",
+      "httpx==0.28.1"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "flask-redirect",
+    "category": "Webapps mit Flask & FastAPI",
+    "name": "POST → Redirect → GET: nach dem Speichern weiterleiten",
+    "introduction": "Nach einer Änderung kann der Server mit 303 auf eine Leseseite umleiten. Der nächste Seitenaufruf ist dann ein GET.",
+    "steps": [
+      "POST /save erzeugt eine Umleitung.",
+      "303 und Location beschreiben sie.",
+      "Mit follow_redirects wird das Ziel gelesen."
+    ],
+    "code": "from flask import Flask, redirect\n\napp = Flask(__name__)\n@app.get(\"/\")\ndef index():\n    return \"Liste\"\n@app.post(\"/save\")\ndef save():\n    return redirect(\"/\", code=303)\n\nclient = app.test_client()\nresponse = client.post(\"/save\")\nprint(response.status_code)\nprint(client.post(\"/save\", follow_redirects=True).get_data(as_text=True))",
+    "output": "303\nListe",
+    "choices": [
+      "303\nListe",
+      "200\nListe",
+      "303\nsave"
+    ],
+    "explanation": "Eine Umleitung allein speichert keine Daten. Die Änderung geschieht vorher. Dieses Muster reduziert versehentliches erneutes Absenden beim Aktualisieren, ist aber keine allgemeine Garantie gegen doppelte Requests.",
+    "methodProfile": {
+      "signature": "redirect(url, code=303)",
+      "parameters": [
+        [
+          "url",
+          "Ziel der anschließenden Leseseite."
+        ]
+      ],
+      "returns": "Redirect-Antwort.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben einer Webseite mit Python verarbeiten und Ergebnisse zurückgeben.",
+    "pitfall": "GET sollte keine Lösch- oder Speicheroperation verstecken.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "Flask==3.1.2",
+      "fastapi==0.116.1",
+      "httpx==0.28.1"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "fastapi-path",
+    "category": "Webapps mit Flask & FastAPI",
+    "name": "FastAPI: Pfadparameter werden typisiert gelesen",
+    "introduction": "FastAPI kann einen Pfadwert anhand seiner Typangabe prüfen. Ein ungültiger Wert wird vor der normalen Funktion zurückgewiesen.",
+    "steps": [
+      "item_id ist als int beschrieben.",
+      "Der Testclient fragt /items/7 ab.",
+      "Die Antwort enthält die berechnete ID."
+    ],
+    "code": "from fastapi import FastAPI\nfrom fastapi.testclient import TestClient\n\napp = FastAPI()\n@app.get(\"/items/{item_id}\")\ndef item(item_id: int):\n    return {\"next\": item_id + 1}\n\nwith TestClient(app) as client:\n    print(client.get(\"/items/7\").json()[\"next\"])\n    print(client.get(\"/items/text\").status_code)",
+    "output": "8\n422",
+    "choices": [
+      "8\n422",
+      "7\n404",
+      "8\n200"
+    ],
+    "explanation": "FastAPI und Flask sind unterschiedliche Frameworks. Die zusätzliche Typverarbeitung von FastAPI beruht auf dessen Integrationen, nicht darauf, dass Python-Anmerkungen allgemein jede Zuweisung prüfen würden.",
+    "methodProfile": {
+      "signature": "@app.get(\"/items/{item_id}\")",
+      "parameters": [
+        [
+          "item_id",
+          "Pfadparameter, hier int."
+        ]
+      ],
+      "returns": "JSON-Antwort oder Validierungsfehler.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben einer Webseite mit Python verarbeiten und Ergebnisse zurückgeben.",
+    "pitfall": "Ein erfolgreich konvertierter Integer ist noch nicht automatisch in deinem fachlich erlaubten Bereich.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "Flask==3.1.2",
+      "fastapi==0.116.1",
+      "httpx==0.28.1"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Lege GET /double/{n} an und gib bei n=4 den verdoppelten Wert aus.",
+      "hint": "Die Route erhält n als int.",
+      "code": "from fastapi import FastAPI\nfrom fastapi.testclient import TestClient\n\napp = FastAPI()\n@app.get(\"/double/{n}\")\ndef double(n: int):\n    return {\"value\": n * 2}\nwith TestClient(app) as client:\n    print(client.get(\"/double/4\").json()[\"value\"])",
+      "output": "8"
+    }
+  },
+  {
+    "id": "fastapi-body",
+    "category": "Webapps mit Flask & FastAPI",
+    "name": "Pydantic: einen JSON-Body als Datenmodell prüfen",
+    "introduction": "Ein Body-Modell beschreibt erwartete Felder und deren Grenzen. Das Modell ersetzt nicht die fachliche Entscheidung, welche Werte sinnvoll sind.",
+    "steps": [
+      "count muss eine echte Ganzzahl von 1 bis 5 sein.",
+      "Ein gültiger POST wird verarbeitet.",
+      "Ein Wert außerhalb der Grenze liefert 422."
+    ],
+    "code": "from fastapi import FastAPI\nfrom fastapi.testclient import TestClient\nfrom pydantic import BaseModel, Field\n\nclass Order(BaseModel):\n    count: int = Field(ge=1, le=5, strict=True)\napp = FastAPI()\n@app.post(\"/orders\")\ndef order(data: Order):\n    return {\"count\": data.count}\nwith TestClient(app) as client:\n    print(client.post(\"/orders\", json={\"count\": 3}).json()[\"count\"])\n    print(client.post(\"/orders\", json={\"count\": 9}).status_code)",
+    "output": "3\n422",
+    "choices": [
+      "3\n422",
+      "3\n200",
+      "5\n422"
+    ],
+    "explanation": "Mit strict=True wird beispielsweise True nicht als fachliche Bestellzahl akzeptiert. Unbekannte Felder und andere Modellregeln müssen bei Bedarf zusätzlich festgelegt werden.",
+    "methodProfile": {
+      "signature": "Field(ge=1, le=5, strict=True)",
+      "parameters": [
+        [
+          "ge und le",
+          "Inklusive Grenzen."
+        ],
+        [
+          "strict",
+          "Keine bequeme Typkonvertierung für dieses Feld."
+        ]
+      ],
+      "returns": "Validiertes Modell oder Fehlerantwort.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben einer Webseite mit Python verarbeiten und Ergebnisse zurückgeben.",
+    "pitfall": "Nicht auf die genaue Textform kompletter Framework-Fehlerantworten vertrauen, wenn dir Status und fachlicher Fehler genügen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "Flask==3.1.2",
+      "fastapi==0.116.1",
+      "httpx==0.28.1"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "fastapi-depends",
+    "category": "Webapps mit Flask & FastAPI",
+    "name": "Depends: eine Abhängigkeit austauschbar machen",
+    "introduction": "Eine Route kann eine bereitgestellte Funktion verwenden. Tests können diese Abhängigkeit gezielt ersetzen.",
+    "steps": [
+      "Die normale Funktion liefert 4.",
+      "Im Test wird sie durch eine Funktion mit 9 ersetzt.",
+      "Die Route nutzt den injizierten Wert."
+    ],
+    "code": "from fastapi import FastAPI, Depends\nfrom fastapi.testclient import TestClient\n\ndef setting(): return 4\napp = FastAPI()\n@app.get(\"/limit\")\ndef limit(value: int = Depends(setting)):\n    return {\"value\": value}\napp.dependency_overrides[setting] = lambda: 9\nwith TestClient(app) as client:\n    print(client.get(\"/limit\").json()[\"value\"])",
+    "output": "9",
+    "choices": [
+      "9",
+      "4",
+      "None"
+    ],
+    "explanation": "Dasselbe Muster hilft, eine Uhr, Datenbankverbindung oder Konfiguration vom Routencode zu trennen. Overrides gehören zum isolierten Testaufbau und sollten nicht versehentlich in produktive Abläufe übernommen werden.",
+    "methodProfile": {
+      "signature": "Depends(provider); app.dependency_overrides[provider] = replacement",
+      "parameters": [
+        [
+          "provider",
+          "Bereitstellende Funktion."
+        ]
+      ],
+      "returns": "Von FastAPI eingesetzter Abhängigkeitswert.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben einer Webseite mit Python verarbeiten und Ergebnisse zurückgeben.",
+    "pitfall": "Ein Test mit einer Ersatzfunktion beweist nicht, dass die reale Datenbank erreichbar ist.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "Flask==3.1.2",
+      "fastapi==0.116.1",
+      "httpx==0.28.1"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install Flask==3.1.2 fastapi==0.116.1 httpx==0.28.1\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "excel-cells",
+    "category": "Automatisierung & Excel",
+    "name": "openpyxl: Arbeitsmappe, Blatt und Zelle unterscheiden",
+    "introduction": "Workbook ist die Excel-Arbeitsmappe. Ein Worksheet enthält Zellen mit Koordinaten wie B2.",
+    "steps": [
+      "Erzeuge eine Arbeitsmappe.",
+      "Schreibe eine Überschrift und Zahl.",
+      "Lies den Zellwert."
+    ],
+    "code": "from openpyxl import Workbook\n\nbook = Workbook()\nsheet = book.active\nsheet[\"A1\"] = \"Punkte\"\nsheet[\"B2\"] = 7\nprint(sheet[\"B2\"].value)\nbook.close()",
+    "output": "7",
+    "choices": [
+      "7",
+      "B2",
+      "Punkte"
+    ],
+    "explanation": "Die Arbeitsmappe liegt zunächst im Speicher. Erst save erzeugt eine XLSX-Datei. Koordinaten verwenden hier Zeilen- und Spaltennummern ab 1, nicht nullbasierte Python-Listenindizes.",
+    "methodProfile": {
+      "signature": "sheet[coordinate] = value",
+      "parameters": [
+        [
+          "coordinate",
+          "Excel-Zellbezeichnung."
+        ]
+      ],
+      "returns": "Zellzugriff beziehungsweise gespeicherter Wert.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Wiederkehrende Dateiarbeit nachvollziehbar planen und als Excel ausgeben.",
+    "pitfall": "Eine geänderte Arbeitsmappe ist ohne Speichern noch keine aktualisierte Datei.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "dependencies": [
+      "openpyxl==3.1.5"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install openpyxl==3.1.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install openpyxl==3.1.5\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Schreibe die doppelte Zahl 4 in C3 und lies sie zurück.",
+      "hint": "Die Zelle enthält das berechnete Ergebnis.",
+      "code": "from openpyxl import Workbook\n\nb = Workbook()\nb.active[\"C3\"] = 4 * 2\nprint(b.active[\"C3\"].value)\nb.close()",
+      "output": "8"
+    }
+  },
+  {
+    "id": "excel-roundtrip",
+    "category": "Automatisierung & Excel",
+    "name": "XLSX speichern und erneut lesen",
+    "introduction": "Eine XLSX-Datei kann auch in einen binären Stream geschrieben werden. load_workbook dekodiert die gespeicherte Arbeitsmappe.",
+    "steps": [
+      "Schreibe einen Wert.",
+      "Speichere XLSX-Bytes.",
+      "Lade diese Bytes in eine neue Mappe."
+    ],
+    "code": "from io import BytesIO\nfrom openpyxl import Workbook, load_workbook\n\nb = Workbook(); b.active[\"A1\"] = \"Grüße\"\nstream = BytesIO(); b.save(stream); b.close()\nresult = load_workbook(BytesIO(stream.getvalue()))\nprint(result.active[\"A1\"].value)\nresult.close()",
+    "output": "Grüße",
+    "choices": [
+      "Grüße",
+      "A1",
+      "None"
+    ],
+    "explanation": "Ein echter Roundtrip prüft mehr als den Wert im ursprünglichen Objekt. Bei vorhandenen Dateien muss die Anwendung ausdrücklich entscheiden, ob Überschreiben erlaubt ist. Unser Projekt erzeugt ausschließlich neue Ausgaben.",
+    "methodProfile": {
+      "signature": "book.save(stream); load_workbook(stream)",
+      "parameters": [
+        [
+          "stream",
+          "Binärer XLSX-Stream oder Dateipfad."
+        ]
+      ],
+      "returns": "Neu eingelesene Arbeitsmappe.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Wiederkehrende Dateiarbeit nachvollziehbar planen und als Excel ausgeben.",
+    "pitfall": "XLSX ist kein CSV-Text; lies es nicht mit read_text.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "dependencies": [
+      "openpyxl==3.1.5"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install openpyxl==3.1.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install openpyxl==3.1.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "excel-rows",
+    "category": "Automatisierung & Excel",
+    "name": "iter_rows: Tabellenwerte ohne Zellobjekt verarbeiten",
+    "introduction": "iter_rows mit values_only=True liefert die Werte zeilenweise. So kann ein Generator die Daten weiterverarbeiten.",
+    "steps": [
+      "Die erste Zeile enthält Überschriften.",
+      "Beginne bei der zweiten Zeile.",
+      "Summiere die zweite Spalte."
+    ],
+    "code": "from openpyxl import Workbook\n\nb = Workbook(); s = b.active\ns.append([\"Name\", \"Wert\"]); s.append([\"A\", 2]); s.append([\"B\", 5])\nprint(sum(row[1] for row in s.iter_rows(min_row=2, values_only=True)))\nb.close()",
+    "output": "7",
+    "choices": [
+      "7",
+      "25",
+      "2"
+    ],
+    "explanation": "Leere Zellen können None enthalten. Vor einer Summe brauchst du für echte Eingaben eine Prüfung, welche Zeilen und Typen erlaubt sind. Die Überschrift darf nicht versehentlich als Datenwert verarbeitet werden.",
+    "methodProfile": {
+      "signature": "sheet.iter_rows(min_row=2, values_only=True)",
+      "parameters": [
+        [
+          "min_row",
+          "Erste gelesene Zeile."
+        ]
+      ],
+      "returns": "Iterator über Tupel von Zellwerten.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Wiederkehrende Dateiarbeit nachvollziehbar planen und als Excel ausgeben.",
+    "pitfall": "values_only=True bedeutet nicht, dass Werte automatisch gültige Zahlen sind.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "dependencies": [
+      "openpyxl==3.1.5"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install openpyxl==3.1.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install openpyxl==3.1.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "excel-formulas",
+    "category": "Automatisierung & Excel",
+    "name": "Formel oder Text: Excel interpretiert führendes Gleichheitszeichen",
+    "introduction": "openpyxl erkennt einen String mit führendem = normalerweise als Formel. Bei Dateinamen und Nutztext kann das unerwünscht sein.",
+    "steps": [
+      "Schreibe =1+1 in eine Zelle.",
+      "Lies ihren erkannten Datentyp.",
+      "Markiere dieselben Zeichen ausdrücklich als Text."
+    ],
+    "code": "from openpyxl import Workbook\n\nb = Workbook(); c = b.active[\"A1\"]\nc.value = \"=1+1\"\nprint(c.data_type)\nc.data_type = \"s\"\nprint(c.data_type)\nb.close()",
+    "output": "f\ns",
+    "choices": [
+      "f\ns",
+      "s\nf",
+      "f\n2"
+    ],
+    "explanation": "Das Inventar behandelt Dateinamen als Text. openpyxl berechnet Formeln nicht selbst. Ein data_only-Lesezugriff kann nur bereits gespeicherte Rechenergebnisse liefern, die beispielsweise Excel erzeugt hat.",
+    "methodProfile": {
+      "signature": "cell.data_type = \"s\"",
+      "parameters": [
+        [
+          "s",
+          "String statt Formel."
+        ]
+      ],
+      "returns": "Geänderte Zelltyp-Markierung.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Wiederkehrende Dateiarbeit nachvollziehbar planen und als Excel ausgeben.",
+    "pitfall": "Eine Formel zu schreiben ist nicht gleichbedeutend damit, ihr Ergebnis in Python berechnet zu haben.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "dependencies": [
+      "openpyxl==3.1.5"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install openpyxl==3.1.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install openpyxl==3.1.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "automation-plan",
+    "category": "Automatisierung & Excel",
+    "name": "Dateiarbeit zuerst als Plan darstellen",
+    "introduction": "Ein Plan kann ausgewählte Dateien und Zielnamen enthalten, bevor eine Automation etwas verändert.",
+    "steps": [
+      "Erzeuge nur temporäre Beispieldateien.",
+      "Wähle CSV-Dateien unabhängig von der Endungsschreibung.",
+      "Gib den sortierten Plan aus."
+    ],
+    "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\n\nwith TemporaryDirectory() as d:\n    root = Path(d)\n    for name in [\"b.CSV\", \"a.txt\", \"a.csv\"]: (root / name).touch()\n    plan = sorted(p.name for p in root.iterdir() if p.is_file() and p.suffix.lower() == \".csv\")\n    print(plan)",
+    "output": "['a.csv', 'b.CSV']",
+    "choices": [
+      "['a.csv', 'b.CSV']",
+      "['a.txt', 'a.csv', 'b.CSV']",
+      "['b.CSV']"
+    ],
+    "explanation": "Planen und Ausführen sind unterschiedliche Phasen. Der Excel-Inventar-Export verändert die erfassten Dateien gar nicht; ein echter Sortierer müsste zusätzlich Zielkonflikte, Links und Rückgängigmachen regeln.",
+    "methodProfile": {
+      "signature": "path.iterdir(); path.suffix.lower()",
+      "parameters": [
+        [
+          "path",
+          "Zu untersuchender Ordner."
+        ]
+      ],
+      "returns": "Ausgewählte Namen, hier noch keine Dateiänderung.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Wiederkehrende Dateiarbeit nachvollziehbar planen und als Excel ausgeben.",
+    "pitfall": "Ein angezeigter Plan sollte keine versteckten Schreiboperationen enthalten.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "dependencies": [
+      "openpyxl==3.1.5"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install openpyxl==3.1.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install openpyxl==3.1.5\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Wähle aus x.png, y.PNG und z.txt nur die PNG-Namen sortiert aus.",
+      "hint": "Normalisiere nur die Endung, behalte den Originalnamen.",
+      "code": "from pathlib import Path\n\nnames = [\"x.png\", \"y.PNG\", \"z.txt\"]\nprint(sorted(n for n in names if Path(n).suffix.lower() == \".png\"))",
+      "output": "['x.png', 'y.PNG']"
+    }
+  },
+  {
+    "id": "automation-move",
+    "category": "Automatisierung & Excel",
+    "name": "Dateien verschieben: Zielkonflikte bewusst verhindern",
+    "introduction": "Ein Verschieben ändert den Pfad einer Datei. Dieses Beispiel arbeitet ausschließlich in einem eigenen temporären Ordner.",
+    "steps": [
+      "Erzeuge eine Quelldatei.",
+      "Prüfe, dass das Ziel noch nicht existiert.",
+      "Verschiebe und vergleiche die Pfade."
+    ],
+    "code": "from pathlib import Path\nfrom tempfile import TemporaryDirectory\nimport shutil\n\nwith TemporaryDirectory() as d:\n    source, target = Path(d) / \"alt.txt\", Path(d) / \"neu.txt\"\n    source.write_text(\"Hallo\", encoding=\"utf-8\")\n    if target.exists(): raise ValueError(\"Ziel existiert\")\n    shutil.move(str(source), str(target))\n    print(source.exists())\n    print(target.read_text(encoding=\"utf-8\"))",
+    "output": "False\nHallo",
+    "choices": [
+      "False\nHallo",
+      "True\nHallo",
+      "False\nNone"
+    ],
+    "explanation": "Eine Vorabprüfung allein schützt nicht vor jedem gleichzeitigen anderen Prozess. Für eine echte Mehrbenutzer-Automation braucht es eine definierte Konfliktregel. Hier demonstrieren eigene temporäre Dateien nur den grundlegenden Effekt.",
+    "methodProfile": {
+      "signature": "shutil.move(source, target)",
+      "parameters": [
+        [
+          "source und target",
+          "Quell- und Zielpfad."
+        ]
+      ],
+      "returns": "Zielpfad der Verschiebung.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Wiederkehrende Dateiarbeit nachvollziehbar planen und als Excel ausgeben.",
+    "pitfall": "Nicht an echten Originalen experimentieren, wenn du den Effekt noch nicht sicher verstanden hast.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "dependencies": [
+      "openpyxl==3.1.5"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install openpyxl==3.1.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install openpyxl==3.1.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pygame-surface",
+    "category": "Spiele mit Pygame",
+    "name": "Pygame: auf einer Surface zeichnen",
+    "introduction": "Eine Surface ist eine Pixel-Zeichenfläche. Sie kann ohne sichtbares Fenster erzeugt und geprüft werden.",
+    "steps": [
+      "Erzeuge eine 20-mal-10-Fläche.",
+      "Fülle sie grün.",
+      "Lies einen Farbwert."
+    ],
+    "code": "import os\nos.environ[\"PYGAME_HIDE_SUPPORT_PROMPT\"] = \"1\"\nos.environ[\"SDL_VIDEODRIVER\"] = \"dummy\"\nimport pygame\n\npygame.display.init()\ntry:\n    surface = pygame.Surface((20, 10))\n    surface.fill((0, 255, 0))\n    print(surface.get_size())\n    print(tuple(surface.get_at((0, 0)))[:3])\nfinally:\n    pygame.display.quit()",
+    "output": "(20, 10)\n(0, 255, 0)",
+    "choices": [
+      "(20, 10)\n(0, 255, 0)",
+      "(10, 20)\n(0, 255, 0)",
+      "(20, 10)\n(0, 0, 0)"
+    ],
+    "explanation": "Ein sichtbares Spiel braucht zusätzlich ein Display und ein Aktualisieren der Anzeige. Das Projekt zeichnet denselben Zustand jedes Frame neu auf die sichtbare Fläche.",
+    "methodProfile": {
+      "signature": "pygame.Surface(size); surface.fill(color)",
+      "parameters": [
+        [
+          "size",
+          "Breite und Höhe."
+        ],
+        [
+          "color",
+          "Füllfarbe."
+        ]
+      ],
+      "returns": "Surface beziehungsweise geänderter Pixelinhalt.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben, Spielzustand und Darstellung in einer Spielschleife verbinden.",
+    "pitfall": "Eine Veränderung einer beliebigen Surface ist noch keine Aktualisierung des Spielfensters.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-pygame-catch",
+    "projectTitle": "Fange den Punkt mit Pygame",
+    "dependencies": [
+      "pygame-ce==2.5.5"
+    ],
+    "setup": {
+      "description": "Pygame läuft lokal. Die kleinen Beispiele verwenden den SDL-Dummy-Treiber ohne sichtbares Fenster, um Verhalten reproduzierbar zu zeigen. Das vollständige Projekt öffnet beim normalen Start ein Spielfenster.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pygame-ce==2.5.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pygame-ce==2.5.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pygame-rect",
+    "category": "Spiele mit Pygame",
+    "name": "Rect: Position und Kollision sind getrennte Regeln",
+    "introduction": "Rects beschreiben achsenparallele Rechtecke. colliderect prüft eine Überlappung, nicht bloß eine gemeinsame Kante.",
+    "steps": [
+      "Zwei Rechtecke berühren sich zunächst nur am Rand.",
+      "Dann wird eines einen Pixel nach links verschoben.",
+      "Nun überlappen sie."
+    ],
+    "code": "import os\nos.environ[\"PYGAME_HIDE_SUPPORT_PROMPT\"] = \"1\"\nos.environ[\"SDL_VIDEODRIVER\"] = \"dummy\"\nimport pygame\n\npygame.display.init()\ntry:\n    a = pygame.Rect(0, 0, 10, 10)\n    b = pygame.Rect(10, 0, 5, 5)\n    print(a.colliderect(b))\n    b.x = 9\n    print(a.colliderect(b))\nfinally:\n    pygame.display.quit()",
+    "output": "False\nTrue",
+    "choices": [
+      "False\nTrue",
+      "True\nTrue",
+      "False\nFalse"
+    ],
+    "explanation": "Rechteckkollision ist eine bewusste Vereinfachung. Sie bedeutet nicht, dass nur sichtbare nichttransparente Pixel berührt werden. Bei schnellen Bewegungen kann ein Objekt zwischen Frames über ein anderes springen.",
+    "methodProfile": {
+      "signature": "rect.colliderect(other)",
+      "parameters": [
+        [
+          "other",
+          "Anderes achsenparalleles Rechteck."
+        ]
+      ],
+      "returns": "bool.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben, Spielzustand und Darstellung in einer Spielschleife verbinden.",
+    "pitfall": "Kollisionsprüfung nur am Endpunkt ist keine kontinuierliche Kollisionssimulation.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-pygame-catch",
+    "projectTitle": "Fange den Punkt mit Pygame",
+    "dependencies": [
+      "pygame-ce==2.5.5"
+    ],
+    "setup": {
+      "description": "Pygame läuft lokal. Die kleinen Beispiele verwenden den SDL-Dummy-Treiber ohne sichtbares Fenster, um Verhalten reproduzierbar zu zeigen. Das vollständige Projekt öffnet beim normalen Start ein Spielfenster.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pygame-ce==2.5.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pygame-ce==2.5.5\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Prüfe die Überlappung von Rect(0,0,5,5) und Rect(4,4,3,3).",
+      "hint": "Die Rechtecke teilen eine kleine Fläche.",
+      "code": "import os\nos.environ[\"PYGAME_HIDE_SUPPORT_PROMPT\"] = \"1\"\nos.environ[\"SDL_VIDEODRIVER\"] = \"dummy\"\nimport pygame\n\npygame.display.init()\ntry:\n    print(pygame.Rect(0, 0, 5, 5).colliderect(pygame.Rect(4, 4, 3, 3)))\nfinally:\n    pygame.display.quit()",
+      "output": "True"
+    }
+  },
+  {
+    "id": "pygame-dt",
+    "category": "Spiele mit Pygame",
+    "name": "Bewegung mit dt: Pixel pro Sekunde statt pro Frame",
+    "introduction": "Geschwindigkeit mal Zeit ergibt die zurückgelegte Strecke. Das trennt die Bewegung von einer festen Anzahl von Bildschirmbildern.",
+    "steps": [
+      "Die Geschwindigkeit beträgt 200 Pixel pro Sekunde.",
+      "Ein Schritt dauert 0.05 Sekunden.",
+      "Berechne die neue Position."
+    ],
+    "code": "import os\nos.environ[\"PYGAME_HIDE_SUPPORT_PROMPT\"] = \"1\"\nos.environ[\"SDL_VIDEODRIVER\"] = \"dummy\"\nimport pygame\n\npygame.display.init()\ntry:\n    position = pygame.Vector2(10, 20)\n    position += pygame.Vector2(1, 0) * 200 * 0.05\n    print(tuple(int(v) for v in position))\nfinally:\n    pygame.display.quit()",
+    "output": "(20, 20)",
+    "choices": [
+      "(20, 20)",
+      "(210, 20)",
+      "(10, 30)"
+    ],
+    "explanation": "Große Zeitsprünge brauchen eine Regel. Das Projekt begrenzt den Schritt auf 0.1 Sekunden, statt nach einer Pause riesige Sprünge auszuführen. Ein festes Zeitschrittmodell wäre eine weitere Ausbaustufe.",
+    "methodProfile": {
+      "signature": "position += direction * speed * dt",
+      "parameters": [
+        [
+          "dt",
+          "Sekunden seit dem letzten Simulationsschritt."
+        ]
+      ],
+      "returns": "Geänderte Position.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben, Spielzustand und Darstellung in einer Spielschleife verbinden.",
+    "pitfall": "clock.tick liefert Millisekunden, nicht Sekunden.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-pygame-catch",
+    "projectTitle": "Fange den Punkt mit Pygame",
+    "dependencies": [
+      "pygame-ce==2.5.5"
+    ],
+    "setup": {
+      "description": "Pygame läuft lokal. Die kleinen Beispiele verwenden den SDL-Dummy-Treiber ohne sichtbares Fenster, um Verhalten reproduzierbar zu zeigen. Das vollständige Projekt öffnet beim normalen Start ein Spielfenster.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pygame-ce==2.5.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pygame-ce==2.5.5\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Bewege x=5 mit 100 Pixeln/Sekunde für 0.1 Sekunden nach rechts.",
+      "hint": "100 mal 0.1 sind 10 Pixel.",
+      "code": "import os\nos.environ[\"PYGAME_HIDE_SUPPORT_PROMPT\"] = \"1\"\nos.environ[\"SDL_VIDEODRIVER\"] = \"dummy\"\nimport pygame\n\npygame.display.init()\ntry:\n    position = pygame.Vector2(5, 0)\n    position.x += 100 * 0.1\n    print(int(position.x))\nfinally:\n    pygame.display.quit()",
+      "output": "15"
+    }
+  },
+  {
+    "id": "pygame-events",
+    "category": "Spiele mit Pygame",
+    "name": "Eventqueue: einzelne Tastendrücke verarbeiten",
+    "introduction": "Die Eventqueue sammelt Ereignisse. get liest sie aus und entfernt sie aus der Queue.",
+    "steps": [
+      "Lege ein eigenes benanntes Event an.",
+      "Stelle es in die Queue.",
+      "Lies den mitgegebenen Wert."
+    ],
+    "code": "import os\nos.environ[\"PYGAME_HIDE_SUPPORT_PROMPT\"] = \"1\"\nos.environ[\"SDL_VIDEODRIVER\"] = \"dummy\"\nimport pygame\n\npygame.display.init()\ntry:\n    pygame.event.clear()\n    kind = pygame.event.custom_type()\n    pygame.event.post(pygame.event.Event(kind, value=7))\n    print([event.value for event in pygame.event.get() if event.type == kind])\nfinally:\n    pygame.display.quit()",
+    "output": "[7]",
+    "choices": [
+      "[7]",
+      "[]",
+      "[0]"
+    ],
+    "explanation": "Ein einzelnes KEYDOWN eignet sich beispielsweise für Neustart. Dauerhafte Bewegung kann dagegen den aktuellen Tastenzustand pro Frame lesen. Auch QUIT muss regelmäßig verarbeitet werden.",
+    "methodProfile": {
+      "signature": "pygame.event.post(event); pygame.event.get()",
+      "parameters": [
+        [
+          "event",
+          "Ereignis mit Typ und zusätzlichen Feldern."
+        ]
+      ],
+      "returns": "Liste aktuell ausgelesener Ereignisse.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben, Spielzustand und Darstellung in einer Spielschleife verbinden.",
+    "pitfall": "Eine blockierende Schleife ohne Eventverarbeitung macht das Fenster scheinbar eingefroren.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-pygame-catch",
+    "projectTitle": "Fange den Punkt mit Pygame",
+    "dependencies": [
+      "pygame-ce==2.5.5"
+    ],
+    "setup": {
+      "description": "Pygame läuft lokal. Die kleinen Beispiele verwenden den SDL-Dummy-Treiber ohne sichtbares Fenster, um Verhalten reproduzierbar zu zeigen. Das vollständige Projekt öffnet beim normalen Start ein Spielfenster.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pygame-ce==2.5.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pygame-ce==2.5.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pygame-clamp",
+    "category": "Spiele mit Pygame",
+    "name": "clamp: ein Rechteck im Spielfeld halten",
+    "introduction": "clamp begrenzt ein Rechteck innerhalb eines anderen. Es liefert eine neue Rect-Position.",
+    "steps": [
+      "Der Spieler liegt rechts außerhalb des Feldes.",
+      "clamp verschiebt ihn hinein.",
+      "Die neue x-Position berücksichtigt seine Breite."
+    ],
+    "code": "import os\nos.environ[\"PYGAME_HIDE_SUPPORT_PROMPT\"] = \"1\"\nos.environ[\"SDL_VIDEODRIVER\"] = \"dummy\"\nimport pygame\n\npygame.display.init()\ntry:\n    field = pygame.Rect(0, 0, 100, 60)\n    player = pygame.Rect(95, 10, 20, 20)\n    result = player.clamp(field)\n    print(result.x)\n    print(player.x)\nfinally:\n    pygame.display.quit()",
+    "output": "80\n95",
+    "choices": [
+      "80\n95",
+      "100\n95",
+      "80\n80"
+    ],
+    "explanation": "Im Projekt wird eine floatbasierte Position getrennt vom gerundeten Zeichenrechteck geführt. Beide müssen beim Begrenzen konsistent bleiben, sonst kann die Figur springen.",
+    "methodProfile": {
+      "signature": "rect.clamp(bounds)",
+      "parameters": [
+        [
+          "bounds",
+          "Erlaubtes umschließendes Rechteck."
+        ]
+      ],
+      "returns": "Neues Rect; clamp_ip würde direkt ändern.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben, Spielzustand und Darstellung in einer Spielschleife verbinden.",
+    "pitfall": "Nur das sichtbare Rect zu begrenzen repariert nicht automatisch eine weiterhin außerhalb liegende Modellposition.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-pygame-catch",
+    "projectTitle": "Fange den Punkt mit Pygame",
+    "dependencies": [
+      "pygame-ce==2.5.5"
+    ],
+    "setup": {
+      "description": "Pygame läuft lokal. Die kleinen Beispiele verwenden den SDL-Dummy-Treiber ohne sichtbares Fenster, um Verhalten reproduzierbar zu zeigen. Das vollständige Projekt öffnet beim normalen Start ein Spielfenster.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pygame-ce==2.5.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pygame-ce==2.5.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pygame-score",
+    "category": "Spiele mit Pygame",
+    "name": "Spielzustand: Punkte und Neustart außerhalb der Darstellung",
+    "introduction": "Das Modell speichert die Regeln. Eine Darstellung liest diesen Zustand, statt ihn beim Zeichnen heimlich zu verändern.",
+    "steps": [
+      "Ein kleiner Zustand zählt einen Treffer.",
+      "draw wäre nur ein Leser.",
+      "Neustart erzeugt einen neuen Ausgangszustand."
+    ],
+    "code": "from dataclasses import dataclass\n\n@dataclass\nclass State:\n    score: int = 0\n    def hit(self): self.score += 1\n\nstate = State(); state.hit()\nprint(state.score)\nstate = State()\nprint(state.score)",
+    "output": "1\n0",
+    "choices": [
+      "1\n0",
+      "1\n1",
+      "0\n0"
+    ],
+    "explanation": "Der vollständige Pygame-Code trennt update und draw. Ein Treffer setzt außerdem ein neues Ziel außerhalb des Spielers, damit dieselbe Überlappung nicht sofort erneut zählt.",
+    "methodProfile": {
+      "signature": "state.hit(); state = State()",
+      "parameters": [],
+      "returns": "Veränderter Zustand beziehungsweise neue Instanz.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Eingaben, Spielzustand und Darstellung in einer Spielschleife verbinden.",
+    "pitfall": "Punkte im Zeichencode zu erhöhen kann mehrere Treffer pro sichtbarem Ereignis erzeugen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-pygame-catch",
+    "projectTitle": "Fange den Punkt mit Pygame",
+    "dependencies": [
+      "pygame-ce==2.5.5"
+    ],
+    "setup": {
+      "description": "Pygame läuft lokal. Die kleinen Beispiele verwenden den SDL-Dummy-Treiber ohne sichtbares Fenster, um Verhalten reproduzierbar zu zeigen. Das vollständige Projekt öffnet beim normalen Start ein Spielfenster.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pygame-ce==2.5.5\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pygame-ce==2.5.5\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "tk-root",
+    "category": "Oberflächen mit Tkinter",
+    "name": "Tkinter: Fenster erzeugen und sauber schließen",
+    "introduction": "Tk ist das Wurzelfenster einer Tkinter-Anwendung. Das Beispiel blendet es für die Ausgabeprüfung aus.",
+    "steps": [
+      "Erzeuge ein echtes Tk-Fenster.",
+      "Setze einen Titel.",
+      "Lies den Titel und schließe das Fenster."
+    ],
+    "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    root.title(\"Mein Fenster\")\n    print(root.title())\n    print(root.winfo_exists())\nfinally:\n    root.destroy()",
+    "output": "Mein Fenster\n1",
+    "choices": [
+      "Mein Fenster\n1",
+      "Mein Fenster\n0",
+      "root\n1"
+    ],
+    "explanation": "Eine normale Anwendung ruft mainloop auf und bleibt für Eingaben geöffnet. Die Lernbeispiele verwenden absichtlich withdraw und finally/destroy, damit sie automatisiert enden.",
+    "methodProfile": {
+      "signature": "root = tk.Tk(); root.destroy()",
+      "parameters": [],
+      "returns": "Tk-Wurzelfenster; destroy beendet seine Widgets.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Ein berechenbares Modell über Fenster, Felder und Buttons bedienen.",
+    "pitfall": "Ohne grafische Sitzung kann tk.Tk() mit einem Display-Fehler scheitern.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-tk-calculator",
+    "projectTitle": "Tkinter-Rechner mit getrenntem Modell",
+    "setup": {
+      "description": "Benötigt Tkinter und einen grafischen Desktop. Unter Linux kann Tkinter separat installiert werden müssen. Die Beispiele erstellen echte, ausgeblendete Tk-Fenster und schließen sie wieder; das vollständige Projekt öffnet ein sichtbares Fenster. CodeKlar zeigt den Lernstoff, führt kein Tk-Fenster im Browser aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "tk-variable",
+    "category": "Oberflächen mit Tkinter",
+    "name": "StringVar: Oberfläche und Textzustand verbinden",
+    "introduction": "Tkinter-Variablen können mit Widgets verbunden werden. set und get verändern beziehungsweise lesen den gehaltenen Text.",
+    "steps": [
+      "Lege eine StringVar an.",
+      "Ändere ihren Wert.",
+      "Lies den aktuellen Text."
+    ],
+    "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    value = tk.StringVar(root, value=\"Start\")\n    value.set(\"Bereit\")\n    print(value.get())\nfinally:\n    root.destroy()",
+    "output": "Bereit",
+    "choices": [
+      "Bereit",
+      "Start",
+      "None"
+    ],
+    "explanation": "Im Rechnerprojekt verbinden StringVars Eingabefelder und Ergebnislabel. Die Rechenlogik bekommt trotzdem normale Strings übergeben und bleibt unabhängig von Tkinter testbar.",
+    "methodProfile": {
+      "signature": "tk.StringVar(root, value=text)",
+      "parameters": [
+        [
+          "root",
+          "Lebensdauer-Kontext der Variablen."
+        ]
+      ],
+      "returns": "Tkinter-Variable, deren get hier einen String liefert.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Ein berechenbares Modell über Fenster, Felder und Buttons bedienen.",
+    "pitfall": "Eine StringVar ist kein Ersatz für die Validierung einer eingegebenen Zahl.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-tk-calculator",
+    "projectTitle": "Tkinter-Rechner mit getrenntem Modell",
+    "setup": {
+      "description": "Benötigt Tkinter und einen grafischen Desktop. Unter Linux kann Tkinter separat installiert werden müssen. Die Beispiele erstellen echte, ausgeblendete Tk-Fenster und schließen sie wieder; das vollständige Projekt öffnet ein sichtbares Fenster. CodeKlar zeigt den Lernstoff, führt kein Tk-Fenster im Browser aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Erzeuge eine StringVar mit 3 und setze ihren Text auf 9. Gib den aktuellen Text aus.",
+      "hint": "set erwartet den neuen Wert, get liest ihn.",
+      "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    value = tk.StringVar(root, value=\"3\")\n    value.set(\"9\")\n    print(value.get())\nfinally:\n    root.destroy()",
+      "output": "9"
+    }
+  },
+  {
+    "id": "tk-button",
+    "category": "Oberflächen mit Tkinter",
+    "name": "ttk.Button: command bekommt eine Funktion",
+    "introduction": "command verweist auf eine aufzurufende Funktion. invoke löst denselben Button-Befehl im Test aus.",
+    "steps": [
+      "Erzeuge einen Button mit Callback.",
+      "invoke löst ihn einmal aus.",
+      "Die Liste hält den gezählten Aufruf."
+    ],
+    "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    calls = []\n    button = ttk.Button(root, text=\"Klick\", command=lambda: calls.append(\"ok\"))\n    button.invoke()\n    print(calls)\nfinally:\n    root.destroy()",
+    "output": "['ok']",
+    "choices": [
+      "['ok']",
+      "[]",
+      "None"
+    ],
+    "explanation": "command=compute übergibt eine Funktion; command=compute() würde sie sofort beim Erstellen ausführen und ihren Rückgabewert zuweisen. Das Projekt prüft echte invoke-Aufrufe.",
+    "methodProfile": {
+      "signature": "ttk.Button(root, command=callback)",
+      "parameters": [
+        [
+          "callback",
+          "Funktion, die später ausgeführt wird."
+        ]
+      ],
+      "returns": "Button-Widget.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Ein berechenbares Modell über Fenster, Felder und Buttons bedienen.",
+    "pitfall": "Eine lange Berechnung im Callback blockiert die Oberfläche, solange sie nicht zur Ereignisschleife zurückkehrt.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-tk-calculator",
+    "projectTitle": "Tkinter-Rechner mit getrenntem Modell",
+    "setup": {
+      "description": "Benötigt Tkinter und einen grafischen Desktop. Unter Linux kann Tkinter separat installiert werden müssen. Die Beispiele erstellen echte, ausgeblendete Tk-Fenster und schließen sie wieder; das vollständige Projekt öffnet ein sichtbares Fenster. CodeKlar zeigt den Lernstoff, führt kein Tk-Fenster im Browser aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Lasse einen Button eine Liste um den Wert 1 ergänzen. Rufe ihn zweimal auf und gib die Länge aus.",
+      "hint": "invoke führt den Callback aus.",
+      "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    values = []\n    button = ttk.Button(root, command=lambda: values.append(1))\n    button.invoke(); button.invoke()\n    print(len(values))\nfinally:\n    root.destroy()",
+      "output": "2"
+    }
+  },
+  {
+    "id": "tk-entry",
+    "category": "Oberflächen mit Tkinter",
+    "name": "Entry: Eingabetext lesen und an das Modell übergeben",
+    "introduction": "Ein Entry enthält zunächst Text. Eine Zahl entsteht erst durch eine bewusste Umwandlung und Prüfung.",
+    "steps": [
+      "Erzeuge ein Eingabefeld.",
+      "Füge den Text 12 ein.",
+      "Lies ihn und berechne plus 3."
+    ],
+    "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    entry = ttk.Entry(root)\n    entry.insert(0, \"12\")\n    print(entry.get())\n    print(int(entry.get()) + 3)\nfinally:\n    root.destroy()",
+    "output": "12\n15",
+    "choices": [
+      "12\n15",
+      "12\n123",
+      "15\n15"
+    ],
+    "explanation": "Der Beispieltext ist gültig. Ein echtes Feld kann leer sein oder Buchstaben enthalten. Das Rechnerprojekt fängt solche Fehler im Modell ab und zeigt sie als verständliche Meldung.",
+    "methodProfile": {
+      "signature": "entry.insert(position, text); entry.get()",
+      "parameters": [
+        [
+          "position",
+          "Zeichenposition im Text."
+        ]
+      ],
+      "returns": "String aus dem Eingabefeld.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Ein berechenbares Modell über Fenster, Felder und Buttons bedienen.",
+    "pitfall": "int akzeptiert keinen beliebigen Dezimal- oder Kommatext.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-tk-calculator",
+    "projectTitle": "Tkinter-Rechner mit getrenntem Modell",
+    "setup": {
+      "description": "Benötigt Tkinter und einen grafischen Desktop. Unter Linux kann Tkinter separat installiert werden müssen. Die Beispiele erstellen echte, ausgeblendete Tk-Fenster und schließen sie wieder; das vollständige Projekt öffnet ein sichtbares Fenster. CodeKlar zeigt den Lernstoff, führt kein Tk-Fenster im Browser aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "tk-grid",
+    "category": "Oberflächen mit Tkinter",
+    "name": "grid: Felder in Zeilen und Spalten anordnen",
+    "introduction": "grid positioniert Widgets in einem gemeinsamen Elterncontainer. Gewichte und sticky beeinflussen das Verhalten bei Größenänderungen.",
+    "steps": [
+      "Erzeuge ein Label.",
+      "Ordne es Zeile 1 und Spalte 2 zu.",
+      "Lies die Layoutinformation."
+    ],
+    "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    label = ttk.Label(root, text=\"Wert\")\n    label.grid(row=1, column=2, sticky=\"w\")\n    print(label.grid_info()[\"row\"])\n    print(label.grid_info()[\"column\"])\nfinally:\n    root.destroy()",
+    "output": "1\n2",
+    "choices": [
+      "1\n2",
+      "2\n1",
+      "0\n0"
+    ],
+    "explanation": "grid und pack sollten nicht für Geschwister im selben Elterncontainer gemischt werden. Unterschiedliche Frames dürfen eigene Layoutstrategien verwenden. Das Projekt gibt der Eingabespalte ein Gewicht zum Mitwachsen.",
+    "methodProfile": {
+      "signature": "widget.grid(row=r, column=c, sticky=...)",
+      "parameters": [
+        [
+          "row und column",
+          "Rasterpositionen."
+        ]
+      ],
+      "returns": "Platziert das vorhandene Widget.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Ein berechenbares Modell über Fenster, Felder und Buttons bedienen.",
+    "pitfall": "Ein grid-Aufruf erzeugt kein neues Label und liefert nicht das Widget als Rückgabewert.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-tk-calculator",
+    "projectTitle": "Tkinter-Rechner mit getrenntem Modell",
+    "setup": {
+      "description": "Benötigt Tkinter und einen grafischen Desktop. Unter Linux kann Tkinter separat installiert werden müssen. Die Beispiele erstellen echte, ausgeblendete Tk-Fenster und schließen sie wieder; das vollständige Projekt öffnet ein sichtbares Fenster. CodeKlar zeigt den Lernstoff, führt kein Tk-Fenster im Browser aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "tk-after",
+    "category": "Oberflächen mit Tkinter",
+    "name": "after: Arbeit an die Ereignisschleife übergeben",
+    "introduction": "after plant einen Callback. Die Anwendung muss anschließend Ereignisse verarbeiten, damit er ausgeführt wird.",
+    "steps": [
+      "Plane einen Callback mit Verzögerung 0.",
+      "Verarbeite die Warteschlange.",
+      "Lies das Ergebnis."
+    ],
+    "code": "import tkinter as tk\nfrom tkinter import ttk\n\nroot = tk.Tk()\nroot.withdraw()\ntry:\n    calls = []\n    root.after(0, lambda: calls.append(\"später\"))\n    root.update()\n    print(calls)\nfinally:\n    root.destroy()",
+    "output": "['später']",
+    "choices": [
+      "['später']",
+      "[]",
+      "['sofort']"
+    ],
+    "explanation": "Im normalen Programm verarbeitet mainloop die Ereignisse; update dient hier der kurzen kontrollierten Demonstration. after führt lange Arbeit nicht automatisch parallel aus.",
+    "methodProfile": {
+      "signature": "root.after(milliseconds, callback)",
+      "parameters": [
+        [
+          "milliseconds",
+          "Verzögerung bis frühestens zur Ausführung."
+        ]
+      ],
+      "returns": "Kennung des geplanten Aufrufs.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Ein berechenbares Modell über Fenster, Felder und Buttons bedienen.",
+    "pitfall": "time.sleep im GUI-Thread lässt die Oberfläche währenddessen nicht reagieren.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-tk-calculator",
+    "projectTitle": "Tkinter-Rechner mit getrenntem Modell",
+    "setup": {
+      "description": "Benötigt Tkinter und einen grafischen Desktop. Unter Linux kann Tkinter separat installiert werden müssen. Die Beispiele erstellen echte, ausgeblendete Tk-Fenster und schließen sie wieder; das vollständige Projekt öffnet ein sichtbares Fenster. CodeKlar zeigt den Lernstoff, führt kein Tk-Fenster im Browser aus.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pytest-assert",
+    "category": "pytest & Debugging",
+    "name": "pytest: eine Verhaltensregel mit assert formulieren",
+    "introduction": "Ein Test vergleicht beobachtetes und erwartetes Verhalten. Ein passender Funktionsname wird später vom Testrunner entdeckt.",
+    "steps": [
+      "Definiere eine kleine Funktion.",
+      "Der Test prüft einen konkreten Fall.",
+      "Hier wird die Testfunktion ausdrücklich direkt aufgerufen."
+    ],
+    "code": "def double(n): return n * 2\n\ndef test_double():\n    assert double(3) == 6\n\ntest_double()\nprint(\"Assertion besteht\")",
+    "output": "Assertion besteht",
+    "choices": [
+      "Assertion besteht",
+      "True",
+      "6"
+    ],
+    "explanation": "Für die automatische Entdeckung speicherst du Tests typischerweise in test_*.py und startest python -m pytest. Der direkte Aufruf in diesem Beispiel demonstriert nur die Assertion, nicht bereits Fixture- oder Parametrisierungslogik.",
+    "methodProfile": {
+      "signature": "assert actual == expected",
+      "parameters": [
+        [
+          "actual und expected",
+          "Beobachteter und erwarteter Wert."
+        ]
+      ],
+      "returns": "Kein Wert; bei Fehlschlag AssertionError.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Fehlerfälle und Abhängigkeiten mit wiederholbaren Tests untersuchen.",
+    "pitfall": "Ein Test, der nur seine eigene Konstante prüft, beweist keine Funktionseigenschaft.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "pytest==8.4.2"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pytest==8.4.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pytest==8.4.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Prüfe mit assert, dass eine Funktion plus(a,b) bei 2 und 5 die Zahl 7 liefert. Gib danach OK aus.",
+      "hint": "Rufe die zu prüfende Funktion wirklich auf.",
+      "code": "def plus(a, b): return a + b\n\nassert plus(2, 5) == 7\nprint(\"OK\")",
+      "output": "OK"
+    }
+  },
+  {
+    "id": "pytest-raises",
+    "category": "pytest & Debugging",
+    "name": "pytest.raises: einen erwarteten Fehler prüfen",
+    "introduction": "Eine korrekte Funktion kann bei ungültiger Eingabe absichtlich eine Ausnahme werfen. raises prüft genau diese Erwartung.",
+    "steps": [
+      "int kann keinen Text abc als Zahl lesen.",
+      "raises erwartet ValueError.",
+      "Der Block danach wird erreicht."
+    ],
+    "code": "import pytest\n\nwith pytest.raises(ValueError):\n    int(\"abc\")\nprint(\"Fehlerfall geprüft\")",
+    "output": "Fehlerfall geprüft",
+    "choices": [
+      "Fehlerfall geprüft",
+      "ValueError",
+      "abc"
+    ],
+    "explanation": "Ein Test sollte sowohl normale Fälle als auch erlaubte und unerlaubte Grenzen prüfen. Ein beliebiges except ohne Fehlererwartung kann einen Defekt versehentlich verschlucken.",
+    "methodProfile": {
+      "signature": "with pytest.raises(ErrorType): ...",
+      "parameters": [
+        [
+          "ErrorType",
+          "Erwartete Ausnahmeart."
+        ]
+      ],
+      "returns": "Contextmanager für die Fehlererwartung.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Fehlerfälle und Abhängigkeiten mit wiederholbaren Tests untersuchen.",
+    "pitfall": "Ein Test, der jede Exception akzeptiert, kann wegen des falschen Fehlers grün werden.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "pytest==8.4.2"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pytest==8.4.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pytest==8.4.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pytest-parametrize",
+    "category": "pytest & Debugging",
+    "name": "parametrize: dieselbe Regel mit mehreren Fällen prüfen",
+    "introduction": "Parametrisierung lässt pytest eine Testfunktion mit mehreren Eingaben ausführen. Das Beispiel startet den echten Runner auf einer temporären Testdatei.",
+    "steps": [
+      "Die Testdatei enthält zwei Eingabepaare.",
+      "pytest führt die Fälle aus.",
+      "True bedeutet einen erfolgreichen Runner-Exitcode."
+    ],
+    "code": "import contextlib\nimport io\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\nimport pytest\n\nwith TemporaryDirectory() as folder:\n    file = Path(folder) / \"test_example.py\"\n    file.write_text('import pytest\\n\\n@pytest.mark.parametrize(\"value,expected\", [(2,4),(3,6)])\\ndef test_double(value, expected):\\n    assert value * 2 == expected\\n', encoding=\"utf-8\")\n    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):\n        status = pytest.main([str(file), \"-q\", \"-p\", \"no:cacheprovider\", \"--basetemp\", str(Path(folder) / \"work\")])\n    print(status == pytest.ExitCode.OK)",
+    "output": "True",
+    "choices": [
+      "True",
+      "False",
+      "2"
+    ],
+    "explanation": "Die Runnerausgabe wird für diese reproduzierbare Lernfrage aufgefangen. Die Tests werden tatsächlich ausgeführt; im Terminal kannst du sie mit -v einzeln sehen. Vorlagen und Anwendungsdaten sollten unabhängig von den erwarteten Ergebnissen gewählt werden.",
+    "methodProfile": {
+      "signature": "@pytest.mark.parametrize(names, cases)",
+      "parameters": [
+        [
+          "names",
+          "Parameternamen."
+        ],
+        [
+          "cases",
+          "Zu prüfende Datensätze."
+        ]
+      ],
+      "returns": "Mehrere ausgeführte Testfälle.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Fehlerfälle und Abhängigkeiten mit wiederholbaren Tests untersuchen.",
+    "pitfall": "Ein einziger grüner Beispielwert deckt nicht automatisch leere, negative oder ungültige Eingaben ab.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "pytest==8.4.2"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pytest==8.4.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pytest==8.4.2\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Starte einen pytest-Test mit den Fällen 0 und 1, der deren Quadrat prüft. Gib nur den erfolgreichen Exitcode-Vergleich aus.",
+      "hint": "Nutze parametrize und den vorbereiteten Runner-Aufbau.",
+      "code": "import contextlib\nimport io\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\nimport pytest\n\nwith TemporaryDirectory() as folder:\n    file = Path(folder) / \"test_example.py\"\n    file.write_text('import pytest\\n\\n@pytest.mark.parametrize(\"n,result\", [(0,0),(1,1)])\\ndef test_square(n,result):\\n    assert n*n == result\\n', encoding=\"utf-8\")\n    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):\n        status = pytest.main([str(file), \"-q\", \"-p\", \"no:cacheprovider\", \"--basetemp\", str(Path(folder) / \"work\")])\n    print(status == pytest.ExitCode.OK)",
+      "output": "True"
+    }
+  },
+  {
+    "id": "pytest-fixture",
+    "category": "pytest & Debugging",
+    "name": "tmp_path: für jeden Test eigene Dateien verwenden",
+    "introduction": "Die Fixture tmp_path stellt ein eigenes temporäres Testverzeichnis bereit. Ein Test braucht damit keine echten Nutzerdaten.",
+    "steps": [
+      "pytest erkennt den Fixture-Namen als Parameter.",
+      "Der Test schreibt eine eigene Datei.",
+      "Er prüft deren Inhalt."
+    ],
+    "code": "import contextlib\nimport io\nfrom pathlib import Path\nfrom tempfile import TemporaryDirectory\nimport pytest\n\nwith TemporaryDirectory() as folder:\n    file = Path(folder) / \"test_example.py\"\n    file.write_text('def test_file(tmp_path):\\n    target = tmp_path / \"notiz.txt\"\\n    target.write_text(\"Hallo\", encoding=\"utf-8\")\\n    assert target.read_text(encoding=\"utf-8\") == \"Hallo\"\\n', encoding=\"utf-8\")\n    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):\n        status = pytest.main([str(file), \"-q\", \"-p\", \"no:cacheprovider\", \"--basetemp\", str(Path(folder) / \"work\")])\n    print(status == pytest.ExitCode.OK)",
+    "output": "True",
+    "choices": [
+      "True",
+      "False",
+      "Hallo"
+    ],
+    "explanation": "Die Notiz-Webapp nutzt tmp_path für eine getrennte SQLite-Datenbank pro Test. Testdaten werden nicht in deine normale notizen.db geschrieben.",
+    "methodProfile": {
+      "signature": "def test_example(tmp_path): ...",
+      "parameters": [
+        [
+          "tmp_path",
+          "Von pytest bereitgestellter Path."
+        ]
+      ],
+      "returns": "Eigenes temporäres Verzeichnis.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Fehlerfälle und Abhängigkeiten mit wiederholbaren Tests untersuchen.",
+    "pitfall": "Fixtures werden vom Runner aufgelöst, nicht durch einen beliebigen direkten Funktionsaufruf ohne Argument.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "pytest==8.4.2"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pytest==8.4.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pytest==8.4.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "pytest-monkeypatch",
+    "category": "pytest & Debugging",
+    "name": "monkeypatch: eine Umgebungsabhängigkeit kontrollieren",
+    "introduction": "MonkeyPatch kann eine Abhängigkeit vorübergehend ändern und anschließend wiederherstellen.",
+    "steps": [
+      "Entferne einen eigenen Beispielwert.",
+      "Setze ihn nur im Kontext.",
+      "Nach dem Kontext ist er wieder weg."
+    ],
+    "code": "import os\nfrom pytest import MonkeyPatch\n\nos.environ.pop(\"CODEKLAR_EXAMPLE_FLAG\", None)\nwith MonkeyPatch.context() as patch:\n    patch.setenv(\"CODEKLAR_EXAMPLE_FLAG\", \"test\")\n    print(os.environ[\"CODEKLAR_EXAMPLE_FLAG\"])\nprint(\"CODEKLAR_EXAMPLE_FLAG\" in os.environ)",
+    "output": "test\nFalse",
+    "choices": [
+      "test\nFalse",
+      "test\nTrue",
+      "None\nFalse"
+    ],
+    "explanation": "Im pytest-Test wird meist die monkeypatch-Fixture verwendet; sie räumt automatisch auf. Für externe Clients ist häufig eine injizierte Schnittstelle leichter zu verstehen als globales Patchen.",
+    "methodProfile": {
+      "signature": "MonkeyPatch.context(); patch.setenv(name, value)",
+      "parameters": [
+        [
+          "name",
+          "Zu ersetzender Umgebungsname."
+        ]
+      ],
+      "returns": "Temporär veränderte Umgebung.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Fehlerfälle und Abhängigkeiten mit wiederholbaren Tests untersuchen.",
+    "pitfall": "Ein falsch gewählter Patch-Ort verändert möglicherweise nicht den Namen, den deine Anwendung wirklich benutzt.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "pytest==8.4.2"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pytest==8.4.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pytest==8.4.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "debug-traceback",
+    "category": "pytest & Debugging",
+    "name": "Traceback lesen: Ausnahme und Aufrufweg unterscheiden",
+    "introduction": "Ein Traceback zeigt, über welche Aufrufe ein Fehler entstanden ist. Die letzte Ausnahmezeile nennt hier die unmittelbare Fehlerart.",
+    "steps": [
+      "Eine Funktion dividiert durch null.",
+      "Fange den Fehler für diese Demonstration ab.",
+      "Prüfe die Fehlerart im erfassten Traceback."
+    ],
+    "code": "import traceback\n\ndef divide(a, b): return a / b\n\ntry:\n    divide(3, 0)\nexcept ZeroDivisionError:\n    detail = traceback.format_exc()\n    print(\"ZeroDivisionError\" in detail)\n    print(\"divide\" in detail)",
+    "output": "True\nTrue",
+    "choices": [
+      "True\nTrue",
+      "False\nTrue",
+      "True\nFalse"
+    ],
+    "explanation": "In einer IDE helfen Breakpoints, Werte vor der Fehlerstelle anzusehen. Ein Test für die Nullgrenze hält die später gefundene Regel dauerhaft fest. Der Traceback ist ein Hinweis auf Ursache und Weg, keine automatische fachliche Reparatur.",
+    "methodProfile": {
+      "signature": "traceback.format_exc()",
+      "parameters": [],
+      "returns": "Traceback-String im aktuellen except-Kontext.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Fehlerfälle und Abhängigkeiten mit wiederholbaren Tests untersuchen.",
+    "pitfall": "Nur die Exception-Meldung zu verstecken behebt den fehlerhaften Eingabefall nicht.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-web-notes",
+    "projectTitle": "Notiz-Webapp mit Flask",
+    "dependencies": [
+      "pytest==8.4.2"
+    ],
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python -m pip install pytest==8.4.2\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe -m pip install pytest==8.4.2\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "iterator-protocol",
+    "category": "Fortgeschrittene Architektur",
+    "name": "Eigenen Iterator bauen: __iter__ und __next__",
+    "introduction": "Ein Iterator hält seinen Fortschritt und meldet das Ende mit StopIteration.",
+    "steps": [
+      "Die Klasse startet bei 0.",
+      "Jeder next-Aufruf erhöht den Zustand.",
+      "list verbraucht die restlichen Werte."
+    ],
+    "code": "class Counter:\n    def __init__(self): self.value = 0\n    def __iter__(self): return self\n    def __next__(self):\n        if self.value >= 3: raise StopIteration\n        result = self.value\n        self.value += 1\n        return result\n\nitems = Counter()\nprint(next(items))\nprint(list(items))",
+    "output": "0\n[1, 2]",
+    "choices": [
+      "0\n[1, 2]",
+      "0\n[0, 1, 2]",
+      "1\n[2, 3]"
+    ],
+    "explanation": "Ein Iterator ist nach dem Verbrauch nicht automatisch wieder am Anfang. Ein Iterable kann dagegen bei jedem iter-Aufruf einen neuen Iterator liefern. Generatoren übernehmen viele dieser Mechanismen bequemer.",
+    "methodProfile": {
+      "signature": "__iter__(); __next__()",
+      "parameters": [],
+      "returns": "Ein Wert pro Aufruf oder StopIteration.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Größere Programme in kleine, unabhängig prüfbare Bausteine zerlegen.",
+    "pitfall": "Dasselbe Iteratorobjekt zweimal zu durchlaufen kann beim zweiten Mal keine Werte mehr liefern.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Verbrauche aus iter([2,4,6]) einen Wert und gib die verbleibenden Werte als Liste aus.",
+      "hint": "next ändert den Fortschritt des Iterators.",
+      "code": "values = iter([2, 4, 6])\nnext(values)\nprint(list(values))",
+      "output": "[4, 6]"
+    }
+  },
+  {
+    "id": "generator-lazy",
+    "category": "Fortgeschrittene Architektur",
+    "name": "Lazy Pipeline: nur angeforderte Werte berechnen",
+    "introduction": "Generatorausdrücke können Daten schrittweise liefern. islice begrenzt, wie viele Werte abgefragt werden.",
+    "steps": [
+      "Die Verarbeitung protokolliert Aufrufe.",
+      "islice fordert nur zwei Werte an.",
+      "Der Rest wird noch nicht berechnet."
+    ],
+    "code": "from itertools import islice\n\ncalls = []\ndef process(n):\n    calls.append(n)\n    return n * 2\n\nvalues = (process(n) for n in range(5))\nprint(list(islice(values, 2)))\nprint(calls)",
+    "output": "[0, 2]\n[0, 1]",
+    "choices": [
+      "[0, 2]\n[0, 1]",
+      "[0, 2]\n[0, 1, 2, 3, 4]",
+      "[]\n[]"
+    ],
+    "explanation": "Lazy Verarbeitung spart gegebenenfalls Zwischenlisten. Die Eingabequelle kann trotzdem schon Ressourcen halten; Dateien und Verbindungen brauchen weiterhin einen klaren Lebensdauer-Kontext.",
+    "methodProfile": {
+      "signature": "islice(iterator, count)",
+      "parameters": [
+        [
+          "count",
+          "Anzahl angeforderter Werte."
+        ]
+      ],
+      "returns": "Begrenzter Iterator.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Größere Programme in kleine, unabhängig prüfbare Bausteine zerlegen.",
+    "pitfall": "Ein Generator macht eine schon vollständig geladene große Datei nicht nachträglich ungeschehen.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "generator-close",
+    "category": "Fortgeschrittene Architektur",
+    "name": "Generator schließen: finally kann aufräumen",
+    "introduction": "Ein pausierter Generator kann Ressourcen halten. close beendet ihn und führt ein passendes finally aus.",
+    "steps": [
+      "Fordere den ersten Wert an.",
+      "Der Generator pausiert am yield.",
+      "close löst das Aufräumen aus."
+    ],
+    "code": "def values():\n    try:\n        yield 1\n        yield 2\n    finally:\n        print(\"geschlossen\")\n\ngenerator = values()\nprint(next(generator))\ngenerator.close()",
+    "output": "1\ngeschlossen",
+    "choices": [
+      "1\ngeschlossen",
+      "1\n2",
+      "geschlossen\n1"
+    ],
+    "explanation": "Verlasse dich bei wichtigen Ressourcen nicht nur auf irgendwann stattfindende Speicherbereinigung. Ein with-Kontext um die eigentliche Ressource macht die Lebensdauer oft klarer. Ein noch nie gestarteter Generator hat seinen try-Block noch nicht betreten.",
+    "methodProfile": {
+      "signature": "generator.close()",
+      "parameters": [],
+      "returns": "None; beendet den Generator.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Größere Programme in kleine, unabhängig prüfbare Bausteine zerlegen.",
+    "pitfall": "Im finally eines gerade geschlossenen Generators erneut einen normalen Wert zu yielden ist keine allgemeine Aufräumstrategie.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "exitstack",
+    "category": "Fortgeschrittene Architektur",
+    "name": "ExitStack: mehrere Aufräumaktionen bündeln",
+    "introduction": "ExitStack verwaltet dynamisch hinzugefügte Ressourcen und Callbacks. Sie werden in umgekehrter Reihenfolge abgearbeitet.",
+    "steps": [
+      "Registriere Aktion A.",
+      "Registriere danach Aktion B.",
+      "Beim Verlassen wird zuletzt registriert zuerst aufgerufen."
+    ],
+    "code": "from contextlib import ExitStack\n\nclosed = []\nwith ExitStack() as stack:\n    stack.callback(closed.append, \"A\")\n    stack.callback(closed.append, \"B\")\nprint(closed)",
+    "output": "['B', 'A']",
+    "choices": [
+      "['B', 'A']",
+      "['A', 'B']",
+      "[]"
+    ],
+    "explanation": "Mit enter_context können auch normale Contextmanager eingebunden werden. Das hilft, wenn erst zur Laufzeit feststeht, wie viele Dateien geöffnet werden. Für eine einzige Datei bleibt ein einfaches with meist verständlicher.",
+    "methodProfile": {
+      "signature": "stack.callback(function, *args)",
+      "parameters": [
+        [
+          "function",
+          "Beim Aufräumen aufzurufende Funktion."
+        ]
+      ],
+      "returns": "Registrierter Callback.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Größere Programme in kleine, unabhängig prüfbare Bausteine zerlegen.",
+    "pitfall": "ExitStack ersetzt keine Regel dafür, was bei bereits teilweise geschriebenen Ergebnissen fachlich gelten soll.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  },
+  {
+    "id": "repository-injection",
+    "category": "Fortgeschrittene Architektur",
+    "name": "Abhängigkeit übergeben: Logik ohne Datei testen",
+    "introduction": "Eine Funktion muss ihren Speicher nicht selbst global erzeugen. Sie kann einen kleinen austauschbaren Baustein übergeben bekommen.",
+    "steps": [
+      "Der Dienst bekommt eine Speicherfunktion.",
+      "Im Test ist das nur list.append.",
+      "Das Ergebnis ist ohne Dateizugriff prüfbar."
+    ],
+    "code": "def save_note(text, save):\n    value = text.strip()\n    if not value: raise ValueError(\"Leer\")\n    save(value)\n\nitems = []\nsave_note(\" Python \", items.append)\nprint(items)",
+    "output": "['Python']",
+    "choices": [
+      "['Python']",
+      "[' Python ']",
+      "[]"
+    ],
+    "explanation": "Das ist ein kleines Beispiel für Dependency Injection, ohne Framework. Dateizugriff, Datenbank oder Testliste können denselben fachlichen Dienst bedienen. Die tatsächliche Speicherimplementierung braucht zusätzlich eigene Tests.",
+    "methodProfile": {
+      "signature": "save_note(text, save)",
+      "parameters": [
+        [
+          "save",
+          "Übergebene Speicherfunktion."
+        ]
+      ],
+      "returns": "Hier None; delegiert die Speicherung.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Größere Programme in kleine, unabhängig prüfbare Bausteine zerlegen.",
+    "pitfall": "Eine erfolgreiche Prüfung mit einer Liste beweist noch keine dauerhafte Speicherung.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    },
+    "practice": {
+      "task": "Übergebe einer Funktion add_entry eine Liste.append-Funktion. Speichere den bereinigten Text Hallo.",
+      "hint": "Die Funktion bekommt den Speicherschritt als Parameter.",
+      "code": "def add_entry(text, store):\n    store(text.strip())\n\nrows = []\nadd_entry(\" Hallo \", rows.append)\nprint(rows)",
+      "output": "['Hallo']"
+    }
+  },
+  {
+    "id": "frozen-model",
+    "category": "Fortgeschrittene Architektur",
+    "name": "Unveränderliche Datenmodelle: frozen dataclass",
+    "introduction": "Eine frozen dataclass verhindert normale spätere Zuweisungen an ihre Felder. Das kann klare Wertobjekte unterstützen.",
+    "steps": [
+      "Erzeuge ein Datenobjekt mit ID 3.",
+      "Versuche seine ID zu ändern.",
+      "Die Ausnahme zeigt die geschützte Zuweisung."
+    ],
+    "code": "from dataclasses import dataclass, FrozenInstanceError\n\n@dataclass(frozen=True)\nclass Note:\n    id: int\n\nnote = Note(3)\ntry:\n    note.id = 4\nexcept FrozenInstanceError:\n    print(note.id)",
+    "output": "3",
+    "choices": [
+      "3",
+      "4",
+      "None"
+    ],
+    "explanation": "frozen ist keine tiefe Unveränderlichkeit aller enthaltenen Objekte. Eine Liste in einem Feld kann weiterhin veränderlich sein. Auch Typannotationen prüfen ihre Werte nicht automatisch beim Erzeugen.",
+    "methodProfile": {
+      "signature": "@dataclass(frozen=True)",
+      "parameters": [],
+      "returns": "Datenklasse mit verhinderten normalen Feldzuweisungen.",
+      "effect": "Die Schritte benennen Datenänderungen, Dateioperationen oder die angesprochene Oberfläche."
+    },
+    "useCase": "Größere Programme in kleine, unabhängig prüfbare Bausteine zerlegen.",
+    "pitfall": "Ein frozen Objekt ist keine Sicherheitsgrenze gegen absichtliche Manipulation.",
+    "difficulty": "Vertiefung",
+    "projectId": "python-file-inventory",
+    "projectTitle": "Datei-Inventar als Excel",
+    "setup": {
+      "description": "Python 3.10+. Die Beispiele laufen lokal auf deinem Computer. In-Process-Webclients und pytest-Beispiele benötigen keinen öffentlich gestarteten Server; CodeKlar prüft die Wissensantwort.",
+      "commands": "python3 -m venv .venv\n.venv/bin/python main.py",
+      "windowsCommands": "py -m venv .venv\n.venv\\Scripts\\python.exe main.py"
+    }
+  }
+]

@@ -932,3 +932,31 @@ CODEKLAR_PYTHON="$PWD/.venv/bin/python" npm run test:python
 Die vorherigen Requirements für Requests, NumPy, pandas, Jinja2 und setuptools werden weiterhin benötigt. Geprüft wurde die Linux-Umgebung mit CPython 3.12.14; Python 3.10 und echte Windows-/macOS-Laufzeiten wurden nicht separat nativ getestet. Der Produktionsbuild enthält beide PNGs im Precache. Browserprüfungen decken Wissensfragen, gespeicherten Fortschritt, Lernrunden, mobile Vorschauen, Quellen und sämtliche Projekt-ZIPs ab. Offline wurden neue PNG-Vorschauen und Kontaktbogen-Dateien sowie bestehende Design- und pandas-Funktionen geprüft. Einschließlich des älteren Zahlenratespiels gibt es neun Python-Projektangebote.
 
 Die beiden Diagrammbilder lassen sich mit dem vorbereiteten Umgebungs-Python und `scripts/render-python-previews.py` aus den festgelegten Beispieldaten neu erzeugen. Größere Achsenbeschriftungen halten sie auch in der schmalen mobilen Vorschau lesbar.
+
+### Python: Webapps, Automatisierung, Spiele, Oberflächen und Architektur
+
+**36 weitere Lektionen und zwölf lokale Programmierübungen** ergänzen alle sechs angekündigten Gebiete. Python umfasst jetzt **229 Lektionen, 72 lokale Übungen und 13 Projektangebote**. Die vorhandenen sechs Hauptbereiche, Lektions-IDs, Antwortpositionen und gespeicherten Fortschritte bleiben erhalten.
+
+- **Flask und FastAPI:** Routen, Formulare, Redirects, typisierte Pfade, geprüfte Request-Bodys und austauschbare Abhängigkeiten.
+- **Automatisierung und Excel:** Zellen und Tabellen, echtes XLSX-Speichern und Einlesen, Text statt unbeabsichtigter Formeln sowie Dateipläne vor dem Verschieben.
+- **Pygame:** Surfaces, Rechtecke, Kollisionen, zeitabhängige Bewegung, Ereignisse, Spielfeldgrenzen und Punktestand.
+- **Tkinter:** Fenster, Variablen, Buttons, Eingaben, Grid und geplante Rückrufe.
+- **pytest und Debugging:** Assertions, erwartete Fehler, Parametrisierung, temporäre Testdaten, Monkeypatch und Tracebacks.
+- **Fortgeschrittenes Python:** Iterator-Protokoll, verzögerte Generatoren, Aufräumen mit close und ExitStack, injizierte Abhängigkeiten und eingefrorene Datenmodelle.
+
+Unter **Projekte → Python** stehen vier zusätzliche vollständige Projekte mit Quelltext, ZIP, Startanleitung, Tests und Erweiterungsideen:
+
+| Projekt | Praktische Anwendung |
+| --- | --- |
+| Notiz-Webapp mit Flask | Formular → Prüfung → SQLite → HTML, Erstellen und Löschen, sechzehn pytest-Tests |
+| Datei-Inventar als Excel | Dateiauswahl mit Vorschau, neue XLSX-Datei mit Datei- und Typenübersicht, zwölf Tests |
+| Fange den Punkt mit Pygame | Pfeiltasten, Bewegung, Kollision, Punkte, Neustart und PNG-Aufnahme, zwölf Tests |
+| Tkinter-Rechner mit getrenntem Modell | Eingabefelder, Rechenart und Button, Decimal-Rechnung, Modell- und echte GUI-Tests, zwölf Tests |
+
+Der Bauplan jedes Projekts erklärt die Befehle für Windows und Linux/macOS. Die Webapp startet lokal auf `127.0.0.1`; der Bauplan beschreibt ihren begrenzten Lehrumfang. Das Inventar verändert die Quelldateien nicht. Das Pygame-Spiel verwendet **pygame-ce 2.5.5**, dessen Import ebenfalls `pygame` heißt: pygame und pygame-ce nicht gleichzeitig in derselben Umgebung installieren. Tkinter gehört zur Python-Standardbibliothek, kann je nach Python-/Betriebssysteminstallation ein zusätzliches Tk-Paket benötigen und braucht für Fenster sowie GUI-Tests eine grafische Sitzung. Es wird nicht über `pip install tkinter` eingerichtet.
+
+Die Lektionen verwenden Flask 3.1.2, FastAPI 0.116.1, HTTPX 0.28.1, openpyxl 3.1.5, pytest 8.4.2 und pygame-ce 2.5.5. Die eigenen `requirements.txt` der Projekte enthalten jeweils ihre benötigten Pakete. Python wird weiterhin lokal ausgeführt; CodeKlar stellt Erklärung, Wissensfragen, erwartete Ausgaben und lokale Übungsaufträge bereit.
+
+Native Prüfung mit CPython 3.12.14: **228 Beispielprogramme, 72 Übungslösungen und 160 Projekt-Testfälle über zwölf Projekte** bestehen. Tkinter wurde unter Linux mit echtem Tk und einem virtuellen Bildschirm geprüft; zusätzlich wurde ein Rechnerfenster geöffnet und `0.1 + 0.2 = 0.3` über den tatsächlichen Button ausgelöst. Das Pygame-Spiel lief mit dem Dummy-Video-Treiber und erzeugte eine echte PNG-Aufnahme. Die Flask-Webapp wurde zusätzlich über HTTP im Browser bedient: Erstellen, erneutes Laden, Textmaskierung und Löschen. Windows/macOS wurden nicht separat nativ geprüft.
+
+Browserprüfungen kontrollieren alle Python-Wissensfragen, gespeicherten Fortschritt, Lernrunden, mobile Ansichten von 320 bis 1505 Pixeln sowie die exakten Inhalte sämtlicher Projekt-ZIPs. Die neuen Lektionen, Quellen und vier Downloads funktionieren auch offline, nachdem die Webapp sie zwischengespeichert hat. Die erstmalige lokale Installation externer Python-Pakete benötigt normalerweise Internet.

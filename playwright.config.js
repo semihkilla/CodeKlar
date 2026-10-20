@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests",
-  testMatch: "learning.spec.js",
+  testMatch: ["learning.spec.js", "physics.spec.js"],
   fullyParallel: true,
   use: {
     baseURL: "http://localhost:5173",

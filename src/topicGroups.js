@@ -1,5 +1,7 @@
+import { physicsAreas } from './physicsLessons.js';
 // Navigation groups only: lesson IDs, grading and the learning sequence stay stable.
 const groups = {
+  physics: physicsAreas.map(area => [area.id,area.title,[area.title,...(area.id === "thinking" ? ["Größen & Einheiten"] : area.id === "mechanics" ? ["Bewegung & Kräfte","Energie & Modelle"] : [])]]),
   python: [
     ["start", "Einstieg & Sprache", ["Grundlagen", "Operatoren & Entscheidungen", "Schleifen"]],
     ["data", "Listen, Texte & Sammlungen", ["Listen", "Dictionaries & Sets", "Strings", "Zahlen & Zeit", "Reguläre Ausdrücke", "NumPy & Zahlen", "pandas & Tabellen", "Matplotlib & Diagramme"]],

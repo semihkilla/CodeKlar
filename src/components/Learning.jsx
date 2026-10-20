@@ -1,3 +1,4 @@
+import { PhysicsCompass, PhysicsStudy } from './PhysicsStudy.jsx';
 import { PythonLessonHelp } from "./PythonLessonHelp";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, Info, Check, Lightbulb } from "lucide-react";
@@ -156,6 +157,7 @@ function LessonPanel({
               {lesson.useCase && <p className="learning-analogy"><strong>Wofür brauche ich das?</strong>{lesson.useCase}</p>}
               <h3 className="reading-label">Ein kleines Beispiel</h3>
               {science ? <ScienceExample lesson={lesson} /> : technology ? <KnowledgeExample lesson={lesson} /> : <pre className="syntax-strip">{lesson.example}</pre>}
+              {lesson.physicsStudy && <PhysicsStudy key={`physics-${lesson.id}`} lesson={lesson} />}
               {science && <FormulaWorkshop key={lesson.id} course={lesson.course} lessonId={lesson.id} />}
               {lesson.pitfall && <div className="learning-pitfall"><strong>Typischer Stolperstein</strong><p>{lesson.pitfall}</p></div>}
               {lesson.course === 'java' && <JavaLessonHelp lesson={lesson} openProject={openProject} />}
@@ -339,6 +341,7 @@ export function Learning({
       <div className="page-intro learning-intro">
         <h1>{courseName}</h1>
       </div>
+      {course === "physics" && <PhysicsCompass progress={progress} onSelect={goTo}/>}
       {(
         <div className="learning-path">
           <div className="path-heading">

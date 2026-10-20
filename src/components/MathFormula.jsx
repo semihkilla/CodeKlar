@@ -20,12 +20,12 @@ export function MathFormula({ expression, label }) {
   return <div className="math-expression"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label={`${label}: ${spoken(expression)}`}><MathNode expression={expression}/></math></div>;
 }
 export function ScienceExample({ lesson, compact=false }) {
-  const content=scienceMath[lesson.id];
+  const content=scienceMath[lesson.id] || (lesson.physicsStudy ? {formula:lesson.physicsStudy.expression,example:null,legend:lesson.physicsStudy.legend} : null);
   return <div className="science-example">
     {content?<>
       <MathFormula expression={content.formula} label={`${lesson.name}: Formel`}/>
-      {!compact && <><span className="math-example-label">Eingesetzte Werte oder Zusammenhang</span><MathFormula expression={content.example} label={`${lesson.name}: Beispiel`}/>
-        {content.legend.length>0 && <ul className="math-legend">{content.legend.map(text=><li key={text}>{text}</li>)}</ul>}</>}
+      {!compact && <><span className="math-example-label">Eingesetzte Werte oder Zusammenhang</span>{content.example ? <MathFormula expression={content.example} label={`${lesson.name}: Beispiel`}/> : <p>{lesson.physicsStudy.worked}</p>}
+        {content.legend.length>0 && (lesson.physicsStudy ? <details className="physics-notation"><summary>Formelzeichen und Einheiten</summary><ul className="math-legend">{content.legend.map(text=><li key={text}>{text}</li>)}</ul></details> : <ul className="math-legend">{content.legend.map(text=><li key={text}>{text}</li>)}</ul>)}</>}
     </>:lesson.example.split('\n').map((line,index)=><p key={index}>{line}</p>)}
   </div>;
 }

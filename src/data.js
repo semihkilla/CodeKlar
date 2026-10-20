@@ -56,7 +56,7 @@ export const courses = [
   {id:"linux",name:"Linux-Befehle",mark:"LX",guided:true,headline:"Linux im Terminal verstehen.",description:"Bash und Unix-Befehle mit Beispielen und Wissensfragen. Die App führt keine Systembefehle auf deinem Gerät aus."},
   {id:"macos",name:"macOS-Befehle",mark:"Mac",guided:true,headline:"macOS im Terminal verstehen.",description:"zsh, Unix-Werkzeuge und macOS-Befehle mit Beispielen und Wissensfragen. Die App führt keine Systembefehle auf deinem Gerät aus."},
   {id:"windows",name:"Windows-Befehle",mark:"Win",guided:true,headline:"PowerShell und cmd unterscheiden.",description:"PowerShell-7-Grundlagen, Dateien, Objekt-Pipelines und cmd. Die App führt keine Systembefehle auf deinem Gerät aus."},
-  {id:"physics",name:"Physik-Grundlagen",mark:"Ph",guided:true,headline:"Bewegung, Kräfte und Energie verstehen.",description:"Größen, Einheiten und einfache Modelle in kleinen Schritten lernen und berechnen."},
+  {id:"physics",name:"Physik-Grundlagen",mark:"Ph",guided:true,headline:"Physik verstehen – vom Messen bis zum Kosmos.",description:"Zwölf Lernbereiche mit Modellen, Rechenübungen, Experimenten und technischen Anwendungen."},
   {id:"electrical",name:"Elektrotechnik",mark:"ET",guided:true,headline:"Spannung, Strom und Schaltungen verstehen.",description:"Elektrische Größen, ideale Schaltungen und Bauteile anhand kleiner Gleichstrommodelle lernen."},
   { id: "computer", name: "Computer verstehen", mark: "01", description: "Bits, Bytes, CPU und Speicher sprachübergreifend verstehen." },
   {

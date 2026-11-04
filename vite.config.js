@@ -29,8 +29,8 @@ export default defineConfig({
         start_url: "/",
         scope: "/",
         display: "standalone",
-        background_color: "#0b101b",
-        theme_color: "#0b101b",
+        background_color: "#131616",
+        theme_color: "#131616",
         categories: ["education", "productivity"],
         icons: [
           {

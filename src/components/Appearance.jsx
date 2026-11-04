@@ -52,7 +52,7 @@ export function Appearance({ webApp }) {
       const resolved = mode === "system" ? (media.matches ? "dark" : "light") : mode;
       document.documentElement.dataset.theme = resolved;
       document.documentElement.dataset.accent = accent;
-      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", resolved === "light" ? "#f5f8f6" : "#0e1514");
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", resolved === "light" ? "#f6f7f6" : "#131616");
     }
     applyTheme();
     media.addEventListener("change", applyTheme);

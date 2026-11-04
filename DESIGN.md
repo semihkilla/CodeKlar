@@ -1,5 +1,16 @@
 # Dunkles Design und mobile Webapp
 
+## Lernwerkstatt mit Graphit und Mint
+
+Die Lernansicht ordnet Kurs, Thema und Lektion auf engerem Raum. Der Editor ist die aktive Arbeitsfläche. Code und Syntaxfarben geben ihm sein visuelles Gewicht. DM Sans bleibt die Leseschrift, JetBrains Mono markiert Code und Methodennamen. Mint bleibt die Standard-Akzentfarbe und ist vor allem für die Ausführung und Auswahl reserviert.
+
+- Dunkel: Seitenfläche `#131616`, Arbeitsfläche `#1b1f1f`, Code `#111414`.
+- Hell: Seitenfläche `#f6f7f6`, Arbeitsfläche `#ffffff`, Code `#edf1ef`.
+- Auf dem Handy führt „Im Spielplatz öffnen“ aus der Erklärung zum Arbeitsbereich. Die wichtigsten Touchflächen bleiben mindestens 44 px hoch.
+
+Die folgenden Abschnitte dokumentieren frühere Designstände und deren damalige Prüfungen.
+
+
 Aktuelle Referenz: `generated_images/exec-c8d9e206-a78c-40f0-b01f-2ee73673a127.png` (853 × 1844; entspricht einem mobilen Verhältnis von ungefähr 390 × 844). Der ältere Entwurf mit Orange ist durch diese Richtung ersetzt. Der Desktop behält seine zwei Lernspalten und übernimmt die dunklen Farben.
 
 ## Designsystem

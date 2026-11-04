@@ -1,5 +1,6 @@
 import { useRef } from "react";
 
+/** Highlights common tokens in lesson examples and editable code. */
 export function Highlight({ code }) {
   const tokens = code.split(
     /(\/\/[^\n]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\b(?:const|let|var|function|return|if|else|true|false|null|new|class|int|String|void)\b|\b\d+\b|=>|===|&&|\b(?:map|filter|includes|slice|log|equals|append)\b)/g,
@@ -25,6 +26,7 @@ export function Highlight({ code }) {
   });
 }
 
+/** Pairs a native textarea with a synchronized syntax layer. */
 export function CodeEditor({
   code,
   setCode,
@@ -38,15 +40,6 @@ export function CodeEditor({
     if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
       event.preventDefault();
       onRun?.();
-    }
-    if (event.key === "Tab") {
-      event.preventDefault();
-      const { selectionStart, selectionEnd } = event.currentTarget;
-      setCode(code.slice(0, selectionStart) + "  " + code.slice(selectionEnd));
-      const target = event.currentTarget;
-      requestAnimationFrame(() => {
-        target.selectionStart = target.selectionEnd = selectionStart + 2;
-      });
     }
   }
   return (

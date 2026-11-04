@@ -54,11 +54,13 @@ export function Exercises({ progress, openLesson, openProjects, openIdeas, openS
   return (
     <>
       <div className="page-intro">
-        <h1>Vom Verstehen zum Anwenden.</h1>
-        <p>Kleine Aufgaben. Klare Rückmeldung. Dein nächster Schritt.</p>
+        <h1>Übungen</h1>
+        <p>Wähle ein Thema und prüfe, ob dein Code die Aufgabe löst.</p>
+      <div className="exercise-destinations">
       <button className="text-button idea-entry" onClick={openStudy}>Lern- & Prüfungsmodus →</button>
       <button className="text-button idea-entry" onClick={openIdeas}>Von der Idee zum Code →</button>
       <button className="text-button" onClick={openProjects}>Projektideen für alle Lernbereiche →</button>
+      </div>
       </div>
       <nav className="reference-modes" aria-label="Übungsbereiche"><button className={`button ${mode === "all" ? "primary" : "secondary"}`} aria-pressed={mode === "all"} onClick={()=>setMode("all")}>Alle Aufgaben</button><button className={`button ${mode === "challenges" ? "primary" : "secondary"}`} aria-pressed={mode === "challenges"} onClick={()=>setMode("challenges")}>Algorithmus-Challenges</button></nav>
       {mode === "challenges" ? <ChallengeList progress={progress} openLesson={openLesson} /> : <>
@@ -158,7 +160,7 @@ export function Reference({ openLesson }) {
   return (
     <>
       <div className="page-intro">
-        <h1>Die Erklärung ist einen Klick entfernt.</h1>
+        <h1>Nachschlagen</h1>
         <p>
           Operatoren und Methoden – mit Bedeutung, Rückgabewert und Beispiel.
         </p>
@@ -248,9 +250,9 @@ export function ProgressView({ progress, openLesson }) {
   return (
     <>
       <div className="page-intro">
-        <h1>Jeder gelöste Schritt zählt.</h1>
+        <h1>Lernfortschritt</h1>
         <p>
-          Hier siehst du, was du bereits geübt und erfolgreich angewendet hast.
+          Sieh nach, welche Aufgaben du gelöst hast und welche sich zum Wiederholen anbieten.
         </p>
       </div>
       <div className="progress-overview">

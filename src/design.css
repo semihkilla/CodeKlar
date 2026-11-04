@@ -1,16 +1,16 @@
 /* Mint Focus: shared light/dark tokens and the compact reading surface. */
 :root {
   color-scheme: dark;
-  --background: #131616;
-  --surface: #1b1f1f;
-  --sidebar: #161919;
-  --soft: #252b2a;
-  --code: #111414;
-  --text: #ecf1ef;
-  --muted: #aebbb7;
-  --border: #333b39;
-  --accent: #78dca8;
-  --on-accent: #092219;
+  --background: #0c111c;
+  --surface: #151d2a;
+  --sidebar: #0f1622;
+  --soft: #202b3b;
+  --code: #090f19;
+  --text: #e8edf5;
+  --muted: #a9b6c9;
+  --border: #2d394c;
+  --accent: #e8c58b;
+  --on-accent: #201a10;
   --success: #78dca8;
   --success-soft: #17392b;
   --error: #ffacb0;
@@ -27,7 +27,7 @@
 :root[data-accent="purple"] { --accent: #b6a2ff; }
 :root[data-accent="blue"] { --accent: #8bc1ff; }
 :root[data-accent="green"] { --accent: #78dca8; }
-:root[data-accent="amber"] { --accent: #efbf70; }
+:root[data-accent="amber"] { --accent: #e8c58b; }
 :root[data-accent="rose"] { --accent: #efa0bb; }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -63,7 +63,7 @@ body { background: var(--background); color: var(--text); }
 .mobile-workspace-switch button.selected,
 .idea-next button:last-child:not(:disabled) { color: var(--on-accent); }
 .lesson-picker button.selected { background: var(--soft); color: var(--text); box-shadow: inset 0 -2px var(--accent); }
-.accent-option > span { color: #092219; }
+.accent-option > span { color: #201a10; }
 .code-editor { color: var(--text); }
 .token-keyword { color: var(--keyword); }
 .token-number { color: var(--number); }
@@ -293,4 +293,123 @@ body { background: var(--background); color: var(--text); }
 
 @media (max-width: 350px) {
   .topic-navigation { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
+
+
+/* The seven views share one reading rhythm while their content sets the layout. */
+.main-content > .page-intro,
+.projects-page > .page-intro,
+.idea-page > .page-intro,
+.study-page > .page-intro {
+  border-bottom: 1px solid var(--border);
+  padding-block: 8px 20px;
+  margin-bottom: 24px;
+}
+.page-intro:not(.learning-intro) h1 {
+  font-size: clamp(30px, 3vw, 44px);
+  font-weight: 600;
+  letter-spacing: -.8px;
+  margin-bottom: 8px;
+}
+.page-intro:not(.learning-intro) p {
+  max-width: 62ch;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+.exercise-destinations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 12px;
+}
+.exercise-destinations .text-button { min-height: 44px; margin: 0; text-align: left; }
+.reference-modes { gap: 8px; margin-bottom: 16px; }
+.reference-modes .button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: normal;
+}
+.reference-modes .button[aria-pressed="true"] {
+  background: var(--soft);
+  color: var(--text);
+  border-color: var(--border);
+  box-shadow: inset 0 -2px var(--accent);
+}
+.library-toolbar { gap: 8px; }
+.exercise-row { padding-block: 16px; background: transparent; }
+.exercise-row strong, .reference-entry h2 { font-weight: 600; }
+.reference-entry { padding-block: 20px; min-width: 0; }
+.reference-entry pre { background: var(--code); border: 1px solid var(--border); border-radius: 8px; }
+.list-caption, .idea-eyebrow, .project-tag, .study-round-heading > span {
+  color: var(--muted);
+  font: 12px/1.6 var(--mono);
+}
+.progress-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 0 0 24px;
+  margin-bottom: 24px;
+}
+.progress-overview > div { gap: 8px; }
+.progress-overview strong {
+  font: 500 clamp(24px, 3vw, 40px)/1.2 var(--mono);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.progress-overview small { font-size: 12px; }
+.project-list { gap: 4px; }
+.project-list button { padding: 12px; border-radius: 8px; }
+.project-list button.selected { border-color: var(--border); box-shadow: inset 2px 0 var(--accent); }
+.project-list small { color: var(--muted); }
+.project-detail { padding: 20px; border-radius: 12px; }
+.project-detail h2, .study-card h2, .idea-stage h2 { font-weight: 600; }
+.idea-page, .study-page { margin-inline: 0; }
+.idea-page .idea-stage, .study-page .study-card {
+  border-radius: 12px;
+  box-shadow: none;
+}
+.idea-page .idea-eyebrow { letter-spacing: 0; text-transform: none; }
+.topic-navigation .topic-tabs,
+.topic-navigation .desktop-lesson-picker,
+.project-list { scrollbar-width: thin; scrollbar-color: var(--muted) var(--background); }
+
+@media (max-width: 720px), (max-width: 1000px) and (pointer: coarse) {
+  .sidebar.is-open .primary-nav { display: flex; }
+  .sidebar .primary-nav .nav-link { min-height: 44px; }
+  .main-content > .page-intro,
+  .projects-page > .page-intro,
+  .idea-page > .page-intro,
+  .study-page > .page-intro { padding-block: 12px 16px; margin-bottom: 16px; }
+  .exercise-destinations { gap: 0 12px; }
+  .reference-entry { padding-block: 16px; }
+  .progress-overview { gap: 8px; }
+  .progress-overview span { font-size: 12px; }
+  .progress-overview small { white-space: nowrap; }
+  .project-detail { padding: 16px; }
+}
+
+@media (min-width: 360px) and (max-width: 720px) {
+  .study-page .study-setup { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .study-page .study-setup select { padding-inline: 8px; }
+}
+
+@media (max-width: 800px) {
+  .project-list button { min-width: min(192px, 75vw); }
+}
+
+.project-browse-hint { display: none; }
+.study-card > .button.primary + p { margin-top: 12px; }
+
+@media (max-width: 800px) {
+  .project-browse-hint { display: block; margin: 0 0 8px; color: var(--muted); font-size: 12px; }
+}
+@media (max-width: 720px), (max-width: 1000px) and (pointer: coarse) {
+  .exercise-row.table-head { grid-template-columns: 48px minmax(0, 1fr) 18px; }
+  .exercise-destinations .text-button { font-size: 12px; }
+}
+@media (max-width: 350px) {
+  .library-toolbar select { flex-basis: 100%; }
 }

@@ -5,15 +5,15 @@ const accents = [
   { id: "purple", label: "Lila", color: "#9b87ff" },
   { id: "blue", label: "Blau", color: "#77b7ff" },
   { id: "green", label: "Mint", color: "#78dca8" },
-  { id: "amber", label: "Amber", color: "#efbf70" },
+  { id: "amber", label: "Sand", color: "#e8c58b" },
   { id: "rose", label: "Rosé", color: "#efa0bb" },
 ];
 function readAccent() {
   try {
     const value = localStorage.getItem("codeklar-accent-v1");
-    return accents.some((item) => item.id === value) ? value : "green";
+    return accents.some((item) => item.id === value) ? value : "amber";
   } catch {
-    return "green";
+    return "amber";
   }
 }
 
@@ -52,7 +52,7 @@ export function Appearance({ webApp }) {
       const resolved = mode === "system" ? (media.matches ? "dark" : "light") : mode;
       document.documentElement.dataset.theme = resolved;
       document.documentElement.dataset.accent = accent;
-      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", resolved === "light" ? "#f6f7f6" : "#131616");
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", resolved === "light" ? "#f6f7f6" : "#0c111c");
     }
     applyTheme();
     media.addEventListener("change", applyTheme);

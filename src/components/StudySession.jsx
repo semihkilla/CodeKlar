@@ -55,7 +55,7 @@ export default function StudySession({ course: initialCourse, progress, recordSe
   const diagnostics = session?.status === "finished" ? chapterResults(session,resultGroups) : [];
   const summary = session?.status === 'finished' ? sessionSummary(session) : null;
   return <section className="study-page">
-    <div className="page-intro"><h1>Lernen mit einem klaren Ablauf.</h1><p>Eine Sprache, eine kurze Runde. Wiederhole fälligen Stoff, kläre Fehler und prüfe deinen Stand.</p></div>
+    <div className="page-intro"><h1>Lernrunden</h1><p>Eine Sprache, eine kurze Runde. Wiederhole fälligen Stoff, kläre Fehler und prüfe deinen Stand.</p></div>
     <p className="study-note" role="status">{saved ? 'Runde und Ergebnisse sind auf diesem Gerät gespeichert.' : 'Speichern nicht möglich: Beim Schließen könnten Runde und Ergebnisse verloren gehen.'}</p>
     {!session && <>
       <div className="study-setup">
@@ -65,9 +65,10 @@ export default function StudySession({ course: initialCourse, progress, recordSe
         <label>Rundenlänge<select aria-label="Fragenzahl" value={count} onChange={e=>setCount(Number(e.target.value))}>{[5,10,20].map(n=><option key={n} value={n}>{n} Fragen</option>)}</select></label>
         {mode==='exam' && <label>Zeitlimit<select aria-label="Zeitlimit" value={minutes} onChange={e=>setMinutes(Number(e.target.value))}>{[5,10,20].map(n=><option key={n} value={n}>{n} Minuten</option>)}</select></label>}
       </div>
-      <div className="study-card"><h2>{names[mode]}</h2><p>{due.length} Aufgaben fällig · {pool.length} Wissensfragen im gewählten Bereich.</p><p>{mode==='exam' ? 'Zufällige Fragen aus den ausgewählten Kapiteln. Lösungen bleiben bis zur Abgabe verborgen. Unbeantwortete Fragen zählen als falsch. Die Uhr läuft bei Navigation oder Neuladen weiter.' : mode==='review' ? 'Nur fällige Fragen: Fehler zuerst, danach Wiederholungen. Eine falsche Antwort kommt am Rundenende einmal erneut.' : 'Zuerst fällige Fragen, dann neuer Stoff in Lernpfadreihenfolge. Direktes Feedback nach jeder Antwort; Fehler kommen am Ende einmal erneut.'}</p>
-        {mode==='review' && !due.length && <p>Gerade ist nichts fällig. Starte eine Lernrunde oder komm am nächsten Wiederholungstermin zurück.</p>}
+      <div className="study-card"><h2>{names[mode]}</h2><p>{due.length} Aufgaben fällig · {pool.length} Wissensfragen im gewählten Bereich.</p>
         <button className="button primary" disabled={!pool.length || (mode==='review' && !due.length)} onClick={()=>setStore(s=>({...s,session:createSession(selectSessionLessons(pool,progress,mode,count,selectedGroup?[selectedGroup]:groups),mode,minutes)}))}>Runde starten</button>
+        <p>{mode==='exam' ? 'Zufällige Fragen aus den ausgewählten Kapiteln. Lösungen bleiben bis zur Abgabe verborgen. Unbeantwortete Fragen zählen als falsch. Die Uhr läuft bei Navigation oder Neuladen weiter.' : mode==='review' ? 'Nur fällige Fragen: Fehler zuerst, danach Wiederholungen. Eine falsche Antwort kommt am Rundenende einmal erneut.' : 'Zuerst fällige Fragen, dann neuer Stoff in Lernpfadreihenfolge. Direktes Feedback nach jeder Antwort; Fehler kommen am Ende einmal erneut.'}</p>
+        {mode==='review' && !due.length && <p>Gerade ist nichts fällig. Starte eine Lernrunde oder komm am nächsten Wiederholungstermin zurück.</p>}
         <p className="study-note">Es werden höchstens so viele Fragen verwendet, wie verfügbar sind. Das sind Wissenschecks; praktische Codeaufgaben und lokale Programmierübungen bearbeitest du zusätzlich. JavaScript-Codeaufgaben werden dadurch nicht als gelöst markiert.</p>
       </div>
       <details className="study-card"><summary>Wie hilft die Wiederholung?</summary><p>Fehler bleiben sofort fällig. Eine erfolgreiche Runde plant die nächste Wiederholung nach 1, 3, 7 und dann 14 Tagen. Wiederholungsversuche innerhalb einer Runde zählen pro Aufgabe als ein Endergebnis. Dein bisheriger Abschluss bleibt bei einem Fehler erhalten.</p></details>

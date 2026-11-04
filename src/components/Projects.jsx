@@ -30,11 +30,12 @@ export default function Projects({ course, openLesson, initialProjectId }) {
     catch { setCopyStatus('Kopieren nicht möglich. Nutze den ZIP-Download.'); }
   }
   return <section className="projects-page">
-    <div className="page-intro"><h1>Aus Funktionen werden Projekte.</h1><p>Spiele, kleine Apps und Werkzeuge: vollständige Beispiele zum Ausprobieren, Verstehen und Weiterbauen.</p></div>
+    <div className="page-intro"><h1>Projektbibliothek</h1><p>Spiele, kleine Apps und Werkzeuge: vollständige Beispiele zum Ausprobieren, Verstehen und Weiterbauen.</p></div>
     <div className="project-toolbar">
       <label>Lernbereich<select aria-label="Lernbereich" value={filter} onChange={e => { setFilter(e.target.value); setFile(''); setCopyStatus(''); setDownloadStatus(''); }}><option value="all">Alle Lernbereiche</option>{courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
       <label>Projekt suchen<input aria-label="Projekt suchen" type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Spiel, Taschenrechner, Python …" /></label>
     </div>
+    <p className="project-browse-hint">Wische für weitere Projektbeispiele</p>
     <div className="project-layout">
       <nav className="project-list" aria-label="Projektbeispiele">{visible.map(p => <button key={p.id} className={project?.id === p.id ? 'selected' : ''} aria-current={project?.id === p.id ? 'true' : undefined} onClick={() => { setSelected(p.id); setFile(''); setCopyStatus(''); setDownloadStatus(''); }}><small>{p.language}</small><strong>{p.title}</strong><span>{p.description}</span></button>)}</nav>
       {project ? <article className="project-detail" key={project.id}>

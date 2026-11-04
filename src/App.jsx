@@ -12,6 +12,7 @@ const StudySession = lazy(() => import("./components/StudySession"));
 const IdeaToCode = lazy(() => import("./components/IdeaToCode"));
 const Projects = lazy(() => import("./components/Projects"));
 
+/** Provides navigation and shared settings for all CodeKlar views. */
 export default function App() {
   const [projectId, setProjectId] = useState(null);
   const [view, setView] = useState("learn");
@@ -91,9 +92,9 @@ export default function App() {
                   : "Offline · gespeichert"
                 : "Speichern nicht möglich"}
             </span>
-            <select className="header-course-select" aria-label="Lernbereich wählen" value={course} onChange={event => openLesson(lessons.find(item => item.course === event.target.value).id)}>
+            {view === "learn" && <select className="header-course-select" aria-label="Lernbereich wählen" value={course} onChange={event => openLesson(lessons.find(item => item.course === event.target.value).id)}>
               {courses.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-            </select>
+            </select>}
             <Appearance webApp={webApp} />
           </div>
         </header>
@@ -140,8 +141,8 @@ export default function App() {
         {navigation.filter(item => item.id !== "projects" && item.id !== "ideas" && item.id !== "sessions").map(({ id, label, icon: Icon }) => (
           <button
             key={id}
-            aria-current={(view === id || ((view === "projects" || view === "ideas" || view === "sessions") && id === "exercises")) ? "page" : undefined}
-            className={(view === id || ((view === "projects" || view === "ideas" || view === "sessions") && id === "exercises")) ? "selected" : ""}
+            aria-current={view === id ? "page" : undefined}
+            className={view === id ? "selected" : ""}
             onClick={() => navigate(id)}
           >
             <Icon size={23} strokeWidth={1.8} />

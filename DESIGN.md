@@ -1,5 +1,11 @@
 # Dunkles Design und mobile Webapp
 
+## Vorschau · Technisches Laborbuch
+
+Tintenblau (`#0c111c`) bildet den Hintergrund, Sand (`#e8c58b`) markiert die wichtigste Aktion. Listen und Trennlinien halten die Bibliotheksansichten ruhig. Code, Dateinamen und Schrittangaben verwenden JetBrains Mono. Das mobile Menü öffnet alle sieben Hauptbereiche direkt.
+
+Die visuellen Durchgänge folgen [unslop von Damir Sokolovsky](https://heydamir.design/unslop), CC BY 4.0.
+
 ## Lernwerkstatt mit Graphit und Mint
 
 Die Lernansicht ordnet Kurs, Thema und Lektion auf engerem Raum. Der Editor ist die aktive Arbeitsfläche. Code und Syntaxfarben geben ihm sein visuelles Gewicht. DM Sans bleibt die Leseschrift, JetBrains Mono markiert Code und Methodennamen. Mint bleibt die Standard-Akzentfarbe und ist vor allem für die Ausführung und Auswahl reserviert.

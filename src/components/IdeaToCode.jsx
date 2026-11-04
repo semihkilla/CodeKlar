@@ -50,7 +50,7 @@ export default function IdeaToCode({ openProject }) {
     setDownloadStatus('Beispiel heruntergeladen. Die Startanleitung steht in README.md.');
   }
   return <section className="idea-page">
-    <div className="page-intro"><h1>Von der Idee zum Code.</h1><p>Du weißt, was du bauen willst. Hier lernst du, daraus Daten, Abläufe und ein erstes Programm zu machen.</p></div>
+    <div className="page-intro"><h1>Vom Bauplan zum Code</h1><p>Du weißt, was du bauen willst. Hier lernst du, daraus Daten, Abläufe und ein erstes Programm zu machen.</p></div>
     <div className="idea-modes" aria-label="Arbeitsweise">
       <button aria-pressed={state.mode === 'examples'} onClick={() => setState(s => ({ ...s, mode: 'examples' }))}>An einem Beispiel lernen</button>
       <button aria-pressed={state.mode === 'own'} onClick={() => setState(s => ({ ...s, mode: 'own' }))}>Meine eigene Idee zerlegen</button>

@@ -42,7 +42,7 @@ Fortschritt wird pro Webadresse gespeichert. Beim Wechsel von der bisherigen Adr
 - Suchbares Nachschlagewerk und Aufgabenfilter nach Lernbereich und Lösungsstatus.
 - Tatsächlicher Lernfortschritt in versioniertem `localStorage`; Export als JSON.
 - Mobile Navigation und lokal mitgelieferte Schriftdateien.
-- Helle und dunkle Oberflächen mit wählbarer, gespeicherter Akzentfarbe. Mintgrün ist der Standard.
+- Helle und dunkle Oberflächen mit wählbarer, gespeicherter Akzentfarbe. Die Dark-Mode-Vorschau verwendet Tintenblau mit Sand als Standard.
 - Handy-Navigation am unteren Bildschirmrand. „Im Spielplatz öffnen“ führt von der JavaScript-Erklärung zum Editor. Nach dem Ausführen rückt die Ausgabe ins Sichtfeld. Ein versehentliches Zurücksetzen lässt sich über „Rückgängig“ wiederherstellen, bis der Code erneut bearbeitet oder die Lektion gewechselt wird.
 - Installierbare PWA mit Icons für Android und iPhone, Offline-Cache und einem Hinweis auf verfügbare Updates.
 

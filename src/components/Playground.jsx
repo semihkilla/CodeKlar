@@ -5,6 +5,7 @@ import { downloadBrowserProject } from "../browserDownload";
 import { BrowserPreview } from "./BrowserPreview";
 import { runJavaScript } from "../runner";
 
+/** Runs editable lesson examples and shows their output and test results. */
 export function Playground({ lesson, tab, record }) {
   const taskMode = tab === "task";
   const initial = taskMode
@@ -18,6 +19,9 @@ export function Playground({ lesson, tab, record }) {
   const [activeFile, setActiveFile] = useState("main.js");
   const [result, setResult] = useState(null);
   const [running, setRunning] = useState(false);
+  const [resetDraft, setResetDraft] = useState(null);
+  const outputRef = useRef(null);
+  const revealOutput = useRef(false);
   const [html, setHtml] = useState(lesson.browser?.html || "");
   const [browserTab, setBrowserTab] = useState("js");
   const history = useRef([]);
@@ -54,8 +58,17 @@ export function Playground({ lesson, tab, record }) {
     setCode(initial);
     setFiles(initialFiles);
     setActiveFile("main.js");
+    setResetDraft(null);
     setResult(null);
   }, [initial, initialFiles]);
+  useEffect(() => {
+    if (!result || !revealOutput.current) return;
+    revealOutput.current = false;
+    const output = outputRef.current;
+    if (!output) return;
+    // Scroll just enough to reveal the result while keeping keyboard focus in place.
+    output.querySelector(".console-output")?.scrollIntoView({ block: "nearest" });
+  }, [result]);
   async function run(test = false) {
     if (busy.current) return;
     busy.current=true;
@@ -78,6 +91,7 @@ export function Playground({ lesson, tab, record }) {
         : {}),
     });
     if (!test && lesson.browser) persistBrowserStorage(output);
+    revealOutput.current = true;
     setResult(output);
     setRunning(false);
     busy.current=false;
@@ -89,6 +103,32 @@ export function Playground({ lesson, tab, record }) {
           !output.error,
       );
   }
+  function resetCode() {
+    const changed = code !== initial || html !== (lesson.browser?.html || "") || files !== initialFiles;
+    if (changed) setResetDraft({ code, html, files, activeFile });
+    setCode(initial);
+    setHtml(lesson.browser?.html || "");
+    history.current = [];
+    setFiles(initialFiles);
+    setActiveFile("main.js");
+    setResult(null);
+  }
+  function undoReset() {
+    if (!resetDraft) return;
+    setCode(resetDraft.code);
+    setHtml(resetDraft.html);
+    setFiles(resetDraft.files);
+    setActiveFile(resetDraft.activeFile);
+    setResetDraft(null);
+    setResult(null);
+  }
+  function editCode(value) {
+    setResetDraft(null);
+    if (lesson.browser && browserTab === "html") setHtml(value);
+    else if (files) setFiles((previous) => ({ ...previous, [activeFile]: value }));
+    else setCode(value);
+  }
+  const editingHtml = Boolean(lesson.browser && browserTab === "html");
   const passed = result?.results?.every((item) => item.passed);
   return (
     <div className="playground-column">
@@ -101,12 +141,18 @@ export function Playground({ lesson, tab, record }) {
           {Object.keys(files).map((name) => <button key={name} role="tab" aria-selected={activeFile === name} className={activeFile === name ? "selected" : ""} onClick={() => setActiveFile(name)}>{name}</button>)}
         </div>}
         {lesson.browser && <><p className="browser-caption">Probiere HTML und Events in der Vorschau aus. API-Antworten sind Beispieldaten; der Speicher gehört nur zu dieser Übung.</p><div className="module-file-tabs" role="tablist" aria-label="Browserdateien"><button role="tab" aria-selected={browserTab === "js"} onClick={() => setBrowserTab("js")}>JavaScript</button><button role="tab" aria-selected={browserTab === "html"} onClick={() => setBrowserTab("html")}>HTML</button></div></>}
-        {lesson.browser && browserTab === "html" ? <CodeEditor code={html} setCode={setHtml} language="HTML" onRun={() => run(false)} /> : <CodeEditor code={files ? files[activeFile] : code} setCode={files ? (value) => setFiles((previous) => ({ ...previous, [activeFile]: value })) : setCode} onRun={() => run(false)} />}
+        <CodeEditor
+          code={editingHtml ? html : files ? files[activeFile] : code}
+          language={editingHtml ? "HTML" : "JavaScript"}
+          setCode={editCode}
+          onRun={() => run(false)}
+        />
         {files && <p className="module-caption">{lesson.testWorkshop ? "Schreibe Tests in main.js. Code ausführen testet deine aktuelle funktion.js. Lösung prüfen ersetzt den Funktionsparameter durch korrekten Code und fehlerhafte Varianten; funktion.js dient dann als Referenz." : "Alle Dateien werden gemeinsam ausgeführt. Änderungen bleiben beim Wechsel der Datei-Reiter erhalten. Geprüft wird der Export aus main.js."}</p>}
         <div className="editor-actions">
           <button
             className="button primary"
             disabled={running}
+            aria-keyshortcuts="Control+Enter Meta+Enter"
             onClick={() => run(false)}
           >
             <Play size={17} fill="currentColor" />
@@ -115,18 +161,14 @@ export function Playground({ lesson, tab, record }) {
           <button
             className="button secondary"
             disabled={running}
-            onClick={() => {
-              setCode(initial);
-              setHtml(lesson.browser?.html || "");
-              history.current=[];
-              setFiles(initialFiles);
-              setActiveFile("main.js");
-              setResult(null);
-            }}
+            onClick={resetDraft ? undoReset : resetCode}
           >
             <RotateCcw size={18} />
-            Zurücksetzen
+            {resetDraft ? "Rückgängig" : "Zurücksetzen"}
           </button>
+          {!taskMode && !lesson.browser && !files && (
+            <span className="editor-shortcut" aria-hidden="true"><kbd>Strg/⌘</kbd> <kbd>Enter</kbd></span>
+          )}
           {lesson.category === "Browser-Projekte" && <button className="button secondary" onClick={() => downloadBrowserProject(lesson)}>Referenzprojekt als ZIP</button>}
           {lesson.browser && <button className="button secondary" disabled={running} onClick={() => {localStorage.removeItem(storageKey);history.current=[];setResult(null);}}>Übungsspeicher leeren</button>}
           {taskMode && (
@@ -145,8 +187,10 @@ export function Playground({ lesson, tab, record }) {
       {lesson.browser && result?.html && <BrowserPreview html={result.html} onActions={interact} busy={running} />}
       <section
         className="output-panel"
+        ref={outputRef}
         aria-label="Code-Ausgabe"
         aria-live="polite"
+        aria-busy={running}
       >
         <div className="output-heading">
           <strong>{result?.results ? "Testergebnis" : "Ausgabe"}</strong>
@@ -162,10 +206,17 @@ export function Playground({ lesson, tab, record }) {
         >
           {!result && (
             <span className="console-empty">
-              Führe deinen Code aus, um das Ergebnis zu sehen.
+              {running ? "Code läuft …" : "Hier erscheint das Ergebnis nach dem Ausführen."}
             </span>
           )}
-          {result?.error && <p>{result.error}</p>}
+          {result?.error && (
+            <>
+              <p>{result.error}</p>
+              {result.error.endsWith(" is not defined") && (
+                <p className="console-hint">Prüfe die Schreibweise und ob der Name vor seiner Verwendung definiert ist</p>
+              )}
+            </>
+          )}
           {result?.logs?.map((log, i) => (
             <pre key={i}>{log}</pre>
           ))}

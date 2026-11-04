@@ -85,7 +85,7 @@ test("ordered learning path resumes after a solved foundation and remains usable
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await page.getByRole("button", { name: "Lernpfad beginnen", exact: true }).click();
+  await page.getByRole("button", { name: "Zu Schritt 1", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Werte speichern mit let und const" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Vorherige Lektion" })).toBeDisabled();
   await page.getByRole("tab", { name: "Aufgabe", exact: true }).click();
@@ -93,7 +93,7 @@ test("ordered learning path resumes after a solved foundation and remains usable
   await page.getByRole("button", { name: "Lösung prüfen" }).click();
   await expect(page.getByLabel("Code-Ausgabe")).toContainText("3 / 3 bestanden");
   await page.reload();
-  await page.getByRole("button", { name: "Lernpfad fortsetzen", exact: true }).click();
+  await page.getByRole("button", { name: "Zu Schritt 2", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Datentypen erkennen mit typeof" })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByText("Alle Schritte im Lernpfad", { exact: true }).click();

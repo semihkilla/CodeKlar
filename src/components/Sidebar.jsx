@@ -59,6 +59,7 @@ const courseIcons = {
   docker: SiDocker,
 };
 
+/** Provides navigation between application views and courses. */
 export function Sidebar({ view, course, onNavigate, onCourse, open, onClose }) {
   return (
     <>
@@ -91,7 +92,7 @@ export function Sidebar({ view, course, onNavigate, onCourse, open, onClose }) {
               aria-current={view === id ? "page" : undefined}
               onClick={() => onNavigate(id)}
             >
-              <Icon size={22} strokeWidth={1.7} />
+              <Icon size={18} strokeWidth={1.5} />
               <span>{label}</span>
             </button>
           ))}
@@ -112,7 +113,7 @@ export function Sidebar({ view, course, onNavigate, onCourse, open, onClose }) {
                 aria-current={course === item.id ? "true" : undefined}
                 onClick={() => onCourse(item.id)}
               >
-                <Icon size={22} />
+                <Icon size={18} strokeWidth={1.5} />
                 <span>{item.name}</span>
               </button>
             );
@@ -120,7 +121,6 @@ export function Sidebar({ view, course, onNavigate, onCourse, open, onClose }) {
             </section>
           ))}
         </nav>
-        <div className="sidebar-footer">Dein Tempo. Dein Weg.</div>
       </aside>
     </>
   );

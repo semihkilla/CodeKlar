@@ -173,7 +173,14 @@ function LessonPanel({
             </> : <>
             <p className="lesson-description">{lesson.description}</p>
             {lesson.debugging && <div className="debugging-guide"><strong>Dein Fehlerlabor</strong><p>{lesson.debugging.strategy}</p><p>{lesson.debugging.symptom}</p></div>}
-            <h3 className="reading-label">So sieht die Syntax aus</h3>
+            <div className="lesson-example-heading">
+              <h3 className="reading-label">Syntax</h3>
+              {lesson.course === "js" && (
+                <button className="text-button mobile-edit-button" onClick={openPlayground}>
+                  Im Spielplatz öffnen <ArrowRight size={16} />
+                </button>
+              )}
+            </div>
             <pre className="syntax-strip">{lesson.syntax}</pre>
             <h3 className="reading-label">Die Bausteine erklärt</h3>
             <dl className="syntax-parts">
@@ -206,7 +213,7 @@ function LessonPanel({
           <>
             {lesson.course === "js" ? (
               <>
-                <h3>Jetzt bist du dran.</h3>
+                <h3>Deine Aufgabe</h3>
                 <p>{lesson.task}</p>
                 <div className="task-instruction">
                   Schreibe deine Lösung im Spielplatz und klicke auf{" "}
@@ -284,6 +291,7 @@ function LessonPanel({
   );
 }
 
+/** Composes the course navigator, lesson and practice workspace. */
 export function Learning({
   course,
   lessonId,
@@ -299,6 +307,7 @@ export function Learning({
   const [mobilePane, setMobilePane] = useState("lesson");
   const topicRef = useRef(null);
   const pickerRef = useRef(null);
+  const workspaceSwitchRef = useRef(null);
   useEffect(() => {
     setTab(initialTab || "explanation");
     setMobilePane("lesson");
@@ -323,12 +332,19 @@ export function Learning({
   const activeGroup = groups.find((group) => group.categories.includes(lesson.category));
   const categories = activeGroup.categories;
   const lessonIndex = available.indexOf(lesson);
-  const nextOpen = available.find((item) => !progress.solved[item.id]);
+  const nextOpenIndex = available.findIndex((item) => !progress.solved[item.id]);
+  const pathTarget = available[Math.max(0, nextOpenIndex)];
   function goTo(id) {
     setLessonId(id);
     setTab("explanation");
     setMobilePane("lesson");
     window.scrollTo({ top: 0, behavior: "instant" });
+  }
+  function openPlayground() {
+    setMobilePane("playground");
+    const switchButton = workspaceSwitchRef.current;
+    // Keep the mode switch in view without opening the mobile keyboard.
+    switchButton?.focus();
   }
   const siblings = available.filter(
     (item) => item.category === lesson.category,
@@ -345,9 +361,9 @@ export function Learning({
       {(
         <div className="learning-path">
           <div className="path-heading">
-            <span>{courseName} · Schritt {lessonIndex + 1} von {available.length}</span>
-            <button className="text-button" onClick={() => goTo((nextOpen || available[0]).id)}>
-              {Object.keys(progress.solved).some((id) => available.some((item) => item.id === id)) ? "Lernpfad fortsetzen" : "Lernpfad beginnen"}
+            <span className="path-position">Schritt {lessonIndex + 1} von {available.length}</span>
+            <button className="text-button" onClick={() => goTo(pathTarget.id)}>
+              Zu Schritt {Math.max(0, nextOpenIndex) + 1}
               <ArrowRight size={17} />
             </button>
           </div>
@@ -438,6 +454,7 @@ export function Learning({
             Lektion
           </button>
           <button
+            ref={workspaceSwitchRef}
             aria-pressed={mobilePane === "playground"}
             className={mobilePane === "playground" ? "selected" : ""}
             onClick={() => setMobilePane("playground")}
@@ -459,7 +476,7 @@ export function Learning({
           solved={!!progress.solved[lesson.id]}
           index={available.indexOf(lesson)}
           openProject={openProject}
-          openPlayground={() => setMobilePane("playground")}
+          openPlayground={openPlayground}
         />
         {course === "js" ? (
           <Playground

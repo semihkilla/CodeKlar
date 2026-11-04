@@ -91,7 +91,8 @@ export function Playground({ lesson, tab, record }) {
         : {}),
     });
     if (!test && lesson.browser) persistBrowserStorage(output);
-    revealOutput.current = true;
+    // Browser projects show their interactive preview before console output.
+    revealOutput.current = test || !output.html;
     setResult(output);
     setRunning(false);
     busy.current=false;
